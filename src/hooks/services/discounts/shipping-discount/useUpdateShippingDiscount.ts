@@ -1,0 +1,45 @@
+import { HttpMethod } from "@/constants/enums/HttpMethods";
+import { QueryKeys } from "@/constants/enums/QueryKeys";
+import { UPDATE_SHIPPING_DISCOUNT } from "@/constants/links";
+import { ShippingDiscount } from "@/constants/models/Discount";
+import useMyMutation from "@/hooks/useMyMutation";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+
+export const useUpdateShippingDiscount = () => {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending } = useMyMutation<ShippingDiscount>();
+
+  const updateDiscount = async (data: ShippingDiscount) => {
+    const request = {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      discountValue: data.discountValue,
+      discountValueType: data.discountValueType,
+      maxDiscountValue: data.maxDiscountValue,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      isActive: data.isActive,
+      minimumCargoAmount: data.minimumCargoAmount,
+    };
+
+    await mutateAsync(
+      {
+        url: `${UPDATE_SHIPPING_DISCOUNT}`,
+        method: HttpMethod.PUT,
+        data: request,
+      },
+      {
+        onSuccess: () => {
+          toast.success("İndirim başarıyla güncellendi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNT_DETAIL],
+          });
+        },
+      }
+    );
+  };
+
+  return { updateDiscount, isPending };
+};

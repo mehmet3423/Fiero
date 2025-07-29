@@ -1,0 +1,428 @@
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { DiscountType } from "@/constants/enums/DiscountType";
+import { TimeOfDayDiscount } from "@/constants/models/Discount";
+import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import { useUpdateTimeOfDayDiscount } from "@/hooks/services/discounts/timeOfDay-discount/useUpdateTimeOfDayDiscount";
+
+interface TimeOfDayDiscountForm {
+  name: string;
+  description: string;
+  discountValue: number;
+  discountValueType: number;
+  maxDiscountValue: number;
+  startDate: string;
+  endDate: string;
+  startTime: number;
+  endTime: number;
+  isActive: boolean;
+  type: DiscountType;
+  isWithinActiveDateRange: boolean;
+}
+
+function EditTimeOfDayDiscount() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  // Fetch discount data for edit mode
+  const { discounts: allDiscounts, isLoading: isLoadingDiscounts } =
+    useGetDiscountList({
+      discountType: DiscountType.TimeOfDayDiscount,
+    });
+
+  const { updateDiscount, isPending } = useUpdateTimeOfDayDiscount();
+
+  const [formData, setFormData] = useState<TimeOfDayDiscountForm>({
+    name: "",
+    description: "",
+    discountValue: 0,
+    discountValueType: 0,
+    maxDiscountValue: 0,
+    startDate: "",
+    endDate: "",
+    startTime: 0,
+    endTime: 0,
+    isActive: true,
+    type: DiscountType.TimeOfDayDiscount,
+    isWithinActiveDateRange: false,
+  });
+
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  useEffect(() => {
+    if (id && allDiscounts.length > 0 && !isDataLoaded) {
+      // ID'yi string olarak karşılaştır (router.query string döner)
+      const discount = allDiscounts.find(
+        (d) => d.id === String(id)
+      ) as TimeOfDayDiscount;
+      if (discount) {
+        console.log("Found discount for edit:", discount);
+        console.log("startTime:", discount.startTime);
+        console.log("endTime:", discount.endTime);
+
+        // API'den gelen veride time-specific alanlar olmayabilir
+        // Bu durumda default değerleri kullanıyoruz
+
+        setFormData({
+          name: discount.name,
+          description: discount.description || "",
+          discountValue: discount.discountValue,
+          discountValueType: discount.discountValueType,
+          maxDiscountValue: discount.maxDiscountValue || 0,
+          startDate: discount.startDate.includes("T")
+            ? discount.startDate.slice(0, 16)
+            : new Date(discount.startDate).toISOString().slice(0, 16),
+          endDate: discount.endDate.includes("T")
+            ? discount.endDate.slice(0, 16)
+            : new Date(discount.endDate).toISOString().slice(0, 16),
+          startTime: discount.startTime?.ticks
+            ? Math.floor(discount.startTime.ticks / 36000000000)
+            : 9,
+          endTime: discount.endTime?.ticks
+            ? Math.floor(discount.endTime.ticks / 36000000000)
+            : 17,
+          isActive: discount.isActive,
+          type: DiscountType.TimeOfDayDiscount,
+          isWithinActiveDateRange: discount.isWithinActiveDateRange || false,
+        });
+        setIsDataLoaded(true);
+
+        console.log("Form data set with times:", {
+          startTime: discount.startTime,
+          endTime: discount.endTime,
+        });
+      } else {
+        console.log("Discount not found with id:", id, "Type:", typeof id);
+        console.log(
+          "Available discounts IDs:",
+          allDiscounts.map((d) => ({ id: d.id, type: typeof d.id }))
+        );
+      }
+    }
+  }, [id, allDiscounts, isDataLoaded]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Saat doğrulaması
+    if (formData.startTime >= formData.endTime) {
+      alert("Başlangıç saati bitiş saatinden küçük olmalıdır");
+      return;
+    }
+
+    try {
+      // Convert form data to API format
+      const apiData: TimeOfDayDiscount = {
+        id: String(id),
+        ...formData,
+        startTime: { ticks: formData.startTime * 36000000000 }, // Convert hours to .NET ticks
+        endTime: { ticks: formData.endTime * 36000000000 }, // Convert hours to .NET ticks
+        createdOn: 0, // Will be handled by API
+        createdOnValue: "", // Will be handled by API
+      };
+      await updateDiscount(apiData);
+      router.push("/admin/campaigns/time-of-day-discount");
+    } catch (error) {
+      console.error("Error saving discount:", error);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : type === "number"
+          ? parseFloat(value)
+          : value,
+    }));
+  };
+
+  // Saat seçenekleri (0-23)
+  const hourOptions = Array.from({ length: 24 }, (_, i) => ({
+    value: i,
+    label: `${i.toString().padStart(2, "0")}:00`,
+  }));
+
+  const formatTimeRange = () => {
+    const formatHour = (hour: number) =>
+      `${hour.toString().padStart(2, "0")}:00`;
+    return `${formatHour(formData.startTime)} - ${formatHour(
+      formData.endTime
+    )}`;
+  };
+
+  const getTimeRangeBadgeColor = () => {
+    // Gece saatleri için farklı renk (22:00-06:00)
+    if (formData.startTime >= 22 || formData.endTime <= 6)
+      return "bg-dark text-white";
+    // Öğle saatleri (11:00-14:00)
+    if (formData.startTime >= 11 && formData.endTime <= 14)
+      return "bg-warning text-dark";
+    // Akşam saatleri (17:00-21:00)
+    if (formData.startTime >= 17 && formData.endTime <= 21)
+      return "bg-info text-white";
+    // Diğer saatler
+    return "bg-primary";
+  };
+
+  if (isLoadingDiscounts || !isDataLoaded) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "400px" }}
+      >
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Yükleniyor...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container-fluid">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 className="fw-bold py-3 mb-4">
+            <span className="text-muted fw-light">
+              <Link
+                href="/admin/campaigns"
+                className="text-muted fw-light hover:text-primary"
+              >
+                Kampanyalar
+              </Link>{" "}
+              /{" "}
+              <Link
+                href="/admin/campaigns/time-of-day-discount"
+                className="text-muted fw-light hover:text-primary"
+              >
+                Saat Aralığı İndirimleri
+              </Link>{" "}
+              /
+            </span>{" "}
+            İndirim Düzenle
+          </h4>
+          <Link
+            href="/admin/campaigns/time-of-day-discount"
+            className="btn btn-outline-secondary"
+            style={{
+              backgroundColor: "#e9e9e9",
+              color: "#000",
+              borderColor: "#d9d9d9",
+            }}
+          >
+            <i className="bx bx-arrow-back me-1"></i>
+            Geri
+          </Link>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">İndirim Adı *</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Saat aralığı indirimi adı"
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">İndirim Açıklaması</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="İndirim açıklaması (isteğe bağlı)"
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-4 mb-3">
+                <label className="form-label">İndirim Değeri *</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="discountValue"
+                  value={formData.discountValue}
+                  onChange={handleChange}
+                  min={0}
+                  step="0.01"
+                  required
+                  placeholder="İndirim değeri"
+                />
+              </div>
+              <div className="col-md-4 mb-3">
+                <label className="form-label">İndirim Tipi *</label>
+                <select
+                  className="form-select"
+                  name="discountValueType"
+                  value={formData.discountValueType}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="1">Yüzde (%)</option>
+                  <option value="2">Tutar (₺)</option>
+                </select>
+              </div>
+              <div className="col-md-4 mb-3">
+                <label className="form-label">Maksimum İndirim Değeri</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="maxDiscountValue"
+                  value={formData.maxDiscountValue}
+                  onChange={handleChange}
+                  min={0}
+                  step="0.01"
+                  required
+                  placeholder="Maksimum indirim değeri"
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Başlangıç Tarihi *</label>
+                <input
+                  type="datetime-local"
+                  className="form-control"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Bitiş Tarihi *</label>
+                <input
+                  type="datetime-local"
+                  className="form-control"
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Başlangıç Saati *</label>
+                <select
+                  className="form-select"
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleChange}
+                  required
+                >
+                  {hourOptions.map((hour) => (
+                    <option key={hour.value} value={hour.value}>
+                      {hour.label}
+                    </option>
+                  ))}
+                </select>
+                <small className="form-text text-muted">
+                  İndirimin geçerli olacağı başlangıç saati
+                </small>
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Bitiş Saati *</label>
+                <select
+                  className="form-select"
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleChange}
+                  required
+                >
+                  {hourOptions.map((hour) => (
+                    <option key={hour.value} value={hour.value}>
+                      {hour.label}
+                    </option>
+                  ))}
+                </select>
+                <small className="form-text text-muted">
+                  İndirimin geçerli olacağı bitiş saati
+                </small>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Saat Aralığı Önizleme</label>
+                <div className="form-control-plaintext">
+                  <span
+                    className={`badge ${getTimeRangeBadgeColor()}`}
+                    style={{ fontSize: "0.875rem", padding: "8px 12px" }}
+                  >
+                    {formatTimeRange()}
+                  </span>
+                  {formData.startTime >= formData.endTime && (
+                    <small className="text-danger d-block mt-1">
+                      ⚠️ Başlangıç saati bitiş saatinden küçük olmalıdır
+                    </small>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Durum</label>
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input form-check-input-sm"
+                    name="isActive"
+                    checked={formData.isActive}
+                    onChange={handleChange}
+                    style={{ transform: "scale(0.7)" }}
+                  />
+                  <label
+                    className="form-check-label"
+                    style={{ fontSize: "0.875rem" }}
+                  >
+                    İndirim aktif
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <div className="d-flex gap-3">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={formData.startTime >= formData.endTime}
+                  >
+                    İndirimi Güncelle
+                  </button>
+                  <Link
+                    href="/admin/campaigns/time-of-day-discount"
+                    className="btn btn-outline-secondary"
+                  >
+                    İptal
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default EditTimeOfDayDiscount;

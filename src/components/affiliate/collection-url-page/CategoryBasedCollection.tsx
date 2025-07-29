@@ -1,0 +1,202 @@
+import { CategoryBasedAffiliateItem } from "@/constants/models/Affiliate";
+import { useCart } from "@/hooks/context/useCart";
+import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
+import { useProductsByMainCategoryId } from "@/hooks/services/products/useProductsByMainCategoryId";
+import { useActiveCollectionCookie } from "@/hooks/useActiveCollectionCookie";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+
+interface CategoryBasedCollectionProps {
+  categoryBasedAffiliateItems: CategoryBasedAffiliateItem[];
+}
+
+function CategoryBasedCollection({ categoryBasedAffiliateItems }: CategoryBasedCollectionProps) {
+  const { cartProducts, addToCart, updateQuantity, updateLoading, removeFromCart } = useCart();
+  const { canAddToCart, removeFromActiveCollection, updateActiveCollection, activeCollection, createActiveCollection } = useActiveCollectionCookie();
+
+  const [openCategories, setOpenCategories] = useState<{ [key: string]: boolean }>(() => {
+    const initial: { [key: string]: boolean } = {};
+    categoryBasedAffiliateItems.forEach(item => {
+      initial[item.id] = true;
+    });
+    return initial;
+  });
+
+  const toggleCategory = (categoryId: string) => {
+    setOpenCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
+  const handleAddToCart = async (productId: string) => {
+    if (!canAddToCart(categoryBasedAffiliateItems[0].affiliateCollectionId)) {
+      toast.error('Farklı bir koleksiyondan ürün ekleyemezsiniz. Lütfen önce mevcut koleksiyonu tamamlayın.');
+      return;
+    }
+    await addToCart(productId);
+    if (!activeCollection) {
+      createActiveCollection(categoryBasedAffiliateItems[0].affiliateCollectionId, productId);
+    }
+    else {
+      updateActiveCollection(productId);
+    }
+  }
+
+  const handleUpdateQuantity = (productId: string, quantity: number) => {
+    if (quantity < 0) return;
+
+    if (!canAddToCart(categoryBasedAffiliateItems[0].affiliateCollectionId)) {
+      toast.error('Farklı bir koleksiyondan ürün ekleyemezsiniz. Lütfen önce mevcut koleksiyonu tamamlayın.');
+      return;
+    }
+
+    if (quantity === 0) {
+      removeFromCart(productId);
+      removeFromActiveCollection(productId);
+      return;
+    }
+    updateQuantity(productId, quantity);
+    updateActiveCollection(productId);
+  }
+
+  const getProductQuantity = (productId: string) => {
+    const product = cartProducts.find(item => item.id === productId);
+    return product ? product.quantity : 0;
+  }
+  const truncate = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + "...";
+  };
+
+  return (
+    <div>
+      {categoryBasedAffiliateItems.map((item) => {
+        const isMainCategory = !!item.mainCategory;
+        const categoryId = isMainCategory ? item.mainCategory?.id : item.subCategory?.id;
+        const categoryName = isMainCategory ? item.mainCategory?.name : item.subCategory?.name;
+
+        const { products: categoryProducts, isLoading: isCategoryProductsLoading } = isMainCategory
+          ? useProductsByMainCategoryId(categoryId)
+          : useProductsByCategory(categoryId);
+
+        return (
+          <div key={item.id} className="mb-5">
+            <div
+              className="d-flex justify-content-between align-items-center mb-3 p-3"
+              onClick={() => toggleCategory(item.id)}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'lightgray'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <h4 className="mb-0">{categoryName}</h4>
+              <div className="d-flex align-items-center">
+                <i
+                  style={{ fontSize: '1.7rem', marginLeft: '8px' }}
+                  className={`bx ${openCategories[item.id] ? 'bx-chevron-down' : 'bx-chevron-right'}`}
+                />
+
+              </div>
+
+            </div>
+
+            {openCategories[item.id] && (
+              <>
+                {isCategoryProductsLoading ? (
+                  <div className="alert alert-info">
+                    Yükleniyor...
+                  </div>
+                ) : categoryProducts && categoryProducts.items.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table table-hover">
+                      <thead>
+                        <tr>
+                          <th style={{ width: '100px' }}>Resim</th>
+                          <th>Ürün Adı</th>
+                          <th>Açıklama</th>
+                          <th>Fiyat</th>
+                          <th style={{ width: '100px', textAlign: 'center' }}>İşlem</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {categoryProducts.items.map((product) => (
+                          <tr key={product.id} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/products/${product.id}`}>
+                            <td>
+                              <img
+                                src={product.baseImageUrl || '/images/no-image.png'}
+                                alt={product.title}
+                                style={{ width: '80px', height: '80px', marginLeft: '8px', objectFit: 'cover' }}
+                                className="rounded"
+                              />
+                            </td>
+                            <td>{product.title}</td>
+                            <td>
+                              <small className="text-muted">
+                                {truncate(product.description, 60)}
+                              </small>
+
+                            </td>
+                            <td>{product.price} ₺</td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                              {cartProducts.some(cartItem => cartItem.id === product.id) ? (
+                                <div className="cart-product-quantity d-flex align-items-center justify-content-center">
+                                  <button
+                                    disabled={updateLoading}
+                                    className="btn btn-link p-0 me-2"
+                                    onClick={() => handleUpdateQuantity(product.id, getProductQuantity(product.id) - 1)}
+                                    style={{ fontSize: "1.2rem", color: "#777" }}
+                                  >
+                                    <i className="icon-minus"></i>
+                                  </button>
+
+                                  <p className="mb-0">{getProductQuantity(product.id)}</p>
+
+                                  <button
+                                    disabled={updateLoading}
+                                    className="btn btn-link p-0 ms-2"
+                                    onClick={() => handleUpdateQuantity(product.id, getProductQuantity(product.id) + 1)}
+                                    style={{ fontSize: "1.2rem", color: "#777" }}
+                                  >
+                                    <i className="icon-plus"></i>
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  className="btn btn-primary btn-sm w-100"
+                                  onClick={() => handleAddToCart(product.id)}
+                                  style={{
+                                    backgroundColor: "black",
+                                    color: "white",
+                                    borderRadius: "8px",
+                                    padding: "8px 12px",
+                                    border: "none",
+                                    fontSize: "0.95rem",
+                                    margin: "0 auto",
+                                    display: "block",
+                                    width: "130px",
+                                  }}
+                                >
+                                  Sepete Ekle
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="alert alert-info">
+                    Bu kategoride henüz ürün bulunmamaktadır.
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )
+}
+
+export default CategoryBasedCollection
