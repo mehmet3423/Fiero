@@ -1,0 +1,16 @@
+.layout {
+    min-height: calc(100vh - 200px);
+}
+
+.image-container {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.image-container:hover {
+    transform: scale(1.02);
+}
+
+.btn-link:hover {
+    opacity: 0.7;
+}
