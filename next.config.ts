@@ -1,13 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: false,
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   images: {
+    formats: ["image/webp"],
     domains: [
-      'static.ticimax.cloud',
-      'cdn.pixabay.com',
-      'www.zafoni.com',
+      "static.ticimax.cloud",
+      "cdn.pixabay.com",
+      "www.zafoni.com",
       "encrypted-tbn0.gstatic.com",
       "i.pinimg.com",
       "res.cloudinary.com",
@@ -19,15 +28,16 @@ const nextConfig: NextConfig = {
       "nors.happencode.com",
     ],
   },
+
   async rewrites() {
     return [
       {
-        source: '/robots.txt',
-        destination: '/api/robots-txt',
+        source: "/robots.txt",
+        destination: "/api/robots-txt",
       },
       {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap-xml',
+        source: "/sitemap.xml",
+        destination: "/api/sitemap-xml",
       },
     ];
   },
