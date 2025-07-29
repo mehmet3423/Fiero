@@ -3,13 +3,14 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _dirname = dirname(_filename);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
 const eslintConfig = [
+  ...compat.plugins("@typescript-eslint"),
   ...compat.extends("next/core-web-vitals"),
   {
     rules: {
@@ -25,9 +26,9 @@ const eslintConfig = [
       "react-hooks/rules-of-hooks": "off",
       "@next/next/no-img-element": "off",
       "@next/next/no-html-link-for-pages": "off",
-      "@next/next/no-sync-scripts": "off"
-    }
-  }
+      "@next/next/no-sync-scripts": "off",
+    },
+  },
 ];
 
-export default eslintConfig;
+export default eslintConfig;
