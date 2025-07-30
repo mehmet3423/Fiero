@@ -156,6 +156,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {
@@ -192,6 +193,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {
@@ -228,6 +230,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {
@@ -264,6 +267,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {
@@ -300,6 +304,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {
@@ -340,6 +345,7 @@ function ProfilePage() {
                   if (isEditing) {
                     e.currentTarget.style.borderColor = "#000";
                     e.currentTarget.style.outline = "none";
+                    e.currentTarget.style.boxShadow = "none";
                   }
                 }}
                 onBlur={(e) => {

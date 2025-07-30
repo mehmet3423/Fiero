@@ -328,18 +328,6 @@ function Cards() {
                 >
                   <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
                     Henüz kayıtlı bir kredi kartınız bulunmamaktadır.
-                    <br />
-                    <a
-                      href="#"
-                      onClick={openAddCardModal}
-                      style={{
-                        color: "#007bff",
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Kart Ekle
-                    </a>
                   </p>
                 </div>
               </div>
