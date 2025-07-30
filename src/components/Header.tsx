@@ -97,28 +97,35 @@ export default function Header() {
           <div className="tf-top-bar_wrap grid-3 gap-30 align-items-center">
             <ul className="tf-top-bar_item tf-social-icon d-flex gap-10">
               <li>
-                <a href="#" className="box-icon w_28 round social-facebook bg_line">
+                <a href="https://www.facebook.com/desafashion?fref=ts"
+                  className="box-icon w_28 round social-facebook bg_line">
                   <i className="icon fs-12 icon-fb"></i>
                 </a>
-              </li>
+              </li>              
               <li>
-                <a href="#" className="box-icon w_28 round social-twiter bg_line">
-                  <i className="icon fs-10 icon-Icon-x"></i>
-                </a>
-              </li>
-              <li>
-                <a href="#" className="box-icon w_28 round social-instagram bg_line">
+                <a href="https://www.instagram.com/desafashion/"
+                  className="box-icon w_28 round social-instagram bg_line">
                   <i className="icon fs-12 icon-instagram"></i>
                 </a>
               </li>
               <li>
-                <a href="#" className="box-icon w_28 round social-tiktok bg_line">
-                  <i className="icon fs-12 icon-tiktok"></i>
-                </a>
-              </li>
-              <li>
-                <a href="#" className="box-icon w_28 round social-pinterest bg_line">
-                  <i className="icon fs-12 icon-pinterest-1"></i>
+                <a
+                  href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
+                  className="box-icon w_28 round social-youtube border-line"
+                  target="_blank"
+                  style={{backgroundColor: '#ebebeb'}}
+                >
+                  <i
+                    className="icon fs-8 icon-play"
+                    style={{
+                      border: '1px solid #000',
+                      padding: '1px 4px',
+                      borderRadius: '2px',
+                      backgroundColor: '#000',
+                      color: '#fff',
+                      fontSize: '8px'
+                    }}
+                  ></i>
                 </a>
               </li>
             </ul>
@@ -142,7 +149,7 @@ export default function Header() {
                 </div>
               </div>
             </div>
-            <div className="top-bar-language tf-cur justify-content-end">
+            {/* <div className="top-bar-language tf-cur justify-content-end">
               <div className="tf-currencies">
                 <select className="image-select center style-default type-currencies">
                   <option data-thumbnail="images/country/tr.svg">TRY <span>₺ | Turkey</span></option>
@@ -157,7 +164,7 @@ export default function Header() {
                   <option>العربية</option>
                 </select>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -272,7 +279,7 @@ export default function Header() {
                     onClick={() => setShowResults(!showResults)}
                     className="nav-icon-item"
                   >
-                    <i className="icon-search"></i>
+                    <i className="icon icon-search"></i>
                   </button>
                   {showResults && (
                     <div className="search-results-dropdown">
@@ -306,7 +313,7 @@ export default function Header() {
                           ))
                         ) : (
                           <div className="search-no-results">
-                            <i className="icon-search"></i>
+                            <i className="icon icon-search"></i>
                             <span>Ürün bulunamadı</span>
                           </div>
                         )}
@@ -331,9 +338,8 @@ export default function Header() {
                             <div className="user-name">
                               {showAdminFeatures
                                 ? "Admin"
-                                : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${
-                                    userProfile?.applicationUser?.lastName || ""
-                                  }`}
+                                : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
+                                }`}
                             </div>
                           </div>
                         </div>
