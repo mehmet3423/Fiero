@@ -3,15 +3,12 @@ import { Product } from "@/constants/models/Product";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import { useGetProductListByIds } from "@/hooks/services/products/useGetProductListByIds";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/pagination";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import DiscountBadge from "../product/DiscountBadge";
 
 interface FeaturedProductsProps {
   productHeader: string;
@@ -61,274 +58,174 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   }
 
   return (
-    <div className="mb-5">
-      <div className="heading heading-center mb-3 mt-3">
-        <h2 className="title">{productHeader}</h2>
-      </div>
+    <section className="flat-spacing-15 pb_0">
+      <div className="container">
+        <div className="flat-title wow fadeInUp" data-wow-delay="0s">
+          <span className="title">{productHeader}</span>
+          <p className="sub-title">Beautifully Functional. Purposefully Designed. Consciously Crafted.</p>
+        </div>
+        <div className="hover-sw-nav hover-sw-3">
+          <div className="swiper tf-sw-product-sell wrap-sw-over" data-preview="4" data-tablet="3" data-mobile="2" data-space-lg="30" data-space-md="15" data-pagination="2" data-pagination-md="3" data-pagination-lg="3">
+            <Swiper
+              modules={[Navigation]}
+              loop={true}
+              navigation={{
+                nextEl: ".nav-next-product",
+                prevEl: ".nav-prev-product",
+              }}
+              spaceBetween={30}
+              breakpoints={{
+                320: { slidesPerView: 2, spaceBetween: 15 },
+                768: { slidesPerView: 3, spaceBetween: 15 },
+                1024: { slidesPerView: 4, spaceBetween: 30 },
+              }}
+              className="swiper-wrapper"
+              style={{ 
+                display: 'flex',
+                alignItems: 'stretch'
+              }}
+            >
+              {products.map((product: Product) => {
+                const hasDiscount = product.discountDTO !== null;
+                const isPercentageDiscount =
+                  hasDiscount &&
+                  (product.discountDTO as any)?.discountValueType === 1;
+                const discountPercentage = isPercentageDiscount
+                  ? product.discountDTO.discountValue
+                  : null;
 
-      <hr className="mb-4" />
-
-      <div className="slider-container">
-        <Swiper
-          modules={[Navigation]}
-          loop={true}
-          navigation={{
-            nextEl: ".custom-next",
-            prevEl: ".custom-prev",
-          }}
-          spaceBetween={20}
-          breakpoints={{
-            576: { slidesPerView: 2 },
-            768: { slidesPerView: 3 },
-            992: { slidesPerView: 4 },
-            1200: { slidesPerView: 5 },
-          }}
-          className="featured-products-slider"
-        >
-          {products.map((product: Product) => {
-            // Check if there's an active discount using new discountDTO structure
-            const hasDiscount = product.discountDTO !== null;
-
-            // Badge sadece percentage discount için gösterilir
-            const isPercentageDiscount =
-              hasDiscount &&
-              (product.discountDTO as any)?.discountValueType === 1;
-            const discountPercentage = isPercentageDiscount
-              ? product.discountDTO.discountValue
-              : null;
-
-            // Fixed discount check
-            const isFixedDiscount =
-              hasDiscount &&
-              (product.discountDTO as any)?.discountValueType === 2;
-
-            return (
-              <SwiperSlide key={product.id}>
-                <div className="product product-7">
-                  <figure className="product-media">
-                    <Link href={`/products/${product.id}`}>
-                      <Image
-                        src={
-                          product.baseImageUrl ||
-                          "/assets/images/products/no-image.jpg"
-                        }
-                        alt={`Detayları görüntüle: - ${product.title}`}
-                        title={`Detayları görüntüle: - ${product.title}`}
-                        className="product-image"
-                        width={280}
-                        height={280}
-                        unoptimized
-                      />
-                      {product.contentImageUrls[0] && (
-                        <Image
-                          src={product.contentImageUrls[0]}
-                          alt={product.title}
-                          className="product-image-hover"
-                          width={280}
-                          height={280}
-                          unoptimized
-                        />
-                      )}
-                    </Link>
-
-                    {isPercentageDiscount && (
-                      <DiscountBadge percentage={discountPercentage} />
-                    )}
-
-                    <div className="product-action-vertical">
-                      <button
-                        className={`btn-product-icon border-0 btn-wishlist btn-expandable ${
-                          isInFavorites(product.id) ? "added" : ""
-                        }`}
-                        onClick={() => handleToggleFavorite(product.id)}
-                        disabled={isFavoritesLoading}
-                        style={{ fontSize: "2rem", padding: "1rem" }}
-                      >
-                        <span>
-                          {isFavoritesLoading
-                            ? "İşleniyor..."
-                            : isInFavorites(product.id)
-                            ? "Favorilerden Çıkar"
-                            : "Favorilere Ekle"}
+                return (
+                  <SwiperSlide key={product.id} className="swiper-slide" style={{ height: 'auto', display: 'flex' }}>
+                    <div className="card-product" style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <div className="card-product-wrapper" style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
+                        <Link href={`/products/${product.id}`} className="product-img">
+                          <img
+                            className="lazyload img-product"
+                            data-src={
+                              product.baseImageUrl ||
+                              "/assets/images/products/no-image.jpg"
+                            }
+                            src={
+                              product.baseImageUrl ||
+                              "/assets/images/products/no-image.jpg"
+                            }
+                            alt="image-product"
+                          />
+                          {product.contentImageUrls && product.contentImageUrls[0] && (
+                            <img
+                              className="lazyload img-hover"
+                              data-src={product.contentImageUrls[0]}
+                              src={product.contentImageUrls[0]}
+                              alt="image-product"
+                            />
+                          )}
+                        </Link>
+                        <div className="list-product-btn">
+                          <a
+                            href="javascript:void(0);"
+                            className="box-icon bg_white quick-add tf-btn-loading"
+                            title="Quick Add"
+                            onClick={() => addToCart(product.id)}
+                          >
+                            <span className="icon icon-bag"></span>
+                            <span className="tooltip">Quick Add</span>
+                          </a>
+                          <a
+                            href="javascript:void(0);"
+                            className={`box-icon bg_white wishlist btn-icon-action ${
+                              isInFavorites(product.id) ? "added" : ""
+                            }`}
+                            title={
+                              isInFavorites(product.id)
+                                ? "Remove from Wishlist"
+                                : "Add to Wishlist"
+                            }
+                            onClick={() => handleToggleFavorite(product.id)}
+                          >
+                            <span className="icon icon-heart"></span>
+                            <span className="tooltip">Add to Wishlist</span>
+                            <span className="icon icon-delete"></span>
+                          </a>
+                          <a
+                            href="javascript:void(0);"
+                            className="box-icon bg_white compare btn-icon-action"
+                            title="Add to Compare"
+                          >
+                            <span className="icon icon-compare"></span>
+                            <span className="tooltip">Add to Compare</span>
+                            <span className="icon icon-check"></span>
+                          </a>
+                          <a
+                            href="javascript:void(0);"
+                            className="box-icon bg_white quickview tf-btn-loading"
+                            title="Quick View"
+                            onClick={() => handleQuickView(product)}
+                          >
+                            <span className="icon icon-view"></span>
+                            <span className="tooltip">Quick View</span>
+                          </a>
+                        </div>
+                        <div className="size-list">
+                          <span>4 sizes available</span>
+                        </div>
+                        {isPercentageDiscount && (
+                          <div className="on-sale-wrap">
+                            <div className="on-sale-item">-{discountPercentage}%</div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="card-product-info" style={{ marginTop: 'auto' }}>
+                        <Link href={`/products/${product.id}`} className="title link" style={{ 
+                          display: 'block',
+                          height: '2.4em',
+                          overflow: 'hidden',
+                          lineHeight: '1.2em',
+                          marginBottom: '8px'
+                        }}>
+                          {product.title}
+                        </Link>
+                        <span className="price">
+                          {hasDiscount &&
+                          product.price !== product.discountedPrice ? (
+                            `From ${product.discountedPrice.toFixed(2)}₺`
+                          ) : (
+                            `${product.price.toFixed(2)}₺`
+                          )}
                         </span>
-                      </button>
-                      <button
-                        className={`btn-product-icon border-0 btn-quickview btn-expandable`}
-                        title="Hızlı Görünüm"
-                        onClick={() => handleQuickView(product)}
-                        style={{ fontSize: "2rem", padding: "1rem" }}
-                      >
-                        <span>Hızlı Görünüm</span>
-                      </button>
+                        <ul className="list-color-product">
+                          <li className="list-color-item color-swatch active">
+                            <span className="tooltip">Default</span>
+                            <span className="swatch-value bg_orange-3"></span>
+                            <img
+                              className="lazyload"
+                              data-src={
+                                product.baseImageUrl ||
+                                "/assets/images/products/no-image.jpg"
+                              }
+                              src={
+                                product.baseImageUrl ||
+                                "/assets/images/products/no-image.jpg"
+                              }
+                              alt="image-product"
+                            />
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-
-                    <div className="product-action">
-                      <button
-                        className="btn-product btn-cart border-0"
-                        onClick={() => addToCart(product.id)}
-                      >
-                        <span>Sepete Ekle</span>
-                      </button>
-                    </div>
-                  </figure>
-
-                  <div className="product-body">
-                    <h3
-                      className="product-title"
-                      style={{
-                        height: "40px",
-                        overflow: "hidden",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <Link href={`/products/${product.id}`}>
-                        {product.title}
-                      </Link>
-                    </h3>
-                    <div
-                      className="product-price"
-                      style={{ minHeight: "30px" }}
-                    >
-                      {hasDiscount &&
-                      product.price !== product.discountedPrice ? (
-                        <>
-                          <span
-                            className="old-price"
-                            style={{
-                              textDecoration: "line-through",
-                              fontSize: "1.3rem",
-                              color: "#999999",
-                            }}
-                          >
-                            {product.price.toFixed(2)}₺
-                          </span>
-                          <span
-                            className="new-price"
-                            style={{ color: "black", fontSize: "1.6rem" }}
-                          >
-                            {product.discountedPrice.toFixed(2)}₺
-                          </span>
-                        </>
-                      ) : (
-                        <span>{product.price.toFixed(2)}₺</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-
-        {/* Özel Ok Butonları */}
-        <button
-          className="custom-prev"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "0",
-            transform: "translateY(-50%)",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            color: "#333",
-            border: "none",
-            borderRadius: "50%",
-            width: "40px",
-            height: "40px",
-            cursor: "pointer",
-            zIndex: 20,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            transition: "all 0.3s ease",
-            opacity: 0.8,
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 1)";
-            e.currentTarget.style.opacity = "1";
-            e.currentTarget.style.transform = "translateY(-50%) scale(1.1)";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-            e.currentTarget.style.opacity = "0.8";
-            e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15 19L8 12L15 5"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <button
-          className="custom-next"
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: "0",
-            transform: "translateY(-50%)",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            color: "#333",
-            border: "none",
-            borderRadius: "50%",
-            width: "40px",
-            height: "40px",
-            cursor: "pointer",
-            zIndex: 20,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            transition: "all 0.3s ease",
-            opacity: 0.8,
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 1)";
-            e.currentTarget.style.opacity = "1";
-            e.currentTarget.style.transform = "translateY(-50%) scale(1.1)";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-            e.currentTarget.style.opacity = "0.8";
-            e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M9 5L16 12L9 19"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+          <div className="nav-sw nav-next-slider nav-next-product box-icon w_46 round">
+            <span className="icon icon-arrow-left"></span>
+          </div>
+          <div className="nav-sw nav-prev-slider nav-prev-product box-icon w_46 round">
+            <span className="icon icon-arrow-right"></span>
+          </div>
+        </div>
       </div>
 
-      <div className="more-container text-center mt-4">
-        <Link href="/products" className="btn btn-outline-primary-2">
-          <span>TÜM ÜRÜNLERİ GÖR</span>
-        </Link>
-      </div>
-      <hr className="mb-4" />
-      {/* asd */}
       {selectedProduct && (
         <QuickView
           isOpen={quickViewOpen}
@@ -336,50 +233,44 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           product={selectedProduct}
         />
       )}
-
+      
       <style jsx global>{`
-        .slider-container {
-          position: relative;
-          padding: 0 40px;
+        .tf-sw-product-sell .swiper-wrapper {
+          align-items: stretch !important;
         }
-        .featured-products-slider {
-          position: relative;
+        
+        .tf-sw-product-sell .swiper-slide {
+          height: auto !important;
+          display: flex !important;
         }
-
-        .product-price {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .product-media {
-          position: relative;
-          width: 100%;
-          height: 280px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: white;
-          margin-bottom: 1rem;
-        }
-        .product-image,
-        .product-image-hover {
+        
+        .tf-sw-product-sell .card-product {
           width: 100% !important;
+          display: flex !important;
+          flex-direction: column !important;
           height: 100% !important;
-          object-fit: contain !important;
-          position: absolute;
-          top: 0;
-          left: 0;
         }
-        .product-body {
-          padding: 1rem;
+        
+        .tf-sw-product-sell .card-product-wrapper {
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
         }
-        .product {
-          height: 100%;
-          display: flex;
-          flex-direction: column;
+        
+        .tf-sw-product-sell .card-product-info {
+          margin-top: auto !important;
+        }
+        
+        .tf-sw-product-sell .title.link {
+          display: block !important;
+          height: 2.4em !important;
+          overflow: hidden !important;
+          line-height: 1.2em !important;
+          margin-bottom: 8px !important;
+          text-overflow: ellipsis !important;
         }
       `}</style>
-    </div>
+    </section>
   );
 };
 

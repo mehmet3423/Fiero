@@ -96,7 +96,7 @@ function CheckoutPage() {
                   ) : (
                     cartProducts.map((item: any) => (
                       <li key={item.id} style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                        <img src={item.imageUrl || '/public/assets/site/images/products/default.jpg'} alt={item.title} style={{ width: 48, height: 48, borderRadius: 8, marginRight: 16 }} />
+                        <img src={item.baseImageUrl || item.imageUrl || '/assets/images/products/no-image.jpg'} alt={item.title} style={{ width: 48, height: 48, borderRadius: 8, marginRight: 16, objectFit: 'cover' }} />
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: 500 }}>{item.title}</div>
                           {item.variant && <div style={{ fontSize: 12, color: '#888' }}>{item.variant}</div>}
