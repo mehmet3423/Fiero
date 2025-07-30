@@ -1,10 +1,18 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useCart } from "@/hooks/context/useCart";
+import QuickView from "@/components/product/QuickView";
 import { useGetProductListByIds } from "@/hooks/services/products/useGetProductListByIds";
+import { Product } from "@/constants/models/Product";
 
 const CompareProducts = () => {
+  const router = useRouter();
+  const { addToCart } = useCart();
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -13,7 +21,33 @@ const CompareProducts = () => {
     }
   }, []);
 
+  // URL'den add parametresini okuyup ürünü listeye ekle
+  useEffect(() => {
+    if (router.isReady && router.query.add) {
+      const productIdToAdd = router.query.add as string;
+      
+      if (typeof window !== "undefined") {
+        const currentIds = JSON.parse(localStorage.getItem('compareProducts') || '[]');
+        
+        // Eğer ürün zaten listede değilse ekle
+        if (!currentIds.includes(productIdToAdd)) {
+          const updatedIds = [...currentIds, productIdToAdd];
+          localStorage.setItem('compareProducts', JSON.stringify(updatedIds));
+          setCompareIds(updatedIds);
+        }
+        
+        // URL'den parametreyi temizle
+        router.replace('/compare-products', undefined, { shallow: true });
+      }
+    }
+  }, [router.isReady, router.query.add]);
+
   const { products, isLoading } = useGetProductListByIds(compareIds);
+
+  const handleQuickView = (product: Product) => {
+    setSelectedProduct(product);
+    setQuickViewOpen(true);
+  };
 
   const handleRemove = (id: string) => {
     const updated = compareIds.filter((pid) => pid !== id);
@@ -70,11 +104,17 @@ const CompareProducts = () => {
                         )}
                       </div>
                       <div className="tf-compare-group-btns d-flex gap-10">
-                        <button className="tf-btn btn-outline-dark radius-3">
+                        <button 
+                          className="tf-btn btn-outline-dark radius-3"
+                          onClick={() => handleQuickView(product)}
+                        >
                           <span className="icon icon-view"></span>
                           <span>QUICK VIEW</span>
                         </button>
-                        <button className="tf-btn btn-outline-dark radius-3">
+                        <button 
+                          className="tf-btn btn-outline-dark radius-3"
+                          onClick={() => addToCart(product.id)}
+                        >
                           <span className="icon icon-bag"></span>
                           <span>QUICK ADD</span>
                         </button>
@@ -111,6 +151,15 @@ const CompareProducts = () => {
           </div>
         </div>
       </section>
+      
+      {selectedProduct && (
+        <QuickView
+          isOpen={quickViewOpen}
+          onClose={() => setQuickViewOpen(false)}
+          product={selectedProduct}
+        />
+      )}
+      
       {/* ...style jsx kısmı aynı kalabilir... */}
     </>
   );

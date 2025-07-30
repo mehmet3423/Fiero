@@ -30,8 +30,8 @@ export default function Footer() {
                     <li>
                       <p>
                         Email:{" "}
-                        <a href="mailto:info@nors.com">
-                          info@nors.com
+                        <a href="mailto:siparis@desa.com.tr">
+                          siparis@desa.com.tr
                         </a>
                       </p>
                     </li>
@@ -51,7 +51,7 @@ export default function Footer() {
                   <ul className="tf-social-icon d-flex gap-10">
                     <li>
                       <a
-                        href="https://www.facebook.com/norsworldwide/"
+                        href="https://www.facebook.com/desafashion?fref=ts"
                         className="box-icon w_34 round social-facebook border-line-black"
                         target="_blank"
                       >
@@ -60,16 +60,7 @@ export default function Footer() {
                     </li>
                     <li>
                       <a
-                        href="https://x.com/norsworldwide/"
-                        className="box-icon w_34 round social-twiter border-line-black"
-                        target="_blank"
-                      >
-                        <i className="icon fs-12 icon-Icon-x"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="https://www.instagram.com/nors.co/"
+                        href="https://www.instagram.com/desafashion/"
                         className="box-icon w_34 round social-instagram border-line-black"
                         target="_blank"
                       >
@@ -78,20 +69,21 @@ export default function Footer() {
                     </li>
                     <li>
                       <a
-                        href="https://www.tiktok.com/@nors"
-                        className="box-icon w_34 round social-tiktok border-line-black"
+                        href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
+                        className="box-icon w_34 round social-youtube border-line-black"
                         target="_blank"
                       >
-                        <i className="icon fs-14 icon-tiktok"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="https://tr.pinterest.com/NorsOfficial/"
-                        className="box-icon w_34 round social-pinterest border-line-black"
-                        target="_blank"
-                      >
-                        <i className="icon fs-14 icon-pinterest-1"></i>
+                        <i
+                          className="icon fs-10 icon-play"
+                          style={{
+                            border: '1px solid #000',
+                            padding: '2px 4px',
+                            borderRadius: '2px',
+                            backgroundColor: '#000',
+                            color: '#fff',
+                            fontSize: '8px'
+                          }}
+                        ></i>
                       </a>
                     </li>
                   </ul>
@@ -261,14 +253,44 @@ export default function Footer() {
                   <div className="footer-menu_item">
                     © DESA 2025
                   </div>
-                  <div className="tf-payment">
-                    <Image
-                      src="/assets/site/images/payments.png"
-                      alt="Payment methods"
-                      title="Kabul Edilen Ödeme Yöntemleri"
-                      width="200"
-                      height="20"
-                    />
+                  <div className="tf-payment col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+                    <div className="d-flex justify-content-center justify-content-md-end gap-1 align-items-center flex-wrap">
+                      <img
+                        src="/assets/site/images/payments/visa.webp"
+                        alt="Payment methods"
+                        title="Kabul Edilen Ödeme Yöntemleri"
+                        width='40px'
+                        height="auto"
+                      />
+                      <img
+                        src="/assets/site/images/payments/mastercard.webp"
+                        alt="Payment methods"
+                        title="Kabul Edilen Ödeme Yöntemleri"
+                        width='40px'
+                        height="auto"
+                      />
+                      <img
+                        src="/assets/site/images/payments/applepay.webp"
+                        alt="Payment methods"
+                        title="Kabul Edilen Ödeme Yöntemleri"
+                        width='40px'
+                        height="auto"
+                      />
+                      <img
+                        src="/assets/site/images/payments/americanexpress.webp"
+                        alt="Payment methods"
+                        title="Kabul Edilen Ödeme Yöntemleri"
+                        width='40px'
+                        height="auto"
+                      />
+                      <img
+                        src="/assets/site/images/payments/cb.webp"
+                        alt="Payment methods"
+                        title="Kabul Edilen Ödeme Yöntemleri"
+                        width='40px'
+                        height="auto"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -276,6 +298,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }

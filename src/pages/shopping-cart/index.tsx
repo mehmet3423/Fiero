@@ -152,7 +152,7 @@ function ShoppingCartPage() {
                   d="M10.0899 24C11.3119 22.1928 11.4245 20.2409 10.4277 18.1443C10.1505 19.2691 9.64344 19.9518 8.90645 20.1924C9.59084 18.2379 9.01896 16.1263 7.19079 13.8576C7.15133 16.2007 6.58824 17.9076 5.50148 18.9782C4.00436 20.4517 4.02197 22.1146 5.55428 23.9669C-0.806588 20.5819 -1.70399 16.0418 2.86196 10.347C3.14516 11.7228 3.83141 12.5674 4.92082 12.8809C3.73335 7.84186 4.98274 3.54821 8.66895 0C8.6916 7.87426 11.1062 8.57414 14.1592 12.089C17.4554 16.3071 15.5184 21.1748 10.0899 24Z"
                 ></path>
               </svg>
-              <p>Bu ürünler sınırlıdır, ödeme yapın </p>
+              {/*<p>Bu ürünler sınırlıdır, ödeme yapın </p>*/}
             </div>
             <div
               className="js-countdown timer-count"
@@ -424,14 +424,14 @@ function ShoppingCartPage() {
                     })}
                   </tbody>
                 </table>
-                <div className="tf-page-cart-note">
+                {/*<div className="tf-page-cart-note">
                   <label htmlFor="cart-note">Sipariş Notu Ekle</label>
                   <textarea
                     name="note"
                     id="cart-note"
                     placeholder="Size nasıl yardımcı olabiliriz?"
                   ></textarea>
-                </div>
+                </div>*/}
               </form>
             </div>
             <div className="tf-page-cart-footer">
@@ -463,7 +463,7 @@ function ShoppingCartPage() {
                   </div>
                 </div>
                 <div className="tf-page-cart-checkout">
-                  <div className="shipping-calculator">
+                  {/*<div className="shipping-calculator">
                     <summary
                       className="accordion-shipping-header d-flex justify-content-between align-items-center collapsed"
                       data-bs-target="#shipping"
@@ -514,7 +514,7 @@ function ShoppingCartPage() {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </div>*/}
                   <div className="cart-checkbox">
                     <input
                       type="checkbox"
