@@ -44,21 +44,14 @@ const BlogPage: React.FC = () => {
       </div>
 
       {/* Blog Grid Main Section */}
-      <div className="blog-grid-main py-5">
+      <div className="blog-grid-main">
         <div className="container">
           <div className="row">
-            {/* Blog Grid */}
-            <div className="col-xl-9 col-lg-9">
-              <div className="px-3" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-                <div className="row">
-                  {currentPosts.map((post) => (
-                    <div key={post.id} className="col-xl-4 col-md-6 col-12 mb-4">
-                      <BlogCard post={post} />
-                    </div>
-                  ))}
-                </div>
+            {currentPosts.map((post) => (
+              <div key={post.id} className="col-xl-4 col-md-6 col-12">
+                <BlogCard post={post} />
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

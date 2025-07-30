@@ -10,93 +10,52 @@ const announcements = [
 ];
 
 const AnnouncementSlider: React.FC = () => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    if (!isHovered) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prevIndex) =>
-          prevIndex === announcements.length - 1 ? 0 : prevIndex + 1
-        );
-      }, 3000);
+  const closeAnnouncement = () => {
+    setIsVisible(false);
+  };
 
-      return () => clearInterval(interval);
-    }
-  }, [isHovered]);
+  if (!isVisible) {
+    return null;
+  }
 
   return (
-    <div
-      className="py-2 w-100"
-      style={{ height: "30px", backgroundColor: "#000000", overflow: "hidden" }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="container">
-        <div className="d-flex align-items-center h-100">
-          <div className="ticker-wrapper">
-            <div className={`ticker  `}>
-              {announcements
-                .concat(announcements)
-                .map((announcement, index) => (
-                  <span
-                    key={index}
-                    className={`ticker-item text-white fw-bold ${
-                      currentIndex === index % announcements.length
-                        ? "active"
-                        : ""
-                    }`}
-                  >
-                    {announcement}
-                  </span>
-                ))}
+    <div className="announcement-bar bg_dark">
+      <div className="wrap-announcement-bar">
+        <div className="box-sw-announcement-bar">
+          {announcements.map((announcement, index) => (
+            <div key={index} className="announcement-bar-item">
+              <p>{announcement}</p>
             </div>
-          </div>
+          ))}
+          {/* Tekrar için aynı elemanları ekliyoruz */}
+          {announcements.map((announcement, index) => (
+            <div key={`repeat-${index}`} className="announcement-bar-item">
+              <p>{announcement}</p>
+            </div>
+          ))}
+          {/* Üçüncü tekrar */}
+          {announcements.map((announcement, index) => (
+            <div key={`repeat2-${index}`} className="announcement-bar-item">
+              <p>{announcement}</p>
+            </div>
+          ))}
+          {/* Dördüncü tekrar */}
+          {announcements.map((announcement, index) => (
+            <div key={`repeat3-${index}`} className="announcement-bar-item">
+              <p>{announcement}</p>
+            </div>
+          ))}
+          {/* Beşinci tekrar */}
+          {announcements.map((announcement, index) => (
+            <div key={`repeat4-${index}`} className="announcement-bar-item">
+              <p>{announcement}</p>
+            </div>
+          ))}
         </div>
       </div>
-      <style jsx>{`
-        .ticker-wrapper {
-          width: 100%;
-          overflow: hidden;
-          position: relative;
-        }
-        .ticker {
-          display: flex;
-          white-space: nowrap;
-          animation: ticker 15s linear infinite;
-          animation-play-state: running;
-        }
-        .ticker.paused {
-          animation-play-state: paused;
-        }
-        .ticker-item {
-          display: inline-block;
-          margin-right: 250px;
-          font-size: 16px;
-          color: white;
-          opacity: 0.8;
-          transition: all 0.3s ease;
-          transform: translateY(0);
-        }
-        .ticker-item.active {
-          opacity: 1;
-          transform: translateY(-2px);
-          text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-        .ticker-item:hover {
-          opacity: 1;
-          transform: translateY(-2px);
-          text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-        @keyframes ticker {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
+      <span className="icon-close close-announcement-bar" onClick={closeAnnouncement}></span>
     </div>
   );
 };
