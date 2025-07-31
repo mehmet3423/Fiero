@@ -353,6 +353,11 @@ function Cards() {
         isLoading={isUpdatingCard}
         formId="updateCardForm"
         onClose={() => {}}
+        approveButtonStyle={{
+          backgroundColor: '#000000',
+          borderColor: '#000000',
+          color: '#ffffff'
+        }}
       >
         <form
           id="updateCardForm"
@@ -362,7 +367,7 @@ function Cards() {
             <label className="form-label">Kart Üzerindeki İsim</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control mb-3 shadow-none"
               placeholder="Kart üzerindeki isim"
               value={updateCard.cardHolderName}
               onChange={(e) =>
@@ -374,7 +379,7 @@ function Cards() {
             <label className="form-label">Kart Numarası</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control mb-3 shadow-none"
               placeholder="XXXX XXXX XXXX XXXX"
               value={updateCard.cardNumber}
               onChange={handleUpdateCardNumberChange}
@@ -389,7 +394,7 @@ function Cards() {
               <div className="row">
                 <div className="col-6">
                   <select
-                    className="form-control me-2"
+                    className="form-control mb-3 shadow-none me-2"
                     value={updateCard.expireMonth}
                     onChange={(e) =>
                       setUpdateCard({
@@ -411,7 +416,7 @@ function Cards() {
                 </div>
                 <div className="col-6">
                   <select
-                    className="form-control"
+                    className="form-control mb-3 shadow-none"
                     value={updateCard.expireYear}
                     onChange={(e) =>
                       setUpdateCard({
@@ -437,7 +442,7 @@ function Cards() {
               <label className="form-label">CVV/CVC</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control mb-3 shadow-none"
                 placeholder="XXX"
                 value={updateCard.cvc}
                 onChange={handleUpdateCvcChange}
@@ -450,7 +455,7 @@ function Cards() {
               <label className="form-label">Kart Takma Adı</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control mb-3 shadow-none"
                 placeholder="Kart takma adı"
                 value={updateCard.cardAlias}
                 onChange={(e) =>

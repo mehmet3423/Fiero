@@ -86,11 +86,11 @@ function ServiceIcons() {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className="nav-sw nav-next-slider nav-next-collection box-icon w_46 round">
-            <span className="icon icon-arrow-left"></span>
-          </div>
-          <div className="nav-sw nav-prev-slider nav-prev-collection box-icon w_46 round">
+          <div className="nav-sw nav-prev-slider nav-next-collection box-icon w_46 round">
             <span className="icon icon-arrow-right"></span>
+          </div>
+          <div className="nav-sw nav-next-slider nav-prev-collection box-icon w_46 round">
+            <span className="icon icon-arrow-left"></span>
           </div>
           <div className="sw-dots style-2 sw-pagination-collection justify-content-center"></div>
         </div>

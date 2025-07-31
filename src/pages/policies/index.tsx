@@ -270,9 +270,8 @@ const PrivacyPolicyPage = () => {
           margin-bottom: 0.8rem;
         }
         .policy-links a {
-          color: #007bff;
+          color: black;
           text-decoration: none;
-          font-weight: 500;
         }
         .policy-links a:hover {
           text-decoration: underline;

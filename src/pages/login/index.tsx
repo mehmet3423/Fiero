@@ -1,4 +1,5 @@
 import { useLogin } from "@/hooks/services/useLogin";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface LoginProps {
@@ -6,6 +7,7 @@ interface LoginProps {
 }
 
 export default function Login({ onSuccess }: LoginProps) {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -21,8 +23,15 @@ export default function Login({ onSuccess }: LoginProps) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleLogin(formData, onSuccess);
-    window.location.reload();
+    
+    try {
+      await handleLogin(formData, onSuccess);
+      // Login başarılı ise home sayfasına yönlendir
+      router.push('/');
+    } catch (error) {
+      // Hata durumunda login sayfasında kal
+      console.error('Login failed:', error);
+    }
   };
 
   // Şifre sıfırlama formu için dummy handler
@@ -121,19 +130,38 @@ export default function Login({ onSuccess }: LoginProps) {
                         <label className="tf-field-label fw-4 text_black-2" htmlFor="property4">
                           Password *
                         </label>
-                        <i
-                          className={`bx ${showPassword ? "bx-hide" : "bx-show"} position-absolute`}
+                        <button
+                          type="button"
+                          className="btn-show-pass"
                           style={{
+                            position: "absolute",
                             top: "50%",
-                            right: "10px",
+                            right: "15px",
                             transform: "translateY(-50%)",
+                            border: "none",
+                            background: "transparent",
                             cursor: "pointer",
-                            fontSize: "1.5rem",
+                            fontSize: "18px",
                             color: "#777",
-                            position: "absolute"
+                            padding: "5px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
                           }}
                           onClick={togglePasswordVisibility}
-                        ></i>
+                          title={showPassword ? "Şifreyi gizle" : "Şifreyi göster"}
+                        >
+                          {showPassword ? (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 4.5C7.31 4.5 3.26 7.38 1.64 11.5c-.11.28-.11.72 0 1c1.62 4.12 5.67 7 10.36 7s8.74-2.88 10.36-7c.11-.28.11-.72 0-1C20.74 7.38 16.69 4.5 12 4.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                              <path d="M3 3l18 18" stroke="currentColor" strokeWidth="2"/>
+                            </svg>
+                          ) : (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 4.5C7.31 4.5 3.26 7.38 1.64 11.5c-.11.28-.11.72 0 1c1.62 4.12 5.67 7 10.36 7s8.74-2.88 10.36-7c.11-.28.11-.72 0-1C20.74 7.38 16.69 4.5 12 4.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                          )}
+                        </button>
                       </div>
                     </div>
                     <div className="mb_20">

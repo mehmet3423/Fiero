@@ -202,7 +202,7 @@ const AffiliateApplicationModal: React.FC<AffiliateApplicationModalProps> = ({
           <div className="text-center mb-4">
             <button
               type="button"
-              className="btn btn-outline-primary"
+              className="btn btn-outline-dark"
               onClick={() => setShowAddIban(true)}
             >
               Yeni IBAN Ekle
@@ -232,7 +232,7 @@ const AffiliateApplicationModal: React.FC<AffiliateApplicationModalProps> = ({
                 <span className="input-group-text">TR</span>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control shadow-none"
                   placeholder="0000 0000 0000 0000 0000 0000"
                   value={newIban}
                   onChange={handleIbanChange}

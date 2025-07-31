@@ -32,6 +32,7 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
     { href: "/profile/affiliate", label: "Affiliate" },
     { href: "/profile/returns", label: "İade Taleplerim" },
     { href: "/profile/support-tickets", label: "Destek Taleplerim" },
+    { href: "/logout", label: "Çıkış Yap" },
   ];
 
   return (

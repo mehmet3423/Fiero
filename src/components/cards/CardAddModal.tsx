@@ -130,13 +130,18 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
       isLoading={isAddingCard}
       formId="addCardForm"
       onClose={onClose}
+      approveButtonStyle={{
+        backgroundColor: '#000000',
+        borderColor: '#000000',
+        color: '#ffffff'
+      }}
     >
       <form id="addCardForm" onSubmit={handleAddCard}>
         <div className="mb-3">
           <label className="form-label">Kart Üzerindeki İsim</label>
           <input
             type="text"
-            className="form-control"
+            className="form-control mb-3 shadow-none"
             placeholder="Kart üzerindeki isim"
             value={newCard.cardHolderName}
             onChange={(e) =>
@@ -148,7 +153,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           <label className="form-label">Kart Numarası</label>
           <input
             type="text"
-            className="form-control"
+            className="form-control mb-3 shadow-none"
             placeholder="XXXX XXXX XXXX XXXX"
             value={newCard.cardNumber}
             onChange={handleCardNumberChange}
@@ -182,7 +187,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
             <div className="row">
               <div className="col-6">
                 <select
-                  className="form-control me-2"
+                  className="form-control mb-3 shadow-none me-2"
                   value={newCard.expireMonth}
                   onChange={(e) =>
                     setNewCard({ ...newCard, expireMonth: e.target.value })
@@ -201,7 +206,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
               </div>
               <div className="col-6">
                 <select
-                  className="form-control"
+                  className="form-control mb-3 shadow-none"
                   value={newCard.expireYear}
                   onChange={(e) =>
                     setNewCard({ ...newCard, expireYear: e.target.value })
@@ -224,7 +229,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
             <label className="form-label">CVV/CVC</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control mb-3 shadow-none"
               placeholder="XXX"
               value={newCard.cvc}
               onChange={handleCvcChange}
@@ -237,7 +242,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
             <label className="form-label">Kart Takma Adı</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control mb-3 shadow-none"
               placeholder="Kart takma adı"
               value={newCard.cardAlias}
               onChange={(e) =>

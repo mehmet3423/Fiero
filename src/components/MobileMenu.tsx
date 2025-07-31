@@ -70,46 +70,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     <div
       className={`offcanvas offcanvas-start canvas-mb ${isOpen ? "show" : ""}`}
       id="mobileMenu"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100vh",
-        backgroundColor: "white",
-        zIndex: 1050,
-        transform: isOpen ? "translateX(0)" : "translateX(-100%)",
-        transition: "transform 0.3s ease-in-out",
-        overflowY: "auto",
-      }}
     >
       <span
         className="icon-close icon-close-popup"
         onClick={onClose}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          fontSize: "24px",
-          cursor: "pointer",
-          zIndex: 1060,
-        }}
-      >
-        <i className="icon-close"></i>
-      </span>
-
-      <div
-        className="mb-canvas-content"
-        style={{ height: "100%", display: "flex", flexDirection: "column" }}
-      >
-        <div className="mb-body" style={{ flex: 1, padding: "20px" }}>
-          <ul
-            className="nav-ul-mb"
-            id="wrapper-menu-navigation"
-            style={{ listStyle: "none", padding: 0, margin: 0 }}
-          >
+        aria-label="Close"
+      ></span>
+      
+      <div className="mb-canvas-content">
+        <div className="mb-body">
+          <ul className="nav-ul-mb" id="wrapper-menu-navigation">
             {/* Anasayfa */}
-            <li className="nav-mb-item" style={{ marginBottom: "10px" }}>
+            <li className="nav-mb-item">
               <a
                 href="#"
                 className={`mb-menu-link ${
@@ -119,17 +91,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   e.preventDefault();
                   handleLinkClick(PathEnums.HOME);
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 0",
-                  textDecoration: "none",
-                  color:
-                    router.pathname === PathEnums.HOME ? "#007bff" : "#333",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                }}
               >
                 <span>Anasayfa</span>
               </a>
@@ -138,103 +99,60 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             {/* Kategoriler */}
             {categories?.items?.length &&
               categories.items.map((category) => (
-                <li
-                  key={category.id}
-                  className="nav-mb-item"
-                  style={{ marginBottom: "10px" }}
-                >
+                <li key={category.id} className="nav-mb-item">
                   <a
-                    href="#"
-                    className={`mb-menu-link ${
+                    href={`#dropdown-menu-${category.id}`}
+                    className={`collapsed mb-menu-link ${
                       router.query.categoryId === category.id ? "current" : ""
                     }`}
+                    data-bs-toggle="collapse"
+                    aria-expanded={expandedCategoryId === category.id}
+                    aria-controls={`dropdown-menu-${category.id}`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleCategoryClick(category.id);
                     }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "12px 0",
-                      textDecoration: "none",
-                      color:
-                        router.query.categoryId === category.id
-                          ? "#007bff"
-                          : "#333",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
                   >
                     <span>{category.name}</span>
-                    <span
-                      className="btn-open-sub"
-                      style={{
-                        transform:
-                          expandedCategoryId === category.id
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                        transition: "transform 0.3s ease",
-                      }}
-                    >
-                      <i className="icon-angle-down"></i>
-                    </span>
+                    <span className="btn-open-sub"></span>
                   </a>
-
-                  {expandedCategoryId === category.id &&
-                    subCategories?.length > 0 && (
-                      <div className="collapse show">
-                        <ul
-                          className="sub-nav-menu"
-                          style={{
-                            listStyle: "none",
-                            padding: "0 0 0 20px",
-                            margin: 0,
-                            borderLeft: "2px solid #eee",
-                          }}
-                        >
-                          {subCategories.map((subCategory) => (
-                            <li
-                              key={subCategory.id}
-                              style={{ marginBottom: "8px" }}
+                  
+                  <div
+                    id={`dropdown-menu-${category.id}`}
+                    className={`collapse ${
+                      expandedCategoryId === category.id ? "show" : ""
+                    }`}
+                  >
+                    {subCategories?.length > 0 && (
+                      <ul className="sub-nav-menu" id="sub-menu-navigation">
+                        {subCategories.map((subCategory) => (
+                          <li key={subCategory.id}>
+                            <a
+                              href="#"
+                              className={`sub-nav-link ${
+                                router.query.subCategoryId === subCategory.id
+                                  ? "current"
+                                  : ""
+                              }`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleLinkClick(
+                                  `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
+                                );
+                              }}
                             >
-                              <a
-                                href="#"
-                                className={`sub-nav-link ${
-                                  router.query.subCategoryId === subCategory.id
-                                    ? "current"
-                                    : ""
-                                }`}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleLinkClick(
-                                    `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
-                                  );
-                                }}
-                                style={{
-                                  display: "block",
-                                  padding: "8px 0",
-                                  textDecoration: "none",
-                                  color:
-                                    router.query.subCategoryId ===
-                                    subCategory.id
-                                      ? "#007bff"
-                                      : "#666",
-                                  fontSize: "14px",
-                                }}
-                              >
-                                {subCategory.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                              {subCategory.name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     )}
+                  </div>
                 </li>
               ))}
 
             {/* Outlet */}
-            <li className="nav-mb-item" style={{ marginBottom: "10px" }}>
+            <li className="nav-mb-item">
               <a
                 href="#"
                 className={`mb-menu-link ${
@@ -244,17 +162,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   e.preventDefault();
                   handleLinkClick(`${PathEnums.PRODUCTS}?categoryId=outlet`);
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "12px 0",
-                  textDecoration: "none",
-                  color:
-                    router.query.categoryId === "outlet" ? "#007bff" : "#333",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                }}
               >
                 <span>Outlet</span>
               </a>
@@ -262,7 +169,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
 
             {/* Satıcı Özellikleri */}
             {showSellerFeatures && (
-              <li className="nav-mb-item" style={{ marginBottom: "10px" }}>
+              <li className="nav-mb-item">
                 <a
                   href="#"
                   className={`mb-menu-link ${
@@ -274,19 +181,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     e.preventDefault();
                     handleLinkClick(PathEnums.SELLER_PRODUCTS);
                   }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "12px 0",
-                    textDecoration: "none",
-                    color:
-                      router.pathname === PathEnums.SELLER_PRODUCTS
-                        ? "#007bff"
-                        : "#333",
-                    fontSize: "16px",
-                    fontWeight: "500",
-                  }}
                 >
                   <span>Ürünleri Yönet</span>
                 </a>
@@ -295,7 +189,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
 
             {/* Admin Özellikleri */}
             {showAdminFeatures && (
-              <li className="nav-mb-item" style={{ marginBottom: "10px" }}>
+              <li className="nav-mb-item">
                 <a
                   href="#"
                   className={`mb-menu-link ${
@@ -305,16 +199,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     e.preventDefault();
                     handleLinkClick("/admin");
                   }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "12px 0",
-                    textDecoration: "none",
-                    color: router.pathname === "/admin" ? "#007bff" : "#333",
-                    fontSize: "16px",
-                    fontWeight: "500",
-                  }}
                 >
                   <span>Admin Paneli</span>
                 </a>
@@ -322,19 +206,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             )}
           </ul>
 
-          {/* Alt İçerik */}
-          <div
-            className="mb-other-content"
-            style={{
-              marginTop: "30px",
-              paddingTop: "20px",
-              borderTop: "1px solid #eee",
-            }}
-          >
-            <div
-              className="d-flex group-icon"
-              style={{ gap: "20px", marginBottom: "20px" }}
-            >
+          <div className="mb-other-content">
+            <div className="d-flex group-icon">
               <a
                 href="#"
                 className="site-nav-icon"
@@ -342,17 +215,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   e.preventDefault();
                   handleLinkClick(PathEnums.FAVORITES);
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  textDecoration: "none",
-                  color: "#333",
-                  fontSize: "14px",
-                }}
               >
-                <i className="icon icon-heart"></i>
-                <span>Favorilerim</span>
+                <i className="icon icon-heart"></i>Favorilerim
               </a>
               <a
                 href="#"
@@ -361,45 +225,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   e.preventDefault();
                   // Arama modalını aç
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  textDecoration: "none",
-                  color: "#333",
-                  fontSize: "14px",
-                }}
               >
-                <i className="icon icon-search"></i>
-                <span>Ara</span>
+                <i className="icon icon-search"></i>Ara
               </a>
             </div>
-
-            <div className="mb-notice" style={{ marginBottom: "20px" }}>
-              <a
-                href={PathEnums.CONTACT}
-                className="text-need"
-                style={{
-                  color: "#007bff",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                }}
-              >
+            
+            <div className="mb-notice">
+              <a href={PathEnums.CONTACT} className="text-need">
                 Yardıma mı ihtiyacınız var?
               </a>
             </div>
-
-            <ul
-              className="mb-info"
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                fontSize: "12px",
-                color: "#666",
-                lineHeight: "1.6",
-              }}
-            >
+            
+            <ul className="mb-info">
               <li>Adres: İstanbul, Türkiye</li>
               <li>
                 Email: <b>info@nors.com</b>
@@ -411,32 +248,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Alt Bar */}
-        <div
-          className="mb-bottom"
-          style={{
-            padding: "20px",
-            borderTop: "1px solid #eee",
-            backgroundColor: "#f8f9fa",
-          }}
-        >
+        <div className="mb-bottom">
           {userProfile ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "15px",
-              }}
-            >
-              <i
-                className="icon icon-account"
-                style={{ fontSize: "18px", color: "#007bff" }}
-              ></i>
-              <span style={{ fontSize: "14px", color: "#333" }}>
-                {userProfile.applicationUser?.fullName || "Kullanıcı"}
-              </span>
-            </div>
+            <a href="#" className="site-nav-icon">
+              <i className="icon icon-account"></i>
+              {userProfile.applicationUser?.fullName || "Kullanıcı"}
+            </a>
           ) : (
             <a
               href="#"
@@ -446,58 +263,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 onClose();
                 $("#signin-modal").modal("show");
               }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                textDecoration: "none",
-                color: "#333",
-                fontSize: "14px",
-                marginBottom: "15px",
-              }}
             >
-              <i className="icon icon-account"></i>
-              <span>Giriş Yap</span>
+              <i className="icon icon-account"></i>Giriş Yap
             </a>
           )}
-
-          <div
-            className="bottom-bar-language"
-            style={{ display: "flex", gap: "15px" }}
-          >
-            <div className="tf-currencies">
-              <select
-                className="image-select center style-default type-currencies"
-                style={{
-                  padding: "8px 12px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  backgroundColor: "white",
-                }}
-              >
-                <option>TRY ₺ | Türkiye</option>
-                <option>USD $ | Amerika</option>
-                <option>EUR € | Avrupa</option>
-              </select>
-            </div>
-            <div className="tf-languages">
-              <select
-                className="image-select center style-default type-languages"
-                style={{
-                  padding: "8px 12px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  backgroundColor: "white",
-                }}
-              >
-                <option>Türkçe</option>
-                <option>English</option>
-                <option>العربية</option>
-              </select>
-            </div>
-          </div>
         </div>
       </div>
     </div>

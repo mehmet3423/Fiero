@@ -162,7 +162,7 @@ function CategoryBasedCollection({ categoryBasedAffiliateItems }: CategoryBasedC
                                 </div>
                               ) : (
                                 <button
-                                  className="btn btn-primary btn-sm w-100"
+                                  className="btn btn-dark btn-sm w-100"
                                   onClick={() => handleAddToCart(product.id)}
                                   style={{
                                     backgroundColor: "black",

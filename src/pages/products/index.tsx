@@ -19,7 +19,7 @@ import { useGetAllOutletProducts } from "@/hooks/services/products/useGetAllOutl
 import { useSubCategorySpecifications } from "@/hooks/services/sub-category-specifications/useSubCategorySpecifications";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ProductFilterSidebar from "@/components/ProductFilterSidebar";
+import ProductFilterSidebar from "@/components/product/ProductFilterSidebar";
 
 declare global {
   interface Window {
@@ -326,12 +326,18 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   useEffect(() => {
     if (apiProducts && apiProducts.length > 0) {
-      const prices = apiProducts.map(
-        (product: Product) => product.discountedPrice ?? product.price
-      );
+      const prices = apiProducts.map((product: Product) => {
+        const finalPrice = product.discountedPrice || product.price;
+        console.log(`${product.title}: Original=${product.price}, Discounted=${product.discountedPrice}, Final=${finalPrice}`);
+        return finalPrice;
+      });
+
       const minPrice = Math.floor(Math.min(...prices));
       const maxPrice = Math.ceil(Math.max(...prices));
       const roundedMaxPrice = Math.ceil(maxPrice / 10) * 10;
+
+      console.log("Price range calculated:", { minPrice, maxPrice, roundedMaxPrice });
+
       setMaxPossiblePrice(roundedMaxPrice);
       setPriceRange([minPrice, roundedMaxPrice]);
     }
@@ -339,6 +345,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   const filteredProducts = useMemo(() => {
     if (!apiProducts) return [];
+
+    console.log("Filtreleme başlıyor...");
+    console.log("Price Range:", priceRange);
+
     let filtered = [...apiProducts];
     if (Object.keys(selectedFilters).length > 0) {
       filtered = filtered.filter((product: Product) => {
@@ -356,9 +366,20 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       });
     }
     filtered = filtered.filter((product: Product) => {
-      const productPrice = product.discountedPrice ?? product.price;
-      return productPrice >= priceRange[0] && productPrice <= priceRange[1];
+      const finalPrice = product.discountedPrice || product.price; // || kullanarak null/undefined kontrolü
+
+      console.log(`Product ${product.title}:`, {
+        originalPrice: product.price,
+        discountedPrice: product.discountedPrice,
+        finalPrice: finalPrice,
+        priceRange: priceRange,
+        isInRange: finalPrice >= priceRange[0] && finalPrice <= priceRange[1]
+      });
+
+      return finalPrice >= priceRange[0] && finalPrice <= priceRange[1];
     });
+
+    console.log("Filtered products count:", filtered.length);
     return filtered;
   }, [apiProducts, selectedFilters, priceRange]);
 
@@ -378,7 +399,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     setPriceRange([0, maxPossiblePrice]);
     setSelectedSpecificationIds([]);
     setDisplayPage(1);
-  }; 
+  };
 
   const handlePageChange = useCallback(
     (newPage: number) => {

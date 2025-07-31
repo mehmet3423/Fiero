@@ -13,6 +13,8 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import MobileMenu from "./MobileMenu";
+import CartSidebar from './CartSidebar';
+
 
 export default function Header() {
   const router = useRouter();
@@ -24,12 +26,13 @@ export default function Header() {
   } = useAuth();
   const { totalFavorites } = useFavorites();
   const { cartProducts, totalItems, removeFromCart } = useCart();
-  const { searchTerm, setSearchTerm, searchResults } = useSearch();
+  const { searchTerm, setSearchTerm, searchResults, isSearching } = useSearch();
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { categories } = useMainCategoriesLookUp();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string>("");
   const { categories: subCategories } = useSubCategoriesLookUp(hoveredCategoryId);
@@ -47,20 +50,78 @@ export default function Header() {
     0
   );
 
+  const [showSearchInput, setShowSearchInput] = useState(false);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowResults(false);
+        // Eğer arama boşsa input'u da kapat
+        if (!searchTerm) {
+          setShowSearchInput(false);
+        }
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    function handleAccountDropdownClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.nav-account')) {
+        setIsAccountDropdownOpen(false);
+      }
+    }
+
+    if (isAccountDropdownOpen) {
+      document.addEventListener("mousedown", handleAccountDropdownClickOutside);
+      return () => document.removeEventListener("mousedown", handleAccountDropdownClickOutside);
+    }
+  }, [isAccountDropdownOpen]);
+
+
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  useEffect(() => {
+    console.log("Header useEffect - isCartDropdownOpen changed to:", isCartDropdownOpen);
+  }, [isCartDropdownOpen]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setShowResults(true);
+    const value = e.target.value;
+    setSearchTerm(value);
+    // 3 karakter veya daha fazla olduğunda sonuçları göster
+    if (value.length >= 3) {
+      setShowResults(true);
+    } else if (value.length === 0) {
+      setShowResults(false);
+    }
+  };
+  const toggleSearch = () => {
+    setShowSearchInput(!showSearchInput);
+    if (!showSearchInput) {
+      // Input gösterildiğinde focus yap
+      setTimeout(() => {
+        const input = searchRef.current?.querySelector('input');
+        input?.focus();
+      }, 100);
+    } else {
+      // Input gizlendiğinde temizle
+      setSearchTerm("");
+      setShowResults(false);
+    }
+  };
+  // Search input'unu kapatma fonksiyonu:
+  const closeSearch = () => {
+    setShowSearchInput(false);
+    setSearchTerm("");
+    setShowResults(false);
+  };
+
+  // Arama sonucu öğesine tıklama:
+  const handleResultClick = (productId: string) => {
+    router.push(`/products/${productId}`);
+    closeSearch();
   };
 
   const { handleLogout } = useLogout();
@@ -101,7 +162,7 @@ export default function Header() {
                   className="box-icon w_28 round social-facebook bg_line">
                   <i className="icon fs-12 icon-fb"></i>
                 </a>
-              </li>              
+              </li>
               <li>
                 <a href="https://www.instagram.com/desafashion/"
                   className="box-icon w_28 round social-instagram bg_line">
@@ -113,7 +174,7 @@ export default function Header() {
                   href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
                   className="box-icon w_28 round social-youtube border-line"
                   target="_blank"
-                  style={{backgroundColor: '#ebebeb'}}
+                  style={{ backgroundColor: '#ebebeb' }}
                 >
                   <i
                     className="icon fs-8 icon-play"
@@ -275,118 +336,248 @@ export default function Header() {
             <div className="col-xl-3 col-md-4 col-3">
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                 <li className="nav-search">
-                  <button
-                    onClick={() => setShowResults(!showResults)}
-                    className="nav-icon-item"
-                  >
-                    <i className="icon icon-search"></i>
-                  </button>
-                  {showResults && (
-                    <div className="search-results-dropdown">
-                      <div className="search-results-list">
-                        {searchResults.length > 0 ? (
-                          searchResults.map((product) => (
-                            <Link
-                              key={product.id}
-                              href={`/products/${product.id}`}
-                              className="search-result-item"
-                              onClick={() => setShowResults(false)}
-                            >
-                              <Image
-                                src={product.baseImageUrl || "/assets/images/no-image.jpg"}
-                                alt={product.title}
-                                width={50}
-                                height={50}
-                              />
-                              <div>
-                                <div className="search-result-title">
-                                  {product.title}
-                                </div>
-                                <div className="search-result-price">
-                                  {product.price.toLocaleString("tr-TR", {
-                                    style: "currency",
-                                    currency: "TRY",
-                                  })}
-                                </div>
+                  <div ref={searchRef}>
+                    <button
+                      onClick={toggleSearch}
+                      className="nav-icon-item"
+                    >
+                      <i className="icon icon-search"></i>
+                    </button>
+
+                    {showSearchInput && (
+                      <div className={`offcanvas offcanvas-end canvas-search ${showSearchInput ? 'show' : ''}`}>
+                        <div className="canvas-wrapper">
+                          <header className="tf-search-head">
+                            <div className="title fw-5">
+                              Sitemizde Ara
+                              <div className="close">
+                                <span
+                                  className="icon-close icon-close-popup"
+                                  onClick={closeSearch}
+                                ></span>
                               </div>
-                            </Link>
-                          ))
-                        ) : (
-                          <div className="search-no-results">
-                            <i className="icon icon-search"></i>
-                            <span>Ürün bulunamadı</span>
+                            </div>
+                            <div className="tf-search-sticky">
+                              <form className="tf-mini-search-frm" onSubmit={handleSearchSubmit}>
+                                <fieldset className="text">
+                                  <input
+                                    type="text"
+                                    placeholder="Ürün ara..."
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    name="text"
+                                    tabIndex={0}
+                                    autoFocus
+                                    required
+                                  />
+                                </fieldset>
+                                <button type="submit">
+                                  <i className="icon-search"></i>
+                                </button>
+                              </form>
+                            </div>
+                          </header>
+
+                          <div className="canvas-body p-0">
+                            <div className="tf-search-content">
+                              {/* Arama sonuçları varsa göster */}
+                              {showResults && (
+                                <div className="tf-cart-has-results">
+                                  <div className="tf-search-content-title fw-5">Arama Sonuçları</div>
+
+                                  {isSearching ? (
+                                    <div className="tf-search-loading">
+                                      <i className="icon icon-refresh"></i>
+                                      <span>Aranıyor...</span>
+                                    </div>
+                                  ) : searchResults.length > 0 ? (
+                                    <div className="tf-search-results">
+                                      {searchResults.map((product) => (
+                                        <div
+                                          key={product.id}
+                                          className="tf-loop-item"
+                                          onClick={() => handleResultClick(product.id)}
+                                        >
+                                          <div className="image">
+                                            <img
+                                              src={product.baseImageUrl || "/assets/site/images/no-image.jpg"}
+                                              alt={product.title}
+                                              onError={(e) => {
+                                                e.currentTarget.src = "/assets/site/images/no-image.jpg";
+                                              }}
+                                            />
+                                          </div>
+                                          <div className="content">
+                                            <div className="product-title">{product.title}</div>
+                                            <div className="tf-product-info-price">
+                                              {product.discountedPrice ? (
+                                                <>
+                                                  <div className="compare-at-price">
+                                                    {product.price.toLocaleString("tr-TR", {
+                                                      style: "currency",
+                                                      currency: "TRY",
+                                                    })}
+                                                  </div>
+                                                  <div className="price-on-sale fw-6">
+                                                    {product.discountedPrice.toLocaleString("tr-TR", {
+                                                      style: "currency",
+                                                      currency: "TRY",
+                                                    })}
+                                                  </div>
+                                                </>
+                                              ) : (
+                                                <div className="price fw-6">
+                                                  {product.price.toLocaleString("tr-TR", {
+                                                    style: "currency",
+                                                    currency: "TRY",
+                                                  })}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : searchTerm.length >= 3 ? (
+                                    <div className="tf-search-no-results">
+                                      <i className="icon icon-search"></i>
+                                      <span>Ürün bulunamadı</span>
+                                    </div>
+                                  ) : searchTerm.length > 0 ? (
+                                    <div className="tf-search-no-results">
+                                      <i className="icon icon-info"></i>
+                                      <span>En az 3 karakter girmelisiniz</span>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              )}
+
+                              {/* Arama sonucu yoksa quick links göster */}
+                              {!showResults && (
+                                <div className="tf-cart-hide-has-results">
+                                  <div className="tf-col-quicklink">
+                                    <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
+                                    <ul className="tf-quicklink-list">
+                                      <li className="tf-quicklink-item">
+                                        <Link href="/products">Tüm Ürünler</Link>
+                                      </li>
+                                      {categories?.items?.slice(0, 4).map((category) => (
+                                        <li key={category.id} className="tf-quicklink-item">
+                                          <Link href={`/products?categoryId=${category.id}`}>
+                                            {category.name}
+                                          </Link>
+                                        </li>
+                                      )) || (
+                                          <li className="tf-quicklink-item">
+                                            <span>Kategoriler yükleniyor...</span>
+                                          </li>
+                                        )}
+                                    </ul>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </li>
                 <li className="nav-account">
                   {userProfile ? (
                     <div className="dropdown">
                       <button
                         className="nav-icon-item"
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
+                        onClick={() => {
+
+                          setIsAccountDropdownOpen(!isAccountDropdownOpen);
+                        }}
                       >
                         <i className="icon icon-account"></i>
                       </button>
-                      <div className="dropdown-menu dropdown-menu-end">
-                        <div className="dropdown-header">
-                          <div className="user-info">
-                            <div className="user-name">
-                              {showAdminFeatures
-                                ? "Admin"
-                                : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
-                                }`}
+                      {isAccountDropdownOpen && (
+                        <div className="dropdown-menu dropdown-menu-end show">
+                          <div className="dropdown-header">
+                            <div className="user-info">
+                              <div className="user-name">
+                                {showAdminFeatures
+                                  ? "Admin"
+                                  : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
+                                  }`}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="dropdown-body">
-                          {!showAdminFeatures && (
-                            <Link href={PathEnums.PROFILE} className="dropdown-item">
-                              <i className="icon-user"></i>
-                              <span>Profil</span>
-                            </Link>
-                          )}
-                          {showCustomerFeatures && (
-                            <>
-                              <Link href={`${PathEnums.PROFILE}/orders`} className="dropdown-item">
-                                <i className="bx bx-shopping-bag"></i>
-                                <span>Siparişlerim</span>
+                          <div className="dropdown-body">
+                            {!showAdminFeatures && (
+                              <Link
+                                href={PathEnums.PROFILE}
+                                className="dropdown-item"
+                                onClick={() => setIsAccountDropdownOpen(false)}
+                              >
+                                <i className="icon-user"></i>
+                                <span>{' '}Profil</span>
                               </Link>
-                              <Link href={`${PathEnums.PROFILE}/addresses`} className="dropdown-item">
-                                <i className="icon-map-marker"></i>
-                                <span>Adreslerim</span>
+                            )}
+                            {showCustomerFeatures && (
+                              <>
+                                <Link
+                                  href={`${PathEnums.PROFILE}/orders`}
+                                  className="dropdown-item"
+                                  onClick={() => setIsAccountDropdownOpen(false)}
+                                >
+                                  <i className="bx bx-shopping-bag"></i>
+                                  <span>Siparişlerim</span>
+                                </Link>
+                                <Link
+                                  href={`${PathEnums.PROFILE}/addresses`}
+                                  className="dropdown-item"
+                                  onClick={() => setIsAccountDropdownOpen(false)}
+                                >
+                                  <i className="icon-map-marker"></i>
+                                  <span>Adreslerim</span>
+                                </Link>
+                              </>
+                            )}
+                            {showSellerFeatures && (
+                              <Link
+                                href={PathEnums.SELLER_PRODUCTS}
+                                className="dropdown-item"
+                                onClick={() => setIsAccountDropdownOpen(false)}
+                              >
+                                <i className="bx bx-user-pin"></i>
+                                <span>Ürünleri Yönet</span>
                               </Link>
-                            </>
-                          )}
-                          {showSellerFeatures && (
-                            <Link href={PathEnums.SELLER_PRODUCTS} className="dropdown-item">
-                              <i className="bx bx-user-pin"></i>
-                              <span>Ürünleri Yönet</span>
-                            </Link>
-                          )}
-                          {showAdminFeatures && (
-                            <Link href={PathEnums.ADMIN_DASHBOARD} className="dropdown-item">
-                              <i className="icon-cog"></i>
-                              <span>Admin Paneli</span>
-                            </Link>
-                          )}
+                            )}
+                            {showAdminFeatures && (
+                              <Link
+                                href={PathEnums.ADMIN_DASHBOARD}
+                                className="dropdown-item"
+                                onClick={() => setIsAccountDropdownOpen(false)}
+                              >
+                                <i className="icon-cog"></i>
+                                <span>Admin Paneli</span>
+                              </Link>
+                            )}
+                          </div>
+                          <div className="dropdown-footer">
+                            <button
+                              className="dropdown-item text-danger"
+                              onClick={() => {
+                                setIsAccountDropdownOpen(false);
+                                handleLogout();
+                              }}
+                            >
+                              <i className="icon-sign-out"></i>
+                              <span>Çıkış Yap</span>
+                            </button>
+                          </div>
                         </div>
-                        <div className="dropdown-footer">
-                          <button className="dropdown-item text-danger" onClick={handleLogout}>
-                            <i className="icon-sign-out"></i>
-                            <span>Çıkış Yap</span>
-                          </button>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   ) : (
                     <button
                       className="nav-icon-item"
-                      onClick={() => router.push("/login")}
+                      onClick={() => router.push("/login")}  // Giriş yapmamış kullanıcı için login sayfası
                     >
                       <i className="icon icon-account"></i>
                     </button>
@@ -399,71 +590,26 @@ export default function Header() {
                   </Link>
                 </li>
                 <li className="nav-cart">
-                  <div className="dropdown">
-                    <button
-                      className="nav-icon-item"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <i className="icon icon-bag"></i>
-                      {totalItems > 0 && <span className="count-box">{totalItems}</span>}
-                    </button>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <div className="dropdown-cart-products">
-                        {cartProducts.map((item) => (
-                          <div key={item.id} className="dropdown-cart-item">
-                            <Image
-                              src={item.baseImageUrl || "/assets/images/no-image.jpg"}
-                              alt={item.title}
-                              width={50}
-                              height={50}
-                            />
-                            <div className="cart-item-info">
-                              <Link href={`/products/${item.id}`} className="cart-item-title">
-                                {item.title}
-                              </Link>
-                              <div className="cart-item-price">
-                                {item.quantity} x{" "}
-                                {(
-                                  item.discountedPrice !== item.price && item.discountedPrice
-                                    ? item.discountedPrice
-                                    : item.price ?? 0
-                                ).toLocaleString("tr-TR", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })}
-                                ₺
-                              </div>
-                            </div>
-                            <button
-                              className="btn-remove"
-                              onClick={() => removeFromCart(item.id)}
-                              title="Ürünü Kaldır"
-                            >
-                              <i className="icon-close"></i>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="dropdown-cart-total">
-                        <span className="cart-total-label">Toplam</span>
-                        <span className="cart-total-price">
-                          {cartTotal.toLocaleString("tr-TR", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                          ₺
-                        </span>
-                      </div>
-                      <div className="dropdown-cart-action">
-                        <Link href={PathEnums.CART} className="btn btn-outline-primary-2">
-                          <span>Sepete Git</span>
-                          <i className="icon-long-arrow-right"></i>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
+                  <button
+                    className="nav-icon-item"
+                    onClick={() => {
+                      console.log("Cart button clicked, current state:", isCartDropdownOpen);
+                      const newState = !isCartDropdownOpen;
+                      console.log("Setting new state to:", newState);
+                      setIsCartDropdownOpen(newState);
+                    }}
+                  >
+                    <i className="icon icon-bag"></i>
+                    {totalItems > 0 && <span className="count-box">{totalItems}</span>}
+                  </button>
+
+                  <CartSidebar
+                    isOpen={isCartDropdownOpen}
+                    onClose={() => {
+                      console.log("CartSidebar onClose called");
+                      setIsCartDropdownOpen(false);
+                    }}
+                  />
                 </li>
               </ul>
             </div>
@@ -476,6 +622,74 @@ export default function Header() {
       {isMobileMenuOpen && (
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       )}
+      <style jsx>{`
+  .nav-icon-item {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .nav-icon-item:hover {
+    background: none !important;
+    border: none !important;
+  }
+
+  .nav-icon-item:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .nav-icon-item i {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .nav-icon-item .count-box {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff0000;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .nav-account {
+    position: relative;
+  }
+
+  .nav-account .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 200px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    margin-top: 5px;
+  }
+
+  .nav-account .dropdown-menu.show {
+    display: block;
+  }
+
+`}</style>
     </>
   );
 }
