@@ -6,7 +6,9 @@ import { GetStaticProps } from "next";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination } from "swiper/modules";
+import "swiper/css/navigation";
+import { Pagination, Navigation } from "swiper/modules";
+import { useRef, useState } from "react";
 
 // SEO prop interface
 interface AboutSEOData {
@@ -25,6 +27,16 @@ interface AboutProps {
 }
 
 function AboutUs({ seoData }: AboutProps) {
+  const thumbsSwiperRef = useRef<any>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  
+  const handleMainSlideChange = (swiper: any) => {
+    setActiveSlide(swiper.activeIndex);
+    if (thumbsSwiperRef.current && thumbsSwiperRef.current.slideTo) {
+      thumbsSwiperRef.current.slideTo(swiper.activeIndex, 800);
+    }
+  };
+  
   const { contents: aboutName } = useGeneralContents(
     GeneralContentType.AboutName
   );
@@ -244,15 +256,24 @@ function AboutUs({ seoData }: AboutProps) {
           <div className="container">
             <div className="wrapper-thumbs-testimonial-v2 flat-thumbs-testimonial">
               <div className="box-left">
-                <div
-                  className="swiper tf-sw-tes-2"
-                  data-preview="1"
-                  data-space-lg="40"
-                  data-space-md="30"
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  spaceBetween={40}
+                  slidesPerView={1}
+                  speed={800}
+                  navigation={{
+                    nextEl: '.nav-next-tes-2',
+                    prevEl: '.nav-prev-tes-2',
+                  }}
+                  pagination={{
+                    el: '.sw-pagination-tes-2',
+                    clickable: true,
+                  }}
+                  onSlideChange={handleMainSlideChange}
+                  className="tf-sw-tes-2"
                 >
-                  <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                      <div className="testimonial-item lg lg-2">
+                  <SwiperSlide>
+                    <div className="testimonial-item lg lg-2">
                         <h4 className="mb_40">Our customer’s reviews</h4>
                         <div className="icon">
                           <img
@@ -291,9 +312,9 @@ function AboutUs({ seoData }: AboutProps) {
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="swiper-slide">
-                      <div className="testimonial-item lg lg-2">
+                    </SwiperSlide>
+                  <SwiperSlide>
+                    <div className="testimonial-item lg lg-2">
                         <h4 className="mb_40">Our customer’s reviews</h4>
                         <div className="icon">
                           <img
@@ -332,48 +353,53 @@ function AboutUs({ seoData }: AboutProps) {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
+                    </SwiperSlide>
+                </Swiper>
                 <div className="d-md-flex d-none box-sw-navigation">
-                  <div className="nav-sw nav-next-slider nav-next-tes-2">
+                  <div className="nav-sw nav-prev-slider nav-prev-tes-2">
                     <span className="icon icon-arrow-left"></span>
                   </div>
-                  <div className="nav-sw nav-prev-slider nav-prev-tes-2">
+                  <div className="nav-sw nav-next-slider nav-next-tes-2">
                     <span className="icon icon-arrow-right"></span>
                   </div>
                 </div>
                 <div className="d-md-none sw-dots style-2 sw-pagination-tes-2"></div>
               </div>
               <div className="box-right">
-                <div
-                  className="swiper tf-thumb-tes"
-                  data-preview="1"
-                  data-space="30"
+                <Swiper
+                  modules={[]}
+                  spaceBetween={30}
+                  slidesPerView={1}
+                  speed={800}
+                  allowTouchMove={false}
+                  initialSlide={activeSlide}
+                  onSwiper={(swiper) => {
+                    thumbsSwiperRef.current = swiper;
+                    console.log('Thumbnail swiper initialized:', swiper);
+                  }}
+                  className="tf-thumb-tes"
                 >
-                  <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                      <div className="img-sw-thumb">
-                        <img
-                          className="lazyload img-product"
-                          data-src="/assets/site/images/item/tets3.jpg"
-                          src="/assets/site/images/item/tets3.jpg"
-                          alt="image-product"
-                        />
-                      </div>
+                  <SwiperSlide>
+                    <div className="img-sw-thumb">
+                      <img
+                        className="lazyload img-product"
+                        data-src="/assets/site/images/item/tets3.jpg"
+                        src="/assets/site/images/item/tets3.jpg"
+                        alt="image-product"
+                      />
                     </div>
-                    <div className="swiper-slide">
-                      <div className="img-sw-thumb">
-                        <img
-                          className="lazyload img-product"
-                          data-src="/assets/site/images/item/tets4.jpg"
-                          src="/assets/site/images/item/tets4.jpg"
-                          alt="image-product"
-                        />
-                      </div>
+                  </SwiperSlide>
+                  <SwiperSlide>
+                    <div className="img-sw-thumb">
+                      <img
+                        className="lazyload img-product"
+                        data-src="/assets/site/images/item/tets4.jpg"
+                        src="/assets/site/images/item/tets4.jpg"
+                        alt="image-product"
+                      />
                     </div>
-                  </div>
-                </div>
+                  </SwiperSlide>
+                </Swiper>
               </div>
             </div>
           </div>

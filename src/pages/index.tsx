@@ -1,4 +1,3 @@
-import AnnouncementSlider from "@/components/home/AnnouncementSlider";
 import HomeCategories from "@/components/home/HomeCategories";
 import ShopCollection from "@/components/home/ShopCollection";
 import BannerCollection from "@/components/home/BannerCollection";
@@ -220,10 +219,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
         <h1 style={{ position: "absolute", left: "-9999px", fontSize: "1px" }}>
           Nors - Kaliteli Ürünler ve Harika Tasarımlar Online Mağazası
         </h1>
-
-        <div className="home-section home-section--announcement">
-          <AnnouncementSlider />
-        </div>
 
         <div className="home-section home-section--categories">
           <HomeCategories />
