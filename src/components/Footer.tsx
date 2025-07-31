@@ -215,7 +215,7 @@ export default function Footer() {
                       </div>
                       <div id="subscribe-msg"></div>
                     </form>
-                    <div className="tf-cur">
+                    {/* <div className="tf-cur">
                       <div className="tf-currencies">
                         <select className="image-select center style-default type-currencies">
                           <option data-thumbnail="images/country/tr.svg">
@@ -236,7 +236,7 @@ export default function Footer() {
                           <option>العربية</option>
                         </select>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
