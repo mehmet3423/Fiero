@@ -220,7 +220,7 @@ export default function AffiliatePaymentPage({
                   </p>
                 </div>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-dark"
                   onClick={() => setShowPayoutForm(!showPayoutForm)}
                   disabled={false}
                 >
@@ -247,7 +247,7 @@ export default function AffiliatePaymentPage({
                       </label>
                       <input
                         type="number"
-                        className="form-control"
+                        className="form-control shadow-none"
                         value={requestAmount}
                         onChange={(e) => setRequestAmount(e.target.value)}
                         min="0"
@@ -263,7 +263,7 @@ export default function AffiliatePaymentPage({
                 </div>
                 <div className="d-flex gap-2">
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-dark"
                     onClick={handleCreatePayoutRequest}
                     disabled={isCreatingPayout || !requestAmount}
                   >
@@ -283,7 +283,7 @@ export default function AffiliatePaymentPage({
                     )}
                   </button>
                   <button
-                    className="btn btn-secondary ml-2"
+                    className="btn btn-outline-secondary"
                     onClick={() => {
                       setShowPayoutForm(false);
                       setRequestAmount("");

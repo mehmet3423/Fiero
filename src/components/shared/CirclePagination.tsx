@@ -52,7 +52,7 @@ const CirclePagination: React.FC<CirclePaginationProps> = ({
         disabled={totalPages === 0 || currentPage === 1}
         aria-label="Önceki sayfa"
       >
-        <i className="bx bx-chevron-left"></i>
+        ‹
       </button>
 
       {/* Sayfa yoksa tek gri "0" göster */}
@@ -81,7 +81,7 @@ const CirclePagination: React.FC<CirclePaginationProps> = ({
         disabled={totalPages === 0 || currentPage >= totalPages}
         aria-label="Sonraki sayfa"
       >
-        <i className="bx bx-chevron-right"></i>
+        ›
       </button>
 
       <style jsx>{`
@@ -121,21 +121,28 @@ const CirclePagination: React.FC<CirclePaginationProps> = ({
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          border: none;
-          background-color: transparent;
-          color: #040404;
+          border: 1px solid #e0e0e0;
+          background-color: #f5f5f5;
+          color: #000;
           cursor: pointer;
           margin: 0 4px;
-          font-size: 16px;
+          font-size: 24px;
+          font-weight: bold;
+          transition: all 0.2s ease;
         }
 
         .circle-page-arrow:disabled {
-          color: #ccc;
+          color: #666;
+          background-color: #f9f9f9;
+          border-color: #e8e8e8;
           cursor: default;
+          opacity: 0.6;
         }
 
         .circle-page-arrow:not(:disabled):hover {
-          background-color: #f5f5f5;
+          background-color: #e0e0e0;
+          border-color: #d0d0d0;
+          color: #000;
         }
       `}</style>
     </div>
