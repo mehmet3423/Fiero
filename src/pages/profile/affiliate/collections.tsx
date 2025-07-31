@@ -144,7 +144,7 @@ export default function AffiliateCollectionsPage({
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-3">
                 <button
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-dark btn-sm"
                   onClick={() => setIsCreateCollectionModalOpen(true)}
                 >
                   <i className="bx bx-plus me-2"></i>
@@ -346,7 +346,7 @@ export default function AffiliateCollectionsPage({
                         veya yeni koleksiyon oluşturun.
                       </p>
                       <button
-                        className="btn btn-outline-primary me-2"
+                        className="btn btn-outline-dark me-2"
                         onClick={() => setSelectedCollectionType(null)}
                       >
                         Tüm Koleksiyonları Göster

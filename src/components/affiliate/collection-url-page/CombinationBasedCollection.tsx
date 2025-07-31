@@ -97,7 +97,7 @@ function CombinationBasedCollection({
     <div>
       <div className="mb-4">
         <button
-          className="btn btn-primary"
+          className="btn btn-dark"
           onClick={
             isAllProductsInCart() ? handleRemoveAllFromCart : handleAddAllToCart
           }

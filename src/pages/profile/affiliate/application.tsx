@@ -35,7 +35,7 @@ export default function AffiliateApplicationPage({
               <div className="col-md-8">
                 <div className="text-center mt-4">
                   <button
-                    className="btn btn-primary me-3"
+                    className="btn btn-dark me-3"
                     onClick={() => window.location.reload()}
                   >
                     <i className="bx bx-refresh me-2"></i>
@@ -124,7 +124,7 @@ export default function AffiliateApplicationPage({
           </p>
 
           <button
-            className="btn btn-primary btn-lg"
+            className="btn btn-dark btn-lg"
             onClick={() => setIsModalOpen(true)}
             style={{
               padding: "1rem 2rem",

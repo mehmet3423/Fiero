@@ -111,7 +111,7 @@ function CollectionBasedCollection({ collectionBasedAffiliateItems }: Collection
                   </div>
                 ) : (
                   <button
-                    className="btn btn-primary btn-sm w-100"
+                    className="btn btn-dark btn-sm w-100"
                     onClick={(e) => { e.stopPropagation(); handleAddToCart(item.product.id); }}
                     style={{
                       backgroundColor: "black",
