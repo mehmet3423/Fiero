@@ -150,13 +150,15 @@ export default function EditProductPage() {
             </Link>
             <div className="d-flex justify-content-between align-items-center">
               <h6
-                className="card-header"
                 style={{
                   fontSize: "1.3rem",
                   fontWeight: "bold",
                   color: "#566a7f",
                   marginLeft: "-10px",
-                  boxShadow: "none",
+                  marginBottom: "0",
+                  background: "none",
+                  border: "none",
+                  padding: "0"
                 }}
               >
                 Ürün Düzenle: {formattedProduct.title}

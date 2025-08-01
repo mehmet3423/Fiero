@@ -84,6 +84,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                 display: 'flex',
                 alignItems: 'stretch'
               }}
+              wrapperClass="d-flex align-items-stretch"
             >
               {products.map((product: Product) => {
                 const hasDiscount = product.discountDTO !== null;
@@ -95,9 +96,9 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                   : null;
 
                 return (
-                  <SwiperSlide key={product.id} className="swiper-slide" style={{ height: 'auto', display: 'flex' }}>
-                    <div className="card-product" style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                      <div className="card-product-wrapper" style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
+                  <SwiperSlide key={product.id} className="swiper-slide d-flex" style={{ height: 'auto' }}>
+                    <div className="card-product d-flex flex-column w-100" style={{ height: '100%' }}>
+                      <div className="card-product-wrapper flex-fill d-flex flex-column">
                         <Link href={`/products/${product.id}`} className="product-img">
                           <img
                             className="lazyload img-product"
@@ -174,9 +175,8 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                           </div>
                         )}
                       </div>
-                      <div className="card-product-info" style={{ marginTop: 'auto' }}>
-                        <Link href={`/products/${product.id}`} className="title link" style={{ 
-                          display: 'block',
+                      <div className="card-product-info mt-auto">
+                        <Link href={`/products/${product.id}`} className="title link d-block text-truncate" style={{ 
                           height: '2.4em',
                           overflow: 'hidden',
                           lineHeight: '1.2em',
@@ -217,11 +217,11 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
               })}
             </Swiper>
           </div>
-          <div className="nav-sw nav-next-slider nav-next-product box-icon w_46 round">
-            <span className="icon icon-arrow-left"></span>
-          </div>
-          <div className="nav-sw nav-prev-slider nav-prev-product box-icon w_46 round">
+          <div className="nav-sw nav-prev-slider nav-next-product box-icon w_46 round">
             <span className="icon icon-arrow-right"></span>
+          </div>
+          <div className="nav-sw nav-next-slider nav-prev-product box-icon w_46 round">
+            <span className="icon icon-arrow-left"></span>
           </div>
         </div>
       </div>
@@ -233,43 +233,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           product={selectedProduct}
         />
       )}
-      
-      <style jsx global>{`
-        .tf-sw-product-sell .swiper-wrapper {
-          align-items: stretch !important;
-        }
-        
-        .tf-sw-product-sell .swiper-slide {
-          height: auto !important;
-          display: flex !important;
-        }
-        
-        .tf-sw-product-sell .card-product {
-          width: 100% !important;
-          display: flex !important;
-          flex-direction: column !important;
-          height: 100% !important;
-        }
-        
-        .tf-sw-product-sell .card-product-wrapper {
-          flex: 1 !important;
-          display: flex !important;
-          flex-direction: column !important;
-        }
-        
-        .tf-sw-product-sell .card-product-info {
-          margin-top: auto !important;
-        }
-        
-        .tf-sw-product-sell .title.link {
-          display: block !important;
-          height: 2.4em !important;
-          overflow: hidden !important;
-          line-height: 1.2em !important;
-          margin-bottom: 8px !important;
-          text-overflow: ellipsis !important;
-        }
-      `}</style>
     </section>
   );
 };

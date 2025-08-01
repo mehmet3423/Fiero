@@ -349,10 +349,10 @@ export default function EditProductForm({
       <div className="row">
         <div className="col-md-3">
           <div className="form-group">
-            <label className="form-label">Ürün Durumu:</label>
-            <div className="form-check">
+            <label className="form-label mb-2">Ürün Durumu:</label>
+            <div className="form-check d-flex align-items-center">
               <input
-                className="form-check-input"
+                className="form-check-input me-3"
                 type="checkbox"
                 id="refundableCheckbox"
                 checked={formData.refundable}
@@ -368,10 +368,10 @@ export default function EditProductForm({
         </div>
         <div className="col-md-3">
           <div className="form-group">
-            <label className="form-label">Ürün Durumu:</label>
-            <div className="form-check">
+            <label className="form-label mb-2">Ürün Durumu:</label>
+            <div className="form-check d-flex align-items-center">
               <input
-                className="form-check-input"
+                className="form-check-input me-3"
                 type="checkbox"
                 id="isAvailableCheckbox"
                 checked={formData.isAvailable}
@@ -387,10 +387,10 @@ export default function EditProductForm({
         </div>
         <div className="col-md-3">
           <div className="form-group">
-            <label className="form-label">Ürün Durumu:</label>
-            <div className="form-check">
+            <label className="form-label mb-2">Ürün Durumu:</label>
+            <div className="form-check d-flex align-items-center">
               <input
-                className="form-check-input"
+                className="form-check-input me-3"
                 type="checkbox"
                 id="isOutletCheckbox"
                 checked={formData.isOutlet}
