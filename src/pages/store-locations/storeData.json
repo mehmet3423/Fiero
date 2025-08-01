@@ -3,976 +3,2311 @@
     "country": "Türkiye",
     "stores": [
       {
-    "city": "ADANA",
-    "name": "DESA - SAMSONITE / M1 Adana AVM",
-    "lat": "37.02037200",
-    "lon": "35.24293900",
-    "mapQuery": "DESA - SAMSONITE / M1 Adana AVM, ADANA",
-    "mapUrl": "https://www.google.com/maps?q=37.02037200,35.24293900&output=embed"
-  },
-  {
-    "city": "ADANA",
-    "name": "DESA / M1 Adana AVM",
-    "lat": "37.02037200",
-    "lon": "35.24293900",
-    "mapQuery": "DESA / M1 Adana AVM, ADANA",
-    "mapUrl": "https://www.google.com/maps?q=37.02037200,35.24293900&output=embed"
-  },
-  {
-    "city": "ADANA",
-    "name": "SAMSONITE Adana Optimum",
-    "lat": "36.99114200",
-    "lon": "35.34027000",
-    "mapQuery": "SAMSONITE Adana Optimum, ADANA",
-    "mapUrl": "https://www.google.com/maps?q=36.99114200,35.34027000&output=embed"
-  },
-  {
-    "city": "AFYONKARAHİSAR",
-    "name": "Afyonkarahisar Afium Outlet ve Eğlence Merkezi",
-    "lat": "38.79771100",
-    "lon": "30.45599000",
-    "mapQuery": "Afyonkarahisar Afium Outlet ve Eğlence Merkezi, AFYONKARAHİSAR",
-    "mapUrl": "https://www.google.com/maps?q=38.79771100,30.45599000&output=embed"
-  },
-  {
-    "city": "AFYONKARAHİSAR",
-    "name": "DESA - SAMSONITE / Afyonkarahisar Afium Outlet ve Eğlence Merkezi",
-    "lat": "38.79771100",
-    "lon": "30.45599000",
-    "mapQuery": "DESA - SAMSONITE / Afyonkarahisar Afium Outlet ve Eğlence Merkezi, AFYONKARAHİSAR",
-    "mapUrl": "https://www.google.com/maps?q=38.79771100,30.45599000&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Ankamall A.V.M.",
-    "lat": "39.94960500",
-    "lon": "32.83294200",
-    "mapQuery": "Ankamall A.V.M., ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.94960500,32.83294200&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Ankara Arcadium",
-    "lat": "39.88292100",
-    "lon": "32.68563400",
-    "mapQuery": "Ankara Arcadium, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.88292100,32.68563400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Armada A.V.M",
-    "lat": "39.91241710",
-    "lon": "32.80713730",
-    "mapQuery": "Armada A.V.M, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.91241710,32.80713730&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Atakule A.V.M.",
-    "lat": "39.88595710",
-    "lon": "32.85421430",
-    "mapQuery": "Atakule A.V.M., ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.88595710,32.85421430&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Cepa A.V.M.",
-    "lat": "39.90888600",
-    "lon": "32.77652400",
-    "mapQuery": "Cepa A.V.M., ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.90888600,32.77652400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "DESA / SAMSONITE Atakule",
-    "lat": "39.88595710",
-    "lon": "32.85421430",
-    "mapQuery": "DESA / SAMSONITE Atakule, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.88595710,32.85421430&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "DESA /SAMSONITE Arcadium",
-    "lat": "39.88292100",
-    "lon": "32.68563400",
-    "mapQuery": "DESA /SAMSONITE Arcadium, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.88292100,32.68563400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "DESA /SAMSONITE Metromall",
-    "lat": null,
-    "lon": null,
-    "mapQuery": "DESA /SAMSONITE Metromall, ANKARA"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Kentpark A.V.M.",
-    "lat": "39.90888600",
-    "lon": "32.77652400",
-    "mapQuery": "Kentpark A.V.M., ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.90888600,32.77652400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "Metromall AVM",
-    "lat": "39.98311500",
-    "lon": "32.61083020",
-    "mapQuery": "Metromall AVM, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.98311500,32.61083020&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE ANKARA ACITY AVM",
-    "lat": "39.94581300",
-    "lon": "32.76269400",
-    "mapQuery": "SAMSONITE ANKARA ACITY AVM, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.94581300,32.76269400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE Ankara 365 Migros AVM",
-    "lat": "39.87591500",
-    "lon": "32.87025300",
-    "mapQuery": "SAMSONITE Ankara 365 Migros AVM, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.87591500,32.87025300&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE Ankara Ankamall A.V.M",
-    "lat": "39.95087900",
-    "lon": "32.83235100",
-    "mapQuery": "SAMSONITE Ankara Ankamall A.V.M, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.95087900,32.83235100&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE Ankara Armada A.V.M.",
-    "lat": "39.91292100",
-    "lon": "32.80902400",
-    "mapQuery": "SAMSONITE Ankara Armada A.V.M., ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.91292100,32.80902400&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE Ankara Esenboğa Havalimanı Kiosk",
-    "lat": "40.12444000",
-    "lon": "32.99167300",
-    "mapQuery": "SAMSONITE Ankara Esenboğa Havalimanı Kiosk, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=40.12444000,32.99167300&output=embed"
-  },
-  {
-    "city": "ANKARA",
-    "name": "SAMSONITE Ankara Kentpark",
-    "lat": "39.90984100",
-    "lon": "32.77658200",
-    "mapQuery": "SAMSONITE Ankara Kentpark, ANKARA",
-    "mapUrl": "https://www.google.com/maps?q=39.90984100,32.77658200&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "Antalya The Land of Legends",
-    "lat": "36.87608020",
-    "lon": "31.00323100",
-    "mapQuery": "Antalya The Land of Legends, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.87608020,31.00323100&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA - SAMSONITE / Alanya Uygun Center AVM",
-    "lat": "36.54821000",
-    "lon": "32.00335000",
-    "mapQuery": "DESA - SAMSONITE / Alanya Uygun Center AVM, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.54821000,32.00335000&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA - SAMSONITE / Antalya The Land of Legends AVM",
-    "lat": "36.87608020",
-    "lon": "31.00323100",
-    "mapQuery": "DESA - SAMSONITE / Antalya The Land of Legends AVM, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.87608020,31.00323100&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA / Alanya Uygun Center AVM",
-    "lat": "36.54821000",
-    "lon": "32.00335000",
-    "mapQuery": "DESA / Alanya Uygun Center AVM, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.54821000,32.00335000&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA / Antalya Deepo Outlet Center",
-    "lat": "36.92094000",
-    "lon": "30.78609500",
-    "mapQuery": "DESA / Antalya Deepo Outlet Center, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.92094000,30.78609500&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA / Antalya Havalimanı İç Hatlar",
-    "lat": "36.91273500",
-    "lon": "30.80280200",
-    "mapQuery": "DESA / Antalya Havalimanı İç Hatlar, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.91273500,30.80280200&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA / Antalya Migros AVM",
-    "lat": "35.91262000",
-    "lon": "30.68970700",
-    "mapQuery": "DESA / Antalya Migros AVM, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=35.91262000,30.68970700&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "DESA / Antalya TerraCity",
-    "lat": "36.86739370",
-    "lon": "30.73616280",
-    "mapQuery": "DESA / Antalya TerraCity, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.86739370,30.73616280&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Dış Hatlar - 1",
-    "lat": "36.91493600",
-    "lon": "30.77276400",
-    "mapQuery": "SAMSONITE Antalya Dış Hatlar - 1, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.91493600,30.77276400&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Deepo A.V.M.",
-    "lat": "36.88414000",
-    "lon": "30.70563000",
-    "mapQuery": "SAMSONITE Antalya Deepo A.V.M., ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.88414000,30.70563000&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Dış Hatlar -2",
-    "lat": "36.90433270",
-    "lon": "30.79968810",
-    "mapQuery": "SAMSONITE Antalya Dış Hatlar -2, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.90433270,30.79968810&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Havalimanı",
-    "lat": "36.89867000",
-    "lon": "30.80049200",
-    "mapQuery": "SAMSONITE Antalya Havalimanı, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.89867000,30.80049200&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Migros",
-    "lat": "36.88246200",
-    "lon": "30.65909600",
-    "mapQuery": "SAMSONITE Antalya Migros, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.88246200,30.65909600&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya Terra City",
-    "lat": "36.85243600",
-    "lon": "30.75731000",
-    "mapQuery": "SAMSONITE Antalya Terra City, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.85243600,30.75731000&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Antalya-Kemer",
-    "lat": "36.59988000",
-    "lon": "30.56483000",
-    "mapQuery": "SAMSONITE Antalya-Kemer, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.59988000,30.56483000&output=embed"
-  },
-  {
-    "city": "ANTALYA",
-    "name": "SAMSONITE Markantalya",
-    "lat": "36.89365400",
-    "lon": "30.70483100",
-    "mapQuery": "SAMSONITE Markantalya, ANTALYA",
-    "mapUrl": "https://www.google.com/maps?q=36.89365400,30.70483100&output=embed"
-  },
-  {
-    "city": "AYDIN",
-    "name": "DESA / SAMSONITE Kuşadası Avm",
-    "lat": "37.81069610",
-    "lon": "27.26978520",
-    "mapQuery": "DESA / SAMSONITE Kuşadası Avm, AYDIN",
-    "mapUrl": "https://www.google.com/maps?q=37.81069610,27.26978520&output=embed"
-  },
-  {
-    "city": "AYDIN",
-    "name": "Kuşadası Avm",
-    "lat": "37.81069610",
-    "lon": "27.26978520",
-    "mapQuery": "Kuşadası Avm, AYDIN",
-    "mapUrl": "https://www.google.com/maps?q=37.81069610,27.26978520&output=embed"
-  },
-  {
-    "city": "BİLECİK",
-    "name": "Bozüyük Sarar Outlet",
-    "lat": "39.90837000",
-    "lon": "30.03666400",
-    "mapQuery": "Bozüyük Sarar Outlet, BİLECİK",
-    "mapUrl": "https://www.google.com/maps?q=39.90837000,30.03666400&output=embed"
-  },
-  {
-    "city": "BİLECİK",
-    "name": "DESA / SAMSONITE Bozüyük Sarar Outlet",
-    "lat": "39.90837000",
-    "lon": "30.03666400",
-    "mapQuery": "DESA / SAMSONITE Bozüyük Sarar Outlet, BİLECİK",
-    "mapUrl": "https://www.google.com/maps?q=39.90837000,30.03666400&output=embed"
-  },
-  {
-    "city": "BURSA",
-    "name": "Korupark A.V.M",
-    "lat": "40.25463900",
-    "lon": "28.95824400",
-    "mapQuery": "Korupark A.V.M, BURSA",
-    "mapUrl": "https://www.google.com/maps?q=40.25463900,28.95824400&output=embed"
-  },
-  {
-    "city": "BURSA",
-    "name": "SAMSONITE Bursa Carrefour A.V.M.",
-    "lat": "40.28333300",
-    "lon": "28.99284400",
-    "mapQuery": "SAMSONITE Bursa Carrefour A.V.M., BURSA",
-    "mapUrl": "https://www.google.com/maps?q=40.28333300,28.99284400&output=embed"
-  },
-  {
-    "city": "DENİZLİ",
-    "name": "DESA - SAMSONITE / Denizli Forum Çamlık AVM",
-    "lat": "37.75426820",
-    "lon": "29.08758530",
-    "mapQuery": "DESA - SAMSONITE / Denizli Forum Çamlık AVM, DENİZLİ",
-    "mapUrl": "https://www.google.com/maps?q=37.75426820,29.08758530&output=embed"
-  },
-  {
-    "city": "DENİZLİ",
-    "name": "DESA / Denizli Forum Çamlık AVM",
-    "lat": "37.75426820",
-    "lon": "29.08758530",
-    "mapQuery": "DESA / Denizli Forum Çamlık AVM, DENİZLİ",
-    "mapUrl": "https://www.google.com/maps?q=37.75426820,29.08758530&output=embed"
-  },
-  {
-    "city": "EDİRNE",
-    "name": "DESA / SAMSONITE Erasta AVM",
-    "lat": "41.66620000",
-    "lon": "26.57110000",
-    "mapQuery": "DESA / SAMSONITE Erasta AVM, EDİRNE",
-    "mapUrl": "https://www.google.com/maps?q=41.66620000,26.57110000&output=embed"
-  },
-  {
-    "city": "ESKİŞEHİR",
-    "name": "DESA / SAMSONITE Espark Avm",
-    "lat": "39.78466400",
-    "lon": "30.51023500",
-    "mapQuery": "DESA / SAMSONITE Espark Avm, ESKİŞEHİR",
-    "mapUrl": "https://www.google.com/maps?q=39.78466400,30.51023500&output=embed"
-  },
-  {
-    "city": "ESKİŞEHİR",
-    "name": "Espark A.V.M.",
-    "lat": "39.78466400",
-    "lon": "30.51023500",
-    "mapQuery": "Espark A.V.M., ESKİŞEHİR",
-    "mapUrl": "https://www.google.com/maps?q=39.78466400,30.51023500&output=embed"
-  },
-  {
-    "city": "GAZİANTEP",
-    "name": "DESA / Gaziantep Sanko Park AVM",
-    "lat": "37.10560900",
-    "lon": "37.40323300",
-    "mapQuery": "DESA / Gaziantep Sanko Park AVM, GAZİANTEP",
-    "mapUrl": "https://www.google.com/maps?q=37.10560900,37.40323300&output=embed"
-  },
-  {
-    "city": "GAZİANTEP",
-    "name": "SAMSONITE Gaziantep PrimeMall Samsonite",
-    "lat": "37.06720720",
-    "lon": "37.33576730",
-    "mapQuery": "SAMSONITE Gaziantep PrimeMall Samsonite, GAZİANTEP",
-    "mapUrl": "https://www.google.com/maps?q=37.06720720,37.33576730&output=embed"
-  },
-  {
-    "city": "GAZİANTEP",
-    "name": "SAMSONITE Sankopark A.V.M.",
-    "lat": "37.06622000",
-    "lon": "37.38332000",
-    "mapQuery": "SAMSONITE Sankopark A.V.M., GAZİANTEP",
-    "mapUrl": "https://www.google.com/maps?q=37.06622000,37.38332000&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Akasya",
-    "lat": "41.05165400",
-    "lon": "28.97506700",
-    "mapQuery": "Akasya, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05165400,28.97506700&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Akbatı",
-    "lat": "41.05864400",
-    "lon": "28.66813700",
-    "mapQuery": "Akbatı, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05864400,28.66813700&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Akmerkez",
-    "lat": "41.07682200",
-    "lon": "29.02703130",
-    "mapQuery": "Akmerkez, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.07682200,29.02703130&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Aqua Florya",
-    "lat": "40.96600780",
-    "lon": "28.79746200",
-    "mapQuery": "Aqua Florya, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.96600780,28.79746200&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Ataköy Konak",
-    "lat": "41.05657300",
-    "lon": "28.89747600",
-    "mapQuery": "Ataköy Konak, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05657300,28.89747600&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Beyoğlu",
-    "lat": "41.03447780",
-    "lon": "28.97895900",
-    "mapQuery": "Beyoğlu, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.03447780,28.97895900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Capitol",
-    "lat": "41.02099900",
-    "lon": "29.03952600",
-    "mapQuery": "Capitol, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.02099900,29.03952600&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Carousel",
-    "lat": "40.97813130",
-    "lon": "28.87391160",
-    "mapQuery": "Carousel, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.97813130,28.87391160&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Cevahir A.V.M.",
-    "lat": "41.07016300",
-    "lon": "28.99849900",
-    "mapQuery": "Cevahir A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.07016300,28.99849900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Ataköy Konak",
-    "lat": "41.05657300",
-    "lon": "28.89747600",
-    "mapQuery": "DESA / SAMSONITE Ataköy Konak, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05657300,28.89747600&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Beyoğlu",
-    "lat": "41.03447780",
-    "lon": "28.97895900",
-    "mapQuery": "DESA / SAMSONITE Beyoğlu, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.03447780,28.97895900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Capitol",
-    "lat": "41.02099900",
-    "lon": "29.03952600",
-    "mapQuery": "DESA / SAMSONITE Capitol, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.02099900,29.03952600&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Carousel Avm",
-    "lat": "40.97813130",
-    "lon": "28.87391160",
-    "mapQuery": "DESA / SAMSONITE Carousel Avm, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.97813130,28.87391160&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Fabrika Outlet",
-    "lat": "41.02428500",
-    "lon": "28.79129300",
-    "mapQuery": "DESA / SAMSONITE Fabrika Outlet, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.02428500,28.79129300&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Kozyatağı City's AVM",
-    "lat": null,
-    "lon": null,
-    "mapQuery": "DESA / SAMSONITE Kozyatağı City's AVM, İSTANBUL"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Maltepe Piazza A.V.M.",
-    "lat": "40.91905870",
-    "lon": "29.16595806",
-    "mapQuery": "DESA / SAMSONITE Maltepe Piazza A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.91905870,29.16595806&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "DESA / SAMSONITE Nişantaşı",
-    "lat": "41.05165000",
-    "lon": "28.98880000",
-    "mapQuery": "DESA / SAMSONITE Nişantaşı, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05165000,28.98880000&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Fabrika Outlet",
-    "lat": "41.02428500",
-    "lon": "28.79129300",
-    "mapQuery": "Fabrika Outlet, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.02428500,28.79129300&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Göztepe",
-    "lat": "40.97183000",
-    "lon": "29.06109100",
-    "mapQuery": "Göztepe, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.97183000,29.06109100&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Kozyatağı City's AVM",
-    "lat": null,
-    "lon": null,
-    "mapQuery": "Kozyatağı City's AVM, İSTANBUL"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Mall Of İstanbul",
-    "lat": "41.06330400",
-    "lon": "28.80726800",
-    "mapQuery": "Mall Of İstanbul, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.06330400,28.80726800&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Maltepe Piazza AVM",
-    "lat": "40.91943160",
-    "lon": "29.16681440",
-    "mapQuery": "Maltepe Piazza AVM, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.91943160,29.16681440&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Marmara Park",
-    "lat": "41.00908940",
-    "lon": "28.65519380",
-    "mapQuery": "Marmara Park, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.00908940,28.65519380&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Nişantaşı",
-    "lat": "41.05165000",
-    "lon": "28.98880000",
-    "mapQuery": "Nişantaşı, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05165000,28.98880000&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Palladium A.V.M.",
-    "lat": "40.98715500",
-    "lon": "29.10003700",
-    "mapQuery": "Palladium A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.98715500,29.10003700&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE / DESA Suadiye",
-    "lat": "40.96066700",
-    "lon": "29.07990900",
-    "mapQuery": "SAMSONITE / DESA Suadiye, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.96066700,29.07990900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Akmerkez A.V.M",
-    "lat": "41.07682200",
-    "lon": "29.02703130",
-    "mapQuery": "SAMSONITE Akmerkez A.V.M, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.07682200,29.02703130&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Aqua Florya AVM",
-    "lat": "40.96638200",
-    "lon": "28.79568030",
-    "mapQuery": "SAMSONITE Aqua Florya AVM, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.96638200,28.79568030&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Buyaka A.V.M.",
-    "lat": "41.02437600",
-    "lon": "29.12754100",
-    "mapQuery": "SAMSONITE Buyaka A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.02437600,29.12754100&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Capacity Samsonite",
-    "lat": "40.98000000",
-    "lon": "28.87139320",
-    "mapQuery": "SAMSONITE Capacity Samsonite, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.98000000,28.87139320&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Göztepe",
-    "lat": "40.97340200",
-    "lon": "29.05621100",
-    "mapQuery": "SAMSONITE Göztepe, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.97340200,29.05621100&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Kanyon A.V.M.",
-    "lat": "41.07866000",
-    "lon": "29.01220800",
-    "mapQuery": "SAMSONITE Kanyon A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.07866000,29.01220800&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Marmara Park A.V.M.",
-    "lat": "41.05774100",
-    "lon": "28.78185400",
-    "mapQuery": "SAMSONITE Marmara Park A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.05774100,28.78185400&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Nişantaşı Citys A.V.M.",
-    "lat": "41.04580200",
-    "lon": "28.99442700",
-    "mapQuery": "SAMSONITE Nişantaşı Citys A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.04580200,28.99442700&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Palladium A.V.M.",
-    "lat": "40.98612000",
-    "lon": "29.10073800",
-    "mapQuery": "SAMSONITE Palladium A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.98612000,29.10073800&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Vadi İstanbul",
-    "lat": "41.10541210",
-    "lon": "28.97873920",
-    "mapQuery": "SAMSONITE Vadi İstanbul, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.10541210,28.97873920&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE Venezia",
-    "lat": "41.08108300",
-    "lon": "28.87729500",
-    "mapQuery": "SAMSONITE Venezia, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.08108300,28.87729500&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE İstanbul Akbatı A.V.M.",
-    "lat": "41.03431800",
-    "lon": "28.66148100",
-    "mapQuery": "SAMSONITE İstanbul Akbatı A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.03431800,28.66148100&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE İstanbul Cevahir",
-    "lat": "41.06321600",
-    "lon": "28.99251100",
-    "mapQuery": "SAMSONITE İstanbul Cevahir, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.06321600,28.99251100&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE İstanbul Forum A.V.M.",
-    "lat": "41.00527000",
-    "lon": "28.97696000",
-    "mapQuery": "SAMSONITE İstanbul Forum A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.00527000,28.97696000&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE İstanbul Optimum",
-    "lat": "40.98806200",
-    "lon": "29.08440120",
-    "mapQuery": "SAMSONITE İstanbul Optimum, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.98806200,29.08440120&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "SAMSONITE İstanbul Viaport",
-    "lat": "40.93876100",
-    "lon": "29.32248900",
-    "mapQuery": "SAMSONITE İstanbul Viaport, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.93876100,29.32248900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Suadiye",
-    "lat": "40.96066700",
-    "lon": "29.07990900",
-    "mapQuery": "Suadiye, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.96066700,29.07990900&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Vadi İstanbul",
-    "lat": "41.10541210",
-    "lon": "28.97873920",
-    "mapQuery": "Vadi İstanbul, İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.10541210,28.97873920&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "Viaport A.V.M.",
-    "lat": "40.93635600",
-    "lon": "29.32770300",
-    "mapQuery": "Viaport A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=40.93635600,29.32770300&output=embed"
-  },
-  {
-    "city": "İSTANBUL",
-    "name": "İstinye Park A.V.M.",
-    "lat": "41.11151700",
-    "lon": "29.03466200",
-    "mapQuery": "İstinye Park A.V.M., İSTANBUL",
-    "mapUrl": "https://www.google.com/maps?q=41.11151700,29.03466200&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "Agora A.V.M.",
-    "lat": "38.39460100",
-    "lon": "27.05410000",
-    "mapQuery": "Agora A.V.M., İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.39460100,27.05410000&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "DESA / SAMSONITE İzmir Forum",
-    "lat": "38.45069800",
-    "lon": "27.21139700",
-    "mapQuery": "DESA / SAMSONITE İzmir Forum, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.45069800,27.21139700&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "Forum Bornova A.V.M",
-    "lat": "38.45069800",
-    "lon": "27.21139700",
-    "mapQuery": "Forum Bornova A.V.M, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.45069800,27.21139700&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "Novada Outlet A.V.M.",
-    "lat": "38.37709100",
-    "lon": "27.07308100",
-    "mapQuery": "Novada Outlet A.V.M., İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.37709100,27.07308100&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "Optimum A.V.M.",
-    "lat": "38.34004100",
-    "lon": "27.13365600",
-    "mapQuery": "Optimum A.V.M., İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.34004100,27.13365600&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "SAMSONITE / DESA Novada Outlet AVM",
-    "lat": "38.37709100",
-    "lon": "27.07308100",
-    "mapQuery": "SAMSONITE / DESA Novada Outlet AVM, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.37709100,27.07308100&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "SAMSONITE Agora A.V.M",
-    "lat": "38.39634700",
-    "lon": "26.99236400",
-    "mapQuery": "SAMSONITE Agora A.V.M, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.39634700,26.99236400&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "SAMSONITE İzmir Adnan Menderes Havalimanı - 2",
-    "lat": "38.29516000",
-    "lon": "27.14725800",
-    "mapQuery": "SAMSONITE İzmir Adnan Menderes Havalimanı - 2, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.29516000,27.14725800&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "SAMSONITE İzmir Optimum",
-    "lat": "38.33866900",
-    "lon": "27.13473100",
-    "mapQuery": "SAMSONITE İzmir Optimum, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.33866900,27.13473100&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "İzmir Mavibahçe",
-    "lat": "38.47400900",
-    "lon": "27.07482800",
-    "mapQuery": "İzmir Mavibahçe, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.47400900,27.07482800&output=embed"
-  },
-  {
-    "city": "İZMİR",
-    "name": "İzmir İstinye Park",
-    "lat": "38.39847000",
-    "lon": "27.06691400",
-    "mapQuery": "İzmir İstinye Park, İZMİR",
-    "mapUrl": "https://www.google.com/maps?q=38.39847000,27.06691400&output=embed"
-  },
-  {
-    "city": "MERSİN",
-    "name": "DESA - SAMSONITE / Forum Mersin AVM",
-    "lat": "36.79184800",
-    "lon": "34.61079400",
-    "mapQuery": "DESA - SAMSONITE / Forum Mersin AVM, MERSİN",
-    "mapUrl": "https://www.google.com/maps?q=36.79184800,34.61079400&output=embed"
-  },
-  {
-    "city": "MERSİN",
-    "name": "DESA / Forum Mersin AVM",
-    "lat": "36.79184800",
-    "lon": "34.61079400",
-    "mapQuery": "DESA / Forum Mersin AVM, MERSİN",
-    "mapUrl": "https://www.google.com/maps?q=36.79184800,34.61079400&output=embed"
-  },
-  {
-    "city": "MUĞLA",
-    "name": "Bodrum Midtown AVM",
-    "lat": "37.05700530",
-    "lon": "27.35695220",
-    "mapQuery": "Bodrum Midtown AVM, MUĞLA",
-    "mapUrl": "https://www.google.com/maps?q=37.05700530,27.35695220&output=embed"
-  },
-  {
-    "city": "MUĞLA",
-    "name": "SAMSONITE Bodrum Midtown",
-    "lat": "37.05853800",
-    "lon": "27.35727000",
-    "mapQuery": "SAMSONITE Bodrum Midtown, MUĞLA",
-    "mapUrl": "https://www.google.com/maps?q=37.05853800,27.35727000&output=embed"
-  },
-  {
-    "city": "MUĞLA",
-    "name": "SAMSONITE Fethiye Erasta Samsonite",
-    "lat": "36.62216410",
-    "lon": "29.13000450",
-    "mapQuery": "SAMSONITE Fethiye Erasta Samsonite, MUĞLA",
-    "mapUrl": "https://www.google.com/maps?q=36.62216410,29.13000450&output=embed"
-  },
-  {
-    "city": "MUĞLA",
-    "name": "SAMSONITE Milas Havalimanı",
-    "lat": "37.24866030",
-    "lon": "27.66180380",
-    "mapQuery": "SAMSONITE Milas Havalimanı, MUĞLA",
-    "mapUrl": "https://www.google.com/maps?q=37.24866030,27.66180380&output=embed"
-  },
-  {
-    "city": "SAMSUN",
-    "name": "DESA / SAMSONITE Piazza Avm",
-    "lat": "41.27693410",
-    "lon": "36.35163940",
-    "mapQuery": "DESA / SAMSONITE Piazza Avm, SAMSUN",
-    "mapUrl": "https://www.google.com/maps?q=41.27693410,36.35163940&output=embed"
-  },
-  {
-    "city": "SAMSUN",
-    "name": "Piazza Avm",
-    "lat": "41.27693410",
-    "lon": "36.35163940",
-    "mapQuery": "Piazza Avm, SAMSUN",
-    "mapUrl": "https://www.google.com/maps?q=41.27693410,36.35163940&output=embed"
-  },
-  {
-    "city": "TEKİRDAĞ",
-    "name": "Avantaj Outlet Center",
-    "lat": "41.20561500",
-    "lon": "27.84059100",
-    "mapQuery": "Avantaj Outlet Center, TEKİRDAĞ",
-    "mapUrl": "https://www.google.com/maps?q=41.20561500,27.84059100&output=embed"
-  },
-  {
-    "city": "TEKİRDAĞ",
-    "name": "DESA / SAMSONITE Avantaj Outlet Center",
-    "lat": "41.20561500",
-    "lon": "27.84059100",
-    "mapQuery": "DESA / SAMSONITE Avantaj Outlet Center, TEKİRDAĞ",
-    "mapUrl": "https://www.google.com/maps?q=41.20561500,27.84059100&output=embed"
-  },
-  {
-    "city": "TEKİRDAĞ",
-    "name": "DESA / SAMSONITE Çorlu Orion",
-    "lat": "41.15190400",
-    "lon": "27.83437700",
-    "mapQuery": "DESA / SAMSONITE Çorlu Orion, TEKİRDAĞ",
-    "mapUrl": "https://www.google.com/maps?q=41.15190400,27.83437700&output=embed"
-  },
-  {
-    "city": "TEKİRDAĞ",
-    "name": "Çorlu Orion",
-    "lat": "41.15190400",
-    "lon": "27.83437700",
-    "mapQuery": "Çorlu Orion, TEKİRDAĞ",
-    "mapUrl": "https://www.google.com/maps?q=41.15190400,27.83437700&output=embed"
-  }
+        "city": "ADANA",
+        "name": "DESA - SAMSONITE / M1 Adana AVM",
+        "lat": "37.02037200",
+        "lon": "35.24293900",
+        "mapQuery": "DESA - SAMSONITE / M1 Adana AVM, ADANA",
+        "mapUrl": "https://www.google.com/maps?q=37.02037200,35.24293900&output=embed",
+        "address": "Yeni Mahalle Öğretmenler Bulvarı 87071 Sokak No: 5 M1 Adana AVM Mağaza No: 56-60",
+        "phone": "0322 271 02 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ADANA",
+        "name": "DESA / M1 Adana AVM",
+        "lat": "37.02037200",
+        "lon": "35.24293900",
+        "mapQuery": "DESA / M1 Adana AVM, ADANA",
+        "mapUrl": "https://www.google.com/maps?q=37.02037200,35.24293900&output=embed",
+        "address": "Yeni Mahalle Öğretmenler Bulvarı 87071 Sokak No: 5 M1 Adana AVM Mağaza No: 56-60",
+        "phone": "0322 271 02 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ADANA",
+        "name": "SAMSONITE Adana Optimum",
+        "lat": "36.99114200",
+        "lon": "35.34027000",
+        "mapQuery": "SAMSONITE Adana Optimum, ADANA",
+        "mapUrl": "https://www.google.com/maps?q=36.99114200,35.34027000&output=embed",
+        "address": "Optimum Alışveriş Merkezi Hacı Sabancı Bulvarı No:28 Zemin kat M31B Yüreğir / ADANA 01220",
+        "phone": "0322 333 35 84",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "AFYONKARAHİSAR",
+        "name": "Afyonkarahisar Afium Outlet ve Eğlence Merkezi",
+        "lat": "38.79771100",
+        "lon": "30.45599000",
+        "mapQuery": "Afyonkarahisar Afium Outlet ve Eğlence Merkezi, AFYONKARAHİSAR",
+        "mapUrl": "https://www.google.com/maps?q=38.79771100,30.45599000&output=embed",
+        "address": "Afyonkarahisar - İzmir Karayolu 9. Km Dörtyol Mahallesi Turgut Özal Bulvarı No: 40/11C Afyonkarahisar Afium Outlet ve Eğlence Merkezi E Blok Mağaza No: 9-10 Afyonkarahisar",
+        "phone": "0272 252 56 17",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "AFYONKARAHİSAR",
+        "name": "DESA - SAMSONITE / Afyonkarahisar Afium Outlet ve Eğlence Merkezi",
+        "lat": "38.79771100",
+        "lon": "30.45599000",
+        "mapQuery": "DESA - SAMSONITE / Afyonkarahisar Afium Outlet ve Eğlence Merkezi, AFYONKARAHİSAR",
+        "mapUrl": "https://www.google.com/maps?q=38.79771100,30.45599000&output=embed",
+        "address": "Afyonkarahisar - İzmir Karayolu 9. Km Dörtyol Mahallesi Turgut Özal Bulvarı No: 40/11C Afyonkarahisar Afium Outlet ve Eğlence Merkezi E Blok Mağaza No: 9-10",
+        "phone": "0272 252 56 17",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Ankamall A.V.M.",
+        "lat": "39.94960500",
+        "lon": "32.83294200",
+        "mapQuery": "Ankamall A.V.M., ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.94960500,32.83294200&output=embed",
+        "address": "Migros Alışveriş Merkezi Zemin kat No: 2A Z-05 Akköprü - İskitler /Ankara Akköprü, Ankara, Türkiye",
+        "phone": "0312 541 27 07",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Ankara Arcadium",
+        "lat": "39.88292100",
+        "lon": "32.68563400",
+        "mapQuery": "Ankara Arcadium, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.88292100,32.68563400&output=embed",
+        "address": "Ankara Arcadium Alışveriş Merkezi Koru mah. 2432. Cad No:192/ mağaza no 116 Çayyolu Çankaya",
+        "phone": "0312 240 64 07",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Armada A.V.M",
+        "lat": "39.91241710",
+        "lon": "32.80713730",
+        "mapQuery": "Armada A.V.M, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.91241710,32.80713730&output=embed",
+        "address": "Armada A.V.M Söğütözü, Eskişehir Yolu No:6, 06560 Ankara",
+        "phone": "0312 219 18 45",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Atakule A.V.M.",
+        "lat": "39.88595710",
+        "lon": "32.85421430",
+        "mapQuery": "Atakule A.V.M., ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.88595710,32.85421430&output=embed",
+        "address": "ATAKULE ALIŞVERİŞ MERKEZİ ÇANKAYA MAHALLESİ ÇANKAYA CADDESİ 1/B BLOK Mağaza No:45 ÇANKAYA ANKARA",
+        "phone": "0312 514 21 19",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Cepa A.V.M.",
+        "lat": "39.90888600",
+        "lon": "32.77652400",
+        "mapQuery": "Cepa A.V.M., ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.90888600,32.77652400&output=embed",
+        "address": "Mustafa Kemal Mah. 17. Sok. No:2 Zemin Kat No: Z-55 Çankaya/Ankara",
+        "phone": "0312 219 58 82",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "DESA / SAMSONITE Atakule",
+        "lat": "39.88595710",
+        "lon": "32.85421430",
+        "mapQuery": "DESA / SAMSONITE Atakule, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.88595710,32.85421430&output=embed",
+        "address": "ATAKULE ALIŞVERİŞ MERKEZİ ÇANKAYA MAHALLESİ ÇANKAYA CADDESİ 1/B BLOK Mağaza No:45 ÇANKAYA ANKARA",
+        "phone": "0312 514 21 19",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "DESA /SAMSONITE Arcadium",
+        "lat": "39.88292100",
+        "lon": "32.68563400",
+        "mapQuery": "DESA /SAMSONITE Arcadium, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.88292100,32.68563400&output=embed",
+        "address": "Ankara Arcadium Alışveriş Merkezi Koru mah. 2432. Cad No:192/ mağaza no 116 Çayyolu Çankaya",
+        "phone": "0312 240 64 07",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "DESA /SAMSONITE Metromall",
+        "lat": null,
+        "lon": null,
+        "mapQuery": "DESA /SAMSONITE Metromall, ANKARA",
+        "address": "Eryaman Mahallesi, Dumlupınar 30 Ağustos Cd. No:2, Etimesgut/Ankara",
+        "phone": "0312 504 15 15",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Kentpark A.V.M.",
+        "lat": "39.90888600",
+        "lon": "32.77652400",
+        "mapQuery": "Kentpark A.V.M., ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.90888600,32.77652400&output=embed",
+        "address": "Mustafa Kemal Mh. Eskişehir Yolu 7.Km No:164 Kentpark A.V.M. Mağaza No:Z-68 Çankaya / Ankara",
+        "phone": "0312 219 93 01",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "Metromall AVM",
+        "lat": "39.98311500",
+        "lon": "32.61083020",
+        "mapQuery": "Metromall AVM, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.98311500,32.61083020&output=embed",
+        "address": "Eryaman Mahallesi, Dumlupınar 30 Ağustos Cd. No:2, Etimesgut/Ankara",
+        "phone": "0312 503 17 05",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE ANKARA ACITY AVM",
+        "lat": "39.94581300",
+        "lon": "32.76269400",
+        "mapQuery": "SAMSONITE ANKARA ACITY AVM, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.94581300,32.76269400&output=embed",
+        "address": "Macun Mh. Fatih Sultan Mehmet Bulvarı No : 244 Acity A.V.M Mağaza No : Z054",
+        "phone": "0312 387 61 30",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE Ankara 365 Migros AVM",
+        "lat": "39.87591500",
+        "lon": "32.87025300",
+        "mapQuery": "SAMSONITE Ankara 365 Migros AVM, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.87591500,32.87025300&output=embed",
+        "address": "365 Migros AVM - Birlik mahallesi 428.cadde no.:41 Z-23 Çankaya / ANKARA",
+        "phone": "0312 450 04 27",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE Ankara Ankamall A.V.M",
+        "lat": "39.95087900",
+        "lon": "32.83235100",
+        "mapQuery": "SAMSONITE Ankara Ankamall A.V.M, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.95087900,32.83235100&output=embed",
+        "address": "Ankamall AVM Kat:1 No: 14",
+        "phone": "0312 541 13 18",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE Ankara Armada A.V.M.",
+        "lat": "39.91292100",
+        "lon": "32.80902400",
+        "mapQuery": "SAMSONITE Ankara Armada A.V.M., ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.91292100,32.80902400&output=embed",
+        "address": "Armada AVM Eskişehir Yolu No:6 Mağaza no:55 Söğütözü - ANKARA",
+        "phone": "0212 692 23 28, 0312 219 16 81",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE Ankara Esenboğa Havalimanı Kiosk",
+        "lat": "40.12444000",
+        "lon": "32.99167300",
+        "mapQuery": "SAMSONITE Ankara Esenboğa Havalimanı Kiosk, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=40.12444000,32.99167300&output=embed",
+        "address": "Esenboğa Havalimanı İç - Dış Hatlar Terminali İç hatlar giden yolcu katı hava tarafı DDL 0433 numaralı mağaza 06750",
+        "phone": "0312 398 08 65",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANKARA",
+        "name": "SAMSONITE Ankara Kentpark",
+        "lat": "39.90984100",
+        "lon": "32.77658200",
+        "mapQuery": "SAMSONITE Ankara Kentpark, ANKARA",
+        "mapUrl": "https://www.google.com/maps?q=39.90984100,32.77658200&output=embed",
+        "address": "Kentpark AVM Mustafa Kemal mah. Eskişehir yolu 7. km No:164 Mağaza no:Z69 Çankaya - ANKARA",
+        "phone": "0312 219 93 03",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "Antalya The Land of Legends",
+        "lat": "36.87608020",
+        "lon": "31.00323100",
+        "mapQuery": "Antalya The Land of Legends, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.87608020,31.00323100&output=embed",
+        "address": "Kadriye Mahallesi Atatürk Caddesi Antalya The Land of Legends AVM No: 104/5 Mağaza No: 170 07500 Belek",
+        "phone": "0 242 725 66 86",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA - SAMSONITE / Alanya Uygun Center AVM",
+        "lat": "36.54821000",
+        "lon": "32.00335000",
+        "mapQuery": "DESA - SAMSONITE / Alanya Uygun Center AVM, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.54821000,32.00335000&output=embed",
+        "address": "Yaylayolu Caddesi Çon Sokak Alanya Uygun Center AVM 5. Blok Mağaza No: 7-8",
+        "phone": "0 242 503 06 31",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA - SAMSONITE / Antalya The Land of Legends AVM",
+        "lat": "36.87608020",
+        "lon": "31.00323100",
+        "mapQuery": "DESA - SAMSONITE / Antalya The Land of Legends AVM, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.87608020,31.00323100&output=embed",
+        "address": "Kadriye Mahallesi Atatürk Caddesi Antalya The Land of Legends AVM No: 104/5 Mağaza No: 170 07500 Belek",
+        "phone": "0 242 725 66 86",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA / Alanya Uygun Center AVM",
+        "lat": "36.54821000",
+        "lon": "32.00335000",
+        "mapQuery": "DESA / Alanya Uygun Center AVM, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.54821000,32.00335000&output=embed",
+        "address": "Şekerhane Mahallesi Yaylayolu Caddesi Çon Sokak Alanya Uygun Center AVM 5. Blok Mağaza No: 7-8",
+        "phone": "0 242 503 06 31",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA / Antalya Deepo Outlet Center",
+        "lat": "36.92094000",
+        "lon": "30.78609500",
+        "mapQuery": "DESA / Antalya Deepo Outlet Center, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.92094000,30.78609500&output=embed",
+        "address": "Sinan Mahallesi Serik Caddesi No: 309 Antalya Deepo Outlet Center Giriş Kat Mağaza No: 371 Altınova",
+        "phone": "0242 340 42 78",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA / Antalya Havalimanı İç Hatlar",
+        "lat": "36.91273500",
+        "lon": "30.80280200",
+        "mapQuery": "DESA / Antalya Havalimanı İç Hatlar, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.91273500,30.80280200&output=embed",
+        "address": "Yenigöl Mahallesi Serik Caddesi Antalya Havalimanı İç Hatlar Giden Yolcu Terminali No: G-187",
+        "phone": "0 242 330 34 99",
+        "workingHours": {
+          "Pazartesi": "07:00 - 22:00",
+          "Salı": "07:00 - 22:00",
+          "Çarşamba": "07:00 - 22:00",
+          "Perşembe": "07:00 - 22:00",
+          "Cuma": "07:00 - 22:00",
+          "Cumartesi": "07:00 - 22:00",
+          "Pazar": "07:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA / Antalya Migros AVM",
+        "lat": "35.91262000",
+        "lon": "30.68970700",
+        "mapQuery": "DESA / Antalya Migros AVM, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=35.91262000,30.68970700&output=embed",
+        "address": "Arapsuyu Mahallesi Atatürk Bulvarı No: 3 Antalya Migros AVM Giriş Kat D2 Mağaza No: B-9-10",
+        "phone": "0242 230 10 24",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "DESA / Antalya TerraCity",
+        "lat": "36.86739370",
+        "lon": "30.73616280",
+        "mapQuery": "DESA / Antalya TerraCity, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.86739370,30.73616280&output=embed",
+        "address": "Fener Mahallesi Tekelioğlu Caddesi No: 55 Antalya TerraCity AVM Zemin Kat Mağaza No: Z62",
+        "phone": "0242 318 17 78",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Dış Hatlar - 1",
+        "lat": "36.91493600",
+        "lon": "30.77276400",
+        "mapQuery": "SAMSONITE Antalya Dış Hatlar - 1, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.91493600,30.77276400&output=embed",
+        "address": "Yeni göl mah. Serik cad. Altınova-Muratpaşa/ANTALYA",
+        "phone": "0242 330 38 69",
+        "workingHours": {
+          "Pazartesi": "07:00 - 22:00",
+          "Salı": "07:00 - 22:00",
+          "Çarşamba": "07:00 - 22:00",
+          "Perşembe": "07:00 - 22:00",
+          "Cuma": "07:00 - 22:00",
+          "Cumartesi": "07:00 - 22:00",
+          "Pazar": "07:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Deepo A.V.M.",
+        "lat": "36.88414000",
+        "lon": "30.70563000",
+        "mapQuery": "SAMSONITE Antalya Deepo A.V.M., ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.88414000,30.70563000&output=embed",
+        "address": "Sinan Mah Serik Cad.  No :371 Deepo A.V.M 47-48",
+        "phone": "0 242 340 42 79",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Dış Hatlar -2",
+        "lat": "36.90433270",
+        "lon": "30.79968810",
+        "mapQuery": "SAMSONITE Antalya Dış Hatlar -2, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.90433270,30.79968810&output=embed",
+        "address": "Yenigöl Mahallesi Serik Caddesi No:100 Antalya Havaalanı 2 Dış Hatlar Terminali Giden Yolcu Check-in Salonu Z-142-4 Muratpaşa/Antalya",
+        "phone": "0242 330 38 75",
+        "workingHours": {
+          "Pazartesi": "07:00 - 22:00",
+          "Salı": "07:00 - 22:00",
+          "Çarşamba": "07:00 - 22:00",
+          "Perşembe": "07:00 - 22:00",
+          "Cuma": "07:00 - 22:00",
+          "Cumartesi": "07:00 - 22:00",
+          "Pazar": "07:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Havalimanı",
+        "lat": "36.89867000",
+        "lon": "30.80049200",
+        "mapQuery": "SAMSONITE Antalya Havalimanı, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.89867000,30.80049200&output=embed",
+        "address": "Antalya Havalimanı iç hatlar terminali giden yolcu katı arındırılmış salon 252-A kodlu mahal alanı",
+        "phone": "0242 330 38 18",
+        "workingHours": {
+          "Pazartesi": "07:00 - 22:00",
+          "Salı": "07:00 - 22:00",
+          "Çarşamba": "07:00 - 22:00",
+          "Perşembe": "07:00 - 22:00",
+          "Cuma": "07:00 - 22:00",
+          "Cumartesi": "07:00 - 22:00",
+          "Pazar": "07:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Migros",
+        "lat": "36.88246200",
+        "lon": "30.65909600",
+        "mapQuery": "SAMSONITE Antalya Migros, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.88246200,30.65909600&output=embed",
+        "address": "Akdeniz Bul. Arapsuyu Mevkii Zemin Kat No:26 / A36 Konyaaltı / ANTALYA",
+        "phone": "0242 230 15 01",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya Terra City",
+        "lat": "36.85243600",
+        "lon": "30.75731000",
+        "mapQuery": "SAMSONITE Antalya Terra City, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.85243600,30.75731000&output=embed",
+        "address": "Terra City AVM Fener mahallesi, Tekelioğlu Caddesi No:55  Kat:1 mağaza no:97 Muratpaşa/ANTALYA",
+        "phone": "0242 318 15 18",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Antalya-Kemer",
+        "lat": "36.59988000",
+        "lon": "30.56483000",
+        "mapQuery": "SAMSONITE Antalya-Kemer, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.59988000,30.56483000&output=embed",
+        "address": "Liman Caddesi No: 13/8",
+        "phone": "0 242 814 20 14",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ANTALYA",
+        "name": "SAMSONITE Markantalya",
+        "lat": "36.89365400",
+        "lon": "30.70483100",
+        "mapQuery": "SAMSONITE Markantalya, ANTALYA",
+        "mapUrl": "https://www.google.com/maps?q=36.89365400,30.70483100&output=embed",
+        "address": "Tahılpazarı Mah. Şarampol Cad. No: 84 Zemin kat mağaza no:75 Muratpaşa /ANTALYA",
+        "phone": "0242 240 89 70",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "AYDIN",
+        "name": "DESA / SAMSONITE Kuşadası Avm",
+        "lat": "37.81069610",
+        "lon": "27.26978520",
+        "mapQuery": "DESA / SAMSONITE Kuşadası Avm, AYDIN",
+        "mapUrl": "https://www.google.com/maps?q=37.81069610,27.26978520&output=embed",
+        "address": "Yavansu mahallesi karaova sokak no8/1-5 Kuşadası AVM 2. etap A-Blok 5 numaralı işyeri Kuşadası / AYDIN",
+        "phone": "0256 633 45 76",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "AYDIN",
+        "name": "Kuşadası Avm",
+        "lat": "37.81069610",
+        "lon": "27.26978520",
+        "mapQuery": "Kuşadası Avm, AYDIN",
+        "mapUrl": "https://www.google.com/maps?q=37.81069610,27.26978520&output=embed",
+        "address": "Yavansu mahallesi karaova sokak no8/1-5 Kuşadası AVM 2. etap A-Blok 5 numaralı işyeri Kuşadası / AYDIN",
+        "phone": "0256 633 45 76",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "BİLECİK",
+        "name": "Bozüyük Sarar Outlet",
+        "lat": "39.90837000",
+        "lon": "30.03666400",
+        "mapQuery": "Bozüyük Sarar Outlet, BİLECİK",
+        "mapUrl": "https://www.google.com/maps?q=39.90837000,30.03666400&output=embed",
+        "address": "Çarşı Mah. Malhatun Cad. No:251 Mağaza No:16-17",
+        "phone": "0228 315 20 61",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "BİLECİK",
+        "name": "DESA / SAMSONITE Bozüyük Sarar Outlet",
+        "lat": "39.90837000",
+        "lon": "30.03666400",
+        "mapQuery": "DESA / SAMSONITE Bozüyük Sarar Outlet, BİLECİK",
+        "mapUrl": "https://www.google.com/maps?q=39.90837000,30.03666400&output=embed",
+        "address": "Çarşı Mah. Malhatun Cad. No:251 Mağaza No:16-17",
+        "phone": "0228 315 20 61",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "BURSA",
+        "name": "Korupark A.V.M",
+        "lat": "40.25463900",
+        "lon": "28.95824400",
+        "mapQuery": "Korupark A.V.M, BURSA",
+        "mapUrl": "https://www.google.com/maps?q=40.25463900,28.95824400&output=embed",
+        "address": "Korupark AVM Mudanya Yolu 9.Km. Adnan Menderes Mh. No: 2 Mağaza No: 48",
+        "phone": "0224 241 30 79",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "BURSA",
+        "name": "SAMSONITE Bursa Carrefour A.V.M.",
+        "lat": "40.28333300",
+        "lon": "28.99284400",
+        "mapQuery": "SAMSONITE Bursa Carrefour A.V.M., BURSA",
+        "mapUrl": "https://www.google.com/maps?q=40.28333300,28.99284400&output=embed",
+        "address": "Bursa Carrefour AVM Odunluk mah. B041",
+        "phone": "0224 451 10 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "DENİZLİ",
+        "name": "DESA - SAMSONITE / Denizli Forum Çamlık AVM",
+        "lat": "37.75426820",
+        "lon": "29.08758530",
+        "mapQuery": "DESA - SAMSONITE / Denizli Forum Çamlık AVM, DENİZLİ",
+        "mapUrl": "https://www.google.com/maps?q=37.75426820,29.08758530&output=embed",
+        "address": "Mehmetçik Mahallesi Doğan Demircioğlu Caddesi No: 2 Denizli Forum Çamlık AVM F Blok 1. Kat Mağaza No: 23 Çamlık",
+        "phone": "0258 215 10 65",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "DENİZLİ",
+        "name": "DESA / Denizli Forum Çamlık AVM",
+        "lat": "37.75426820",
+        "lon": "29.08758530",
+        "mapQuery": "DESA / Denizli Forum Çamlık AVM, DENİZLİ",
+        "mapUrl": "https://www.google.com/maps?q=37.75426820,29.08758530&output=embed",
+        "address": "Mehmetçik Mahallesi Doğan Demircioğlu Caddesi No: 2 Denizli Forum Çamlık AVM F Blok 1. Kat Mağaza No: 23 Çamlık",
+        "phone": "0258 215 10 65",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "EDİRNE",
+        "name": "DESA / SAMSONITE Erasta AVM",
+        "lat": "41.66620000",
+        "lon": "26.57110000",
+        "mapQuery": "DESA / SAMSONITE Erasta AVM, EDİRNE",
+        "mapUrl": "https://www.google.com/maps?q=41.66620000,26.57110000&output=embed",
+        "address": "Talat Paşa Cd. No: 59 Mağaza No: F01 -120A",
+        "phone": "(0284) 212 93 11",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ESKİŞEHİR",
+        "name": "DESA / SAMSONITE Espark Avm",
+        "lat": "39.78466400",
+        "lon": "30.51023500",
+        "mapQuery": "DESA / SAMSONITE Espark Avm, ESKİŞEHİR",
+        "mapUrl": "https://www.google.com/maps?q=39.78466400,30.51023500&output=embed",
+        "address": "Espark Alışveriş Merkezi Eski Bağlar Mh.Üniversite Cd.No:21 Mağaza No:Z-21",
+        "phone": "0222 333 02 75",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "ESKİŞEHİR",
+        "name": "Espark A.V.M.",
+        "lat": "39.78466400",
+        "lon": "30.51023500",
+        "mapQuery": "Espark A.V.M., ESKİŞEHİR",
+        "mapUrl": "https://www.google.com/maps?q=39.78466400,30.51023500&output=embed",
+        "address": "Espark Alışveriş Merkezi Eski Bağlar Mh.Üniversite Cd.No:21 Mağaza No:Z-21",
+        "phone": "0222 333 02 75",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "GAZİANTEP",
+        "name": "DESA / Gaziantep Sanko Park AVM",
+        "lat": "37.10560900",
+        "lon": "37.40323300",
+        "mapQuery": "DESA / Gaziantep Sanko Park AVM, GAZİANTEP",
+        "mapUrl": "https://www.google.com/maps?q=37.10560900,37.40323300&output=embed",
+        "address": "Sarıgüllük Mahallesi Maraşel Fevzi Çakmak Caddesi No: 23 Gaziantep Sanko Park AVM Giriş Kat Mağaza No: RZ83",
+        "phone": "0342 336 97 91",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "GAZİANTEP",
+        "name": "SAMSONITE Gaziantep PrimeMall Samsonite",
+        "lat": "37.06720720",
+        "lon": "37.33576730",
+        "mapQuery": "SAMSONITE Gaziantep PrimeMall Samsonite, GAZİANTEP",
+        "mapUrl": "https://www.google.com/maps?q=37.06720720,37.33576730&output=embed",
+        "address": "15 Temmuz Mah Prof. Dr. Necmettin Erbakan Cad. Primemall AVM No:71 D:33, 27560 Şehitkamil/Gaziantep",
+        "phone": "0342 502 35 98",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "GAZİANTEP",
+        "name": "SAMSONITE Sankopark A.V.M.",
+        "lat": "37.06622000",
+        "lon": "37.38332000",
+        "mapQuery": "SAMSONITE Sankopark A.V.M., GAZİANTEP",
+        "mapUrl": "https://www.google.com/maps?q=37.06622000,37.38332000&output=embed",
+        "address": "Mareşal Fevzi Çakmak bulvarı Sankopark A.V.M mağaza no RZ05C",
+        "phone": "0342 338 80 82",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Akasya",
+        "lat": "41.05165400",
+        "lon": "28.97506700",
+        "mapQuery": "Akasya, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05165400,28.97506700&output=embed",
+        "address": "Acıbadem Mahallesi. Çeçen Sokak. Akasya Avm. 25 / 89 1.bodrum kat kapı no:142",
+        "phone": "0216 510 59 96",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Akbatı",
+        "lat": "41.05864400",
+        "lon": "28.66813700",
+        "mapQuery": "Akbatı, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05864400,28.66813700&output=embed",
+        "address": "Akbatı A.V.M Sanayi Mah. 1655 Sok.No:6 Zemin Kat Mağ.No:85",
+        "phone": "0212 397 70 80",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Akmerkez",
+        "lat": "41.07682200",
+        "lon": "29.02703130",
+        "mapQuery": "Akmerkez, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.07682200,29.02703130&output=embed",
+        "address": "Akmerkez Alışveriş Merkezi Nispetiye Cad. No: 56 Mağaza No: 252 PK: 34337 Etiler, İstanbul",
+        "phone": "02122822406",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Aqua Florya",
+        "lat": "40.96600780",
+        "lon": "28.79746200",
+        "mapQuery": "Aqua Florya, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.96600780,28.79746200&output=embed",
+        "address": "Şenlikköy mahallesi halkalı caddesi no:93-93/1",
+        "phone": "0212 662 77 38",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Ataköy Konak",
+        "lat": "41.05657300",
+        "lon": "28.89747600",
+        "mapQuery": "Ataköy Konak, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05657300,28.89747600&output=embed",
+        "address": "Ataköy Plus A.V.M. Ataköy Konakları Adnan Kahveci Bulvarı 8.Kısım Mağaza No:Zk1-19",
+        "phone": "0212 661 68 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Beyoğlu",
+        "lat": "41.03447780",
+        "lon": "28.97895900",
+        "mapQuery": "Beyoğlu, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.03447780,28.97895900&output=embed",
+        "address": "Şehit Muhtar Mahallesi İstiklal Cd No 58",
+        "phone": "0212 249 76 96",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Capitol",
+        "lat": "41.02099900",
+        "lon": "29.03952600",
+        "mapQuery": "Capitol, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.02099900,29.03952600&output=embed",
+        "address": "Capitol Alışveriş Merkezi Kat:1 No:39",
+        "phone": "0216 651 21 21",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Carousel",
+        "lat": "40.97813130",
+        "lon": "28.87391160",
+        "mapQuery": "Carousel, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.97813130,28.87391160&output=embed",
+        "address": "Halit Ziya Uşaklıgil Cad. No:1",
+        "phone": "0212 572 61 35",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Cevahir A.V.M.",
+        "lat": "41.07016300",
+        "lon": "28.99849900",
+        "mapQuery": "Cevahir A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.07016300,28.99849900&output=embed",
+        "address": "Meşrutiyet Mah. Büyükdere Cad. No:22 Kapı No : 250/ A",
+        "phone": "0212 380 12 90",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Ataköy Konak",
+        "lat": "41.05657300",
+        "lon": "28.89747600",
+        "mapQuery": "DESA / SAMSONITE Ataköy Konak, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05657300,28.89747600&output=embed",
+        "address": "Ataköy Plus A.V.M. Ataköy Konakları Adnan Kahveci Bulvarı 8.Kısım Mağaza No:Zk1-19",
+        "phone": "0212 661 68 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Beyoğlu",
+        "lat": "41.03447780",
+        "lon": "28.97895900",
+        "mapQuery": "DESA / SAMSONITE Beyoğlu, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.03447780,28.97895900&output=embed",
+        "address": "Şehit Muhtar Mahallesi İstiklal Cd No 58",
+        "phone": "0212 249 76 96",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Capitol",
+        "lat": "41.02099900",
+        "lon": "29.03952600",
+        "mapQuery": "DESA / SAMSONITE Capitol, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.02099900,29.03952600&output=embed",
+        "address": "Capitol Alışveriş Merkezi Kat:1 No:39",
+        "phone": "0216 651 21 21",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Carousel Avm",
+        "lat": "40.97813130",
+        "lon": "28.87391160",
+        "mapQuery": "DESA / SAMSONITE Carousel Avm, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.97813130,28.87391160&output=embed",
+        "address": "Halit Ziya Uşaklıgil Cad. No:1",
+        "phone": "0212 572 61 35",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Fabrika Outlet",
+        "lat": "41.02428500",
+        "lon": "28.79129300",
+        "mapQuery": "DESA / SAMSONITE Fabrika Outlet, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.02428500,28.79129300&output=embed",
+        "address": "Halkalı Cad. No: 208 Sefaköy",
+        "phone": "0212 698 98 11",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Kozyatağı City's AVM",
+        "lat": null,
+        "lon": null,
+        "mapQuery": "DESA / SAMSONITE Kozyatağı City's AVM, İSTANBUL",
+        "mapUrl": null,
+        "address": "ÇAYIR CAD. MAĞAZA NO: Z148 – Z 149",
+        "phone": "0 216 573 54 00",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Maltepe Piazza A.V.M.",
+        "lat": "40.91905870",
+        "lon": "29.16595806",
+        "mapQuery": "DESA / SAMSONITE Maltepe Piazza A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.91905870,29.16595806&output=embed",
+        "address": "Cevizli, Tugay Yolu Cad. 69-C Mağaza no: ZK –A K9",
+        "phone": "0216 629 57 52",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "DESA / SAMSONITE Nişantaşı",
+        "lat": "41.05165000",
+        "lon": "28.98880000",
+        "mapQuery": "DESA / SAMSONITE Nişantaşı, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05165000,28.98880000&output=embed",
+        "address": "Abdi İpekçi Cad. No: 5",
+        "phone": "0212 232 12 90",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Fabrika Outlet",
+        "lat": "41.02428500",
+        "lon": "28.79129300",
+        "mapQuery": "Fabrika Outlet, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.02428500,28.79129300&output=embed",
+        "address": "Halkalı Cad. No: 208 Sefaköy",
+        "phone": "0212 698 98 11",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Göztepe",
+        "lat": "40.97183000",
+        "lon": "29.06109100",
+        "mapQuery": "Göztepe, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.97183000,29.06109100&output=embed",
+        "address": "Göztepe Bağdat Cad.Ergun Apt.No:244/2-3-6 Caddebostan",
+        "phone": "0216 369 80 37",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Kozyatağı City's AVM",
+        "lat": null,
+        "lon": null,
+        "mapQuery": "Kozyatağı City's AVM, İSTANBUL",
+        "mapUrl": null,
+        "address": "ÇAYIR CAD. MAĞAZA NO: Z148 – Z 149",
+        "phone": "0 216 573 54 00",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Mall Of İstanbul",
+        "lat": "41.06330400",
+        "lon": "28.80726800",
+        "mapQuery": "Mall Of İstanbul, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.06330400,28.80726800&output=embed",
+        "address": "İkitelli-2 Mahallesi, 858 Ada 4 Parsel Ziya Gökalp Mah. Süleyman Demirel Cad. No:7 İkitelli",
+        "phone": "0212 801 04 51",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Maltepe Piazza AVM",
+        "lat": "40.91943160",
+        "lon": "29.16681440",
+        "mapQuery": "Maltepe Piazza AVM, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.91943160,29.16681440&output=embed",
+        "address": "Tugay Yolu Caddesi No: 69-C Maltepe Piazza AVM 1. Kat Mağaza No: ZK-A-K49 34846",
+        "phone": "0216 629 57 52",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Marmara Park",
+        "lat": "41.00908940",
+        "lon": "28.65519380",
+        "mapQuery": "Marmara Park, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.00908940,28.65519380&output=embed",
+        "address": "Marmarapark AVM Mevlana Mah. Çelebi Mehmet Cad. No:33A Marmarapark A.V.M. Dükkan No: 445",
+        "phone": "0212 852 93 89",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Nişantaşı",
+        "lat": "41.05165000",
+        "lon": "28.98880000",
+        "mapQuery": "Nişantaşı, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05165000,28.98880000&output=embed",
+        "address": "Abdi İpekçi Cad. No: 5",
+        "phone": "0212 232 12 90",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Palladium A.V.M.",
+        "lat": "40.98715500",
+        "lon": "29.10003700",
+        "mapQuery": "Palladium A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.98715500,29.10003700&output=embed",
+        "address": "Palladium Rezidans Ve A.V.M. Barbaros Mh. Halk Cd. No:6 Bb169",
+        "phone": "0216 663 14 51",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
 
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE / DESA Suadiye",
+        "lat": "40.96066700",
+        "lon": "29.07990900",
+        "mapQuery": "SAMSONITE / DESA Suadiye, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.96066700,29.07990900&output=embed",
+        "address": "Bağdat Cad. No: 443",
+        "phone": "0216 416 43 68",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Akmerkez A.V.M",
+        "lat": "41.07682200",
+        "lon": "29.02703130",
+        "mapQuery": "SAMSONITE Akmerkez A.V.M, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.07682200,29.02703130&output=embed",
+        "address": "Akmerkez Alışveriş Merkezi Etiler, Kültür Mahallesi, Nispetiye Cd D:354, 34340 Beşiktaş/İstanbul",
+        "phone": "(0212) 282 26 14",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Aqua Florya AVM",
+        "lat": "40.96638200",
+        "lon": "28.79568030",
+        "mapQuery": "SAMSONITE Aqua Florya AVM, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.96638200,28.79568030&output=embed",
+        "address": "Şenlikköy Mah. Yeşilköy Halkalı Cad. No:93-93/1",
+        "phone": "0212 573 31 04",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Buyaka A.V.M.",
+        "lat": "41.02437600",
+        "lon": "29.12754100",
+        "mapQuery": "SAMSONITE Buyaka A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.02437600,29.12754100&output=embed",
+        "address": "BUYAKA AVM Ümraniye Tepeüstü İnkilap Mah. Poligon Cad. Mağaza No:93",
+        "phone": "0216 290 77 97",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Capacity Samsonite",
+        "lat": "40.98000000",
+        "lon": "28.87139320",
+        "mapQuery": "SAMSONITE Capacity Samsonite, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.98000000,28.87139320&output=embed",
+        "address": "Ataköy 1.kısım mahallesi Fişekhane cad. Capacity Alışveriş merkezi Mağaza no:1K-06 Bakırköy/İstanbul",
+        "phone": "0212 661 46 08",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Göztepe",
+        "lat": "40.97340200",
+        "lon": "29.05621100",
+        "mapQuery": "SAMSONITE Göztepe, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.97340200,29.05621100&output=embed",
+        "address": "Bağdat Caddesi No:244/B Ergun Apartmanı Göztepe",
+        "phone": "0216 385 62 79",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Kanyon A.V.M.",
+        "lat": "41.07866000",
+        "lon": "29.01220800",
+        "mapQuery": "SAMSONITE Kanyon A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.07866000,29.01220800&output=embed",
+        "address": "Mecidiyekoy mah. Büyükdere Cad. Kanyon AVM No:185",
+        "phone": "0212 692 23 25",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Marmara Park A.V.M.",
+        "lat": "41.05774100",
+        "lon": "28.78185400",
+        "mapQuery": "SAMSONITE Marmara Park A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.05774100,28.78185400&output=embed",
+        "address": "Marmarapark AVM Samsonite Güzelyurt mah. 1. Cad. No:31 Kat:2  Mağaza No:439",
+        "phone": "0212 853 79 60",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Nişantaşı Citys A.V.M.",
+        "lat": "41.04580200",
+        "lon": "28.99442700",
+        "mapQuery": "SAMSONITE Nişantaşı Citys A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.04580200,28.99442700&output=embed",
+        "address": "City's Nişantaşı A.V.M Samsonite Mağazası Teşvikiye Mah. Teşvikiye Cad. No: 162 Akkavak Katı",
+        "phone": "0212 373 22 31",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Palladium A.V.M.",
+        "lat": "40.98612000",
+        "lon": "29.10073800",
+        "mapQuery": "SAMSONITE Palladium A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.98612000,29.10073800&output=embed",
+        "address": "Palladium A.V.M. Barbaros Mah. Halk Cad. No:6B B115",
+        "phone": "0216 663 22 99",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Vadi İstanbul",
+        "lat": "41.10541210",
+        "lon": "28.97873920",
+        "mapQuery": "SAMSONITE Vadi İstanbul, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.10541210,28.97873920&output=embed",
+        "address": "Ayazağa Mah. Cendere Cad. No:109/C İç Kapı No: 255 Sarıyer/İstanbul",
+        "phone": "0212 809 1303",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE Venezia",
+        "lat": "41.08108300",
+        "lon": "28.87729500",
+        "mapQuery": "SAMSONITE Venezia, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.08108300,28.87729500&output=embed",
+        "address": "Karadeniz mah. eski Edirne asfaltı cad. 408 F Blok cadde katı 227 mağaza-B1 066 Gaziosmanpaşa/İstanbul",
+        "phone": "0212 830 69 78",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE İstanbul Akbatı A.V.M.",
+        "lat": "41.03431800",
+        "lon": "28.66148100",
+        "mapQuery": "SAMSONITE İstanbul Akbatı A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.03431800,28.66148100&output=embed",
+        "address": "Akbatı A.V.M. Sanayi Mah.1655.Sokak No:6 Zemin Kat Mağaza No:138",
+        "phone": "0212 397 70 82",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE İstanbul Cevahir",
+        "lat": "41.06321600",
+        "lon": "28.99251100",
+        "mapQuery": "SAMSONITE İstanbul Cevahir, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.06321600,28.99251100&output=embed",
+        "address": "Buyukdere cad. No: 22A Cevahir AVM Magaza no: 305 Mecidiyekoy - IST",
+        "phone": "0212 692 23 26",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE İstanbul Forum A.V.M.",
+        "lat": "41.00527000",
+        "lon": "28.97696000",
+        "mapQuery": "SAMSONITE İstanbul Forum A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.00527000,28.97696000&output=embed",
+        "address": "Kocatepe Mah. Paşa Cad. No:3 Mağaza No:GF170",
+        "phone": "0212 437 26 63",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE İstanbul Optimum",
+        "lat": "40.98806200",
+        "lon": "29.08440120",
+        "mapQuery": "SAMSONITE İstanbul Optimum, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.98806200,29.08440120&output=embed",
+        "address": "İstanbul Optimum Outlet AVM İstiklal Cad. No:10/4 Mğz No:132 Yenisahra",
+        "phone": "0216 664 1863",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "SAMSONITE İstanbul Viaport",
+        "lat": "40.93876100",
+        "lon": "29.32248900",
+        "mapQuery": "SAMSONITE İstanbul Viaport, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.93876100,29.32248900&output=embed",
+        "address": "Viaport AVM Yenisehir mah. Dedepasa cad. No:2 Kurtkoy / Pendik - IST",
+        "phone": "0216 696 15 03",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Suadiye",
+        "lat": "40.96066700",
+        "lon": "29.07990900",
+        "mapQuery": "Suadiye, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.96066700,29.07990900&output=embed",
+        "address": "Bağdat Cad. No: 443",
+        "phone": "0216 416 43 68",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Vadi İstanbul",
+        "lat": "41.10541210",
+        "lon": "28.97873920",
+        "mapQuery": "Vadi İstanbul, İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.10541210,28.97873920&output=embed",
+        "address": "AYAZAĞA MAH CENDERE CAD NO: 109/C KAPI NO: 253 34396",
+        "phone": "(0212) 803 4831",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "Viaport A.V.M.",
+        "lat": "40.93635600",
+        "lon": "29.32770300",
+        "mapQuery": "Viaport A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=40.93635600,29.32770300&output=embed",
+        "address": "Viaport A.V.M. Yenişehir Mh. Dedepaşa Cd. No:2 Mağaza No:056 Kurtköy",
+        "phone": "0216 696 15 44",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İSTANBUL",
+        "name": "İstinye Park A.V.M.",
+        "lat": "41.11151700",
+        "lon": "29.03466200",
+        "mapQuery": "İstinye Park A.V.M., İSTANBUL",
+        "mapUrl": "https://www.google.com/maps?q=41.11151700,29.03466200&output=embed",
+        "address": "Pınar Mh. İstinye Bayırı Cd. İstinye Park Avm Mağaza No: 398",
+        "phone": "0212 345 67 39",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "Agora A.V.M.",
+        "lat": "38.39460100",
+        "lon": "27.05410000",
+        "mapQuery": "Agora A.V.M., İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.39460100,27.05410000&output=embed",
+        "address": "Agora Alışveriş Merkezi No:1448-1448a Mağaza No:Z-2-20",
+        "phone": "0232 278 94 04",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "DESA / SAMSONITE İzmir Forum",
+        "lat": "38.45069800",
+        "lon": "27.21139700",
+        "mapQuery": "DESA / SAMSONITE İzmir Forum, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.45069800,27.21139700&output=embed",
+        "address": "Forum Bornova Avm. Kazım Birlik M. 372 S. E Blok No:24/H",
+        "phone": "0232 339 70 77",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "Forum Bornova A.V.M",
+        "lat": "38.45069800",
+        "lon": "27.21139700",
+        "mapQuery": "Forum Bornova A.V.M, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.45069800,27.21139700&output=embed",
+        "address": "Forum Bornova Avm. Kazım Birlik M. 372 S. E Blok No:24/H",
+        "phone": "0232 339 70 77",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "Novada Outlet A.V.M.",
+        "lat": "38.37709100",
+        "lon": "27.07308100",
+        "mapQuery": "Novada Outlet A.V.M., İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.37709100,27.07308100&output=embed",
+        "address": "Uzundere Mevkii Novada Outlet A.V.M. 12-13/A",
+        "phone": "0232 259 39 99",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "Optimum A.V.M.",
+        "lat": "38.34004100",
+        "lon": "27.13365600",
+        "mapQuery": "Optimum A.V.M., İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.34004100,27.13365600&output=embed",
+        "address": "Beyazevler Mah. 19m-2d Pafta 148 Ada 46 Nolu Parsel Mağaza No:B1k-004 İzmir Optimum Outlet A.V.M",
+        "phone": "0232 273 80 08",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "SAMSONITE / DESA Novada Outlet AVM",
+        "lat": "38.37709100",
+        "lon": "27.07308100",
+        "mapQuery": "SAMSONITE / DESA Novada Outlet AVM, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.37709100,27.07308100&output=embed",
+        "address": "Uzundere Mevkii Novada Outlet A.V.M. 12-13/A",
+        "phone": "0232 259 39 99",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "SAMSONITE Agora A.V.M",
+        "lat": "38.39634700",
+        "lon": "26.99236400",
+        "mapQuery": "SAMSONITE Agora A.V.M, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.39634700,26.99236400&output=embed",
+        "address": "Mithatpaşa caddesi Agora Alışveriş Merkezi 3 nolu parsel no:1446  1. Kat No:124",
+        "phone": "0232 277 67 92",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "SAMSONITE İzmir Adnan Menderes Havalimanı - 2",
+        "lat": "38.29516000",
+        "lon": "27.14725800",
+        "mapQuery": "SAMSONITE İzmir Adnan Menderes Havalimanı - 2, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.29516000,27.14725800&output=embed",
+        "address": "Adnan Menderes Airport TR İç Hatlar - Samsonite mağazası Gaziemir/İZMİR",
+        "phone": "0212 692 23 37",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "SAMSONITE İzmir Optimum",
+        "lat": "38.33866900",
+        "lon": "27.13473100",
+        "mapQuery": "SAMSONITE İzmir Optimum, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.33866900,27.13473100&output=embed",
+        "address": "Optimum AVM / Samsonite Magazasi Beyaz evler mah. Akcay cad. No:101 Gaziemir - Izmir",
+        "phone": "0232 273 80 10",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "İzmir Mavibahçe",
+        "lat": "38.47400900",
+        "lon": "27.07482800",
+        "mapQuery": "İzmir Mavibahçe, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.47400900,27.07482800&output=embed",
+        "address": "Mavibahçe Avm.No:24 C Blok Zemın Kat CZ19",
+        "phone": "0232 502 15 73",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "İZMİR",
+        "name": "İzmir İstinye Park",
+        "lat": "38.39847000",
+        "lon": "27.06691400",
+        "mapQuery": "İzmir İstinye Park, İZMİR",
+        "mapUrl": "https://www.google.com/maps?q=38.39847000,27.06691400&output=embed",
+        "address": "İzmir İstinye Park Desa; Bahçelerarası Mah. Şehit Bnb. Ali Resmi Tufan sok. No: 3, Balçova / İzmir",
+        "phone": "0232 683 27 48",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+
+      {
+        "city": "MERSİN",
+        "name": "DESA - SAMSONITE / Forum Mersin AVM",
+        "lat": "36.79184800",
+        "lon": "34.61079400",
+        "mapQuery": "DESA - SAMSONITE / Forum Mersin AVM, MERSİN",
+        "mapUrl": "https://www.google.com/maps?q=36.79184800,34.61079400&output=embed",
+        "address": "Güvenevler Mah. 1. Cadde No: 120-133 Forum Mersin AVM A Blok Zemin Kat Mağaza No: GF 08",
+        "phone": "0324 331 51 46",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "MERSİN",
+        "name": "DESA / Forum Mersin AVM",
+        "lat": "36.79184800",
+        "lon": "34.61079400",
+        "mapQuery": "DESA / Forum Mersin AVM, MERSİN",
+        "mapUrl": "https://www.google.com/maps?q=36.79184800,34.61079400&output=embed",
+        "address": "Güvenevler Mah. 1. Cadde No: 120-133 Forum Mersin AVM A Blok Zemin Kat Mağaza No: GF 08",
+        "phone": "0324 331 51 46",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "MUĞLA",
+        "name": "Bodrum Midtown AVM",
+        "lat": "37.05700530",
+        "lon": "27.35695220",
+        "mapQuery": "Bodrum Midtown AVM, MUĞLA",
+        "mapUrl": "https://www.google.com/maps?q=37.05700530,27.35695220&output=embed",
+        "address": "Cumhuriyet Caddesi Kemer Mevkii No: 6/2 Bodrum Midtown AVM Bodrum Kat Mağaza No: 1B-133 (B1-08) 48200 Ortakent",
+        "phone": "0252 358 67 81",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "MUĞLA",
+        "name": "SAMSONITE Bodrum Midtown",
+        "lat": "37.05853800",
+        "lon": "27.35727000",
+        "mapQuery": "SAMSONITE Bodrum Midtown, MUĞLA",
+        "mapUrl": "https://www.google.com/maps?q=37.05853800,27.35727000&output=embed",
+        "address": "Midtown Alışveriş Merkezi Cumhuriyet Caddesi Kemer Mevkii No:06 1B-112 Ortakent Bodrum/ Muğla Posta kod:48420",
+        "phone": "0252 358 59 88",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "MUĞLA",
+        "name": "SAMSONITE Fethiye Erasta Samsonite",
+        "lat": "36.62216410",
+        "lon": "29.13000450",
+        "mapQuery": "SAMSONITE Fethiye Erasta Samsonite, MUĞLA",
+        "mapUrl": "https://www.google.com/maps?q=36.62216410,29.13000450&output=embed",
+        "address": "Fethiye Erasta Alışveriş Merkezi Taşyaka, Ölüdeniz Cd. No:14, 48300 Fethiye/Muğla",
+        "phone": "0252 614 02 10",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "MUĞLA",
+        "name": "SAMSONITE Milas Havalimanı",
+        "lat": "37.24866030",
+        "lon": "27.66180380",
+        "mapQuery": "SAMSONITE Milas Havalimanı, MUĞLA",
+        "mapUrl": "https://www.google.com/maps?q=37.24866030,27.66180380&output=embed",
+        "address": "Milas-Bodrum Havalimanı Ekin Ambarı Mah.Havaalanı Sk.No:3 Milas/MUĞLA Gidiş Terminali",
+        "phone": "0212 692 23 38",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "SAMSUN",
+        "name": "DESA / SAMSONITE Piazza Avm",
+        "lat": "41.27693410",
+        "lon": "36.35163940",
+        "mapQuery": "DESA / SAMSONITE Piazza Avm, SAMSUN",
+        "mapUrl": "https://www.google.com/maps?q=41.27693410,36.35163940&output=embed",
+        "address": "YENİ MAHALLE ÇARŞAMBA CD. NO:52 MĞZ NO: 1-19",
+        "phone": "0362 503 20 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "SAMSUN",
+        "name": "Piazza Avm",
+        "lat": "41.27693410",
+        "lon": "36.35163940",
+        "mapQuery": "Piazza Avm, SAMSUN",
+        "mapUrl": "https://www.google.com/maps?q=41.27693410,36.35163940&output=embed",
+        "address": "YENİ MAHALLE ÇARŞAMBA CD. NO:52 MĞZ NO: 1-19",
+        "phone": "0362 503 20 55",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "TEKİRDAĞ",
+        "name": "Avantaj Outlet Center",
+        "lat": "41.20561500",
+        "lon": "27.84059100",
+        "mapQuery": "Avantaj Outlet Center, TEKİRDAĞ",
+        "mapUrl": "https://www.google.com/maps?q=41.20561500,27.84059100&output=embed",
+        "address": "Çerkezköy yolu üzeri yulaflı mevkii B 28 ÇORLU / TEKİRDAG",
+        "phone": "(0282) 676 44 29",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "TEKİRDAĞ",
+        "name": "DESA / SAMSONITE Avantaj Outlet Center",
+        "lat": "41.20561500",
+        "lon": "27.84059100",
+        "mapQuery": "DESA / SAMSONITE Avantaj Outlet Center, TEKİRDAĞ",
+        "mapUrl": "https://www.google.com/maps?q=41.20561500,27.84059100&output=embed",
+        "address": "Çerkezköy yolu üzeri yulaflı mevkii B 28 ÇORLU / TEKİRDAG",
+        "phone": "0 282 676 44 30",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "TEKİRDAĞ",
+        "name": "DESA / SAMSONITE Çorlu Orion",
+        "lat": "41.15190400",
+        "lon": "27.83437700",
+        "mapQuery": "DESA / SAMSONITE Çorlu Orion, TEKİRDAĞ",
+        "mapUrl": "https://www.google.com/maps?q=41.15190400,27.83437700&output=embed",
+        "address": "Omurtak Cad. Muhittin Mah. Mağaza No:9",
+        "phone": "0282 673 53 14",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      },
+      {
+        "city": "TEKİRDAĞ",
+        "name": "Çorlu Orion",
+        "lat": "41.15190400",
+        "lon": "27.83437700",
+        "mapQuery": "Çorlu Orion, TEKİRDAĞ",
+        "mapUrl": "https://www.google.com/maps?q=41.15190400,27.83437700&output=embed",
+        "address": "Omurtak Cad. Muhittin Mah. Mağaza No:9",
+        "phone": "0282 673 53 14",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      }
     ]
   },
- {
-  "country": "Kuzey Kıbrıs",
-  "stores": [
-    {
-      "city": "City Mall AVM",
-      "name": "DESA - Kıbrıs City Mall AVM",
-      "lat": "35.126492",
-      "lon": "33.920690",
-      "mapQuery": "DESA - Kıbrıs City Mall AVM, City Mall AVM",
-      "mapUrl": "https://www.google.com/maps?q=35.126492,33.920690&output=embed"
-    }
-  ]
-}
+  {
+    "country": "Kuzey Kıbrıs",
+    "stores": [
+      {
+        "city": "City Mall AVM",
+        "name": "DESA - Kıbrıs City Mall AVM",
+        "lat": "35.126492",
+        "lon": "33.920690",
+        "mapQuery": "DESA - Kıbrıs City Mall AVM, City Mall AVM",
+        "mapUrl": "https://www.google.com/maps?q=35.126492,33.920690&output=embed",
+        "address": "City Mall Alışveriş Merkezi, Zemin Kat, No:13 Gazimağusa - Kıbrıs",
+        "phone": "0392 365 46 66",
+        "workingHours": {
+          "Pazartesi": "10:00 - 22:00",
+          "Salı": "10:00 - 22:00",
+          "Çarşamba": "10:00 - 22:00",
+          "Perşembe": "10:00 - 22:00",
+          "Cuma": "10:00 - 22:00",
+          "Cumartesi": "10:00 - 22:00",
+          "Pazar": "10:00 - 22:00"
+        }
+      }
+    ]
+  }
 ]

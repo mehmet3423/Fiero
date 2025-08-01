@@ -387,7 +387,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
             </label>
             <input
               type="text"
-              className="form-control"
+              className="form-control shadow-none"
               placeholder="Koleksiyon adını girin"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
@@ -402,7 +402,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
           Açıklama <span className="text-danger">*</span>
         </label>
         <textarea
-          className="form-control"
+          className="form-control shadow-none"
           rows={3}
           placeholder="Koleksiyon açıklamasını girin"
           value={formData.description}
@@ -427,7 +427,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               </label>
               <input
                 type="datetime-local"
-                className="form-control"
+                className="form-control shadow-none"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 min={new Date().toISOString().slice(0, 16)}
@@ -439,7 +439,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               </label>
               <input
                 type="datetime-local"
-                className="form-control"
+                className="form-control shadow-none"
                 value={expirationDate}
                 onChange={(e) => setExpirationDate(e.target.value)}
                 min={startDate || new Date().toISOString().slice(0, 16)}
@@ -450,7 +450,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
           <div>
             <input
               type="text"
-              className="form-control"
+              className="form-control shadow-none"
               placeholder="Ürün ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -545,7 +545,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               </label>
               <input
                 type="datetime-local"
-                className="form-control"
+                className="form-control shadow-none"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 min={new Date().toISOString().slice(0, 16)}
@@ -557,7 +557,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               </label>
               <input
                 type="datetime-local"
-                className="form-control"
+                className="form-control shadow-none"
                 value={expirationDate}
                 onChange={(e) => setExpirationDate(e.target.value)}
                 min={startDate || new Date().toISOString().slice(0, 16)}

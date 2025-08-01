@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
 
 declare global {
     interface Window {
@@ -20,7 +21,9 @@ interface Specification {
 }
 
 interface ProductFilterSidebarProps {
-    categories: { id: string; name: string }[];
+    categories?: {
+        displayIndex: any; id: string; name: string 
+}[]; // Prop olarak gelen kategoriler
     selectedFilters: Record<string, string[]>;
     show: boolean;
     onClose: () => void;
@@ -34,7 +37,7 @@ interface ProductFilterSidebarProps {
 }
 
 const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
-    categories,
+    categories: propCategories, // Prop'tan gelen kategorileri rename ediyoruz
     selectedFilters,
     onFilterChange,
     show,
@@ -45,6 +48,15 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
     priceRange,
     onPriceRangeChange,
 }) => {
+    // Lookup hook'u kullanarak kategorileri çekiyoruz
+    const { categories: lookupCategories } = useMainCategoriesLookUp();
+
+    // Kategorileri belirliyoruz: önce lookup'tan gelen, yoksa prop'tan gelen
+    const categories = lookupCategories?.items || propCategories || [];
+
+    console.log('Lookup categories:', lookupCategories);
+    console.log('Final categories:', categories);
+
     const handleFilter = (group: string, value: string) => {
         console.log('Filter triggered:', group, value);
         console.log('Current filters before:', selectedFilters);
@@ -99,11 +111,12 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
 
                 if (rangeSlider && window.noUiSlider && window.wNumb) {
                     if ((rangeSlider as any).noUiSlider) {
-                        (rangeSlider as any).noUiSlider.destroy();
+                        (rangeSlider as any).noUiSlider.set([priceRange[0], priceRange[1]]);
+                        return;
                     }
 
                     window.noUiSlider.create(rangeSlider, {
-                        start: [0, 1000],
+                        start: [priceRange[0], priceRange[1]],
                         step: 100,
                         range: {
                             min: [0],
@@ -130,25 +143,24 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                 Math.round(parseFloat(values[0])),
                                 Math.round(parseFloat(values[1]))
                             ];
-                            console.log('🔥 SLIDER - Price range updated:', newRange);
                             onPriceRangeChange(newRange);
-                        }, 300);
+                        }, 100);
                     });
                 }
-            }, 300);
+            }, 100);
 
             return () => clearTimeout(timer);
         }
     }, [show]);
 
     useEffect(() => {
-        return () => {
+        if (show && typeof window !== 'undefined') {
             const rangeSlider = document.getElementById("slider-range");
             if (rangeSlider && (rangeSlider as any).noUiSlider) {
-                (rangeSlider as any).noUiSlider.destroy();
+                (rangeSlider as any).noUiSlider.set([priceRange[0], priceRange[1]]);
             }
-        };
-    }, []);
+        }
+    }, [priceRange, show]);
 
     return (
         <div className={`offcanvas offcanvas-start canvas-filter${show ? " show" : ""}`} id="filterShop">
@@ -165,7 +177,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                     ></span>
                 </header>
                 <div className="canvas-body">
-                    {/* Kategoriler - Statik */}
+                    {/* Kategoriler - Lookup ile Backend'den */}
                     <div className="widget-facet wd-categories">
                         <div
                             className="facet-title"
@@ -184,22 +196,25 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                         <span>kategori yok</span>
                                     </li>
                                 ) : (
-                                    categories.map((cat) => (
-                                        <li
-                                            className={`cate-item${selectedFilters.category?.includes(cat.id) ? " current" : ""}`}
-                                            key={cat.id}
-                                        >
-                                            <a
-                                                href="#"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleFilter("category", cat.id);
-                                                }}
+                                    categories
+                                        .slice()
+                                        .sort((a, b) => a.displayIndex - b.displayIndex) 
+                                        .map((cat) => (
+                                            <li
+                                                className={`cate-item${selectedFilters.category?.includes(cat.id) ? " current" : ""}`}
+                                                key={cat.id}
                                             >
-                                                <span>{cat.name && cat.name.trim() !== "" ? cat.name : "kategori"}</span>
-                                            </a>
-                                        </li>
-                                    ))
+                                                <a
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleFilter("category", cat.id);
+                                                    }}
+                                                >
+                                                    <span>{cat.name && cat.name.trim() !== "" ? cat.name : "kategori"}</span>
+                                                </a>
+                                            </li>
+                                        ))
                                 )}
                             </ul>
                         </div>

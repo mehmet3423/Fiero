@@ -166,7 +166,7 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
           </label>
           <input
             type="text"
-            className="form-control"
+            className="form-control shadow-none"
             placeholder="Koleksiyon adını girin"
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
@@ -180,7 +180,7 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
           Açıklama <span className="text-danger">*</span>
         </label>
         <textarea
-          className="form-control"
+          className="form-control shadow-none"
           rows={3}
           placeholder="Koleksiyon açıklamasını girin"
           value={formData.description}

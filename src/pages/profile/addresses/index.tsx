@@ -161,49 +161,34 @@ function AddressesPage() {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-          padding: "20px 24px",
-          border: "1px solid #eee",
-          borderRadius: "8px",
-          backgroundColor: "#fff",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            color: "#666",
-            fontSize: "14px",
-            lineHeight: "1.5",
-          }}
-        >
+      <style jsx>{`
+        .cursor-pointer {
+          cursor: pointer;
+        }
+        .cursor-pointer:hover {
+          background-color: #f8f9fa !important;
+        }
+        .icon-edit:hover {
+          color: #000 !important;
+        }
+        .text-danger:hover {
+          color: #c82333 !important;
+          background-color: #f8f9fa !important;
+        }
+        .shadow-none:focus {
+          box-shadow: none !important;
+          outline: none !important;
+          border-color: #ced4da !important;
+        }
+      `}</style>
+      
+      <div className="d-flex justify-content-between align-items-center mb-4 p-3 border rounded bg-white shadow-sm">
+        <p className="mb-0 text-muted small">
           Aşağıdaki adresler, ödeme sayfasında varsayılan olarak
           kullanılacaktır.
         </p>
         <button
-          style={{
-            padding: "12px 24px",
-            border: "1px solid #000",
-            borderRadius: "4px",
-            backgroundColor: "#000",
-            color: "#fff",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
-            transition: "all 0.3s ease",
-            whiteSpace: "nowrap",
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = "#333";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = "#000";
-          }}
+          className="btn btn-dark btn-sm text-nowrap"
           onClick={() => openModal("add")}
         >
           Adres Ekle
@@ -214,95 +199,33 @@ function AddressesPage() {
         {addresses.length > 0 ? (
           addresses.map((address) => (
             <div className="col-lg-6 mb-3" key={address.id}>
-              <div
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: "8px",
-                  padding: "24px",
-                  backgroundColor: "#fff",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  height: "100%",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "18px",
-                      fontWeight: "600",
-                      color: "#333",
-                    }}
-                  >
+              <div className="border rounded p-4 bg-white shadow-sm h-100">
+                <div className="d-flex justify-content-between align-items-start mb-3">
+                  <h3 className="mb-0 h5 fw-semibold text-dark">
                     {address.firstName} {address.lastName}
                   </h3>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div className="d-flex gap-2">
                     <i
-                      style={{
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        color: "#666",
-                        padding: "4px",
-                        borderRadius: "4px",
-                        transition: "all 0.3s ease",
-                      }}
-                      className="icon-edit"
+                      className="icon-edit text-muted p-1 rounded cursor-pointer"
                       onClick={() => openModal("edit", address)}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.color = "#000";
-                        e.currentTarget.style.backgroundColor = "#f8f9fa";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.color = "#666";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
                     ></i>
-                    <i
-                      style={{
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        color: "#dc3545",
-                        padding: "4px",
-                        borderRadius: "4px",
-                        transition: "all 0.3s ease",
-                      }}
-                      className="bx bxs-trash"
+                    <span
+                      className="text-danger p-1 rounded cursor-pointer fw-bold"
                       onClick={() => openModal("delete", address)}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = "#f8f9fa";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
-                    ></i>
+                      style={{ fontSize: '16px', lineHeight: '1' }}
+                    >
+                      ×
+                    </span>
                   </div>
                 </div>
-                <div
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: "1.6",
-                    color: "#555",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: "500",
-                      marginBottom: "8px",
-                      color: "#333",
-                    }}
-                  >
+                <div className="small lh-base text-secondary">
+                  <div className="fw-medium mb-2 text-dark">
                     {address.title}
                   </div>
-                  <div style={{ marginBottom: "4px" }}>
+                  <div className="mb-1">
                     {address.city} / {address.district}
                   </div>
-                  <div style={{ marginBottom: "8px" }}>Türkiye</div>
+                  <div className="mb-2">Türkiye</div>
                   <div>{address.fullAddress}</div>
                 </div>
               </div>
@@ -310,59 +233,15 @@ function AddressesPage() {
           ))
         ) : (
           <div className="col-lg-6">
-            <div
-              style={{
-                border: "1px solid #eee",
-                borderRadius: "8px",
-                padding: "24px",
-                backgroundColor: "#fff",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                textAlign: "center",
-              }}
-            >
-              <h3
-                style={{
-                  marginBottom: "16px",
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: "#333",
-                }}
-              >
+            <div className="border rounded p-4 bg-white shadow-sm text-center">
+              <h3 className="mb-3 h5 fw-semibold text-dark">
                 Adresim
               </h3>
-              <p
-                style={{
-                  marginBottom: "16px",
-                  color: "#666",
-                  fontSize: "14px",
-                  lineHeight: "1.5",
-                }}
-              >
+              <p className="mb-3 text-muted small lh-base">
                 Henüz bir fatura adresi eklemediniz.
               </p>
               <button
-                style={{
-                  padding: "8px 16px",
-                  border: "1px solid #000",
-                  borderRadius: "4px",
-                  backgroundColor: "transparent",
-                  color: "#000",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  transition: "all 0.3s ease",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#000";
-                  e.currentTarget.style.color = "#fff";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "#000";
-                }}
+                className="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1"
                 onClick={() => openModal("add")}
               >
                 Ekle <i className="icon-edit"></i>
@@ -380,7 +259,7 @@ function AddressesPage() {
         approveButtonStyle={{
           backgroundColor: "#000",
           color: "#fff",
-          border: "1px solid #000", // Added border style
+          border: "1px solid #000",
         }}
         isLoading={isAddingAddress}
         formId="addAddressForm"
@@ -388,7 +267,7 @@ function AddressesPage() {
         <form id="addAddressForm" onSubmit={handleAddAddress}>
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Adınız"
             value={newAddress.firstName}
             onChange={(e) =>
@@ -397,7 +276,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Soyadınız"
             value={newAddress.lastName}
             onChange={(e) =>
@@ -406,7 +285,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Adres Başlığı"
             value={newAddress.title}
             onChange={(e) =>
@@ -436,7 +315,7 @@ function AddressesPage() {
           /> */}
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Ülke"
             value="Türkiye"
             readOnly
@@ -479,9 +358,16 @@ function AddressesPage() {
                 ...provided,
                 backgroundColor: "#f8f8f8",
               }),
-              control: (provided) => ({
+              control: (provided, state) => ({
                 ...provided,
                 backgroundColor: "#f8f8f8",
+                outline: "none",
+                boxShadow: "none",
+                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
+                "&:hover": {
+                  borderColor: "#ced4da",
+                  boxShadow: "none",
+                },
               }),
             }}
           />
@@ -521,15 +407,22 @@ function AddressesPage() {
                 ...provided,
                 backgroundColor: "#f8f8f8",
               }),
-              control: (provided) => ({
+              control: (provided, state) => ({
                 ...provided,
                 backgroundColor: "#f8f8f8",
+                outline: "none",
+                boxShadow: "none",
+                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
+                "&:hover": {
+                  borderColor: "#ced4da",
+                  boxShadow: "none",
+                },
               }),
             }}
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Mahalle"
             value={newAddress.neighbourhood}
             onChange={(e) =>
@@ -538,7 +431,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Cadde"
             value={newAddress.street}
             onChange={(e) =>
@@ -547,7 +440,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Posta Kodu"
             value={newAddress.postalCode}
             onChange={(e) =>
@@ -561,7 +454,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Açık Adres"
             value={newAddress.fullAddress}
             onChange={(e) =>
@@ -579,7 +472,7 @@ function AddressesPage() {
         approveButtonStyle={{
           backgroundColor: "#000",
           color: "#fff",
-          border: "1px solid #000", // Added border style
+          border: "1px solid #000",
         }}
         isLoading={isUpdatingAddress}
         formId="editAddressForm"
@@ -587,7 +480,7 @@ function AddressesPage() {
         <form id="editAddressForm" onSubmit={handleUpdateAddress}>
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Adınız"
             value={editAddress?.firstName || ""}
             onChange={(e) =>
@@ -600,7 +493,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Soyadınız"
             value={editAddress?.lastName || ""}
             onChange={(e) =>
@@ -614,7 +507,7 @@ function AddressesPage() {
 
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Adres Başlığı"
             value={editAddress?.title || ""}
             onChange={(e) =>
@@ -625,7 +518,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Ülke"
             value="Türkiye"
             readOnly
@@ -667,9 +560,16 @@ function AddressesPage() {
                 ...provided,
                 backgroundColor: "#f8f8f8",
               }),
-              control: (provided) => ({
+              control: (provided, state) => ({
                 ...provided,
                 backgroundColor: "#f8f8f8",
+                outline: "none",
+                boxShadow: "none",
+                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
+                "&:hover": {
+                  borderColor: "#ced4da",
+                  boxShadow: "none",
+                },
               }),
             }}
           />
@@ -709,15 +609,22 @@ function AddressesPage() {
                 ...provided,
                 backgroundColor: "#f8f8f8",
               }),
-              control: (provided) => ({
+              control: (provided, state) => ({
                 ...provided,
                 backgroundColor: "#f8f8f8",
+                outline: "none",
+                boxShadow: "none",
+                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
+                "&:hover": {
+                  borderColor: "#ced4da",
+                  boxShadow: "none",
+                },
               }),
             }}
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Mahalle"
             value={editAddress?.neighbourhood || ""}
             onChange={(e) =>
@@ -730,7 +637,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Cadde"
             value={editAddress?.street || ""}
             onChange={(e) =>
@@ -741,7 +648,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Posta Kodu"
             value={editAddress?.postalCode || ""}
             onChange={(e) =>
@@ -754,7 +661,7 @@ function AddressesPage() {
           />
           <input
             type="text"
-            className="form-control mb-3"
+            className="form-control mb-3 shadow-none"
             placeholder="Açık Adres"
             value={editAddress?.fullAddress || ""}
             onChange={(e) =>
