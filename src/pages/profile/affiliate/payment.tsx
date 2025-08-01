@@ -118,69 +118,65 @@ export default function AffiliatePaymentPage({
       {/* Statistics Cards */}
       <div className="row mb-4">
         <div className="col-3">
-          <div className="card h-100 text-center">
-            <div className="card-body">
-              <div className="card-icon mt-2">
-                <i
-                  className="bx bx-shopping-bag mb-1"
-                  style={{ fontSize: "3rem", color: "#6c757d" }}
-                ></i>
+          <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+            <div className="card-body py-3 px-2">
+              <div className="card-icon mb-2">
+                <i className="bx bx-shopping-bag text-muted" style={{ fontSize: "2.5rem" }}></i>
               </div>
-              <h5 className="card-title text-muted mb-1">TOPLAM SATIŞ</h5>
-              <h3 className="text-dark" style={{ fontSize: "2rem" }}>
+              <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                TOPLAM SATIŞ
+              </h6>
+              <h4 className="text-dark mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {totalSales.toFixed(2)} ₺
-              </h3>
+              </h4>
             </div>
           </div>
         </div>
 
         <div className="col-3">
-          <div className="card h-100 text-center">
-            <div className="card-body">
-              <div className="card-icon mt-2">
-                <i
-                  className="bx bx-money mb-1"
-                  style={{ fontSize: "3rem", color: "#17a2b8" }}
-                ></i>
+          <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+            <div className="card-body py-3 px-2">
+              <div className="card-icon mb-2">
+                <i className="bx bx-money text-info" style={{ fontSize: "2.5rem" }}></i>
               </div>
-              <h5 className="card-title text-muted mb-1">AKTARILABİLİR</h5>
-              <h3 className="text-info" style={{ fontSize: "2rem" }}>
+              <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                AKTARILABİLİR
+              </h6>
+              <h4 className="text-info mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {transferableAmount.toFixed(2)} ₺
-              </h3>
+              </h4>
             </div>
           </div>
         </div>
 
         <div className="col-3">
-          <div className="card h-100 text-center">
-            <div className="card-body">
-              <div className="card-icon mt-2">
-                <i
-                  className="bx bx-time-five mb-1"
-                  style={{ fontSize: "3rem", color: "#ffc107" }}
-                ></i>
+          <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+            <div className="card-body py-3 px-2">
+              <div className="card-icon mb-2">
+                <i className="bx bx-time-five text-warning" style={{ fontSize: "2.5rem" }}></i>
               </div>
-              <h5 className="card-title text-muted mb-1">ONAY BEKLEYEN</h5>
-              <h3 className="text-warning" style={{ fontSize: "2rem" }}>
+              <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                ONAY BEKLEYEN
+              </h6>
+              <h4 className="text-warning mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {pendingAmount.toFixed(2)} ₺
-              </h3>
+              </h4>
             </div>
           </div>
         </div>
 
         <div className="col-3">
-          <div className="card h-100 text-center">
-            <div className="card-body">
-              <div className="card-icon mt-2">
-                <i
-                  className="bx bx-check-circle mb-1"
-                  style={{ fontSize: "3rem", color: "#28a745" }}
-                ></i>
+          <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+            <div className="card-body py-3 px-2">
+              <div className="card-icon mb-2">
+                <i className="bx bx-check-circle text-success" style={{ fontSize: "2.5rem" }}></i>
               </div>
-              <h5 className="card-title text-muted mb-1">TRANSFER EDİLEN</h5>
-              <h3 className="text-success" style={{ fontSize: "2rem" }}>
+              <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                TRANSFER EDİLEN
+              </h6>
+              <h4 className="text-success mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {transferredAmount.toFixed(2)} ₺
-              </h3>
+              </h4>
             </div>
           </div>
         </div>
@@ -190,16 +186,13 @@ export default function AffiliatePaymentPage({
       {affiliateUser.status === 5 ? (
         <div className="row">
           <div className="col-12">
-            <div className="card">
-              <div className="card-body text-center">
-                <div className="card-icon mt-2">
-                  <i
-                    className="bx bx-block mb-3"
-                    style={{ fontSize: "3rem", color: "#dc3545" }}
-                  ></i>
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body text-center p-5">
+                <div className="card-icon mb-4">
+                  <i className="bx bx-block text-danger" style={{ fontSize: "4rem" }}></i>
                 </div>
-                <h5 className="text-danger mb-2">Hesap Askıya Alındı</h5>
-                <p className="text-muted mb-0">
+                <h5 className="text-danger mb-3 fw-bold">Hesap Askıya Alındı</h5>
+                <p className="text-muted mb-0 lead">
                   Affiliate hesabınız askıya alındığından dolayı çekim talebi
                   oluşturamazsınız
                 </p>
@@ -210,23 +203,25 @@ export default function AffiliatePaymentPage({
       ) : (
         <div className="row">
           <div className="col-12">
-            <div className="card">
-              <div className="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 className="mb-1 mt-1">Ödeme Talebi Oluştur</h5>
-                  <p className="text-muted mb-0">
-                    Transfer edilebilir kazancınızdan ödeme talebinde
-                    bulunabilirsiniz.
-                  </p>
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body p-4">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="mb-2 fw-bold text-dark">Ödeme Talebi Oluştur</h5>
+                    <p className="text-muted mb-0">
+                      Transfer edilebilir kazancınızdan ödeme talebinde
+                      bulunabilirsiniz.
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-dark btn-lg rounded-pill px-4"
+                    onClick={() => setShowPayoutForm(!showPayoutForm)}
+                    disabled={false}
+                  >
+                    <i className="bx bx-plus me-2"></i>
+                    Yeni Talep
+                  </button>
                 </div>
-                <button
-                  className="btn btn-dark"
-                  onClick={() => setShowPayoutForm(!showPayoutForm)}
-                  disabled={false}
-                >
-                  <i className="bx bx-plus me-2"></i>
-                  Yeni Talep
-                </button>
               </div>
             </div>
           </div>
@@ -237,17 +232,17 @@ export default function AffiliatePaymentPage({
       {showPayoutForm && affiliateUser.status !== 5 && (
         <div className="row mb-4">
           <div className="col-12">
-            <div className="card">
-              <div className="card-body">
+            <div className="card shadow-sm border-0 rounded-4">
+              <div className="card-body p-4">
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
-                      <label className="form-label">
+                      <label className="form-label fw-bold text-dark">
                         Talep Edilecek Tutar (₺)
                       </label>
                       <input
                         type="number"
-                        className="form-control shadow-none"
+                        className="form-control shadow-none border rounded-pill px-3"
                         value={requestAmount}
                         onChange={(e) => setRequestAmount(e.target.value)}
                         min="0"
@@ -261,9 +256,9 @@ export default function AffiliatePaymentPage({
                     </div>
                   </div>
                 </div>
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-3">
                   <button
-                    className="btn btn-dark"
+                    className="btn btn-dark rounded-pill px-4"
                     onClick={handleCreatePayoutRequest}
                     disabled={isCreatingPayout || !requestAmount}
                   >
@@ -283,7 +278,7 @@ export default function AffiliatePaymentPage({
                     )}
                   </button>
                   <button
-                    className="btn btn-outline-secondary"
+                    className="btn btn-outline-secondary rounded-pill px-4"
                     onClick={() => {
                       setShowPayoutForm(false);
                       setRequestAmount("");
@@ -301,67 +296,85 @@ export default function AffiliatePaymentPage({
       {/* Payout Requests Table */}
       <div className="row mt-4">
         <div className="col-12">
-          <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 m-4 ml-4">Ödeme Talepleri</h5>
+          <div className="card shadow-sm border-0 rounded-4">
+            <div className="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+              <h5 className="mb-0 fw-bold text-dark">
+                <i className="bx bx-receipt me-2"></i>
+                Ödeme Talepleri
+              </h5>
+              <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+                <i className="bx bx-list-ul me-1"></i>
+                {payouts.length} talep
+              </span>
             </div>
             <div className="card-body p-0">
               {payoutsLoading ? (
                 <div className="text-center py-5">
-                  <div className="spinner-border" role="status">
+                  <div className="spinner-border text-primary" role="status">
                     <span className="sr-only">Yükleniyor...</span>
                   </div>
+                  <p className="text-muted mt-3 mb-0">Ödeme talepleri yükleniyor...</p>
                 </div>
               ) : payouts.length === 0 ? (
                 <div className="text-center py-5">
-                  <i
-                    className="bx bx-receipt"
-                    style={{ fontSize: "4rem", color: "#ccc" }}
-                  ></i>
-                  <h5 className="mt-3 text-muted">
-                    Henüz ödeme talebiniz bulunmuyor
-                  </h5>
-                  <p className="text-muted">
-                    İlk ödeme talebinizi oluşturmak için yukarıdaki butonu
-                    kullanın
-                  </p>
+                  <div className="empty-state">
+                    <i className="bx bx-receipt text-muted mb-3" style={{ fontSize: "4rem" }}></i>
+                    <h5 className="mt-3 text-muted fw-bold">
+                      Henüz ödeme talebiniz bulunmuyor
+                    </h5>
+                    <p className="text-muted mb-0">
+                      İlk ödeme talebinizi oluşturmak için yukarıdaki butonu
+                      kullanın
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-hover mb-0">
                     <thead className="table-light">
                       <tr>
-                        <th>Talep Tarihi</th>
-                        <th>Tutar</th>
-                        <th>Durum</th>
-                        <th>İşlenme Tarihi</th>
-                        <th>Açıklama</th>
+                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                          Talep Tarihi
+                        </th>
+                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                          Tutar
+                        </th>
+                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                          Durum
+                        </th>
+                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                          İşlenme Tarihi
+                        </th>
+                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                          Açıklama
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {payouts.map((payout) => (
                         <tr key={payout.id}>
-                          <td>{formatDate(payout.requestDate)}</td>
-                          <td>
-                            <strong>
+                          <td className="align-middle">{formatDate(payout.requestDate)}</td>
+                          <td className="align-middle">
+                            <strong className="text-dark">
                               {payout.requestedAmount.toFixed(2)} ₺
                             </strong>
                           </td>
-                          <td>
+                          <td className="align-middle">
                             <span
                               className={`badge bg-${getPayoutStatusColor(
                                 payout.status
-                              )}`}
+                              )} rounded-pill px-3 py-2`}
+                              style={{ fontSize: "0.75rem" }}
                             >
                               {getPayoutStatusText(payout.status)}
                             </span>
                           </td>
-                          <td>
+                          <td className="align-middle">
                             {payout.processedDate
                               ? formatDate(payout.processedDate)
                               : "-"}
                           </td>
-                          <td>{payout.description || "-"}</td>
+                          <td className="align-middle text-muted">{payout.description || "-"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -375,42 +388,93 @@ export default function AffiliatePaymentPage({
 
       <style jsx>{`
         .affiliate-payment-page {
-          padding: 1rem 0;
+          padding: 1.5rem 0;
         }
 
-        .card {
-          border-radius: 0.75rem;
-          border: 1px solid #eee;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        /* Card hover effects */
+        .card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
         }
 
-        .card-icon i {
-          opacity: 0.8;
+        /* Statistics card titles */
+        .card h6.card-title {
+          font-size: 0.7rem;
+          color: #8c9196;
+          letter-spacing: 1px;
         }
 
-        .table th {
-          border-top: none;
-          font-weight: 600;
-          text-transform: uppercase;
-          font-size: 0.8rem;
-          letter-spacing: 0.5px;
+        .card h4 {
+          font-size: 1.6rem;
+          line-height: 1.2;
         }
 
-        .table td {
-          vertical-align: middle;
+        /* Button hover effects */
+        .btn:hover {
+          transform: translateY(-2px);
         }
 
+        /* Form control focus - remove shadow */
+        .form-control:focus {
+          box-shadow: none;
+          outline: none;
+        }
+
+        /* Table hover effects */
+        .table tbody tr {
+          transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+          background: #f8f9fa;
+          transform: translateX(2px);
+        }
+
+        /* Empty state */
+        .empty-state {
+          padding: 3rem 2rem;
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
           .affiliate-payment-page {
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
           }
 
-          .card {
-            margin-bottom: 1rem;
+          .card h4 {
+            font-size: 1.25rem;
+          }
+
+          .card h6.card-title {
+            font-size: 0.6rem;
           }
 
           .table-responsive {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+          }
+
+          .empty-state {
+            padding: 2rem 1rem;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .row .col-3 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            margin-bottom: 1rem;
+          }
+
+          .card h4 {
+            font-size: 1.1rem;
+          }
+
+          .card h6.card-title {
+            font-size: 0.55rem;
+          }
+
+          .table-responsive {
+            font-size: 0.8rem;
           }
         }
       `}</style>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AffiliateCollection } from "@/constants/models/Affiliate";
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateApplicationStatus";
 import { useGetAffiliateCollections } from "@/hooks/services/affiliate/useGetAffiliateCollections";
@@ -32,6 +32,7 @@ export default function AffiliateCollectionsPage({
   >(null);
   const [selectedCollectionType, setSelectedCollectionType] =
     useState<AffiliateCollectionType | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   const {
     collections,
@@ -42,6 +43,18 @@ export default function AffiliateCollectionsPage({
 
   const { deleteCollection, isPending: deleteCollectionPending } =
     useDeleteCollection();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenDropdownId(null);
+    };
+
+    if (openDropdownId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdownId]);
 
   // Utility Functions
   const getCollectionTypeText = (type: AffiliateCollectionType): string => {
@@ -139,7 +152,7 @@ export default function AffiliateCollectionsPage({
   return (
     <AffiliateGuard>
       <div className="affiliate-collections-content">
-        <div className="card">
+        <div className="card shadow-sm border-0 rounded-4">
           <div className="card-body p-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-3">
@@ -152,12 +165,12 @@ export default function AffiliateCollectionsPage({
                 </button>
               </div>
 
-              {/* Collection Count Info */}
-              <div className="collection-info">
+              {/* Collection Filter and Count */}
+              <div className="d-flex align-items-center gap-3">
                 {/* Collection Type Filter */}
                 <div className="filter-section">
                   <select
-                    className="form-select form-select-sm bg-transparent text-dark border-0"
+                    className="form-select form-select-sm border rounded-pill px-3 shadow-none"
                     value={selectedCollectionType || ""}
                     onChange={(e) =>
                       setSelectedCollectionType(
@@ -166,14 +179,11 @@ export default function AffiliateCollectionsPage({
                           : null
                       )
                     }
-                    style={{
-                      minWidth: "100px",
-                      marginRight: "10px",
-                      outline: "none",
-                      boxShadow: "none",
-                    }}
+                    style={{ minWidth: "180px" }}
                   >
-                    <option value="">Tüm Koleksiyonlar</option>
+                    <option value="">
+                      <i className="bx bx-filter-alt me-1"></i>Tüm Koleksiyonlar
+                    </option>
                     <option value={AffiliateCollectionType.Product}>
                       Ürün Bazlı
                     </option>
@@ -188,11 +198,14 @@ export default function AffiliateCollectionsPage({
                     </option>
                   </select>
                 </div>
-                <small className="text-muted" style={{ marginLeft: "10px" }}>
+                
+                {/* Collection Count Badge */}
+                <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+                  <i className="bx bx-list-ul me-1"></i>
                   {selectedCollectionType
                     ? `${filteredCollections.length} koleksiyon`
-                    : `Toplam ${collections?.length || 0} koleksiyon`}
-                </small>
+                    : `${collections?.length || 0} koleksiyon`}
+                </span>
               </div>
             </div>
 
@@ -205,124 +218,166 @@ export default function AffiliateCollectionsPage({
             ) : collections && collections.length > 0 ? (
               <div className="row">
                 {filteredCollections.map((collection) => (
-                  <div key={collection.id} className="col-lg-6 col-xl-6 mb-4">
+                  <div key={collection.id} className="col-lg-4 col-md-6 col-sm-12 mb-3">
                     <div
-                      className={"collection-card card h-100  "}
+                      className={`card h-100 shadow-sm border position-relative overflow-hidden ${!collection.isActive ? 'bg-white' : 'bg-white'}`}
                       style={{
                         cursor: "pointer",
                         opacity: collection.isActive ? 1 : 0.7,
+                        transition: "all 0.3s ease",
+                        borderRadius: "0.75rem",
+                        borderTop: "4px solid #040404",
+                        border: "1px solid #e8e8e8"
                       }}
                       onClick={() => handleViewCollection(collection.id)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-4px)";
+                        e.currentTarget.style.boxShadow = "0 12px 35px rgba(0, 0, 0, 0.12)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "";
+                      }}
                     >
-                      <div className="card-body p-4">
-                        <div className="d-flex justify-content-between align-items-start">
-                          <div className="collection-header flex-grow-1">
-                            <div className="d-flex align-items-center mb-2">
-                              <div className="collection-icon me-3">
-                                <i className="bx bx-collection"></i>
+                      <div className="card-body p-2">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div className="flex-grow-1">
+                            <div className="d-flex align-items-center mb-1">
+                              <div>
+                                <h6
+                                  className="card-title mb-0 fw-bold text-dark"
+                                  style={{ fontSize: "1rem", lineHeight: "1.2" }}
+                                >
+                                  {collection.name}
+                                </h6>
                               </div>
-                              <h5
-                                className="card-title mb-0 fw-bold ml-4 font-weight-bold"
-                                style={{ fontSize: "1.5rem" }}
-                              >
-                                {collection.name}
-                              </h5>
                             </div>
                           </div>
-                          <div className="dropdown">
+                          <div className="dropdown position-relative">
                             <button
-                              className="btn-light dropdown-toggle border-0 bg-transparent border-none shadow-none"
+                              className="btn btn-sm border-0 bg-light"
                               type="button"
-                              data-bs-toggle="dropdown"
-                              onClick={(e) => e.stopPropagation()}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDropdownId(openDropdownId === collection.id ? null : collection.id);
+                              }}
+                              style={{ 
+                                fontSize: "1rem",
+                                padding: "2px 6px",
+                                color: "#666",
+                                borderRadius: "4px"
+                              }}
                             >
-                              <i className="bx bx-dots-vertical-rounded"></i>
+                              ⋮
                             </button>
-                            <ul className="dropdown-menu dropdown-menu-end shadow-sm">
-                              <li>
-                                <a
-                                  className="dropdown-item"
+                            {openDropdownId === collection.id && (
+                              <div 
+                                className="position-absolute bg-white border rounded shadow-sm"
+                                style={{ 
+                                  top: "100%",
+                                  right: "0",
+                                  zIndex: 1000,
+                                  minWidth: "80px",
+                                  fontSize: "0.75rem",
+                                  marginTop: "2px"
+                                }}
+                              >
+                                <div
+                                  className="py-1 px-2 border-bottom"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setOpenDropdownId(null);
                                     handleEditCollection(collection);
                                   }}
                                   style={{
                                     cursor: "pointer",
-                                    fontSize: "1.2rem",
+                                    fontSize: "0.75rem",
+                                    borderBottom: "1px solid #eee"
                                   }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
                                 >
-                                  <i className="bx bx-edit me-2 text-primary"></i>
                                   Düzenle
-                                </a>
-                              </li>
-                              <li>
-                                <hr className="dropdown-divider" />
-                              </li>
-                              <li>
-                                <a
-                                  className="dropdown-item text-danger"
+                                </div>
+                                <div
+                                  className="py-1 px-2 text-danger"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setOpenDropdownId(null);
                                     handleDeleteClick(collection.id);
                                   }}
                                   style={{
                                     cursor: "pointer",
-                                    fontSize: "1.2rem",
+                                    fontSize: "0.75rem"
                                   }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
                                 >
-                                  <i className="bx bx-trash me-2"></i>
                                   Sil
-                                </a>
-                              </li>
-                            </ul>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         <p
-                          className="collection-description text-muted text-dark font-weight-normal"
-                          style={{ fontSize: "1.2rem" }}
+                          className="text-muted mb-2"
+                          style={{ 
+                            fontSize: "0.8rem",
+                            lineHeight: "1.3",
+                            color: "#6c757d",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            minHeight: "1.8rem"
+                          }}
                         >
                           {collection.description}
                         </p>
                       </div>
-                      <div className="d-flex flex-wrap align-items-center gap-2 m-3">
+                      <div className="d-flex flex-wrap align-items-center gap-2 mx-2 mb-2">
                         <span
-                          className="badge text-dark"
-                          style={{ fontSize: "1.2rem" }}
+                          className="badge bg-light text-dark border"
+                          style={{ fontSize: "0.7rem" }}
                         >
                           <i
                             className="bx bx-package me-1"
-                            style={{ fontSize: "1.2rem" }}
+                            style={{ fontSize: "0.7rem" }}
                           ></i>
-                          {getCollectionTypeText(getCollectionType(collection))}
-                        </span>
-                        <span
-                          className="badge text-dark"
-                          style={{ fontSize: "1.2rem" }}
-                        >
                           {getItemCount(collection)}
                         </span>
+                        {collection.totalEarnedCommission > 0 && (
+                          <span className="badge bg-success text-white" style={{ fontSize: "0.7rem" }}>
+                            <i className="bx bx-money me-1"></i>
+                            {collection.totalEarnedCommission.toFixed(2)}₺
+                          </span>
+                        )}
                       </div>
 
                       {/* Date Information */}
-                      <div className="px-3 pb-3 ml-2">
-                        <small className="text-muted d-block">
-                          <i className="bx bx-calendar me-1"></i>
-                          {new Date(collection.startDate).toLocaleDateString(
-                            "tr-TR"
-                          )}{" "}
-                          -{" "}
-                          {new Date(
-                            collection.expirationDate
-                          ).toLocaleDateString("tr-TR")}
-                        </small>
-                        {collection.totalEarnedCommission > 0 && (
-                          <small className="text-success d-block mt-1">
-                            <i className="bx bx-money me-1"></i>
-                            Kazanılan:{" "}
-                            {collection.totalEarnedCommission.toFixed(2)}₺
+                      <div className="border-top pt-1 px-2 pb-1">
+                        <div className="d-flex justify-content-between align-items-center">
+                          <small className="text-muted" style={{ fontSize: "0.65rem" }}>
+                            <i className="bx bx-calendar me-1"></i>
+                            {new Date(collection.startDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })} - {new Date(collection.expirationDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })}
                           </small>
-                        )}
+                          <span 
+                            className="badge" 
+                            style={{ 
+                              fontSize: "0.65rem",
+                              backgroundColor: getCollectionType(collection) === 1 ? "#e8f0fe" : 
+                                             getCollectionType(collection) === 2 ? "#f0f4ff" : 
+                                             getCollectionType(collection) === 3 ? "#f5f5f5" : "#faf7ff",
+                              color: getCollectionType(collection) === 1 ? "#1565c0" : 
+                                     getCollectionType(collection) === 2 ? "#3949ab" : 
+                                     getCollectionType(collection) === 3 ? "#5f6368" : "#7c4dff",
+                              border: "1px solid #e9ecef"
+                            }}
+                          >
+                            {getCollectionTypeText(getCollectionType(collection))}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -408,6 +463,7 @@ export default function AffiliateCollectionsPage({
           onClose={() => setDeletingCollectionId(null)}
           onApprove={handleConfirmDelete}
           approveButtonText="Evet, Sil"
+          approveButtonClassName="btn-danger"
           isLoading={deleteCollectionPending}
           showFooter={true}
         >
@@ -425,116 +481,45 @@ export default function AffiliateCollectionsPage({
         </GeneralModal>
 
         <style jsx>{`
-          .card {
-            border-radius: 0.75rem;
-            border: 1px solid #eee;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+          .affiliate-collections-content {
+            padding: 1.5rem 0;
           }
 
-          .collection-card {
-            transition: all 0.3s ease;
-            border: 1px solid #e8e8e8;
-            position: relative;
-            overflow: hidden;
+          /* Card hover effects */
+          .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
           }
 
-          .collection-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-            border-color: #d0d0d0;
+          /* Collection card specific hover */
+          .col-lg-4 .card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12) !important;
           }
 
-          .collection-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #040404, #333);
+          /* Empty state */
+          .empty-state {
+            padding: 3rem 2rem;
           }
 
-          .collection-icon {
-            width: 40px;
-            height: 40px;
-            background: rgb(129, 157, 171);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+          /* Button hover effects */
+          .btn:hover {
+            transform: translateY(-1px);
           }
 
-          .collection-icon i {
-            color: white;
-            font-size: 1.2rem;
-          }
+          /* Responsive adjustments */
+          @media (max-width: 768px) {
+            .affiliate-collections-content {
+              padding: 0.75rem 0;
+            }
 
-          .collection-header h5 {
-            color: #2c3e50;
-            font-size: 1.1rem;
-            line-height: 1.3;
-          }
+            .col-lg-4 {
+              margin-bottom: 1rem;
+            }
 
-          .collection-description {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #6c757d;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 2.7rem;
-          }
-
-          .dropdown-toggle {
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-          }
-
-          .collection-card:hover .dropdown-toggle {
-            opacity: 1;
-          }
-
-          .dropdown-menu {
-            border: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 0.5rem 0;
-          }
-
-          .dropdown-item {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-          }
-
-          .dropdown-item:hover {
-            background: #f8f9fa;
-            transform: translateX(2px);
-          }
-
-          .dropdown-divider {
-            margin: 0.25rem 0;
-          }
-
-          .inactive-collection {
-            background-color: #f8f9fa !important;
-            border-color: #e9ecef !important;
-          }
-
-          .inactive-collection:hover {
-            transform: none !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-            border-color: #e9ecef !important;
-          }
-
-          .inactive-collection .collection-header h5 {
-            color: #6c757d !important;
-          }
-
-          .inactive-collection .collection-description {
-            color: #adb5bd !important;
+            .empty-state {
+              padding: 2rem 1rem;
+            }
           }
         `}</style>
       </div>

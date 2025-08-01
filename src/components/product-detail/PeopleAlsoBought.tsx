@@ -30,6 +30,10 @@ const PeopleAlsoBought: React.FC = () => {
           slidesPerView: 2,
           spaceBetween: 10,
         },
+        320: {
+          slidesPerView: 2,
+          spaceBetween: 8,
+        },
       },
     });
   }, []);
