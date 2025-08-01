@@ -5,6 +5,7 @@ export enum QueryKeys {
   GET_USER_PROFILE = "UserInfo",
   UPDATE_USER_PROFILE = "UpdateUserProfile",
   MAIN_CATEGORY_LIST = "MainCategoryList",
+  MAIN_CATEGORY_LOOKUP = "MainCategoryLookup",
   SUB_CATEGORY_LIST = "SubCategoryList",
   PRODUCT_LIST = "ProductList",
   PRODUCT_LIST_BY_CATEGORY = "ProductList_ByCategory",
@@ -50,7 +51,6 @@ export enum QueryKeys {
   PRODUCT_LIST_BY_IDS = "ProductListByIds",
   SEO = "SEO",
   MAIN_CATEGORIES_WITH_SUBS = "mainCategoriesWithSubs",
-  BASIC_PRODUCT_LIST = 'basicProductList',
-  SITEMAP_ITEM = 'SitemapItem',
-
+  BASIC_PRODUCT_LIST = "basicProductList",
+  SITEMAP_ITEM = "SitemapItem",
 }
