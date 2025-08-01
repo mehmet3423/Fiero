@@ -200,7 +200,7 @@ export const GET_SEO_BY_CANONICAL = `${BASE_URL}api/SEO/GetSEOByCanonical`;
 // Settings endpoints
 export const GET_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
 export const UPDATE_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
-export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptiosns/GetSystemSettingTypes`;
+export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptions/GetSystemSettingTypes`;
 export const CREATE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
 export const DELETE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
 
