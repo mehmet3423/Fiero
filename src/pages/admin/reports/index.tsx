@@ -144,9 +144,9 @@ function ReportsPage() {
 
   return (
     <div>
-      <h4 className="fw-bold py-3" style={{ marginLeft: "15px" }}>
+      <h5 className="fw-medium py-3" style={{ marginLeft: "30px" }}>
         Ürün Raporları
-      </h4>
+      </h5>
 
       <div className="row g-3 m-2">
         {reports.map((report, index) => (

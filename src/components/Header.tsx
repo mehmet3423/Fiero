@@ -14,6 +14,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import MobileMenu from "./MobileMenu";
 import CartSidebar from './CartSidebar';
+import SearchSidebar from './SearchSidebar';
+
 
 
 export default function Header() {
@@ -100,17 +102,16 @@ export default function Header() {
   const toggleSearch = () => {
     setShowSearchInput(!showSearchInput);
     if (!showSearchInput) {
-      // Input gösterildiğinde focus yap
       setTimeout(() => {
-        const input = searchRef.current?.querySelector('input');
-        input?.focus();
+        const input = document.querySelector('.canvas-search input');
+        (input as HTMLInputElement)?.focus();
       }, 100);
     } else {
-      // Input gizlendiğinde temizle
       setSearchTerm("");
       setShowResults(false);
     }
   };
+
   // Search input'unu kapatma fonksiyonu:
   const closeSearch = () => {
     setShowSearchInput(false);
@@ -336,152 +337,21 @@ export default function Header() {
             <div className="col-xl-3 col-md-4 col-3">
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                 <li className="nav-search">
-                  <div ref={searchRef}>
-                    <button
-                      onClick={toggleSearch}
-                      className="nav-icon-item"
-                    >
-                      <i className="icon icon-search"></i>
-                    </button>
+                  <button
+                    onClick={toggleSearch}
+                    className="nav-icon-item"
+                  >
+                    <i className="icon icon-search" style={{ paddingTop: '20%' }}></i>
+                  </button>
 
-                    {showSearchInput && (
-                      <div className={`offcanvas offcanvas-end canvas-search ${showSearchInput ? 'show' : ''}`}>
-                        <div className="canvas-wrapper">
-                          <header className="tf-search-head">
-                            <div className="title fw-5">
-                              Sitemizde Ara
-                              <div className="close">
-                                <span
-                                  className="icon-close icon-close-popup"
-                                  onClick={closeSearch}
-                                ></span>
-                              </div>
-                            </div>
-                            <div className="tf-search-sticky">
-                              <form className="tf-mini-search-frm" onSubmit={handleSearchSubmit}>
-                                <fieldset className="text">
-                                  <input
-                                    type="text"
-                                    placeholder="Ürün ara..."
-                                    value={searchTerm}
-                                    onChange={handleSearchChange}
-                                    name="text"
-                                    tabIndex={0}
-                                    autoFocus
-                                    required
-                                  />
-                                </fieldset>
-                                <button type="submit">
-                                  <i className="icon-search"></i>
-                                </button>
-                              </form>
-                            </div>
-                          </header>
-
-                          <div className="canvas-body p-0">
-                            <div className="tf-search-content">
-                              {/* Arama sonuçları varsa göster */}
-                              {showResults && (
-                                <div className="tf-cart-has-results">
-                                  <div className="tf-search-content-title fw-5">Arama Sonuçları</div>
-
-                                  {isSearching ? (
-                                    <div className="tf-search-loading">
-                                      <i className="icon icon-refresh"></i>
-                                      <span>Aranıyor...</span>
-                                    </div>
-                                  ) : searchResults.length > 0 ? (
-                                    <div className="tf-search-results">
-                                      {searchResults.map((product) => (
-                                        <div
-                                          key={product.id}
-                                          className="tf-loop-item"
-                                          onClick={() => handleResultClick(product.id)}
-                                        >
-                                          <div className="image">
-                                            <img
-                                              src={product.baseImageUrl || "/assets/site/images/no-image.jpg"}
-                                              alt={product.title}
-                                              onError={(e) => {
-                                                e.currentTarget.src = "/assets/site/images/no-image.jpg";
-                                              }}
-                                            />
-                                          </div>
-                                          <div className="content">
-                                            <div className="product-title">{product.title}</div>
-                                            <div className="tf-product-info-price">
-                                              {product.discountedPrice ? (
-                                                <>
-                                                  <div className="compare-at-price">
-                                                    {product.price.toLocaleString("tr-TR", {
-                                                      style: "currency",
-                                                      currency: "TRY",
-                                                    })}
-                                                  </div>
-                                                  <div className="price-on-sale fw-6">
-                                                    {product.discountedPrice.toLocaleString("tr-TR", {
-                                                      style: "currency",
-                                                      currency: "TRY",
-                                                    })}
-                                                  </div>
-                                                </>
-                                              ) : (
-                                                <div className="price fw-6">
-                                                  {product.price.toLocaleString("tr-TR", {
-                                                    style: "currency",
-                                                    currency: "TRY",
-                                                  })}
-                                                </div>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : searchTerm.length >= 3 ? (
-                                    <div className="tf-search-no-results">
-                                      <i className="icon icon-search"></i>
-                                      <span>Ürün bulunamadı</span>
-                                    </div>
-                                  ) : searchTerm.length > 0 ? (
-                                    <div className="tf-search-no-results">
-                                      <i className="icon icon-info"></i>
-                                      <span>En az 3 karakter girmelisiniz</span>
-                                    </div>
-                                  ) : null}
-                                </div>
-                              )}
-
-                              {/* Arama sonucu yoksa quick links göster */}
-                              {!showResults && (
-                                <div className="tf-cart-hide-has-results">
-                                  <div className="tf-col-quicklink">
-                                    <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
-                                    <ul className="tf-quicklink-list">
-                                      <li className="tf-quicklink-item">
-                                        <Link href="/products">Tüm Ürünler</Link>
-                                      </li>
-                                      {categories?.items?.slice(0, 4).map((category) => (
-                                        <li key={category.id} className="tf-quicklink-item">
-                                          <Link href={`/products?categoryId=${category.id}`}>
-                                            {category.name}
-                                          </Link>
-                                        </li>
-                                      )) || (
-                                          <li className="tf-quicklink-item">
-                                            <span>Kategoriler yükleniyor...</span>
-                                          </li>
-                                        )}
-                                    </ul>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <SearchSidebar
+                    isOpen={showSearchInput}
+                    onClose={closeSearch}
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    showResults={showResults}
+                    setShowResults={setShowResults}
+                  />
                 </li>
                 <li className="nav-account">
                   {userProfile ? (
