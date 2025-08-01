@@ -661,7 +661,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
             {isLoading ? (
               <div className="col-12 d-flex justify-content-center align-items-center">
                 <div className="spinner-border" role="status">
-                  <span className="sr-only">Yükleniyor...</span>
+                  <span className="sr-only"></span>
                 </div>
               </div>
             ) : sortedProducts.length > 0 ? (

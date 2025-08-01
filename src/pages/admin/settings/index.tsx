@@ -353,8 +353,8 @@ function SettingsPage() {
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              <h2 className="fw-bold text-dark mb-1">
-                <FontAwesomeIcon icon={faCog} className="me-3 text-primary" />
+              <h2 className="fw-bold text-gray mb-1" style={{ fontSize: "2rem" }}>
+                <FontAwesomeIcon icon={faCog} className="me-3 text-dark" />
                 Sistem Ayarları
               </h2>
               <p className="text-muted mb-0">
@@ -364,7 +364,7 @@ function SettingsPage() {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn btn-success btn-sm px-3"
+                className="btn btn-dark btn-sm px-3"
                 onClick={() => setShowCreateModal(true)}
                 disabled={isPending || isCreating}
               >
@@ -384,9 +384,8 @@ function SettingsPage() {
               )}
 
               <button
-                className={`btn btn-sm px-3 ${
-                  hasChanges ? "btn-primary" : "btn-outline-primary"
-                }`}
+                className={`btn btn-sm px-3 ${hasChanges ? "btn-primary" : "btn-outline-primary"
+                  }`}
                 onClick={handleSaveChanges}
                 disabled={!hasChanges || isPending || isCreating}
               >
@@ -441,12 +440,11 @@ function SettingsPage() {
                   return (
                     <div key={setting.id} className="col-md-6 col-xl-4">
                       <div
-                        className={`card h-100 shadow-sm border-0 ${
-                          changes[`${setting.id}_value`] ||
+                        className={`card h-100 shadow-sm border-0 ${changes[`${setting.id}_value`] ||
                           changes[`${setting.id}_description`]
-                            ? "border-start border-warning border-4"
-                            : ""
-                        }`}
+                          ? "border-start border-warning border-4"
+                          : ""
+                          }`}
                       >
                         <div className="card-body p-4">
                           <div className="d-flex justify-content-between align-items-start mb-3">
@@ -480,11 +478,10 @@ function SettingsPage() {
                                     ? "numeric"
                                     : undefined
                                 }
-                                className={`form-control ${
-                                  changes[`${setting.id}_value`]
-                                    ? "border-warning"
-                                    : ""
-                                }`}
+                                className={`form-control ${changes[`${setting.id}_value`]
+                                  ? "border-warning"
+                                  : ""
+                                  }`}
                                 value={displayValue}
                                 onChange={(e) =>
                                   handleInputChange(
@@ -497,8 +494,8 @@ function SettingsPage() {
                                   !displayValue
                                     ? "Henüz tanımlanmadı - değer giriniz"
                                     : `${getDisplayName(
-                                        setting.key || ""
-                                      )} değerini düzenleyin`
+                                      setting.key || ""
+                                    )} değerini düzenleyin`
                                 }
                                 style={{
                                   borderRadius: "8px",
@@ -512,7 +509,7 @@ function SettingsPage() {
                                   {setting.key
                                     ?.toLowerCase()
                                     .includes("percent") ||
-                                  setting.key?.toLowerCase().includes("rate")
+                                    setting.key?.toLowerCase().includes("rate")
                                     ? "%"
                                     : "₺"}
                                 </span>
@@ -525,11 +522,10 @@ function SettingsPage() {
                               Açıklama
                             </label>
                             <textarea
-                              className={`form-control ${
-                                changes[`${setting.id}_description`]
-                                  ? "border-warning"
-                                  : ""
-                              }`}
+                              className={`form-control ${changes[`${setting.id}_description`]
+                                ? "border-warning"
+                                : ""
+                                }`}
                               value={setting.description || ""}
                               onChange={(e) =>
                                 handleInputChange(
@@ -582,6 +578,11 @@ function SettingsPage() {
         title="Yeni Sistem Ayarı Ekle"
         showFooter={true}
         approveButtonText={isCreating ? "Oluşturuluyor..." : "Oluştur"}
+        approveButtonStyle={{
+          backgroundColor: '#000',
+          borderColor: '#000',
+          color: '#ffffff'
+        }}
         isLoading={isCreating}
         onApprove={handleCreateSetting}
         onClose={() => {
@@ -621,7 +622,6 @@ function SettingsPage() {
               Sadece henüz oluşturulmamış ayar türleri gösterilmektedir.
             </small>
           </div>
-
           <div className="col-12 mb-3">
             <label className="form-label fw-medium">
               <i className="fas fa-edit me-2"></i>
@@ -656,14 +656,18 @@ function SettingsPage() {
       <GeneralModal
         id="deleteSettingModal"
         title="Ayarı Sil"
-        size="sm"
+        size="lg"
         onClose={() => {
           setDeletingSettingId(null);
           setDeletingSettingName("");
         }}
         onApprove={handleConfirmDeleteSetting}
         approveButtonText="Evet, Sil"
-        isLoading={isDeleting}
+        approveButtonStyle={{
+          backgroundColor: '#000',
+          borderColor: '#000',
+          color: '#ffffff'
+        }} isLoading={isDeleting}
         showFooter={true}
       >
         <div className="text-center">

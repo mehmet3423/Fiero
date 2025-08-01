@@ -181,23 +181,15 @@ const SubCategoryDiscountPage = () => {
                     <td>{formatDate(discount.startDate)}</td>
                     <td>{formatDate(discount.endDate)}</td>
                     <td>
-                      <span
-                        className={`badge bg-${
-                          discount.isActive && discount.isWithinActiveDateRange
-                            ? "success"
-                            : "danger"
-                        }`}
-                      >
-                        {discount.isActive && discount.isWithinActiveDateRange
-                          ? "Aktif"
-                          : "Pasif"}
-                      </span>
+                      {discount.isActive && discount.isWithinActiveDateRange
+                        ? "Aktif"
+                        : "Pasif"}
                     </td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-primary"
+                          className="btn btn-sm btn-icon btn-outline-primary d-flex align-items-center justify-content-center"
                           onClick={() => handleEdit(discount.id)}
                           title="Düzenle"
                           disabled={isDeleting}
@@ -207,7 +199,7 @@ const SubCategoryDiscountPage = () => {
 
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-danger"
+                          className="btn btn-sm btn-icon btn-outline-danger d-flex align-items-center justify-content-center"
                           onClick={() => confirmDelete(discount.id)}
                           title="Sil"
                           disabled={isDeleting}

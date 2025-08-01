@@ -53,17 +53,17 @@ function StockReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y">
-      <h4 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y px-4">
+      <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Stok Raporu
-      </h4>
+      </h5>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
-        <div className="card-header">
+        <div className="card-header bg-white" style={{ borderBottom: "0px", textAlign: "left" }}>
           <h5 className="card-title mb-0 p-3">Filtreler</h5>
         </div>
         <div className="card-body">
@@ -84,7 +84,7 @@ function StockReportPage() {
             </div>
             <div className="col-md-6 d-flex align-items-end">
               <button
-                className="btn btn-primary me-2"
+                className="btn btn-dark me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
               >
@@ -103,7 +103,7 @@ function StockReportPage() {
 
       {/* Results Section */}
       <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
+        <div className="card-header bg-white d-flex justify-content-between align-items-center" style={{ borderBottom: "0px" }}>
           <h5 className="card-title mb-0 p-3">Stok Raporu</h5>
           <button
             className="btn btn-success btn-sm m-3"
@@ -148,7 +148,7 @@ function StockReportPage() {
               Array.isArray(data.data.items) &&
               data.data.items.length > 0 ? (
                 <div className="table-responsive">
-                  <table className="table table-striped table-sm">
+                  <table className="table table-striped table-lg">
                     <thead>
                       <tr>
                         <th className="small">#</th>
@@ -163,9 +163,9 @@ function StockReportPage() {
                       {data.data.items.map((item, index) => {
                         return (
                           <tr key={item.id}>
-                            <td className="small">
+                            <td className="large">
                               <span
-                                className="badge text-primary badge-sm"
+                                className="badge text-gray badge-sm"
                                 style={{ fontSize: "0.7rem" }}
                               >
                                 {getGlobalRowNumber(
@@ -175,14 +175,14 @@ function StockReportPage() {
                                 )}
                               </span>
                             </td>
-                            <td className="small">{item.title}</td>
-                            <td className="small">{item.price}₺</td>
-                            <td className="small">{item.barcodeNumber}</td>
-                            <td className="small">
+                            <td className="large text-gray">{item.title}</td>
+                            <td className="large text-gray">{item.price}₺</td>
+                            <td className="large text-gray">{item.barcodeNumber}</td>
+                            <td className="large text-gray">
                               <span
                                 className={`badge badge-sm ${
                                   item.sellableQuantity > 10
-                                    ? "bg-success"
+                                    ? "bg-dark"
                                     : item.sellableQuantity > 0
                                     ? "bg-warning"
                                     : "bg-danger"
@@ -194,7 +194,7 @@ function StockReportPage() {
                                 {item.sellableQuantity}
                               </span>
                             </td>
-                            <td className="small">
+                            <td className="large">
                               {item?.modifiedOnValue || item?.createdOnValue
                                 ? new Date(
                                     item.modifiedOnValue || item.createdOnValue

@@ -12,6 +12,7 @@ interface GeneralModalProps {
   isLoading?: boolean;
   formId?: string;
   approveButtonStyle?: React.CSSProperties; // Add this prop
+  approveButtonClassName?: string; // Added className prop for approve button
 }
 
 function GeneralModal({
@@ -26,6 +27,7 @@ function GeneralModal({
   isLoading = false,
   formId,
   approveButtonStyle,
+  approveButtonClassName, // Added className prop for approve button
 }: GeneralModalProps) {
   return (
     <div className="modal fade" id={id} tabIndex={-1} aria-hidden="true">
@@ -63,10 +65,10 @@ function GeneralModal({
               <button
                 type={formId ? "submit" : "button"}
                 form={formId}
-                className="btn btn-primary"
+                className={`btn ${approveButtonClassName || "btn-primary"}`}
                 onClick={!formId ? onApprove : undefined}
                 disabled={isLoading}
-                style={approveButtonStyle} // Apply the custom style here
+                style={approveButtonStyle}
               >
                 {isLoading ? "İşleniyor..." : approveButtonText}
               </button>

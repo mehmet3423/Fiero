@@ -76,17 +76,17 @@ function PassiveProductsReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y">
-      <h4 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y px-4">
+      <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Pasif Ürünler Raporu
-      </h4>
+      </h5>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
-        <div className="card-header">
+        <div className="card-header bg-white" style={{ borderBottom: "0px" }}>
           <h5 className="card-title mb-0 p-3">Filtreler</h5>
         </div>
         <div className="card-body">
@@ -121,7 +121,7 @@ function PassiveProductsReportPage() {
             </div>
             <div className="col-md-4 d-flex align-items-end">
               <button
-                className="btn btn-primary me-2"
+                className="btn btn-dark me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
               >
@@ -140,7 +140,7 @@ function PassiveProductsReportPage() {
 
       {/* Results Section */}
       <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
+        <div className="card-header bg-white d-flex justify-content-between align-items-center" style={{ borderBottom: "0px" }}>
           <h5 className="card-title mb-0 p-3">Pasif Ürünler Raporu</h5>
           <button
             className="btn btn-success btn-sm m-3"
@@ -188,50 +188,50 @@ function PassiveProductsReportPage() {
                   <table className="table table-striped table-sm">
                     <thead>
                       <tr>
-                        <th className="small">#</th>
-                        <th className="small">Ürün Adı</th>
-                        <th className="small">Kategori</th>
-                        <th className="small">Barkod No</th>
-                        <th className="small">Fiyat</th>
-                        <th className="small">Stok</th>
-                        <th className="small">Durum</th>
-                        <th className="small">İşlemler</th>
+                        <th className="large">#</th>
+                        <th className="large">Ürün Adı</th>
+                        <th className="large">Kategori</th>
+                        <th className="large">Barkod No</th>
+                        <th className="large">Fiyat</th>
+                        <th className="large">Stok</th>
+                        <th className="large">Durum</th>
+                        <th className="large">İşlemler</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.data.items.map((item, index) => (
                         <tr key={item.id}>
-                          <td className="small">
+                          <td className="large">
                             <span
-                              className="badge text-primary badge-sm"
+                              className="badge text-dark badge-sm"
                               style={{ fontSize: "0.7rem" }}
                             >
                               {getGlobalRowNumber(displayPage, pageSize, index)}
                             </span>
                           </td>
-                          <td className="small">
+                          <td className="large">
                             <div className="d-flex align-items-center">
                               <span className="me-2">{item.title}</span>
                             </div>
                           </td>
-                          <td className="small">
+                          <td className="large">
                             {item.mainCategory?.name ||
                               item.subCategory?.name ||
                               "N/A"}
                           </td>
-                          <td className="small">
+                          <td className="large">
                             <code className="bg-light p-1 rounded small">
                               {item.barcodeNumber}
                             </code>
                           </td>
-                          <td className="small">
+                          <td className="large">
                             {item.price.toLocaleString("tr-TR")} ₺
                           </td>
-                          <td className="small">
+                          <td className="large">
                             <span
                               className={`badge badge-sm ${
                                 item.sellableQuantity > 0
-                                  ? "bg-warning"
+                                  ? "bg-dark"
                                   : "bg-danger"
                               }`}
                               style={{ fontSize: "0.75rem" }}
@@ -239,15 +239,15 @@ function PassiveProductsReportPage() {
                               {item.sellableQuantity}
                             </span>
                           </td>
-                          <td className="small">
+                          <td className="large">
                             <span
-                              className="badge bg-danger badge-sm"
+                              className="badge text-danger badge-sm"
                               style={{ fontSize: "0.75rem" }}
                             >
                               {item.isAvailable ? "Aktif" : "Pasif"}
                             </span>
                           </td>
-                          <td className="small">
+                          <td className="large">
                             <button
                               className="btn btn-sm btn-outline-primary"
                               onClick={() => handleEdit(item.id)}

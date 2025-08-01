@@ -126,10 +126,10 @@ const TestimonialSection: React.FC = () => {
               ))}
             </Swiper>
             <div className="d-md-flex d-none box-sw-navigation">
-              <div className="nav-sw nav-prev-slider nav-next-tes-2">
+              <div className="nav-sw nav-next-slider nav-prev-tes-2">
                 <span className="icon icon-arrow-left"></span>
               </div>
-              <div className="nav-sw nav-next-slider nav-prev-tes-2">
+              <div className="nav-sw nav-prev-slider nav-next-tes-2">
                 <span className="icon icon-arrow-right"></span>
               </div>
             </div>

@@ -153,13 +153,13 @@ function MostRatedProductsReportPage() {
   const totalCount = data?.data?.count || 0;
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y">
-      <h4 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y px-4">
+      <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         En Çok Puanlanan Ürünler
-      </h4>
+      </h5>
       <BackButton href="/admin/reports" />
       {/* Sort Options */}
       <div className="card mb-4">

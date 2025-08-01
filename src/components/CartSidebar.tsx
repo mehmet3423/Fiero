@@ -30,28 +30,40 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
   return (
     <>
-      {/* Modal Backdrop */}
-      <div className={`modal-backdrop ${isOpen ? 'show' : ''}`} onClick={onClose}></div>
-
+      
       {/* Cart Modal */}
       <div
         className={`modal fullRight ${isOpen ? 'show' : ''} modal-shopping-cart`}
         style={{ display: isOpen ? 'block' : 'none' }}
       >
+        {/* Backdrop */}
+        <div
+          className="modal-backdrop-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: -1
+          }}
+          onClick={onClose}
+        ></div>
         <div className="modal-dialog">
-          <div className="modal-content">
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="header">
               <div className="title fw-5">Alışveriş Sepeti</div>
-              <span className="icon-close icon-close-popup" onClick={onClose}></span>
+              <span className="icon-close icon-close-popup" onClick={onClose} style={{ cursor: 'pointer' }}></span>
             </div>
             <div className="wrap">
               <div className="tf-mini-cart-threshold">
                 <div className="tf-progress-bar">
                   <span style={{ width: "50%" }}></span>
                 </div>
-                <div className="tf-progress-msg">
+                {/* <div className="tf-progress-msg">
                   <span className="price fw-6">150₺</span> daha alışveriş yapın, <span className="fw-6">Ücretsiz Kargo</span> kazanın
-                </div>
+                </div> */}
               </div>
               <div className="tf-mini-cart-wrap">
                 <div className="tf-mini-cart-main">
@@ -61,12 +73,12 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         cartProducts.map((item) => (
                           <div key={item.id} className="tf-mini-cart-item">
                             <div className="tf-mini-cart-image">
-                              <Link href={`/products/${item.id}`}>
+                              <Link href={`/products/${item.id}`} onClick={onClose}>
                                 <img src={item.baseImageUrl || "/assets/site/images/no-image.jpg"} alt={item.title} />
                               </Link>
                             </div>
                             <div className="tf-mini-cart-info">
-                              <Link className="title link" href={`/products/${item.id}`}>
+                              <Link className="title link" href={`/products/${item.id}`} onClick={onClose}>
                                 {item.title}
                               </Link>
                               <div className="price fw-6">
@@ -94,6 +106,18 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                                 <div
                                   className="tf-mini-cart-remove"
                                   onClick={() => removeFromCart(item.id)}
+                                  style={{
+                                    cursor: 'pointer',
+                                    transition: 'color 0.3s ease'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    const target = e.target as HTMLElement;
+                                    if (target) target.style.color = '#dc3545';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    const target = e.target as HTMLElement;
+                                    if (target) target.style.color = '';
+                                  }}
                                 >
                                   Kaldır
                                 </div>
@@ -120,37 +144,14 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         })}₺
                       </div>
                     </div>
-                    <div className="tf-cart-tax">Vergiler ve kargo ödeme sırasında hesaplanacak</div>
                     <div className="tf-mini-cart-line"></div>
-
-                    {/* Terms and Conditions Checkbox */}
-                    <div className="tf-cart-checkbox">
-                      <div className="tf-checkbox-wrapp">
-                        <input
-                          className=""
-                          type="checkbox"
-                          id="CartDrawer-Form_agree"
-                          name="agree_checkbox"
-                          checked={agreeTerms}
-                          onChange={(e) => setAgreeTerms(e.target.checked)}
-                        />
-                        <div>
-                          <i className="icon-check"></i>
-                        </div>
-                      </div>
-                      <label htmlFor="CartDrawer-Form_agree">
-                        <Link href="/terms" className="terms-link">Kullanım koşulları</Link>nı ve {''}
-                        <Link href="/policies" className="terms-link">gizlilik politikası</Link>nı kabul ediyorum
-                      </label>
-                    </div>
-
                     <div className="tf-mini-cart-view-checkout">
                       <Link href={PathEnums.CART} onClick={onClose} className="tf-btn btn-outline radius-3 link w-100 justify-content-center">
                         Sepeti Görüntüle
                       </Link>
                       <Link
-                        href={agreeTerms ? PathEnums.CHECKOUT : "#"}
-                        onClick={agreeTerms ? onClose : (e) => e.preventDefault()}
+                        href={PathEnums.CHECKOUT}
+                        onClick={onClose}
                         className={`tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center ${!agreeTerms ? 'disabled' : ''}`}
                       >
                         <span>Ödemeye Geç</span>

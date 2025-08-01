@@ -284,19 +284,18 @@ function CategoryManagementPage() {
               </span>
             </div>
             <div className="card-body p-0">
-              {categories?.items.length === 0 ? (
+              {categories?.items?.length === 0 ? (
                 <div className="text-center p-4">
                   <i className="bx bx-category fs-1 text-muted mb-3"></i>
                   <p className="text-muted">Henüz kategori bulunmuyor</p>
                 </div>
               ) : (
                 <div className="table-responsive">
-                  <table className="table">
+                  <table className="table table-bordered">
                     <DragDropContext onDragEnd={onDragEnd}>
                       <Droppable droppableId="mainCategories">
                         {(provided) => (
                           <tbody
-                            className="table-border-bottom-0"
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
@@ -413,12 +412,11 @@ function CategoryManagementPage() {
             <div className="card-body p-0">
               {selectedMainCategory ? (
                 <div className="table-responsive">
-                  <table className="table">
+                  <table className="table table-bordered">
                     <DragDropContext onDragEnd={onDragEnd}>
                       <Droppable droppableId="subCategories">
                         {(provided) => (
                           <tbody
-                            className="table-border-bottom-0"
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
@@ -721,6 +719,32 @@ function CategoryManagementPage() {
           padding: 0.5rem 0.75rem;
           font-size: 0.813rem;
           border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-bordered {
+          border: 1px solid #dee2e6 !important;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+          border-left: none !important;
+          border-right: none !important;
+          border-top: none !important;
+          border-bottom: 1px solid #dee2e6 !important;
+        }
+
+        .table tbody tr {
+          border-bottom: 1px solid #dee2e6 !important;
+        }
+
+        .table tbody tr td {
+          border-right: none !important;
+          border-left: none !important;
+          padding: 12px 8px;
+        }
+
+        .table tbody tr:last-child {
+          border-bottom: 1px solid #dee2e6 !important;
         }
 
         .btn {

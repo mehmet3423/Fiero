@@ -65,7 +65,7 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
                         >
                             <Image
                                 src={"/assets/admin/img/logo/happncodelogo.png"}
-                                alt="Nors Admin"
+                                alt="Desa Deri Admin"
                                 width={0}
                                 height={0}
                                 style={{ width: "100%", height: "100%" }}

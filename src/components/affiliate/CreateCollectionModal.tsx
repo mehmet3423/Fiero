@@ -338,6 +338,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
       title="Yeni Koleksiyon Oluştur"
       showFooter={true}
       approveButtonText={isPending ? "Oluşturuluyor..." : "Koleksiyon Oluştur"}
+      approveButtonClassName="btn-dark"
       isLoading={isPending}
       onApprove={handleSubmit}
       onClose={onClose}
@@ -350,13 +351,10 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               Koleksiyon Türü <span className="text-danger">*</span>
             </label>
             <select
-              className="form-select"
+              className="form-select border border-light shadow-none"
               style={{
                 backgroundColor: "white",
-                border: "none",
                 color: "#040404",
-                boxShadow: "none",
-                outline: "none",
               }}
               value={collectionType}
               onChange={(e) =>
@@ -387,7 +385,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
             </label>
             <input
               type="text"
-              className="form-control shadow-none"
+              className="form-control shadow-none border border-light"
               placeholder="Koleksiyon adını girin"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
@@ -402,7 +400,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
           Açıklama <span className="text-danger">*</span>
         </label>
         <textarea
-          className="form-control shadow-none"
+          className="form-control shadow-none border border-light"
           rows={3}
           placeholder="Koleksiyon açıklamasını girin"
           value={formData.description}
@@ -481,11 +479,17 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
                     className="form-check d-flex align-items-center p-2 border-bottom"
                   >
                     <input
-                      className="form-check-input me-3"
+                      className="form-check-input me-3 border-2"
                       type="checkbox"
                       id={`product-${product.id}`}
                       checked={selectedProductIds.includes(product.id)}
                       onChange={() => handleProductToggle(product.id)}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        borderColor: selectedProductIds.includes(product.id) ? "#212529" : "#dee2e6",
+                        backgroundColor: selectedProductIds.includes(product.id) ? "#212529" : "#ffffff",
+                      }}
                     />
                     <div className="d-flex align-items-center flex-grow-1">
                       <img
@@ -833,43 +837,44 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
         .form-check-input {
           margin: 0;
           cursor: pointer;
+          border: 2px solid #dee2e6 !important;
+          box-shadow: none !important;
+          background-color: #ffffff;
+          width: 20px;
+          height: 20px;
         }
 
         .form-check-input:checked {
-          background-color: #0d6efd;
-          border-color: #0d6efd;
+          background-color: #212529;
+          border-color: #212529 !important;
+        }
+
+        .form-check-input:focus {
+          border: 2px solid #dee2e6 !important;
+          box-shadow: none !important;
+        }
+
+        .form-check-input:hover {
+          border-color: #adb5bd !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        textarea:focus {
+          border-color: #dee2e6 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        .form-control:hover,
+        .form-select:hover,
+        textarea:hover {
+          border-color: #adb5bd !important;
         }
 
         .form-check-input:disabled {
           opacity: 0.5;
           cursor: not-allowed;
-        }
-
-        /* Fix datetime-local calendar icon visibility */
-        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-          color: #495057;
-          background-color: transparent;
-          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23495057' d='M8 0a.5.5 0 0 1 .5.5V2H9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h.5V.5a.5.5 0 0 1 1 0V2h5V.5A.5.5 0 0 1 8 0zM1 4v10h8V4H1z'/%3e%3c/svg%3e");
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: 16px 16px;
-          cursor: pointer;
-          opacity: 1;
-          width: 20px;
-          height: 20px;
-          padding: 0;
-          margin: 0;
-        }
-
-        input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
-          background-color: #f8f9fa;
-          border-radius: 2px;
-        }
-
-        /* Alternative fix for better browser compatibility */
-        input[type="datetime-local"] {
-          color-scheme: light;
-          position: relative;
         }
       `}</style>
     </GeneralModal>

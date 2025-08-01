@@ -166,7 +166,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Content */}
         <div
           className="layout-page"
-          style={{ flex: "1 1 auto", width: "calc(100% - 260px)" }}
+          style={{ flex: "1 1 auto", width: "calc(100% - 260px)", backgroundColor: "#e9ecef" }}
         >
           <nav
             className="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
@@ -181,147 +181,144 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </button>
             </div>
 
-            <div className="navbar-nav align-items-center flex-grow-1">
-              <div className="nav-item d-flex align-items-center w-px-400">
+            {/* Search Section - Sol taraf */}
+            <div className="navbar-nav align-items-center flex-grow-1 d-none d-md-flex">
+              <div className="nav-item d-flex align-items-center">
                 <i className="bx bx-search fs-4 lh-0 me-2"></i>
                 <input
                   type="text"
                   className="form-control border-0 shadow-none"
                   placeholder="Ara..."
                   aria-label="Ara..."
+                  style={{ maxWidth: "300px" }}
                 />
               </div>
             </div>
 
-            <div
-              className="navbar-nav-right d-flex align-items-center"
-              id="navbar-collapse"
-            >
-              <ul className="navbar-nav flex-row align-items-center ms-auto">
-                {/* Notifications */}
-                <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
-                  <a
-                    className="nav-link dropdown-toggle hide-arrow"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i className="bx bx-bell bx-sm"></i>
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end py-0">
-                    <li className="dropdown-menu-header border-bottom">
-                      <div className="dropdown-header d-flex align-items-center py-3">
-                        <h5 className="text-body mb-0 me-auto">Bildirimler</h5>
-                        <a
-                          href="#"
-                          className="dropdown-notifications-all text-body"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="Tümünü okundu olarak işaretle"
-                        >
-                          <i className="bx fs-4 bx-envelope-open"></i>
-                        </a>
-                      </div>
-                    </li>
-                    <li className="dropdown-notifications-list scrollable-container">
-                      <ul className="list-group list-group-flush">
-                        <li className="list-group-item list-group-item-action dropdown-notifications-item">
-                          <div className="d-flex">
-                            <div className="flex-shrink-0 me-3">
-                              <div className="avatar">
-                                <span className="avatar-initial rounded-circle bg-label-danger">
-                                  <i className="bx bx-cart"></i>
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex-grow-1">
-                              <h6 className="mb-1">Yeni sipariş alındı</h6>
-                              <p className="mb-0">
-                                Yeni bir sipariş oluşturuldu
-                              </p>
-                              <small className="text-muted">1 saat önce</small>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </li>
-                    <li className="dropdown-menu-footer border-top">
+            {/* Right Side - Notifications & User */}
+            <ul className="navbar-nav flex-row align-items-center ms-auto">
+              {/* Notifications */}
+              <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
+                <a
+                  className="nav-link dropdown-toggle hide-arrow"
+                  href="javascript:void(0);"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="bx bx-bell bx-sm"></i>
+                </a>
+                <ul className="dropdown-menu dropdown-menu-end py-0">
+                  <li className="dropdown-menu-header border-bottom">
+                    <div className="dropdown-header d-flex align-items-center py-3">
+                      <h5 className="text-body mb-0 me-auto">Bildirimler</h5>
                       <a
                         href="#"
-                        className="dropdown-item d-flex justify-content-center p-3"
+                        className="dropdown-notifications-all text-body"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Tümünü okundu olarak işaretle"
                       >
-                        Tüm bildirimleri görüntüle
+                        <i className="bx fs-4 bx-envelope-open"></i>
                       </a>
-                    </li>
-                  </ul>
-                </li>
-                {/* User */}
-                <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a
-                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                  >
-                    <div className="avatar avatar-online me-2">
-                      <Image
-                        src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                        alt="User Avatar"
-                        className="rounded-circle"
-                        width={40}
-                        height={40}
-                      />
                     </div>
-                    <div className="flex-grow-1">
-                      <span className="fw-semibold d-block">
-                        {userProfile?.applicationUser?.firstName ||
-                          "Admin Kullanıcı"}
-                      </span>
-                      <small className="text-muted">Admin</small>
-                    </div>
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <a className="dropdown-item" href="#">
+                  </li>
+                  <li className="dropdown-notifications-list scrollable-container">
+                    <ul className="list-group list-group-flush">
+                      <li className="list-group-item list-group-item-action dropdown-notifications-item">
                         <div className="d-flex">
-                          <div className="avatar avatar-online me-2">
-                            <Image
-                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                              alt="User Avatar"
-                              className="rounded-circle"
-                              width={40}
-                              height={40}
-                            />
+                          <div className="flex-shrink-0 me-3">
+                            <div className="avatar">
+                              <span className="avatar-initial rounded-circle bg-label-danger">
+                                <i className="bx bx-cart"></i>
+                              </span>
+                            </div>
                           </div>
                           <div className="flex-grow-1">
-                            <span className="fw-semibold d-block">
-                              {userProfile?.applicationUser?.firstName ||
-                                "Admin Kullanıcı"}
-                            </span>
-                            <small className="text-muted">Admin</small>
+                            <h6 className="mb-1">Yeni sipariş alındı</h6>
+                            <p className="mb-0">
+                              Yeni bir sipariş oluşturuldu
+                            </p>
+                            <small className="text-muted">1 saat önce</small>
                           </div>
                         </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div className="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item text-danger"
-                        href="#"
-                        onClick={handleLogout}
-                      >
-                        <i className="bx bx-power-off me-2"></i>
-                        <span className="align-middle">Çıkış Yap</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                {/* /User */}
-              </ul>
-            </div>
-          </nav>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className="dropdown-menu-footer border-top">
+                    <a
+                      href="#"
+                      className="dropdown-item d-flex justify-content-center p-3"
+                    >
+                      Tüm bildirimleri görüntüle
+                    </a>
+                  </li>
+                </ul>
+              </li>
 
+              {/* User */}
+              <li className="nav-item navbar-dropdown dropdown-user dropdown">
+                <a
+                  className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
+                  href="javascript:void(0);"
+                  data-bs-toggle="dropdown"
+                >
+                  <div className="avatar avatar-online me-2">
+                    <Image
+                      src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                      alt="User Avatar"
+                      className="rounded-circle"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                  <div className="flex-grow-1">
+                    <span className="fw-semibold d-block">
+                      {userProfile?.applicationUser?.firstName ||
+                        "Admin Kullanıcı"}
+                    </span>
+                    <small className="text-muted">Admin</small>
+                  </div>
+                </a>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      <div className="d-flex">
+                        <div className="avatar avatar-online me-2">
+                          <Image
+                            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                            alt="User Avatar"
+                            className="rounded-circle"
+                            width={40}
+                            height={40}
+                          />
+                        </div>
+                        <div className="flex-grow-1">
+                          <span className="fw-semibold d-block">
+                            {userProfile?.applicationUser?.firstName ||
+                              "Admin Kullanıcı"}
+                          </span>
+                          <small className="text-muted">Admin</small>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <div className="dropdown-divider"></div>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item text-danger"
+                      href="#"
+                      onClick={handleLogout}
+                    >
+                      <i className="bx bx-power-off me-2"></i>
+                      <span className="align-middle">Çıkış Yap</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
           <div className="content-wrapper">
             <div className="container-fluid flex-grow-1 container-p-y">
               <main>{children}</main>

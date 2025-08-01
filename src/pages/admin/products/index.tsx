@@ -256,7 +256,7 @@ function ProductsAdminPage() {
                 className="col-12 col-sm-6 col-md-4 col-xl-3"
               >
                 <div className="card h-100">
-                  <div className="position-relative">
+                  <div className="position-relative d-flex justify-content-center align-items-center" style={{ height: "200px", padding: "10px" }}>
                     {product.isOutlet && (
                       <div
                         className="position-absolute top-0 start-0 m-2"
@@ -267,30 +267,25 @@ function ProductsAdminPage() {
                     )}
                     <Link href={`/products/${product.id}`}>
                       <Image
-                        width={0}
-                        height={0}
-                        sizes="100vw"
+                        width={180}
+                        height={180}
                         src={
                           product.baseImageUrl || "/assets/images/no-image.jpg"
                         }
                         alt={product.title}
-                        className="card-img-top"
-                        style={{ height: "200px", objectFit: "contain" }}
+                        style={{ 
+                          maxHeight: "180px", 
+                          maxWidth: "100%", 
+                          objectFit: "contain",
+                          borderRadius: "4px"
+                        }}
                       />
                     </Link>
                     <div
                       className="position-absolute top-0 end-0 m-2"
                       style={{ zIndex: 1 }}
                     >
-                      <div className="btn-group">
-                        <button
-                          className="btn btn-sm btn-light"
-                          onClick={() => handleEdit(product)}
-                          disabled={isDeleting}
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          <i className="bx bx-edit"></i>
-                        </button>
+                      <div className="d-flex flex-column gap-1">
                         <button
                           className="btn btn-sm btn-light"
                           onClick={() => handleDelete(product.id)}
@@ -298,6 +293,14 @@ function ProductsAdminPage() {
                           style={{ fontSize: "0.75rem" }}
                         >
                           <i className="bx bx-trash text-danger"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-light"
+                          onClick={() => handleEdit(product)}
+                          disabled={isDeleting}
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          <i className="bx bx-edit"></i>
                         </button>
                       </div>
                     </div>
