@@ -5077,7 +5077,7 @@ fieldset:disabled .btn {
     padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
     margin-bottom: 0;
     color: var(--bs-card-cap-color);
-    background-color: var(--bs-card-cap-bg);
+    background-color: #ffffff;
     border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color)
 }
 

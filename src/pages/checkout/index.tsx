@@ -3,7 +3,6 @@ import PageLoadingAnimation from "@/components/shared/PageLoadingAnimation";
 import { Address, District, Province } from "@/constants/models/Address";
 import { CreateOrderRequest } from "@/constants/models/Order";
 import { useAuth } from "@/hooks/context/useAuth";
-
 import { useCart } from "@/hooks/context/useCart";
 
 import Select from "react-select";
@@ -34,10 +33,8 @@ function CheckoutPage() {
       {/* Page Cart Section */}
       <section className="flat-spacing-11">
         <div className="container">
-          <div className="row" style={{ display: 'flex', gap: '32px' }}>
-            {/* Billing Details - Left Column */}
-            <div className="col-lg-7 col-md-12" style={{ flex: 1 }}>
-              <div className="tf-page-cart-item">
+          <div className="tf-page-cart-wrap layout-2">
+            <div className="tf-page-cart-item">
                 <h5 className="fw-5 mb_20">Billing details</h5>
                 <form className="form-checkout" onSubmit={handleSubmit}>
                   <div className="box grid-2">
@@ -53,14 +50,24 @@ function CheckoutPage() {
                   <fieldset className="box fieldset">
                     <label htmlFor="country">Country/Region</label>
                     <div className="select-custom">
-                      <Select
-                        className="tf-select w-100"
-                        options={countries.map((c: any) => ({ value: c.id, label: c.name }))}
-                        value={countries.find((c: any) => c.id === selectedCountryId) ? { value: selectedCountryId, label: countries.find((c: any) => c.id === selectedCountryId)?.name } : null}
-                        onChange={(selectedOption: any) => setSelectedCountryId(selectedOption?.value || "")}
-                        placeholder="Country"
-                        isClearable
-                      />
+                      <select 
+                        className="tf-select w-100" 
+                        id="country" 
+                        name="country"
+                        value={selectedCountryId}
+                        onChange={(e) => setSelectedCountryId(e.target.value)}
+                      >
+                        <option value="">Select Country</option>
+                        <option value="turkey">Turkey</option>
+                        <option value="usa">United States</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="germany">Germany</option>
+                        <option value="france">France</option>
+                        <option value="italy">Italy</option>
+                        <option value="spain">Spain</option>
+                        <option value="canada">Canada</option>
+                        <option value="australia">Australia</option>
+                      </select>
                     </div>
                   </fieldset>
                   <fieldset className="box fieldset">
@@ -85,55 +92,68 @@ function CheckoutPage() {
                   </fieldset>
                 </form>
               </div>
-            </div>
-            {/* Your Order - Right Column */}
-            <div className="col-lg-5 col-md-12" style={{ flex: 1, maxWidth: '400px' }}>
-              <div style={{ background: '#fff', borderRadius: '8px', padding: '32px 24px', boxShadow: '0 0 8px rgba(0,0,0,0.04)' }}>
-                <h5 style={{ fontWeight: 600, marginBottom: 24 }}>Your order</h5>
-                <ul style={{ listStyle: 'none', padding: 0, marginBottom: 24 }}>
-                  {cartProducts.length === 0 ? (
-                    <li style={{ color: '#888', textAlign: 'center', padding: '24px 0' }}>Sepetinizde ürün yok.</li>
-                  ) : (
-                    cartProducts.map((item: any) => (
-                      <li key={item.id} style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                        <img src={item.baseImageUrl || item.imageUrl || '/assets/images/products/no-image.jpg'} alt={item.title} style={{ width: 48, height: 48, borderRadius: 8, marginRight: 16, objectFit: 'cover' }} />
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: 500 }}>{item.title}</div>
-                          {item.variant && <div style={{ fontSize: 12, color: '#888' }}>{item.variant}</div>}
+            <div className="tf-page-cart-footer">
+              <div className="tf-cart-footer-inner">
+                <h5 className="fw-5 mb_20">Your order</h5>
+                <form className="tf-page-cart-checkout widget-wrap-checkout">
+                  <ul className="wrap-checkout-product">
+                    {cartProducts.length === 0 ? (
+                      <li className="checkout-product-item">
+                        <div className="content">
+                          <div className="info">
+                            <p className="name text-center">Sepetinizde ürün yok.</p>
+                          </div>
                         </div>
-                        <div style={{ fontWeight: 500 }}>{(item.discountedPrice || item.price).toFixed(2)}₺</div>
                       </li>
-                    ))
-                  )}
-                </ul>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-                  <input type="text" placeholder="Discount code" style={{ flex: 1, padding: '8px 12px', border: '1px solid #ccc', borderRadius: 4 }} />
-                  <button type="button" style={{ background: '#000', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 16px', fontWeight: 500 }}>Apply</button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, marginBottom: 24 }}>
-                  <span>Total</span>
-                  <span>{total.toFixed(2)}₺</span>
-                </div>
-                <div style={{ marginBottom: 24 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                    <input type="radio" id="bank" name="payment" defaultChecked style={{ accentColor: '#e53935', marginRight: 8 }} />
-                    <label htmlFor="bank" style={{ fontWeight: 500, color: '#222' }}>Direct bank transfer</label>
+                    ) : (
+                      cartProducts.map((item: any) => (
+                        <li key={item.id} className="checkout-product-item">
+                          <figure className="img-product">
+                            <img src={item.baseImageUrl || item.imageUrl || '/assets/images/products/no-image.jpg'} alt={item.title} />
+                            <span className="quantity">{item.quantity}</span>
+                          </figure>
+                          <div className="content">
+                            <div className="info">
+                              <p className="name">{item.title}</p>
+                              {item.variant && <span className="variant">{item.variant}</span>}
+                            </div>
+                            <span className="price">{(item.discountedPrice || item.price).toFixed(2)}₺</span>
+                          </div>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                  <div className="coupon-box">
+                    <input type="text" placeholder="Discount code" />
+                    <a href="#" className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn">Apply</a>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                    <input type="radio" id="delivery" name="payment" style={{ accentColor: '#ccc', marginRight: 8 }} />
-                    <label htmlFor="delivery" style={{ fontWeight: 500, color: '#222' }}>Cash on delivery</label>
+                  <div className="d-flex justify-content-between line pb_20">
+                    <h6 className="fw-5">Total</h6>
+                    <h6 className="total fw-5">{total.toFixed(2)}₺</h6>
                   </div>
-                </div>
-                <div style={{ fontSize: 13, color: '#444', marginBottom: 16 }}>
-                  Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <a href="/privacy-policy" style={{ textDecoration: 'underline' }}>privacy policy</a>.
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-                  <input type="checkbox" id="agree" style={{ marginRight: 8 }} />
-                  <label htmlFor="agree" style={{ fontSize: 13, color: '#444' }}>
-                    I have read and agree to the website <a href="/terms-conditions" style={{ textDecoration: 'underline' }}>terms and conditions</a>.
-                  </label>
-                </div>
-                <button type="submit" style={{ width: '100%', background: '#000', color: '#fff', border: 'none', borderRadius: 4, padding: '12px 0', fontWeight: 600, fontSize: 16 }}>Place order</button>
+                  <div className="wd-check-payment">
+                    <div className="fieldset-radio mb_20">
+                      <input type="radio" name="payment" id="bank" className="tf-check" defaultChecked />
+                      <label htmlFor="bank">Direct bank transfer</label>
+                    </div>
+                    <div className="fieldset-radio mb_20">
+                      <input type="radio" name="payment" id="delivery" className="tf-check" />
+                      <label htmlFor="delivery">Cash on delivery</label>
+                    </div>
+                    <p className="text_black-2 mb_20">
+                      Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our{' '}
+                      <a href="/privacy-policy" className="text-decoration-underline">privacy policy</a>.
+                    </p>
+                    <div className="box-checkbox fieldset-radio mb_20">
+                      <input type="checkbox" id="check-agree" className="tf-check" />
+                      <label htmlFor="check-agree" className="text_black-2">
+                        I have read and agree to the website{' '}
+                        <a href="/terms-conditions" className="text-decoration-underline">terms and conditions</a>.
+                      </label>
+                    </div>
+                  </div>
+                  <button className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center">Place order</button>
+                </form>
               </div>
             </div>
           </div>
