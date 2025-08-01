@@ -103,13 +103,13 @@ function FavoriteProductsReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y">
-      <h4 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y px-4">
+      <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Favori Ürünler
-      </h4>
+      </h5>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -164,7 +164,7 @@ function FavoriteProductsReportPage() {
             </div>
             <div className="col-md-3 d-flex align-items-end">
               <button
-                className="btn btn-primary btn-sm me-2"
+                className="btn btn-dark btn-sm me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
                 style={{ fontSize: "0.8rem" }}

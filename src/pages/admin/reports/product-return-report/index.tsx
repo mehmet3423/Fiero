@@ -107,13 +107,13 @@ function ProductReturnReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y">
-      <h4 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y px-4">
+      <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Ürün İade Raporu
-      </h4>
+      </h5>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -167,7 +167,7 @@ function ProductReturnReportPage() {
             </div>
             <div className="col-md-4 d-flex align-items-end">
               <button
-                className="btn btn-primary btn-sm me-2"
+                className="btn btn-dark btn-sm me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
                 style={{ fontSize: "0.8rem" }}
@@ -291,7 +291,7 @@ function ProductReturnReportPage() {
           )}
 
           {error && (
-            <div className="alert alert-danger" role="alert">
+            <div className="alert alert-danger mt-4" role="alert">
               Aradığınız kriterlere uygun ürün iade kaydı bulunamadı.
             </div>
           )}
