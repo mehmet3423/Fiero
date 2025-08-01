@@ -154,6 +154,7 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
       approveButtonText={
         isPending ? "Güncelleniyor..." : "Koleksiyonu Güncelle"
       }
+      approveButtonClassName="btn-dark"
       isLoading={isPending}
       onApprove={handleSubmit}
       onClose={onClose}

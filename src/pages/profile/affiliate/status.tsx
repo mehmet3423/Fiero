@@ -212,110 +212,109 @@ export default function AffiliateStatusPage({
   };
 
   return (
-    <div className="affiliate-status-content">
-      <div className="card">
-        <div className="card-body p-5">
-          <div className="text-center mb-4">
-            <div className="affiliate-icon mb-4">
-              <i className="bx bx-user-check"></i>
-            </div>
-            <h3
-              style={{
-                fontSize: "2rem",
-                color: "#566a7f",
-                marginBottom: "1.5rem",
-                fontWeight: "600",
-              }}
-            >
-              Affiliate Durumunuz
-            </h3>
-          </div>
-
-          <div className="row justify-content-center">
-            <div className="col-md-8">
-              {affiliateUser.status === AffiliateStatus.Approved && (
-                <div className="earnings-overview p-4">
-                  <h5 className="mb-3 text-success">
-                    <i className="bx bx-money me-2"></i>
-                    Kazanç Bilgileri
-                  </h5>
-                  <div className="row">
-                    <div className="col-md-3 text-center">
-                      <div className="earning-item">
-                        <h4 className="mb-1 text-success">
-                          {affiliateUser.totalEarnings?.toFixed(2) || "0.00"}₺
-                        </h4>
-                        <small className="text-muted">Toplam Kazanç</small>
-                      </div>
-                    </div>
-                    <div className="col-md-3 text-center">
-                      <div className="earning-item">
-                        <h4 className="mb-1 text-primary">
-                          {affiliateUser.transferableEarnings?.toFixed(2) ||
-                            "0.00"}
-                          ₺
-                        </h4>
-                        <small className="text-muted">
-                          Transfer Edilebilir
-                        </small>
-                      </div>
-                    </div>
-                    <div className="col-md-3 text-center">
-                      <div className="earning-item">
-                        <h4 className="mb-1 text-warning">
-                          {affiliateUser.pendingApprovalEarnings?.toFixed(2) ||
-                            "0.00"}
-                          ₺
-                        </h4>
-                        <small className="text-muted">Onay Bekleyen</small>
-                      </div>
-                    </div>
-                    <div className="col-md-3 text-center">
-                      <div className="earning-item">
-                        <h4 className="mb-1 text-info">
-                          {affiliateUser.transferredEarnings?.toFixed(2) ||
-                            "0.00"}
-                          ₺
-                        </h4>
-                        <small className="text-muted">Transfer Edilmiş</small>
-                      </div>
-                    </div>
+    <>
+      <div className="affiliate-status-content">
+        {/* Statistics Cards */}
+        {affiliateUser.status === AffiliateStatus.Approved && (
+          <div className="row mb-4">
+            <div className="col-3">
+              <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+                <div className="card-body py-3 px-2">
+                  <div className="card-icon mb-2">
+                    <i className="bx bx-money text-success" style={{ fontSize: "2.5rem" }}></i>
                   </div>
+                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                    TOPLAM KAZANÇ
+                  </h6>
+                  <h4 className="text-success mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                    {affiliateUser.totalEarnings?.toFixed(2) || "0.00"} ₺
+                  </h4>
                 </div>
-              )}
+              </div>
+            </div>
 
-              {affiliateUser.appliedAt && (
-                <div
-                  className="info-card p-3 mb-4"
-                  style={{
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "0.5rem",
-                    border: "1px solid #dee2e6",
-                  }}
-                >
-                  <div className="row">
-                    <div className="col-md-6">
-                      <small className="text-muted">Başvuru Tarihi</small>
-                      <p className="mb-0 fw-bold">
+            <div className="col-3">
+              <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+                <div className="card-body py-3 px-2">
+                  <div className="card-icon mb-2">
+                    <i className="bx bx-transfer text-info" style={{ fontSize: "2.5rem" }}></i>
+                  </div>
+                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                    AKTARILABİLİR
+                  </h6>
+                  <h4 className="text-info mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                    {affiliateUser.transferableEarnings?.toFixed(2) || "0.00"} ₺
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-3">
+              <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+                <div className="card-body py-3 px-2">
+                  <div className="card-icon mb-2">
+                    <i className="bx bx-time-five text-warning" style={{ fontSize: "2.5rem" }}></i>
+                  </div>
+                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                    ONAY BEKLEYEN
+                  </h6>
+                  <h4 className="text-warning mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                    {affiliateUser.pendingApprovalEarnings?.toFixed(2) || "0.00"} ₺
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-3">
+              <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
+                <div className="card-body py-3 px-2">
+                  <div className="card-icon mb-2">
+                    <i className="bx bx-check-circle text-primary" style={{ fontSize: "2.5rem" }}></i>
+                  </div>
+                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                    TRANSFER EDİLEN
+                  </h6>
+                  <h4 className="text-primary mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                    {affiliateUser.transferredEarnings?.toFixed(2) || "0.00"} ₺
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {affiliateUser.appliedAt && (
+          <div className="card shadow-sm border-0 rounded-4 mb-4">
+            <div className="card-body p-4">
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <div className="d-flex align-items-center">
+                    <i className="bx bx-calendar text-muted me-2"></i>
+                    <div>
+                      <small className="text-muted d-block">Başvuru Tarihi</small>
+                      <span className="fw-semibold">
                         {new Date(affiliateUser.appliedAt).toLocaleDateString(
                           "tr-TR",
                           {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
                           }
                         )}
-                      </p>
+                      </span>
                     </div>
-                    {affiliateUser.status === AffiliateStatus.Approved &&
-                      affiliateUser.affiliateSince && (
-                        <div className="col-md-6">
-                          <small className="text-muted">
+                  </div>
+                </div>
+                {affiliateUser.status === AffiliateStatus.Approved &&
+                  affiliateUser.affiliateSince && (
+                    <div className="col-md-6">
+                      <div className="d-flex align-items-center">
+                        <i className="bx bx-check-circle text-success me-2"></i>
+                        <div>
+                          <small className="text-muted d-block">
                             Affiliate Olma Tarihi
                           </small>
-                          <p className="mb-0 fw-bold">
+                          <span className="fw-semibold">
                             {new Date(
                               affiliateUser.affiliateSince
                             ).toLocaleDateString("tr-TR", {
@@ -323,108 +322,102 @@ export default function AffiliateStatusPage({
                               month: "long",
                               day: "numeric",
                             })}
-                          </p>
+                          </span>
                         </div>
-                      )}
-                  </div>
-                </div>
-              )}
+                      </div>
+                    </div>
+                  )}
+              </div>
+            </div>
+          </div>
+        )}
 
-              <div
-                className="status-card p-4 mb-4"
-                style={{
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: "0.5rem",
-                  border: `2px solid ${getStatusColor(affiliateUser.status)}`,
-                }}
-              >
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="mb-1">Başvuru Durumu</h5>
-                    <p className="mb-0 text-muted">
-                      {affiliateUser.status === AffiliateStatus.InProgress && (
-                        <div>
-                          <i className="bx bx-info-circle me-2"></i>
-                          Affiliate başvurunuz inceleniyor.
-                          <br />
-                          <small className="text-muted mt-2 d-block">
-                            <strong>Not:</strong> Başvurunuz değerlendirilene
-                            kadar yeni başvuru yapamazsınız.
-                          </small>
-                        </div>
-                      )}
-                      {affiliateUser.status === AffiliateStatus.Approved && (
-                        <div>
-                          <i className="bx bx-check-circle me-2"></i>
-                          Affiliate hesabınız onaylandı.
-                          <br />
-                        </div>
-                      )}
-
-                      {affiliateUser.status === AffiliateStatus.Rejected && (
-                        <div>
-                          <i className="bx bx-x-circle me-2"></i>
-                          Affiliate başvurunuz reddedildi. Daha fazla bilgi için
-                          destek ekibimizle iletişime geçebilirsiniz.
-                          <br />
-                        </div>
-                      )}
-
-                      {affiliateUser.status === AffiliateStatus.Cancelled && (
-                        <div>
-                          <i className="bx bx-pause-circle me-2"></i>
-                          Affiliate hesabınız iptal edildi. Destek ekibimizle
-                          iletişime geçin.
-                        </div>
-                      )}
-
-                      {affiliateUser.status === AffiliateStatus.Suspended && (
-                        <div>
-                          <i className="bx bx-lock-alt me-2"></i>
-                          Affiliate hesabınız askıya alındı. Destek ekibimizle
-                          iletişime geçin.
-                        </div>
-                      )}
-                    </p>
-                  </div>
-                  <div className="d-flex align-items-center gap-3">
-                    <span
-                      className="badge px-3 py-2"
-                      style={{
-                        backgroundColor: getStatusColor(affiliateUser.status),
-                        color: "white",
-                        fontSize: "1rem",
-                      }}
-                    >
-                      {getStatusText(affiliateUser.status)}
-                    </span>
-                  </div>
+        <div className="card shadow-sm border-0 rounded-4 mb-4">
+          <div className="card-body p-4" style={{
+            borderLeft: `4px solid ${getStatusColor(affiliateUser.status)}`,
+          }}>
+            <div className="d-flex justify-content-between align-items-start">
+              <div className="flex-grow-1">
+                <h5 className="card-title mb-2">Başvuru Durumu</h5>
+                <div className="text-muted">
+                  {affiliateUser.status === AffiliateStatus.InProgress && (
+                    <div>
+                      <i className="bx bx-info-circle me-2 text-warning"></i>
+                      <span>Affiliate başvurunuz inceleniyor.</span>
+                      <br />
+                      <small className="text-muted mt-2 d-block">
+                        <strong>Not:</strong> Başvurunuz değerlendirilene
+                        kadar yeni başvuru yapamazsınız.
+                      </small>
+                    </div>
+                  )}
+                  {affiliateUser.status === AffiliateStatus.Approved && (
+                    <div>
+                      <i className="bx bx-check-circle me-2 text-success"></i>
+                      <span>Affiliate hesabınız onaylandı.</span>
+                    </div>
+                  )}
+                  {affiliateUser.status === AffiliateStatus.Rejected && (
+                    <div>
+                      <i className="bx bx-x-circle me-2 text-danger"></i>
+                      <span>Affiliate başvurunuz reddedildi. Daha fazla bilgi için
+                      destek ekibimizle iletişime geçebilirsiniz.</span>
+                    </div>
+                  )}
+                  {affiliateUser.status === AffiliateStatus.Cancelled && (
+                    <div>
+                      <i className="bx bx-pause-circle me-2 text-danger"></i>
+                      <span>Affiliate hesabınız iptal edildi. Destek ekibimizle
+                      iletişime geçin.</span>
+                    </div>
+                  )}
+                  {affiliateUser.status === AffiliateStatus.Suspended && (
+                    <div>
+                      <i className="bx bx-lock-alt me-2 text-warning"></i>
+                      <span>Affiliate hesabınız askıya alındı. Destek ekibimizle
+                      iletişime geçin.</span>
+                    </div>
+                  )}
                 </div>
               </div>
-              {(affiliateUser.status === AffiliateStatus.Approved ||
-                affiliateUser.status === AffiliateStatus.InProgress) && (
-                <div className="d-flex justify-content-center gap-3 my-3">
-                  <button
-                    className="btn btn-sm btn-light w-100 col-md-5"
-                    onClick={handleEditUserStatus}
-                    title="Bilgileri Düzenle"
-                  >
-                    <i className="bx bx-edit me-2"></i>
-                    IBAN Güncelle
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger w-100 col-md-5 ml-3"
-                    onClick={handleCancelAccount}
-                    title="Hesabı İptal Et"
-                  >
-                    <i className="bx bx-trash me-2"></i>
-                    Hesabını Kapat
-                  </button>
-                </div>
-              )}
+              <span
+                className="badge fs-6 px-3 py-2 ms-3"
+                style={{
+                  backgroundColor: getStatusColor(affiliateUser.status),
+                  color: "white",
+                }}
+              >
+                {getStatusText(affiliateUser.status)}
+              </span>
             </div>
           </div>
         </div>
+
+        {(affiliateUser.status === AffiliateStatus.Approved ||
+          affiliateUser.status === AffiliateStatus.InProgress) && (
+          <div className="row g-3 justify-content-center">
+            <div className="col-sm-6 col-md-4">
+              <button
+                className="btn btn-dark rounded-pill w-100 py-2"
+                onClick={handleEditUserStatus}
+                title="IBAN Bilgilerini Güncelle"
+              >
+                <i className="bx bx-edit me-2"></i>
+                IBAN Güncelle
+              </button>
+            </div>
+            <div className="col-sm-6 col-md-4">
+              <button
+                className="btn btn-outline-danger rounded-pill w-100 py-2"
+                onClick={handleCancelAccount}
+                title="Affiliate Hesabını Kapat"
+              >
+                <i className="bx bx-trash me-2"></i>
+                Hesabı Kapat
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* IBAN Güncelleme Modal */}
@@ -435,18 +428,19 @@ export default function AffiliateStatusPage({
         onClose={() => setIsEditingUserStatus(false)}
         onApprove={handleSaveUserStatus}
         approveButtonText="IBAN Güncelle"
+        approveButtonClassName="btn-dark"
         isLoading={isUpdatingStatus}
         showFooter={true}
       >
-        <div className="form-group mb-3">
-          <label className="form-label">
+        <div className="mb-4">
+          <label className="form-label fw-semibold">
             IBAN <span className="text-danger">*</span>
           </label>
           <div className="input-group">
-            <span className="input-group-text">TR</span>
+            <span className="input-group-text bg-light border-end-0">TR</span>
             <input
               type="text"
-              className="form-control"
+              className="form-control border-start-0"
               placeholder="0000 0000 0000 0000 0000 0000"
               value={
                 editUserForm.iban.startsWith("TR")
@@ -459,14 +453,14 @@ export default function AffiliateStatusPage({
               pattern="[0-9\s]*"
             />
           </div>
-          <small className="form-text text-muted">
+          <small className="form-text text-muted mt-1">
             24 haneli IBAN numaranızı giriniz (TR otomatik eklenir)
           </small>
           {editUserForm.iban &&
             editUserForm.iban.startsWith("TR") &&
             !validateIban(editUserForm.iban.slice(2)) &&
             editUserForm.iban.length > 6 && (
-              <small className="form-text text-danger">
+              <small className="form-text text-danger mt-1">
                 Geçersiz IBAN formatı (24 haneli rakam gerekli)
               </small>
             )}
@@ -492,62 +486,75 @@ export default function AffiliateStatusPage({
       </GeneralModal>
 
       <style jsx>{`
-        .affiliate-icon {
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          background: #e7e7ff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto;
+        .affiliate-status-content {
+          padding: 1.5rem 0;
         }
 
-        .affiliate-icon i {
-          font-size: 4rem;
-          color: #040404;
+        /* Card hover effects */
+        .card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
         }
 
-        .card {
-          border-radius: 0.75rem;
-          border: 1px solid #eee;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        /* Statistics card titles */
+        .card h6.card-title {
+          font-size: 0.7rem;
+          color: #8c9196;
+          letter-spacing: 1px;
         }
 
-        @media (max-width: 768px) {
-          .affiliate-icon {
-            width: 100px;
-            height: 100px;
-          }
-
-          .affiliate-icon i {
-            font-size: 3rem;
-          }
+        .card h4 {
+          font-size: 1.6rem;
+          line-height: 1.2;
         }
 
-        /* IBAN Input Styles */
-        .input-group-text {
-          background-color: #f8f9fa;
-          border: 1px solid #ebebeb;
-          font-weight: 600;
-          max-height: 40px;
-          color: #333;
+        /* Button hover effects */
+        .btn:hover {
+          transform: translateY(-2px);
         }
 
-        .input-group .form-control {
-          border-left: 0;
-        }
-
+        /* IBAN Input - remove focus shadow */
         .input-group .form-control:focus {
-          border-color: #040404;
           box-shadow: none;
+          outline: none;
         }
 
-        .input-group .form-control:focus + .input-group-text,
-        .input-group .input-group-text:has(+ .form-control:focus) {
-          border-color: #040404;
+        .form-control:focus {
+          box-shadow: none;
+          outline: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .affiliate-status-content {
+            padding: 0.75rem 0;
+          }
+
+          .card h4 {
+            font-size: 1.25rem;
+          }
+
+          .card h6.card-title {
+            font-size: 0.6rem;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .row .col-3 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            margin-bottom: 1rem;
+          }
+
+          .card h4 {
+            font-size: 1.1rem;
+          }
+
+          .card h6.card-title {
+            font-size: 0.55rem;
+          }
         }
       `}</style>
-    </div>
+    </>
   );
 }
