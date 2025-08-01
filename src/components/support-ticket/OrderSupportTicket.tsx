@@ -107,7 +107,7 @@ function OrderSupportTicket() {
                   {order.recipientFirstName} {order.recipientLastName}
                 </div>
                 <div className="order-items-count">
-                  {order.orderItems.length} ürün
+                  {order.orderItems?.length || 0} ürün
                 </div>
               </div>
             ))}
@@ -122,7 +122,7 @@ function OrderSupportTicket() {
             Hangi ürün ile ilgili destek talep ediyorsunuz?
           </label>
           <div className="order-items-list">
-            {selectedOrder.orderItems.map((orderItem) => (
+            {selectedOrder.orderItems?.map((orderItem) => (
               <div
                 key={orderItem.id}
                 className={`order-item-card ${
@@ -131,12 +131,14 @@ function OrderSupportTicket() {
                 onClick={() => handleOrderItemSelect(orderItem)}
               >
                 <div className="order-item-content">
-                  {orderItem.product?.baseImageUrl && (
+                  {orderItem.product?.baseImageUrl ? (
                     <img
                       src={orderItem.product.baseImageUrl}
-                      alt={orderItem.product.title}
+                      alt={orderItem.product?.title || "Ürün"}
                       className="order-item-image"
                     />
+                  ) : (
+                    <div className="order-item-placeholder"></div>
                   )}
                   <div className="order-item-details">
                     <div className="order-item-title">
@@ -338,6 +340,14 @@ function OrderSupportTicket() {
         .order-item-card.selected {
           background-color: #e8f5e8;
           border-left: 4px solid #4caf50;
+        }
+
+        .order-item-placeholder {
+          width: 60px;
+          height: 60px;
+          background-color: #f0f0f0;
+          border: 1px solid #ebebeb;
+          border-radius: 0.3rem;
         }
 
         .order-item-card:last-child {

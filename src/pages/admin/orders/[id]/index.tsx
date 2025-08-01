@@ -201,7 +201,7 @@ function AdminOrderDetail() {
                     Ürün Sayısı
                   </small>
                   <div style={{ fontSize: "0.8rem" }}>
-                    {order.orderItems.length} Ürün
+                    {order?.orderItems?.length} Ürün
                   </div>
                 </div>
               </div>
