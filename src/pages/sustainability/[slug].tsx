@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { sustainabilityCollections, SustainabilityItem } from './sustainabilityData';
+import { sustainabilityCollections, SustainabilityItem } from '../../data/sustainabilityData';
 import SustainabilitySub from '@/components/sustainability-sub/SustainabilitySub';
 
 interface SustainabilityDetailProps {
