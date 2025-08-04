@@ -154,44 +154,21 @@ export default function Header() {
   return (
     <>
       {/* Top Bar */}
-      <div className="tf-top-bar bg_white line">
+      <div className="tf-top-bar bg_white line py-4">
         <div className="px_15 lg-px_40">
-          <div className="tf-top-bar_wrap grid-3 gap-30 align-items-center">
-            <ul className="tf-top-bar_item tf-social-icon d-flex gap-10">
-              <li>
-                <a href="https://www.facebook.com/desafashion?fref=ts"
-                  className="box-icon w_28 round social-facebook bg_line">
-                  <i className="icon fs-12 icon-fb"></i>
-                </a>
-              </li>
-              <li>
-                <a href="https://www.instagram.com/desafashion/"
-                  className="box-icon w_28 round social-instagram bg_line">
-                  <i className="icon fs-12 icon-instagram"></i>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
-                  className="box-icon w_28 round social-youtube border-line"
-                  target="_blank"
-                  style={{ backgroundColor: '#ebebeb' }}
-                >
-                  <i
-                    className="icon fs-8 icon-play"
-                    style={{
-                      border: '1px solid #000',
-                      padding: '1px 4px',
-                      borderRadius: '2px',
-                      backgroundColor: '#000',
-                      color: '#fff',
-                      fontSize: '8px'
-                    }}
-                  ></i>
-                </a>
-              </li>
-            </ul>
-            <div className="text-center overflow-hidden">
+          <div className="tf-top-bar_item d-flex justify-content-start align-items-center">
+            <div className="col-xl-5 col-md-6 col-6">
+              <Link href="/" className="logo-header">
+                <Image
+                  src="/assets/site/images/logo/desa-logo.svg"
+                  alt="Desa Logo"
+                  width={120}
+                  height={40}
+                  className="logo"
+                />
+              </Link>
+            </div>
+            <div className="col-xl-2 tf-md-hidden text-center overflow-hidden">
               <div className="swiper tf-sw-top_bar" data-preview="1" data-space="0" data-loop="true" data-speed="1000" data-delay="2000">
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
@@ -227,123 +204,15 @@ export default function Header() {
                 </select>
               </div>
             </div> */}
-          </div>
-        </div>
-      </div>
-      {/* /Top Bar */}
-
-      {/* Header */}
-      <header id="header" className="header-default">
-        <div className="px_15 lg-px_40">
-          <div className="row wrapper-header align-items-center">
-            <div className="col-md-4 col-3 tf-lg-hidden">
-              <button
-                onClick={toggleMobileMenu}
-                className="nav-icon-item"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="16"
-                  viewBox="0 0 24 16"
-                  fill="none"
-                >
-                  <path
-                    d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-            <div className="col-xl-3 col-md-4 col-6">
-              <Link href="/" className="logo-header">
-                <Image
-                  src="/assets/site/images/logo/desa-logo.svg"
-                  alt="Desa Logo"
-                  width={120}
-                  height={40}
-                  className="logo"
-                />
-              </Link>
-            </div>
-            <div className="col-xl-6 tf-md-hidden">
-              <nav className="box-navigation text-center">
-                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
-                  <li className="menu-item">
-                    <Link href={PathEnums.HOME} className="item-link">
-                      Anasayfa
-                    </Link>
-                  </li>
-
-                  {categories?.items?.length &&
-                    categories.items
-                      .slice()
-                      .sort((a, b) => a.displayIndex - b.displayIndex)
-                      .map((category) => (
-                        <li
-                          key={category.id}
-                          className="menu-item"
-                          onMouseEnter={() => setHoveredCategoryId(category.id)}
-                          onMouseLeave={() => setHoveredCategoryId("")}
-                        >
-                          <Link
-                            href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
-                            className="item-link"
-                          >
-                            {category.name}
-                            <i className="icon icon-arrow-down"></i>
-                          </Link>
-
-                          {hoveredCategoryId === category.id && subCategories && (
-                            <div className="sub-menu mega-menu">
-                              <div className="container">
-                                <div className="row">
-                                  <div className="col-lg-12">
-                                    <div className="mega-menu-item">
-                                      <div className="menu-heading">
-                                        {category.name} Alt Kategorileri
-                                      </div>
-                                      <ul className="menu-list">
-                                        {subCategories
-                                          .slice()
-                                          .sort((a, b) => a.displayIndex - b.displayIndex)
-                                          .map((subCategory) => (
-                                            <li key={subCategory.id}>
-                                              <Link
-                                                href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
-                                                className="menu-link-text link"
-                                              >
-                                                {subCategory.name}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                      </ul>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                  <li className="menu-item">
-                    <Link href={`${PathEnums.PRODUCTS}?categoryId=outlet`} className="item-link">
-                      Outlet
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div className="col-xl-3 col-md-4 col-3">
+            <div className="col-xl-5 col-md-6 col-6">
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                 <li className="nav-search">
                   <button
                     onClick={toggleSearch}
                     className="nav-icon-item"
                   >
-                    <i className="icon icon-search" style={{ paddingTop: '20%' }}></i>
+                    <i className="icon icon-search" ></i>
                   </button>
-
                   <SearchSidebar
                     isOpen={showSearchInput}
                     onClose={closeSearch}
@@ -483,11 +352,201 @@ export default function Header() {
                 </li>
               </ul>
             </div>
+
+
+          </div>
+        </div>
+      </div>
+      {/* /Top Bar */}
+
+      {/* Header */}
+      <header id="header" className="header-default">
+        <div className="px_15 lg-px_40">
+          <div className="row wrapper-header align-items-center">
+            <div className="col-md-4 col-3 tf-lg-hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="nav-icon-item"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="16"
+                  viewBox="0 0 24 16"
+                  fill="none"
+                >
+                  <path
+                    d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div className="tf-md-hidden align-items-center">
+              <nav className="box-navigation text-center">
+                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
+                  <li className="menu-item">
+                    <Link href={PathEnums.HOME} className="item-link">
+                      Anasayfa
+                    </Link>
+                  </li>
+                  {categories?.items?.length &&
+                    categories.items
+                      .slice()
+                      .sort((a, b) => a.displayIndex - b.displayIndex)
+                      .map((category) => (
+                        <li
+                          key={category.id}
+                          className="menu-item"
+                          onMouseEnter={() => setHoveredCategoryId(category.id)}
+                          onMouseLeave={() => setHoveredCategoryId("")}
+                        >
+                          <Link
+                            href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
+                            className="item-link"
+                          >
+                            {category.name}
+                            <i className="icon icon-arrow-down"></i>
+                          </Link>
+
+                          {hoveredCategoryId === category.id && subCategories && (
+                            <div className="sub-menu mega-menu">
+                              <div className="container">
+                                <div className="row">
+                                  <div className="col-lg-12">
+                                    <div className="mega-menu-item">
+                                      <div className="menu-heading">
+                                        {category.name} Alt Kategorileri
+                                      </div>
+                                      <ul className="menu-list">
+                                        {subCategories
+                                          .slice()
+                                          .sort((a, b) => a.displayIndex - b.displayIndex)
+                                          .map((subCategory) => (
+                                            <li key={subCategory.id}>
+                                              <Link
+                                                href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
+                                                className="menu-link-text link"
+                                              >
+                                                {subCategory.name}
+                                              </Link>
+                                            </li>
+                                          ))}
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                  <li className="menu-item">
+                    <Link href={PathEnums.SUSTAINABILITY} className="item-link">
+                      SÜRDÜRÜLEBİLİRLİK
+                      <i className="icon icon-arrow-down"></i>
+                    </Link>
+
+                    {/* Sürdürülebilirlik Dropdown */}
+                    {/* <div className="sub-menu mega-menu">
+                      <div className="container">
+                        <div className="row">
+                          <div className="col-lg-12">
+                            <div className="mega-menu-item">
+                              <div className="menu-heading">
+                                Sürdürülebilirlik Konuları
+                              </div>
+                              <ul className="menu-list">
+                                <li>
+                                  <Link
+                                    href="/sustainability/enerji"
+                                    className="menu-link-text link"
+                                  >
+                                    Enerjimizi Güneşten Alıyoruz
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/leather-working-group"
+                                    className="menu-link-text link"
+                                  >
+                                    Leather Working Group
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/hatira-ormani"
+                                    className="menu-link-text link"
+                                  >
+                                    Desa Hatıra Ormanı
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/higg-index"
+                                    className="menu-link-text link"
+                                  >
+                                    Higg Index
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/sosyal-sorumluluk"
+                                    className="menu-link-text link"
+                                  >
+                                    Sosyal Sorumluluk
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/sorumlu-uretim"
+                                    className="menu-link-text link"
+                                  >
+                                    Sorumlu Üretim
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/nitelikli-is-gucu"
+                                    className="menu-link-text link"
+                                  >
+                                    Nitelikli İş Gücü
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/izlenebilirlik"
+                                    className="menu-link-text link"
+                                  >
+                                    İzlenebilirlik
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/sustainability/atik-yonetimi"
+                                    className="menu-link-text link"
+                                  >
+                                    Atık Yönetimi
+                                  </Link>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div> */}
+                  </li>
+
+
+
+                </ul>
+              </nav>
+            </div>
+
           </div>
         </div>
       </header>
       {/* /Header */}
-
       {/* Mobil Menü */}
       {isMobileMenuOpen && (
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
@@ -558,7 +617,6 @@ export default function Header() {
   .nav-account .dropdown-menu.show {
     display: block;
   }
-
 `}</style>
     </>
   );

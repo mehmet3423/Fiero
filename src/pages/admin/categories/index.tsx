@@ -235,7 +235,7 @@ function CategoryManagementPage() {
 
   if (categoriesLoading) {
     return (
-      <div className="card">
+      <div className="card" >
         <h5
           className="card-header"
           style={{ fontSize: "1.2rem", fontWeight: "bold", padding: "20px" }}
@@ -267,7 +267,7 @@ function CategoryManagementPage() {
               Kategoriler
             </h6>
           </div>
-          <div className="card">
+          <div className="card" style={{maxHeight: '450px', overflowY: 'auto'}}>
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -334,7 +334,7 @@ function CategoryManagementPage() {
                                             minWidth: "330px", // zorunlu genişlik
                                           }}
                                         >
-                                          <FontAwesomeIcon icon={faBars} />
+                                          <FontAwesomeIcon icon={faBars} style={{paddingRight: "1rem", paddingLeft: "0.5rem"}}/>
                                           <span>{category.name}</span>
                                         </div>
                                       </td>
@@ -385,8 +385,8 @@ function CategoryManagementPage() {
         </div>
 
         {/* Alt Kategoriler - Mevcut yapıyı koruyarak sadece görsel güncelleme */}
-        <div className="col-lg-6">
-          <div className="card" style={{ marginTop: "62px" }}>
+        <div className="col-lg-6 " >
+          <div className="card" style={{ marginTop: "70px", marginLeft: "auto", maxHeight: '444px', overflowY: 'auto' }}>
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -451,7 +451,7 @@ function CategoryManagementPage() {
                                             gap: "0.5rem",
                                           }}
                                         >
-                                          <FontAwesomeIcon icon={faBars} />
+                                          <FontAwesomeIcon icon={faBars} style={{paddingRight: "1rem", paddingLeft: "0.5rem"}} />
                                           <span>{subCategory.name}</span>
                                         </div>
                                       </td>
@@ -819,8 +819,8 @@ function CategoryManagementPage() {
           }
 
           .col-lg-6 {
-            padding-left: 0.25rem;
-            padding-right: 0.25rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
           }
         }
       `}</style>

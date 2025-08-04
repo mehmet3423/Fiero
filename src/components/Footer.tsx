@@ -166,6 +166,16 @@ export default function Footer() {
                       Hesabım
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/about-desa-tr" className="footer-menu_item">
+                      Yatırımcı İlişkileri
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/about-desa" className="footer-menu_item">
+                      Investor Relations
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
