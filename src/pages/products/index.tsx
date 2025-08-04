@@ -83,9 +83,13 @@ interface ProductsProps {
 }
 
 const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
-  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string>("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>("");
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
+  const [selectedMainCategoryId, setSelectedMainCategoryId] =
+    useState<string>("");
+  const [selectedSubCategoryId, setSelectedSubCategoryId] =
+    useState<string>("");
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >({});
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
@@ -95,7 +99,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
 
   const [grid, setGrid] = useState<number>(4);
 
@@ -132,8 +135,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       title: "Women",
       image: "/assets/site/images/collections/collection-2.jpg",
     },
-
-
   ];
 
   const getSortParameters = (
@@ -176,25 +177,26 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const router = useRouter();
   const { categoryId, subCategoryId, page, title, search } = router.query;
 
-
   useEffect(() => {
     const initSwiper = () => {
-      if (typeof window !== 'undefined' && window.Swiper) {
-        const swiperElement = document.querySelector('.tf-sw-collection') as SwiperElement;
+      if (typeof window !== "undefined" && window.Swiper) {
+        const swiperElement = document.querySelector(
+          ".tf-sw-collection"
+        ) as SwiperElement;
 
         if (swiperElement && !swiperElement.swiper) {
-          console.log('Initializing collection swiper...');
+          console.log("Initializing collection swiper...");
 
-          const swiper = new window.Swiper('.tf-sw-collection', {
+          const swiper = new window.Swiper(".tf-sw-collection", {
             slidesPerView: 2,
             spaceBetween: 15,
             loop: false,
             navigation: {
-              nextEl: '.nav-next-collection',
-              prevEl: '.nav-prev-collection',
+              nextEl: ".nav-next-collection",
+              prevEl: ".nav-prev-collection",
             },
             pagination: {
-              el: '.sw-pagination-collection',
+              el: ".sw-pagination-collection",
               clickable: true,
             },
             breakpoints: {
@@ -209,14 +211,14 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
             },
           });
 
-          console.log('Collection swiper initialized:', swiper);
+          console.log("Collection swiper initialized:", swiper);
         }
       }
     };
 
     const timer = setTimeout(initSwiper, 100);
     return () => clearTimeout(timer);
-  },); // Collections statik olduğu için hızlanması açısından useEffect'e bağımlılık eklenmedi
+  }); // Collections statik olduğu için hızlanması açısından useEffect'e bağımlılık eklenmedi
 
   useEffect(() => {
     if (categoryId && typeof categoryId === "string") {
@@ -245,7 +247,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     isLoading: subCategorySpecificationsLoading,
   } = useSubCategorySpecifications(selectedSubCategoryId);
 
-  const [selectedSpecificationIds, setSelectedSpecificationIds] = useState<string[]>([]);
+  const [selectedSpecificationIds, setSelectedSpecificationIds] = useState<
+    string[]
+  >([]);
   useEffect(() => {
     if (
       subCategorySpecifications &&
@@ -259,7 +263,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
           selectedSpecificationIds.includes(option.id)
         );
         if (matchingOptions.length > 0) {
-          newSelectedFilters[spec.name] = matchingOptions.map((opt) => opt.value);
+          newSelectedFilters[spec.name] = matchingOptions.map(
+            (opt) => opt.value
+          );
         }
       }
 
@@ -273,25 +279,29 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   const isOutletPage = selectedMainCategoryId === "outlet";
 
-  const { data: allProducts, isLoading: allProductsLoading } = useGetAllProducts({
-    page: displayPage - 1,
-    pageSize: pageSize,
-    searchTerm: searchTerm || undefined,
-    mainCategoryId: !isOutletPage ? selectedMainCategoryId || undefined : undefined,
-    subCategoryId: !isOutletPage ? selectedSubCategoryId || undefined : undefined,
-    ...sortParams,
-    enabled: !isOutletPage,
-  });
+  const { data: allProducts, isLoading: allProductsLoading } =
+    useGetAllProducts({
+      page: displayPage - 1,
+      pageSize: pageSize,
+      searchTerm: searchTerm || undefined,
+      mainCategoryId: !isOutletPage
+        ? selectedMainCategoryId || undefined
+        : undefined,
+      subCategoryId: !isOutletPage
+        ? selectedSubCategoryId || undefined
+        : undefined,
+      ...sortParams,
+      enabled: !isOutletPage,
+    });
 
-  const { data: outletProducts, isLoading: outletProductsLoading } = useGetAllOutletProducts({
-    page: displayPage - 1,
-    pageSize: pageSize,
-    searchTerm: searchTerm || undefined,
-    ...sortParams,
-    enabled: isOutletPage,
-  });
-
-
+  const { data: outletProducts, isLoading: outletProductsLoading } =
+    useGetAllOutletProducts({
+      page: displayPage - 1,
+      pageSize: pageSize,
+      searchTerm: searchTerm || undefined,
+      ...sortParams,
+      enabled: isOutletPage,
+    });
 
   const selectedMainCategory = useMemo(() => {
     if (!categories?.items) return null;
@@ -317,7 +327,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     setDisplayPage(1);
   }, [sortBy]);
 
-  const isLoading = categoriesLoading || allProductsLoading || outletProductsLoading;
+  const isLoading =
+    categoriesLoading || allProductsLoading || outletProductsLoading;
 
   const currentProductData = isOutletPage ? outletProducts : allProducts;
   const apiProducts = (currentProductData?.items || []) as Product[];
@@ -328,7 +339,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     if (apiProducts && apiProducts.length > 0) {
       const prices = apiProducts.map((product: Product) => {
         const finalPrice = product.discountedPrice || product.price;
-        console.log(`${product.title}: Original=${product.price}, Discounted=${product.discountedPrice}, Final=${finalPrice}`);
+        console.log(
+          `${product.title}: Original=${product.price}, Discounted=${product.discountedPrice}, Final=${finalPrice}`
+        );
         return finalPrice;
       });
 
@@ -336,7 +349,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       const maxPrice = Math.ceil(Math.max(...prices));
       const roundedMaxPrice = Math.ceil(maxPrice / 10) * 10;
 
-      console.log("Price range calculated:", { minPrice, maxPrice, roundedMaxPrice });
+      console.log("Price range calculated:", {
+        minPrice,
+        maxPrice,
+        roundedMaxPrice,
+      });
 
       setMaxPossiblePrice(roundedMaxPrice);
       setPriceRange([minPrice, roundedMaxPrice]);
@@ -373,7 +390,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
         discountedPrice: product.discountedPrice,
         finalPrice: finalPrice,
         priceRange: priceRange,
-        isInRange: finalPrice >= priceRange[0] && finalPrice <= priceRange[1]
+        isInRange: finalPrice >= priceRange[0] && finalPrice <= priceRange[1],
       });
 
       return finalPrice >= priceRange[0] && finalPrice <= priceRange[1];
@@ -390,7 +407,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     setIsFilterVisible(!isFilterVisible);
     document.body.classList.toggle("sidebar-filter-active");
   };
-
 
   const clearAllFilters = () => {
     setSelectedFilters({});
@@ -553,10 +569,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                   <div className="swiper-slide" key={col.key} data-lazy="true">
                     <div className="collection-item style-2 hover-img">
                       <div className="collection-inner">
-                        <a
-                          href="#"
-                          className="collection-image img-style"
-                        >
+                        <a href="#" className="collection-image img-style">
                           <img
                             className="lazyload"
                             data-src={col.image}
@@ -565,7 +578,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                           />
                         </a>
                         <div className="collection-content">
-                          <a href="#" className="tf-btn collection-title hover-icon fs-15">
+                          <a
+                            href="#"
+                            className="tf-btn collection-title hover-icon fs-15"
+                          >
                             <span>{col.title}</span>
                             <i className="icon icon-arrow1-top-left"></i>
                           </a>
@@ -613,11 +629,15 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 {[2, 3, 4].map((g) => (
                   <li
                     key={g}
-                    className={`tf-view-layout-switch sw-layout-${g}${grid === g ? " active" : ""}`}
+                    className={`tf-view-layout-switch sw-layout-${g}${
+                      grid === g ? " active" : ""
+                    }`}
                     data-value-grid={`grid-${g}`}
                     onClick={() => setGrid(g)}
                   >
-                    <div className="item"><span className={`icon icon-grid-${g}`}></span></div>
+                    <div className="item">
+                      <span className={`icon icon-grid-${g}`}></span>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -635,17 +655,23 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     style={{ cursor: "pointer" }}
                   >
                     <span className="text-sort-value">
-                      {SORT_OPTION_LABELS[sortBy as keyof typeof SORT_OPTION_LABELS] || "Featured"}
+                      {SORT_OPTION_LABELS[
+                        sortBy as keyof typeof SORT_OPTION_LABELS
+                      ] || "Featured"}
                     </span>
                     <span className="icon icon-arrow-down"></span>
                   </div>
-                  <div className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
+                  <div
+                    className={`dropdown-menu${dropdownOpen ? " show" : ""}`}
+                  >
                     {Object.entries(SORT_OPTION_LABELS).map(([key, label]) => (
                       <div
-                        className={`select-item${sortBy === key ? " active" : ""}`}
+                        className={`select-item${
+                          sortBy === key ? " active" : ""
+                        }`}
                         key={key}
                         onClick={() => {
-                          setSortBy(key);      // mevcut projedeki filtreleme fonksiyonunu tetikler
+                          setSortBy(key); // mevcut projedeki filtreleme fonksiyonunu tetikler
                           setDropdownOpen(false);
                         }}
                       >
@@ -672,8 +698,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     grid === 2
                       ? "col-12 col-md-6 d-flex"
                       : grid === 3
-                        ? "col-12 col-md-4 d-flex"
-                        : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
+                      ? "col-12 col-md-4 d-flex"
+                      : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
                   }
                 >
                   <ProductCard product={product} />
@@ -707,7 +733,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 export const getStaticProps: GetStaticProps<ProductsProps> = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/SEO/GetSEOBySlug?slug=/products`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/SEO/GetSEOBySlug?slug=/products`
     );
     if (response.ok) {
       const seoData = await response.json();
