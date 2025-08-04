@@ -482,7 +482,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   try {
     // En popüler ürünlerin ID'lerini çek (performans için sadece ilk 100 ürün)
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/Product/GetAllProducts?Page=1&PageSize=100`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Product/GetAllProducts?Page=1&PageSize=100`
     );
 
     if (response.ok) {

@@ -489,7 +489,7 @@ function AboutUs({ seoData }: AboutProps) {
 export const getStaticProps: GetStaticProps<AboutProps> = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/SEO/GetSEOBySlug?slug=/about-us`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/SEO/GetSEOBySlug?slug=/about-us`
     );
     if (response.ok) {
       const seoData = await response.json();
