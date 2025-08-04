@@ -270,7 +270,7 @@ function SubCategorySpecifications() {
                       }}
                     >
                       <option value="">Ana Kategori Seçin</option>
-                      {categories?.items.map((category) => (
+                      {categories?.items?.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>
