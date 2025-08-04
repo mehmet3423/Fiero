@@ -1,4 +1,4 @@
-import { sustainabilityCollections } from "./sustainabilityData";
+import { sustainabilityCollections } from "../../data/sustainabilityData";
 import Link from "next/link";
 import SEOHead from "@/components/SEO/SEOHead";
 
