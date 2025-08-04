@@ -102,30 +102,47 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
 
         /* Desktop Thumbnail Styles */
         @media (min-width: 768px) {
-          .tf-product-media-thumbs {
-            flex-shrink: 0;
-            width: 160px !important;
-            overflow: visible !important;
+          .thumbs-slider {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-start !important;
+            gap: 24px !important;
           }
-          
+          .tf-product-media-thumbs {
+            flex: none !important;
+            width: 120px !important;
+            height: 500px !important;
+            overflow: hidden !important;
+            margin-right: 0 !important;
+          }
+
+          .tf-single-slide {
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            position: relative !important;
+          }
+
           .tf-product-media-thumbs .swiper-wrapper {
             width: 100% !important;
-            overflow: visible !important;
+            overflow: hidden !important;
           }
-          
+
           .tf-product-media-thumbs .swiper-slide {
-            height: auto !important;
+            height: 120px !important;
             margin-bottom: 12px !important;
             width: 100% !important;
-            overflow: visible !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
           }
-          
+
           .tf-product-media-thumbs .item {
             display: block !important;
-            width: 120px !important;
-            height: 120px !important;
+            width: 100px !important;
+            height: 100px !important;
             margin: 0 auto !important;
-            overflow: visible !important;
+            overflow: hidden !important;
           }
         }
       `}</style>
@@ -143,57 +160,55 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
             modules={[Thumbs]}
             className="swiper tf-product-media-thumbs other-image-zoom"
             data-direction="vertical"
-            style={{ height: "500px", width: "160px", marginRight: "20px", overflow: "visible" }}
+            style={{ height: "500px", width: "120px", marginRight: "20px", overflow: "hidden" }}
           >
-            <div className="swiper-wrapper stagger-wrap">
-              {media.map((item, index) => (
-                <SwiperSlide key={index} className="swiper-slide stagger-item">
-                  <div
-                    className="item"
-                    onClick={() => {
-                      mainSwiperRef.current?.swiper.slideTo(index);
-                      setInitialSlide(index);
-                    }}
-                    style={{ 
-                      cursor: "pointer",
-                      border: initialSlide === index ? "2px solid #000" : "2px solid transparent",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      transition: "border-color 0.3s ease",
-                      width: "100px",
-                      height: "100px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: "10px"
-                    }}
-                  >
-                    {item.type === "video" ? (
-                      <VideoThumbnail
-                        videoUrl={item.url}
-                        alt={`${product.title} - Video ${index + 1}`}
-                        width={100}
-                        height={100}
-                      />
-                    ) : (
-                      <Image
-                        src={item.url || "/assets/images/no-image.jpg"}
-                        alt={`${product.title} - ${index + 1}`}
-                        width={100}
-                        height={100}
-                        className="lazyload"
-                        style={{ 
-                          objectFit: "cover",
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "6px"
-                        }}
-                      />
-                    )}
-                  </div>
-                </SwiperSlide>
-              ))}
-            </div>
+            {media.map((item, index) => (
+              <SwiperSlide key={index} className="swiper-slide stagger-item">
+                <div
+                  className="item"
+                  onClick={() => {
+                    mainSwiperRef.current?.swiper.slideTo(index);
+                    setInitialSlide(index);
+                  }}
+                  style={{ 
+                    cursor: "pointer",
+                    border: initialSlide === index ? "2px solid #000" : "2px solid transparent",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    transition: "border-color 0.3s ease",
+                    width: "100px",
+                    height: "100px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "10px"
+                  }}
+                >
+                  {item.type === "video" ? (
+                    <VideoThumbnail
+                      videoUrl={item.url}
+                      alt={`${product.title} - Video ${index + 1}`}
+                      width={100}
+                      height={100}
+                    />
+                  ) : (
+                    <Image
+                      src={item.url || "/assets/images/no-image.jpg"}
+                      alt={`${product.title} - ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="lazyload"
+                      style={{ 
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "6px"
+                      }}
+                    />
+                  )}
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         )}
 
