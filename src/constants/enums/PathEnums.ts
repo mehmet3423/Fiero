@@ -26,4 +26,5 @@ export enum PathEnums {
   ADMIN_CATEGORIES = "/admin/categories",
   SUPPORT_TICKETS = "/support-ticket",
   ORDER_SUPPORT_TICKETS = "/order-support-ticket",
+  SUSTAINABILITY = "/sustainability",
 }
