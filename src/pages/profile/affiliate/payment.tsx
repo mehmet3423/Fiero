@@ -187,15 +187,15 @@ export default function AffiliatePaymentPage({
         <div className="row">
           <div className="col-12">
             <div className="card shadow-sm border-0 rounded-4">
-              <div className="card-body text-center p-5">
-                <div className="card-icon mb-4">
-                  <i className="bx bx-block text-danger" style={{ fontSize: "4rem" }}></i>
+              <div className="card-body text-center py-4">
+                <div className="card-icon mb-3">
+                  <i className="bx bx-block text-danger" style={{ fontSize: "3rem" }}></i>
                 </div>
-                <h5 className="text-danger mb-3 fw-bold">Hesap Askıya Alındı</h5>
-                <p className="text-muted mb-0 lead">
+                <h6 className="text-danger mb-2 fw-bold">Hesap Askıya Alındı</h6>
+                <small className="text-muted">
                   Affiliate hesabınız askıya alındığından dolayı çekim talebi
                   oluşturamazsınız
-                </p>
+                </small>
               </div>
             </div>
           </div>
@@ -204,17 +204,17 @@ export default function AffiliatePaymentPage({
         <div className="row">
           <div className="col-12">
             <div className="card shadow-sm border-0 rounded-4">
-              <div className="card-body p-4">
+              <div className="card-body p-3">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
-                    <h5 className="mb-2 fw-bold text-dark">Ödeme Talebi Oluştur</h5>
-                    <p className="text-muted mb-0">
+                    <h6 className="mb-1 fw-bold text-dark">Ödeme Talebi Oluştur</h6>
+                    <small className="text-muted">
                       Transfer edilebilir kazancınızdan ödeme talebinde
                       bulunabilirsiniz.
-                    </p>
+                    </small>
                   </div>
                   <button
-                    className="btn btn-dark btn-lg rounded-pill px-4"
+                    className="btn btn-dark rounded-pill px-3 py-2"
                     onClick={() => setShowPayoutForm(!showPayoutForm)}
                     disabled={false}
                   >
@@ -233,11 +233,11 @@ export default function AffiliatePaymentPage({
         <div className="row mb-4">
           <div className="col-12">
             <div className="card shadow-sm border-0 rounded-4">
-              <div className="card-body p-4">
+              <div className="card-body p-3">
                 <div className="row">
                   <div className="col-md-6">
                     <div className="mb-3">
-                      <label className="form-label fw-bold text-dark">
+                      <label className="form-label fw-semibold text-dark">
                         Talep Edilecek Tutar (₺)
                       </label>
                       <input
@@ -258,7 +258,7 @@ export default function AffiliatePaymentPage({
                 </div>
                 <div className="d-flex gap-3">
                   <button
-                    className="btn btn-dark rounded-pill px-4"
+                    className="btn btn-dark rounded-pill px-3 py-2"
                     onClick={handleCreatePayoutRequest}
                     disabled={isCreatingPayout || !requestAmount}
                   >
@@ -278,7 +278,7 @@ export default function AffiliatePaymentPage({
                     )}
                   </button>
                   <button
-                    className="btn btn-outline-secondary rounded-pill px-4"
+                    className="btn btn-outline-secondary rounded-pill px-3 py-2"
                     onClick={() => {
                       setShowPayoutForm(false);
                       setRequestAmount("");
@@ -297,55 +297,55 @@ export default function AffiliatePaymentPage({
       <div className="row mt-4">
         <div className="col-12">
           <div className="card shadow-sm border-0 rounded-4">
-            <div className="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
-              <h5 className="mb-0 fw-bold text-dark">
+            <div className="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-2">
+              <h6 className="mb-0 fw-bold text-dark">
                 <i className="bx bx-receipt me-2"></i>
                 Ödeme Talepleri
-              </h5>
-              <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+              </h6>
+              <span className="badge bg-light text-dark border rounded-pill px-2 py-1">
                 <i className="bx bx-list-ul me-1"></i>
                 {payouts.length} talep
               </span>
             </div>
             <div className="card-body p-0">
               {payoutsLoading ? (
-                <div className="text-center py-5">
+                <div className="text-center py-3">
                   <div className="spinner-border text-primary" role="status">
                     <span className="sr-only">Yükleniyor...</span>
                   </div>
-                  <p className="text-muted mt-3 mb-0">Ödeme talepleri yükleniyor...</p>
+                  <p className="text-muted mt-2 mb-0">Ödeme talepleri yükleniyor...</p>
                 </div>
               ) : payouts.length === 0 ? (
-                <div className="text-center py-5">
+                <div className="text-center py-3">
                   <div className="empty-state">
-                    <i className="bx bx-receipt text-muted mb-3" style={{ fontSize: "4rem" }}></i>
-                    <h5 className="mt-3 text-muted fw-bold">
+                    <i className="bx bx-receipt text-muted mb-2" style={{ fontSize: "3rem" }}></i>
+                    <h6 className="mt-2 text-muted fw-bold">
                       Henüz ödeme talebiniz bulunmuyor
-                    </h5>
-                    <p className="text-muted mb-0">
+                    </h6>
+                    <small className="text-muted">
                       İlk ödeme talebinizi oluşturmak için yukarıdaki butonu
                       kullanın
-                    </p>
+                    </small>
                   </div>
                 </div>
               ) : (
                 <div className="table-responsive">
-                  <table className="table table-hover mb-0">
+                  <table className="table table-hover mb-0 table-sm">
                     <thead className="table-light">
                       <tr>
-                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                        <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                           Talep Tarihi
                         </th>
-                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                        <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                           Tutar
                         </th>
-                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                        <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                           Durum
                         </th>
-                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                        <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                           İşlenme Tarihi
                         </th>
-                        <th className="border-0 fw-bold text-uppercase" style={{ fontSize: "0.8rem", letterSpacing: "0.5px" }}>
+                        <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
                           Açıklama
                         </th>
                       </tr>
@@ -353,28 +353,28 @@ export default function AffiliatePaymentPage({
                     <tbody>
                       {payouts.map((payout) => (
                         <tr key={payout.id}>
-                          <td className="align-middle">{formatDate(payout.requestDate)}</td>
-                          <td className="align-middle">
+                          <td className="align-middle py-2">{formatDate(payout.requestDate)}</td>
+                          <td className="align-middle py-2">
                             <strong className="text-dark">
                               {payout.requestedAmount.toFixed(2)} ₺
                             </strong>
                           </td>
-                          <td className="align-middle">
+                          <td className="align-middle py-2">
                             <span
                               className={`badge bg-${getPayoutStatusColor(
                                 payout.status
-                              )} rounded-pill px-3 py-2`}
-                              style={{ fontSize: "0.75rem" }}
+                              )} rounded-pill px-2 py-1`}
+                              style={{ fontSize: "0.7rem" }}
                             >
                               {getPayoutStatusText(payout.status)}
                             </span>
                           </td>
-                          <td className="align-middle">
+                          <td className="align-middle py-2">
                             {payout.processedDate
                               ? formatDate(payout.processedDate)
                               : "-"}
                           </td>
-                          <td className="align-middle text-muted">{payout.description || "-"}</td>
+                          <td className="align-middle text-muted py-2">{payout.description || "-"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -432,7 +432,7 @@ export default function AffiliatePaymentPage({
 
         /* Empty state */
         .empty-state {
-          padding: 3rem 2rem;
+          padding: 1.5rem 1rem;
         }
 
         /* Responsive adjustments */
@@ -454,7 +454,7 @@ export default function AffiliatePaymentPage({
           }
 
           .empty-state {
-            padding: 2rem 1rem;
+            padding: 1rem 0.5rem;
           }
         }
 
