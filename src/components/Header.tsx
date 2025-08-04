@@ -10,13 +10,11 @@ import { useLogout } from "@/hooks/services/useLogout";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import MobileMenu from "./MobileMenu";
-import CartSidebar from './CartSidebar';
-import SearchSidebar from './SearchSidebar';
-
-
+import CartSidebar from "./CartSidebar";
+import SearchSidebar from "./SearchSidebar";
 
 export default function Header() {
   const router = useRouter();
@@ -37,9 +35,24 @@ export default function Header() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string>("");
-  const { categories: subCategories } = useSubCategoriesLookUp(hoveredCategoryId);
+  const { categories: subCategories } =
+    useSubCategoriesLookUp(hoveredCategoryId);
 
-  const showCustomerFeatures = userRole === UserRole.CUSTOMER || userRole === null;
+  // Chunk subcategories into groups of 10 for column layout
+  const chunkedSubCategories = useMemo(() => {
+    if (!subCategories) return [];
+    const sorted = [...subCategories].sort(
+      (a, b) => a.displayIndex - b.displayIndex
+    );
+    const chunks: (typeof sorted)[] = [];
+    for (let i = 0; i < sorted.length; i += 10) {
+      chunks.push(sorted.slice(i, i + 10));
+    }
+    return chunks;
+  }, [subCategories]);
+
+  const showCustomerFeatures =
+    userRole === UserRole.CUSTOMER || userRole === null;
   const showSellerFeatures = userRole === UserRole.SELLER;
   const showAdminFeatures = userRole === UserRole.ADMIN;
 
@@ -48,7 +61,8 @@ export default function Header() {
   }
 
   const cartTotal = cartProducts.reduce(
-    (total, item) => total + (item.discountedPrice || item.price) * item.quantity,
+    (total, item) =>
+      total + (item.discountedPrice || item.price) * item.quantity,
     0
   );
 
@@ -56,7 +70,10 @@ export default function Header() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setShowResults(false);
         // Eğer arama boşsa input'u da kapat
         if (!searchTerm) {
@@ -72,21 +89,27 @@ export default function Header() {
   useEffect(() => {
     function handleAccountDropdownClickOutside(event: MouseEvent) {
       const target = event.target as HTMLElement;
-      if (!target.closest('.nav-account')) {
+      if (!target.closest(".nav-account")) {
         setIsAccountDropdownOpen(false);
       }
     }
 
     if (isAccountDropdownOpen) {
       document.addEventListener("mousedown", handleAccountDropdownClickOutside);
-      return () => document.removeEventListener("mousedown", handleAccountDropdownClickOutside);
+      return () =>
+        document.removeEventListener(
+          "mousedown",
+          handleAccountDropdownClickOutside
+        );
     }
   }, [isAccountDropdownOpen]);
 
-
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
   useEffect(() => {
-    console.log("Header useEffect - isCartDropdownOpen changed to:", isCartDropdownOpen);
+    console.log(
+      "Header useEffect - isCartDropdownOpen changed to:",
+      isCartDropdownOpen
+    );
   }, [isCartDropdownOpen]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +126,7 @@ export default function Header() {
     setShowSearchInput(!showSearchInput);
     if (!showSearchInput) {
       setTimeout(() => {
-        const input = document.querySelector('.canvas-search input');
+        const input = document.querySelector(".canvas-search input");
         (input as HTMLInputElement)?.focus();
       }, 100);
     } else {
@@ -169,7 +192,14 @@ export default function Header() {
               </Link>
             </div>
             <div className="col-xl-2 tf-md-hidden text-center overflow-hidden">
-              <div className="swiper tf-sw-top_bar" data-preview="1" data-space="0" data-loop="true" data-speed="1000" data-delay="2000">
+              <div
+                className="swiper tf-sw-top_bar"
+                data-preview="1"
+                data-space="0"
+                data-loop="true"
+                data-speed="1000"
+                data-delay="2000"
+              >
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
                     <p className="top-bar-text fw-5">
@@ -180,10 +210,14 @@ export default function Header() {
                     </p>
                   </div>
                   <div className="swiper-slide">
-                    <p className="top-bar-text fw-5">Summer sale discount off 70%</p>
+                    <p className="top-bar-text fw-5">
+                      Summer sale discount off 70%
+                    </p>
                   </div>
                   <div className="swiper-slide">
-                    <p className="top-bar-text fw-5">Time to refresh your wardrobe.</p>
+                    <p className="top-bar-text fw-5">
+                      Time to refresh your wardrobe.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -207,11 +241,8 @@ export default function Header() {
             <div className="col-xl-5 col-md-6 col-6">
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                 <li className="nav-search">
-                  <button
-                    onClick={toggleSearch}
-                    className="nav-icon-item"
-                  >
-                    <i className="icon icon-search" ></i>
+                  <button onClick={toggleSearch} className="nav-icon-item">
+                    <i className="icon icon-search"></i>
                   </button>
                   <SearchSidebar
                     isOpen={showSearchInput}
@@ -228,7 +259,6 @@ export default function Header() {
                       <button
                         className="nav-icon-item"
                         onClick={() => {
-
                           setIsAccountDropdownOpen(!isAccountDropdownOpen);
                         }}
                       >
@@ -241,8 +271,13 @@ export default function Header() {
                               <div className="user-name">
                                 {showAdminFeatures
                                   ? "Admin"
-                                  : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
-                                  }`}
+                                  : `${
+                                      userProfile?.applicationUser?.firstName ||
+                                      "Kullanıcı"
+                                    } ${
+                                      userProfile?.applicationUser?.lastName ||
+                                      ""
+                                    }`}
                               </div>
                             </div>
                           </div>
@@ -254,7 +289,7 @@ export default function Header() {
                                 onClick={() => setIsAccountDropdownOpen(false)}
                               >
                                 <i className="icon-user"></i>
-                                <span>{' '}Profil</span>
+                                <span> Profil</span>
                               </Link>
                             )}
                             {showCustomerFeatures && (
@@ -262,7 +297,9 @@ export default function Header() {
                                 <Link
                                   href={`${PathEnums.PROFILE}/orders`}
                                   className="dropdown-item"
-                                  onClick={() => setIsAccountDropdownOpen(false)}
+                                  onClick={() =>
+                                    setIsAccountDropdownOpen(false)
+                                  }
                                 >
                                   <i className="bx bx-shopping-bag"></i>
                                   <span>Siparişlerim</span>
@@ -270,7 +307,9 @@ export default function Header() {
                                 <Link
                                   href={`${PathEnums.PROFILE}/addresses`}
                                   className="dropdown-item"
-                                  onClick={() => setIsAccountDropdownOpen(false)}
+                                  onClick={() =>
+                                    setIsAccountDropdownOpen(false)
+                                  }
                                 >
                                   <i className="icon-map-marker"></i>
                                   <span>Adreslerim</span>
@@ -316,7 +355,7 @@ export default function Header() {
                   ) : (
                     <button
                       className="nav-icon-item"
-                      onClick={() => router.push("/login")}  // Giriş yapmamış kullanıcı için login sayfası
+                      onClick={() => router.push("/login")} // Giriş yapmamış kullanıcı için login sayfası
                     >
                       <i className="icon icon-account"></i>
                     </button>
@@ -325,21 +364,28 @@ export default function Header() {
                 <li className="nav-wishlist">
                   <Link href={PathEnums.FAVORITES} className="nav-icon-item">
                     <i className="icon icon-heart"></i>
-                    {totalFavorites > 0 && <span className="count-box">{totalFavorites}</span>}
+                    {totalFavorites > 0 && (
+                      <span className="count-box">{totalFavorites}</span>
+                    )}
                   </Link>
                 </li>
                 <li className="nav-cart">
                   <button
                     className="nav-icon-item"
                     onClick={() => {
-                      console.log("Cart button clicked, current state:", isCartDropdownOpen);
+                      console.log(
+                        "Cart button clicked, current state:",
+                        isCartDropdownOpen
+                      );
                       const newState = !isCartDropdownOpen;
                       console.log("Setting new state to:", newState);
                       setIsCartDropdownOpen(newState);
                     }}
                   >
                     <i className="icon icon-bag"></i>
-                    {totalItems > 0 && <span className="count-box">{totalItems}</span>}
+                    {totalItems > 0 && (
+                      <span className="count-box">{totalItems}</span>
+                    )}
                   </button>
 
                   <CartSidebar
@@ -352,8 +398,6 @@ export default function Header() {
                 </li>
               </ul>
             </div>
-
-
           </div>
         </div>
       </div>
@@ -364,10 +408,7 @@ export default function Header() {
         <div className="px_15 lg-px_40">
           <div className="row wrapper-header align-items-center">
             <div className="col-md-4 col-3 tf-lg-hidden">
-              <button
-                onClick={toggleMobileMenu}
-                className="nav-icon-item"
-              >
+              <button onClick={toggleMobileMenu} className="nav-icon-item">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -409,36 +450,58 @@ export default function Header() {
                             <i className="icon icon-arrow-down"></i>
                           </Link>
 
-                          {hoveredCategoryId === category.id && subCategories && (
-                            <div className="sub-menu mega-menu">
-                              <div className="container">
-                                <div className="row">
-                                  <div className="col-lg-12">
-                                    <div className="mega-menu-item">
-                                      <div className="menu-heading">
-                                        {category.name} Alt Kategorileri
-                                      </div>
-                                      <ul className="menu-list">
-                                        {subCategories
-                                          .slice()
-                                          .sort((a, b) => a.displayIndex - b.displayIndex)
-                                          .map((subCategory) => (
-                                            <li key={subCategory.id}>
-                                              <Link
-                                                href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
-                                                className="menu-link-text link"
+                          {hoveredCategoryId === category.id &&
+                            subCategories && (
+                              <div className="sub-menu mega-menu">
+                                <div className="container">
+                                  <div className="row">
+                                    <div className="col-lg-12">
+                                      <div className="mega-menu-item">
+                                        <div
+                                          className="menu-columns"
+                                          style={{
+                                            display: "flex",
+                                            gap: "40px",
+                                          }}
+                                        >
+                                          {chunkedSubCategories.map(
+                                            (chunk, idx) => (
+                                              <ul
+                                                key={idx}
+                                                className="menu-list"
                                               >
-                                                {subCategory.name}
-                                              </Link>
-                                            </li>
-                                          ))}
-                                      </ul>
+                                                {chunk.map(
+                                                  (subCategory, subIdx) => (
+                                                    <li key={subCategory.id}>
+                                                      <Link
+                                                        href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
+                                                        className="menu-link-text link"
+                                                        style={{
+                                                          fontWeight:
+                                                            subIdx === 0
+                                                              ? "600"
+                                                              : "normal",
+                                                          color:
+                                                            subIdx === 0
+                                                              ? "#333"
+                                                              : "#666",
+                                                        }}
+                                                      >
+                                                        {subCategory.name}
+                                                      </Link>
+                                                    </li>
+                                                  )
+                                                )}
+                                              </ul>
+                                            )
+                                          )}
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </li>
                       ))}
                   <li className="menu-item">
@@ -536,13 +599,9 @@ export default function Header() {
                       </div>
                     </div> */}
                   </li>
-
-
-
                 </ul>
               </nav>
             </div>
-
           </div>
         </div>
       </header>
@@ -552,72 +611,111 @@ export default function Header() {
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       )}
       <style jsx>{`
-  .nav-icon-item {
-    background: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0;
-    color: inherit;
-    font-size: inherit;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
+        .nav-icon-item {
+          background: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0;
+          color: inherit;
+          font-size: inherit;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
 
-  .nav-icon-item:hover {
-    background: none !important;
-    border: none !important;
-  }
+        .nav-icon-item:hover {
+          background: none !important;
+          border: none !important;
+        }
 
-  .nav-icon-item:focus {
-    outline: none;
-    box-shadow: none;
-  }
+        .nav-icon-item:focus {
+          outline: none;
+          box-shadow: none;
+        }
 
-  .nav-icon-item i {
-    font-size: 16px;
-    line-height: 1;
-  }
+        .nav-icon-item i {
+          font-size: 16px;
+          line-height: 1;
+        }
 
-  .nav-icon-item .count-box {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ff0000;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-  }
+        .nav-icon-item .count-box {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background: #ff0000;
+          color: white;
+          border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          font-size: 11px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+        }
 
-  .nav-account {
-    position: relative;
-  }
+        .nav-account {
+          position: relative;
+        }
 
-  .nav-account .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    min-width: 200px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-    margin-top: 5px;
-  }
+        .nav-account .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          min-width: 200px;
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          margin-top: 5px;
+        }
 
-  .nav-account .dropdown-menu.show {
-    display: block;
-  }
-`}</style>
+        .nav-account .dropdown-menu.show {
+          display: block;
+        }
+
+        .menu-columns {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 2rem;
+          max-width: 100%;
+        }
+
+        .menu-list-column {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          min-width: 200px;
+          flex: 1;
+        }
+
+        .menu-list-column li {
+          margin-bottom: 0.5rem;
+        }
+
+        .menu-link-text.link {
+          font-size: 0.95em;
+          color: #666;
+          transition: color 0.2s ease;
+        }
+
+        .menu-link-text.link:hover {
+          color: #333;
+        }
+
+        .menu-link-text.link.group-header {
+          font-weight: 700 !important;
+          font-size: 1.1em !important;
+          color: #333 !important;
+          border-bottom: 1px solid #eee;
+          padding-bottom: 0.5rem !important;
+          margin-bottom: 0.75rem !important;
+          display: block;
+        }
+      `}</style>
     </>
   );
 }
