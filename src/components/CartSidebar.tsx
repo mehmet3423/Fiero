@@ -57,14 +57,6 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               <span className="icon-close icon-close-popup" onClick={onClose} style={{ cursor: 'pointer' }}></span>
             </div>
             <div className="wrap">
-              <div className="tf-mini-cart-threshold">
-                <div className="tf-progress-bar">
-                  <span style={{ width: "50%" }}></span>
-                </div>
-                {/* <div className="tf-progress-msg">
-                  <span className="price fw-6">150₺</span> daha alışveriş yapın, <span className="fw-6">Ücretsiz Kargo</span> kazanın
-                </div> */}
-              </div>
               <div className="tf-mini-cart-wrap">
                 <div className="tf-mini-cart-main">
                   <div className="tf-mini-cart-sroll">

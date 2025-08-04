@@ -1,0 +1,568 @@
+/* About Desa Pages Styles */
+
+.content-about-desa,
+.content-investors,
+.content-about,
+.content-corporate-governance,
+.content-investor-presentations,
+.content-financials,
+.content-analyst-reports,
+.content-annual-reports,
+.content-other-reports,
+.content-press-releases,
+.content-investor-contact,
+.content-tr-investor {
+  padding: 20px 0;
+}
+
+/* Flatpage Content Styles */
+.flatpage-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: none;
+}
+
+.flatpage-text {
+  line-height: 1.6;
+  color: #333;
+}
+
+.flatpage-text h1 {
+  color: #2c3e50;
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 20px 0 15px 0;
+  text-align: left;
+  letter-spacing: 1px;
+}
+
+.flatpage-text p {
+  margin-bottom: 12px;
+  font-size: 16px;
+  text-align: justify;
+}
+
+.flatpage-text img {
+  width: 100%;
+  height: auto;
+  margin: 15px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Content spacing - boşlukları azalt */
+.flatpage-text br {
+  line-height: 1;
+}
+
+/* Investors Page Specific Styles */
+.investors-banner {
+  width: 100%;
+  height: auto;
+  margin: 0 0 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.investors-title {
+  color: #2c3e50;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 15px 0;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+.intro-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-left: 4px solid #000000;
+  margin: 20px 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.section-title {
+  color: #2c3e50;
+  font-size: 1.4em;
+  font-weight: 600;
+  margin: 25px 0 15px 0;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 8px;
+}
+
+/* Corporate Governance Page Specific Styles */
+.corporate-links {
+  margin: 15px 0;
+}
+
+.corporate-links p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.corporate-links a {
+  color: #000000;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.corporate-links a:hover {
+  color: #333333;
+  text-decoration: underline;
+}
+
+.shareholding-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.board-members {
+  margin: 20px 0;
+}
+
+.senior-management {
+  margin: 30px 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.management-person {
+  margin: 0;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #000000;
+}
+
+.management-person h3 {
+  margin: 2px 0;
+  color: #2c3e50;
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.management-person h3:first-child {
+  font-size: 0.95em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Responsive design for management grid */
+@media (max-width: 768px) {
+  .senior-management {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .management-person {
+    padding: 10px;
+  }
+}
+
+.policies-section {
+  margin: 30px 0;
+}
+
+/* Responsive design for flatpage */
+@media (max-width: 768px) {
+  .flatpage-content {
+    padding: 20px;
+  }
+  
+  .flatpage-text h1 {
+    font-size: 2em;
+    margin: 30px 0 20px 0;
+  }
+  
+  .flatpage-text p {
+    font-size: 14px;
+  }
+}
+
+/* Section Styles */
+.about-sections,
+.governance-sections,
+.investor-info {
+  margin-top: 30px;
+}
+
+.section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.section h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+/* Presentations Styles */
+.presentations-list {
+  display: grid;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.presentation-item {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.presentation-item h4 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+/* Financial Reports Styles */
+.financial-reports {
+  margin-top: 20px;
+}
+
+.report-section {
+  margin-bottom: 30px;
+}
+
+.report-section h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 5px;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-item {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+}
+
+.report-item span {
+  flex: 1;
+  font-weight: 500;
+}
+
+/* Analyst Reports Styles */
+.analyst-reports-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.report-card {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.report-header h4 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.report-date {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.report-content {
+  margin-bottom: 15px;
+}
+
+.rating {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.rating.buy {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.rating.hold {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Annual Reports Styles */
+.annual-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.report-year-card {
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.report-year-card h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  text-align: center;
+  border-bottom: 3px solid #000000;
+  padding-bottom: 10px;
+}
+
+.report-details ul {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.report-details li {
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.download-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Other Reports Styles */
+.other-reports-sections {
+  margin-top: 20px;
+}
+
+.report-category {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.report-category h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Press Releases Styles */
+.press-releases-list {
+  margin-top: 20px;
+}
+
+.press-release-item {
+  padding: 25px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.press-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.press-header h3 {
+  color: #2c3e50;
+  margin: 0;
+  flex: 1;
+  margin-right: 20px;
+}
+
+.press-date {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.press-content {
+  margin-bottom: 15px;
+}
+
+.press-content p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Contact Styles */
+.contact-sections {
+  margin-top: 20px;
+}
+
+.contact-info,
+.general-contact,
+.meeting-requests {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.contact-details {
+  margin-top: 15px;
+}
+
+.contact-person {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 6px;
+  border-left: 4px solid #000000;
+}
+
+.contact-person h4 {
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.contact-person p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.address {
+  font-style: normal;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* TR Specific Styles */
+.tr-investor-sections {
+  margin-top: 20px;
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.document-item {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.document-item span {
+  flex: 1;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Button Styles */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #000000;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.btn-outline:hover {
+  background-color: #000000;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .annual-reports-grid,
+  .analyst-reports-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .press-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .press-header h3 {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .download-options {
+    flex-direction: column;
+  }
+  
+  .report-item,
+  .document-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

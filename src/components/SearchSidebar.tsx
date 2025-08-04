@@ -73,143 +73,167 @@ export default function SearchSidebar({
     if (!isOpen) return null;
 
     return (
-        <div className={`offcanvas offcanvas-end canvas-search ${isOpen ? 'show' : ''}`} id="canvasSearch">
-            <div ref={searchRef} className="canvas-wrapper">
-                <header className="tf-search-head">
-                    <div className="title fw-5">
-                        Sitemizde Ara
-                        <div className="close">
-                            <span 
-                                className="icon-close icon-close-popup" 
-                                onClick={onClose}
-                                aria-label="Close"
-                            ></span>
+        <>
+            {/* Backdrop - Gri Arka Plan */}
+            <div
+                className="search-backdrop "
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 1040,
+                    opacity: isOpen ? 1 : 0,
+                    visibility: isOpen ? 'visible' : 'hidden',
+                    transition: 'opacity 0.3s ease, visibility 0.3s ease',
+                    cursor: 'pointer'
+                }}
+                onClick={onClose}
+            ></div>
+
+            {/* SearchSidebar */}
+            <div className={`offcanvas offcanvas-end canvas-search ${isOpen ? 'show' : ''}`}
+                id="canvasSearch"
+                style={{ zIndex: 1050 }}>
+                <div ref={searchRef} className="canvas-wrapper">
+                    <header className="tf-search-head">
+                        <div className="title fw-5">
+                            Sitemizde Ara
+                            <div className="close">
+                                <span
+                                    className="icon-close icon-close-popup"
+                                    onClick={onClose}
+                                    aria-label="Close"
+                                ></span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="tf-search-sticky">
-                        <form className="tf-mini-search-frm" onSubmit={handleSearchSubmit}>
-                            <fieldset className="text">
-                                <input 
-                                    type="text" 
-                                    placeholder="Ürün ara..." 
-                                    className="" 
-                                    name="text" 
-                                    tabIndex={0} 
-                                    value={searchTerm} 
-                                    onChange={handleSearchChange}
-                                    aria-required="true" 
-                                    required 
-                                    autoFocus
-                                />
-                            </fieldset>
-                            <button className="" type="submit">
-                                <i className="icon-search"></i>
-                            </button>
-                        </form>
-                    </div>
-                </header>
-                
-                <div className="canvas-body p-0">
-                    <div className="tf-search-content">
-                        {/* Arama sonuçları varsa göster */}
-                        {showResults && (
-                            <div className="tf-cart-has-results">
-                                <div className="tf-search-content-title fw-5">Arama Sonuçları</div>
-                                
-                                {isSearching ? (
-                                    <div className="tf-search-loading">
-                                        <i className="icon icon-refresh"></i>
-                                        <span>Aranıyor...</span>
-                                    </div>
-                                ) : searchResults.length > 0 ? (
-                                    <div className="tf-search-hidden-inner">
-                                        {searchResults.map((product) => (
-                                            <div
-                                                key={product.id}
-                                                className="tf-loop-item"
-                                                onClick={() => handleResultClick(product.id)}
-                                            >
-                                                <div className="image">
-                                                    <img
-                                                        src={product.baseImageUrl || "/assets/site/images/no-image.jpg"}
-                                                        alt={product.title}
-                                                        onError={(e) => {
-                                                            e.currentTarget.src = "/assets/site/images/no-image.jpg";
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="content">
-                                                    <div className="product-title">{product.title}</div>
-                                                    <div className="tf-product-info-price">
-                                                        {product.discountedPrice !== product.price ? (
-                                                            <>
-                                                                <div className="compare-at-price">
+                        <div className="tf-search-sticky">
+                            <form className="tf-mini-search-frm" onSubmit={handleSearchSubmit}>
+                                <fieldset className="text">
+                                    <input
+                                        type="text"
+                                        placeholder="Ürün ara..."
+                                        className=""
+                                        name="text"
+                                        tabIndex={0}
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        aria-required="true"
+                                        required
+                                        autoFocus
+                                    />
+                                </fieldset>
+                                <button className="" type="submit">
+                                    <i className="icon-search"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </header>
+
+                    <div className="canvas-body p-0">
+                        <div className="tf-search-content">
+                            {/* Arama sonuçları varsa göster */}
+                            {showResults && (
+                                <div className="tf-cart-has-results">
+                                    <div className="tf-search-content-title fw-5">Arama Sonuçları</div>
+
+                                    {isSearching ? (
+                                        <div className="tf-search-loading">
+                                            <i className="icon icon-refresh"></i>
+                                            <span>Aranıyor...</span>
+                                        </div>
+                                    ) : searchResults.length > 0 ? (
+                                        <div className="tf-search-hidden-inner">
+                                            {searchResults.map((product) => (
+                                                <div
+                                                    key={product.id}
+                                                    className="tf-loop-item"
+                                                    onClick={() => handleResultClick(product.id)}
+                                                >
+                                                    <div className="image">
+                                                        <img
+                                                            src={product.baseImageUrl || "/assets/site/images/no-image.jpg"}
+                                                            alt={product.title}
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = "/assets/site/images/no-image.jpg";
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="content">
+                                                        <div className="product-title">{product.title}</div>
+                                                        <div className="tf-product-info-price">
+                                                            {product.discountedPrice !== product.price ? (
+                                                                <>
+                                                                    <div className="compare-at-price">
+                                                                        {product.price.toLocaleString("tr-TR", {
+                                                                            style: "currency",
+                                                                            currency: "TRY",
+                                                                        })}
+                                                                    </div>
+                                                                    <div className="price-on-sale fw-6">
+                                                                        {product.discountedPrice.toLocaleString("tr-TR", {
+                                                                            style: "currency",
+                                                                            currency: "TRY",
+                                                                        })}
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <div className="price fw-6">
                                                                     {product.price.toLocaleString("tr-TR", {
                                                                         style: "currency",
                                                                         currency: "TRY",
                                                                     })}
                                                                 </div>
-                                                                <div className="price-on-sale fw-6">
-                                                                    {product.discountedPrice.toLocaleString("tr-TR", {
-                                                                        style: "currency",
-                                                                        currency: "TRY",
-                                                                    })}
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <div className="price fw-6">
-                                                                {product.price.toLocaleString("tr-TR", {
-                                                                    style: "currency",
-                                                                    currency: "TRY",
-                                                                })}
-                                                            </div>
-                                                        )}
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : searchTerm.length >= 3 ? (
-                                    <div className="tf-search-no-results">
-                                        <i className="icon icon-search"></i>
-                                        <span>Ürün bulunamadı</span>
-                                    </div>
-                                ) : searchTerm.length > 0 ? (
-                                    <div className="tf-search-no-results">
-                                        <i className="icon icon-info"></i>
-                                        <span>En az 3 karakter girmelisiniz</span>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-
-                        {/* Arama sonucu yoksa quick links göster */}
-                        {!showResults && (
-                            <div className="tf-cart-hide-has-results">
-                                <div className="tf-col-quicklink">
-                                    <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
-                                    <ul className="tf-quicklink-list">
-                                        <li className="tf-quicklink-item">
-                                            <Link href="/products" className="">Tüm Ürünler</Link>
-                                        </li>
-                                        {categories?.items?.slice(0, 4).map((category) => (
-                                            <li key={category.id} className="tf-quicklink-item">
-                                                <Link href={`/products?categoryId=${category.id}`} className="">
-                                                    {category.name}
-                                                </Link>
-                                            </li>
-                                        )) || (
-                                            <li className="tf-quicklink-item">
-                                                <span>Kategoriler yükleniyor...</span>
-                                            </li>
-                                        )}
-                                    </ul>
+                                            ))}
+                                        </div>
+                                    ) : searchTerm.length >= 3 ? (
+                                        <div className="tf-search-no-results">
+                                            <i className="icon icon-search"></i>
+                                            <span>Ürün bulunamadı</span>
+                                        </div>
+                                    ) : searchTerm.length > 0 ? (
+                                        <div className="tf-search-no-results">
+                                            <i className="icon icon-info"></i>
+                                            <span>En az 3 karakter girmelisiniz</span>
+                                        </div>
+                                    ) : null}
                                 </div>
-                            </div>
-                        )}
+                            )}
+
+                            {/* Arama sonucu yoksa quick links göster */}
+                            {!showResults && (
+                                <div className="tf-cart-hide-has-results">
+                                    <div className="tf-col-quicklink">
+                                        <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
+                                        <ul className="tf-quicklink-list">
+                                            <li className="tf-quicklink-item">
+                                                <Link href="/products" className="">TÜM ÜRÜNLER</Link>
+                                            </li>
+                                            {categories?.items?.slice(0, 4).map((category) => (
+                                                <li key={category.id} className="tf-quicklink-item">
+                                                    <Link href={`/products?categoryId=${category.id}`} className="">
+                                                        {category.name}
+                                                    </Link>
+                                                </li>
+                                            )) || (
+                                                    <li className="tf-quicklink-item">
+                                                        <span>Kategoriler yükleniyor...</span>
+                                                    </li>
+                                                )}
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

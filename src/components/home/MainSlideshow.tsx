@@ -1,6 +1,6 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectFade, Pagination } from "swiper/modules";
+import { EffectFade, Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
 import Link from "next/link";
 import "swiper/css";
@@ -24,9 +24,14 @@ const MainSlideshow: React.FC<MainSlideshowProps> = ({ slides, className = "" })
   return (
     <div className={`tf-slideshow slider-women slider-effect-fade position-relative ${className}`}>
       <Swiper
-        modules={[EffectFade, Pagination]}
+        modules={[EffectFade, Pagination, Autoplay]}
         effect="fade"
         pagination={{ clickable: true, el: ".sw-pagination-slider" }}
+        autoplay={{
+          delay: 4000, 
+          disableOnInteraction: false, 
+          pauseOnMouseEnter: true 
+        }}
         loop={true}
         slidesPerView={1}
         className="swiper tf-sw-slideshow"
