@@ -350,9 +350,13 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
           <div className="container">
             <div className="tf-breadcrumb-wrap d-flex justify-content-between flex-wrap align-items-center">
               <div className="tf-breadcrumb-list">
-                <Link href="/" className="text">Home</Link>
+                <Link href="/" className="text">
+                  Home
+                </Link>
                 <i className="icon icon-arrow-right"></i>
-                <Link href="/products" className="text">Products</Link>
+                <Link href="/products" className="text">
+                  Products
+                </Link>
                 <i className="icon icon-arrow-right"></i>
                 <span className="text">{product.title}</span>
               </div>
@@ -436,7 +440,9 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
                 return null;
               }
               return (
-                <div style={{ marginTop: "2rem" }}> {/* Added spacing above the bundle section */}
+                <div style={{ marginTop: "2rem" }}>
+                  {" "}
+                  {/* Added spacing above the bundle section */}
                   <BundleProducts
                     bundleDiscounts={filteredDiscounts.map(
                       (d) => d.bundleDiscount as any
@@ -476,7 +482,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   try {
     // En popüler ürünlerin ID'lerini çek (performans için sadece ilk 100 ürün)
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/Product/GetAllProducts?Page=1&PageSize=100`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Product/GetAllProducts?Page=1&PageSize=100`
     );
 
     if (response.ok) {
@@ -507,7 +513,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     // API'den product detayını çek
     const productResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/Product/GetProductById?id=${productId}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Product/GetProductById?id=${productId}`
     );
     let product = null;
     if (productResponse.ok) {

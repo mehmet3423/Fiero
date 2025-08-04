@@ -34,7 +34,7 @@ const AnnouncementSlider: React.FC = () => {
         }
         .box-sw-announcement-bar {
           -webkit-animation: slide-har 25s linear infinite !important;
-          animation: slide-har 25s linear infinite !important;
+          animation: slide-har 45s linear infinite !important;
         }
         .announcement-bar .close-announcement-bar {
           height: 30px !important;
@@ -74,7 +74,10 @@ const AnnouncementSlider: React.FC = () => {
             ))}
           </div>
         </div>
-        <span className="icon-close close-announcement-bar" onClick={closeAnnouncement}></span>
+        <span
+          className="icon-close close-announcement-bar"
+          onClick={closeAnnouncement}
+        ></span>
       </div>
     </>
   );
