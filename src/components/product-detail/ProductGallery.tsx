@@ -147,7 +147,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
         }
       `}</style>
       
-    <div className="tf-product-media-wrap position-sticky" style={{ top: "0" }}>
+    <div className="tf-product-media-wrap position-sticky" style={{ top: "120px" }}>
       <div className="thumbs-slider d-flex align-items-start gap-3 flex-column flex-md-row overflow-visible">
         {/* Desktop: Thumbnail Swiper önce */}
         {!isMobile && (
@@ -222,6 +222,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                 nextEl: ".thumbs-next",
                 prevEl: ".thumbs-prev",
               }}
+              effect="slide"
               spaceBetween={10}
               slidesPerView={1}
               modules={[Navigation, Thumbs]}
@@ -283,7 +284,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
             onSwiper={setThumbsSwiper}
             direction="horizontal"
             spaceBetween={8}
-            slidesPerView="auto"
+            slidesPerView={5}
             watchSlidesProgress
             modules={[Thumbs]}
             className="swiper tf-product-media-thumbs other-image-zoom"
@@ -292,54 +293,52 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
               paddingBottom: "10px"
             }}
           >
-            <div className="swiper-wrapper stagger-wrap">
-              {media.map((item, index) => (
-                <SwiperSlide 
-                  key={index} 
-                  className="swiper-slide stagger-item"
-                  style={{ width: "auto", marginRight: "8px" }}
+            {media.map((item, index) => (
+              <SwiperSlide 
+                key={index} 
+                className="swiper-slide stagger-item"
+                style={{ width: "60px", marginRight: "8px" }}
+              >
+                <div
+                  className="item"
+                  onClick={() => {
+                    mainSwiperRef.current?.swiper.slideTo(index);
+                    setInitialSlide(index);
+                  }}
+                  style={{ 
+                    cursor: "pointer",
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    border: initialSlide === index ? "2px solid #000" : "2px solid transparent",
+                    transition: "border-color 0.3s ease"
+                  }}
                 >
-                  <div
-                    className="item"
-                    onClick={() => {
-                      mainSwiperRef.current?.swiper.slideTo(index);
-                      setInitialSlide(index);
-                    }}
-                    style={{ 
-                      cursor: "pointer",
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      border: initialSlide === index ? "2px solid #000" : "2px solid transparent",
-                      transition: "border-color 0.3s ease"
-                    }}
-                  >
-                    {item.type === "video" ? (
-                      <VideoThumbnail
-                        videoUrl={item.url}
-                        alt={`${product.title} - Video ${index + 1}`}
-                        width={60}
-                        height={60}
-                      />
-                    ) : (
-                      <Image
-                        src={item.url || "/assets/images/no-image.jpg"}
-                        alt={`${product.title} - ${index + 1}`}
-                        width={60}
-                        height={60}
-                        className="lazyload"
-                        style={{ 
-                          objectFit: "cover",
-                          width: "100%",
-                          height: "100%"
-                        }}
-                      />
-                    )}
-                  </div>
-                </SwiperSlide>
-              ))}
-            </div>
+                  {item.type === "video" ? (
+                    <VideoThumbnail
+                      videoUrl={item.url}
+                      alt={`${product.title} - Video ${index + 1}`}
+                      width={60}
+                      height={60}
+                    />
+                  ) : (
+                    <Image
+                      src={item.url || "/assets/images/no-image.jpg"}
+                      alt={`${product.title} - ${index + 1}`}
+                      width={60}
+                      height={60}
+                      className="lazyload"
+                      style={{ 
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%"
+                      }}
+                    />
+                  )}
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         )}
       </div>

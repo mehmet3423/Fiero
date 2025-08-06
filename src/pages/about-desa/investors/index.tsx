@@ -3,17 +3,18 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function Investors() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <img 
             src="/assets/site/images/about-desa/investors-banner.jpg" 
             alt="Investors" 
             className={styles["investors-banner"]}
+            style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }}
           />
           
           <h4 className={styles["investors-title"]}>INVESTORS</h4>
-
+          
           <p className={styles["intro-text"]}>
             "HERE AT DESA, WE ARE COMMITTED TO CREATING SUSTAINABLE, LONG TERM VALUE FOR ALL OF OUR STAKEHOLDERS INCLUDING OUR EMPLOYEES, CLIENTS, BUSINESS PARTNERS AND CERTAINLY OUR MINORITY SHAREHOLDERS"
           </p>
