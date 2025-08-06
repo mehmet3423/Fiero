@@ -3,11 +3,11 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function InvestorPresentations() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img src="http://login.setrow.com/photo/2103/images/download_2.jpg" alt="Investor Presentations" />
+            <img src="http://login.setrow.com/photo/2103/images/download_2.jpg" alt="Investor Presentations" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <h1><strong>INVESTOR PRESENTATIONS</strong></h1>

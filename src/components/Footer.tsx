@@ -1,10 +1,19 @@
+"use client";
+
 import { PathEnums } from "@/constants/enums/PathEnums";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Footer() {
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (section: string) => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
   return (
-    <footer id="footer" className="footer">
+    <footer id="footer" className="footer md-pb-70">
       <div className="footer-wrap">
         <div className="footer-body">
           <div className="container">
@@ -52,7 +61,7 @@ export default function Footer() {
                     <li>
                       <a
                         href="https://www.facebook.com/desafashion?fref=ts"
-                        className="box-icon w_34 round social-facebook border-line-black"
+                        className="box-icon w_34 round social-facebook social-line"
                         target="_blank"
                       >
                         <i className="icon fs-14 icon-fb"></i>
@@ -61,7 +70,7 @@ export default function Footer() {
                     <li>
                       <a
                         href="https://www.instagram.com/desafashion/"
-                        className="box-icon w_34 round social-instagram border-line-black"
+                        className="box-icon w_34 round social-instagram social-line"
                         target="_blank"
                       >
                         <i className="icon fs-14 icon-instagram"></i>
@@ -70,7 +79,7 @@ export default function Footer() {
                     <li>
                       <a
                         href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
-                        className="box-icon w_34 round social-youtube border-line-black"
+                        className="box-icon w_34 round social-youtube social-line"
                         target="_blank"
                       >
                         <i
@@ -91,14 +100,23 @@ export default function Footer() {
               </div>
 
               {/* Yardım Bölümü */}
-              <div className="col-xl-3 col-md-6 col-12 footer-col-block">
+              <div className="col-xl-3 col-md-6 col-12 footer-col-block ">
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Yardım</h6>
                 </div>
-                <div className="footer-heading footer-heading-moblie">
-                  <h6>Yardım</h6>
+                <div 
+                  className="footer-heading footer-heading-mobile"
+                  onClick={() => toggleSection('help')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <h6>
+                    Yardım
+                    <span style={{ float: 'right' }}>
+                      {openSection === 'help' ? '−' : '+'}
+                    </span>
+                  </h6>
                 </div>
-                <ul className="footer-menu-list tf-collapse-content">
+                <ul className={`footer-menu-list tf-collapse-content ${openSection === 'help' ? 'is-show' : ''}`}>
                   <li>
                     <Link href="/policies" className="footer-menu_item">
                       Politikalarımız
@@ -138,14 +156,23 @@ export default function Footer() {
               </div>
 
               {/* Hakkımızda Bölümü */}
-              <div className="col-xl-3 col-md-6 col-12 footer-col-block">
+              <div className="col-xl-3 col-md-6 col-12 footer-col-block ">
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Hakkımızda</h6>
                 </div>
-                <div className="footer-heading footer-heading-moblie">
-                  <h6>Hakkımızda</h6>
+                <div 
+                  className="footer-heading footer-heading-mobile"
+                  onClick={() => toggleSection('about')}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <h6>
+                    Hakkımızda
+                    <span style={{ float: 'right' }}>
+                      {openSection === 'about' ? '−' : '+'}
+                    </span>
+                  </h6>
                 </div>
-                <ul className="footer-menu-list tf-collapse-content">
+                <ul className={`footer-menu-list tf-collapse-content ${openSection === 'about' ? 'is-show' : ''}`}>
                   <li>
                     <Link href="/about-us" className="footer-menu_item">
                       Hikayemiz
@@ -179,34 +206,43 @@ export default function Footer() {
                 </ul>
               </div>
 
-              {/* Newsletter ve Dil/Para Birimi */}
+              {/* E-posta Kaydı Bölümü */}
               <div className="col-xl-3 col-md-6 col-12">
                 <div className="footer-newsletter footer-col-block">
                   <div className="footer-heading footer-heading-desktop">
                     <h6>E-posta Kaydı</h6>
                   </div>
-                  <div className="footer-heading footer-heading-moblie">
-                    <h6>E-posta Kaydı</h6>
+                  <div 
+                    className="footer-heading footer-heading-mobile"
+                    onClick={() => toggleSection('newsletter')}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <h6>
+                      E-posta Kaydı
+                      <span style={{ float: 'right' }}>
+                        {openSection === 'newsletter' ? '−' : '+'}
+                      </span>
+                    </h6>
                   </div>
-                  <div className="tf-collapse-content">
+                  <div className={`tf-collapse-content ${openSection === 'newsletter' ? 'is-show' : ''}`}>
                     <div className="footer-menu_item">
                       Yeni ürünler, indirimler, özel içerikler, etkinlikler ve
                       daha fazlası için kayıt olun!
                     </div>
                     <form
-                      className="form-newsletter"
+                      className="form-newsletter subscribe-form"
                       id="subscribe-form"
                       action="#"
                       method="post"
                       acceptCharset="utf-8"
                       data-mailchimp="true"
                     >
-                      <div id="subscribe-content">
+                      <div className="subscribe-content">
                         <fieldset className="email">
                           <input
                             type="email"
                             name="email-form"
-                            id="subscribe-email"
+                            className="subscribe-email"
                             placeholder="E-posta adresinizi girin...."
                             tabIndex={0}
                             aria-required="true"
@@ -214,8 +250,7 @@ export default function Footer() {
                         </fieldset>
                         <div className="button-submit">
                           <button
-                            id="subscribe-button"
-                            className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
+                            className="subscribe-button tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
                             type="button"
                           >
                             Abone Ol
@@ -223,30 +258,8 @@ export default function Footer() {
                           </button>
                         </div>
                       </div>
-                      <div id="subscribe-msg"></div>
+                      <div className="subscribe-msg"></div>
                     </form>
-                    {/* <div className="tf-cur">
-                      <div className="tf-currencies">
-                        <select className="image-select center style-default type-currencies">
-                          <option data-thumbnail="images/country/tr.svg">
-                            TRY <span>₺ | Türkiye</span>
-                          </option>
-                          <option data-thumbnail="images/country/us.svg">
-                            USD <span>$ | Amerika</span>
-                          </option>
-                          <option data-thumbnail="images/country/de.svg">
-                            EUR <span>€ | Avrupa</span>
-                          </option>
-                        </select>
-                      </div>
-                      <div className="tf-languages">
-                        <select className="image-select center style-default type-languages">
-                          <option>Türkçe</option>
-                          <option>English</option>
-                          <option>العربية</option>
-                        </select>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </div>
@@ -308,6 +321,82 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer >
+
+      <style jsx>{`
+  /* Desktop görünüm */
+  .footer-heading-desktop {
+    display: block;
+  }
+  .footer-heading-mobile {
+    display: none;
+  }
+  .tf-collapse-content {
+    display: block;
+  }
+
+  /* Footer column spacing */
+  .footer-col-block {
+    margin-bottom: 2rem;
+  }
+
+  /* Mobile görünüm */
+  @media (max-width: 767px) {
+    .footer-heading-desktop {
+      display: none !important;
+    }
+    
+    .footer-heading-mobile {
+      display: block !important;
+      cursor: pointer;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 0 !important;
+    }
+    
+    .footer-heading-mobile h6 {
+      margin: 0;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .tf-collapse-content {
+      display: none !important;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .tf-collapse-content.is-show {
+      display: block !important;
+      padding-top: 15px;
+    }
+    
+    .footer-col-block {
+      margin-bottom: 0 !important;
+    }
+    
+    .footer-menu-list {
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    .footer-menu-list li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-menu_item {
+      padding: 8px 0;
+      display: block;
+      color: #666;
+      text-decoration: none;
+    }
+    
+    .footer-menu_item:hover {
+      color: #333;
+    }
+  }
+`}</style>
+    </footer>
   );
 }

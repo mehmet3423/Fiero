@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 import MobileMenu from "./MobileMenu";
 import CartSidebar from "./CartSidebar";
 import SearchSidebar from "./SearchSidebar";
+import AnnouncementSlider from "./home/AnnouncementSlider";
 
 export default function Header() {
   const router = useRouter();
@@ -112,6 +113,22 @@ export default function Header() {
     );
   }, [isCartDropdownOpen]);
 
+  const [windowWidth, setWindowWidth] = useState(0);
+  useEffect(() => {
+    // İlk yükleme
+    setWindowWidth(window.innerWidth);
+
+    // Resize event listener
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -177,10 +194,30 @@ export default function Header() {
   return (
     <>
       {/* Top Bar */}
-      <div className="tf-top-bar bg_white line py-4">
+      <AnnouncementSlider />
+      <div className="tf-top-bar bg_white line py-4 sticky-top">
         <div className="px_15 lg-px_40">
-          <div className="tf-top-bar_item d-flex justify-content-start align-items-center">
-            <div className="col-xl-5 col-md-6 col-6">
+          <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
+            <div className="col-4 tf-lg-hidden" style={{paddingLeft: '25px'}}>
+              <button onClick={toggleMobileMenu} className="nav-icon-item">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="16"
+                  viewBox="0 0 24 16"
+                  fill="none"
+                >
+                  <path
+                    d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div className="col-4 justify-content-center align-items-center mx-4"
+              style={{
+                paddingLeft: windowWidth > 768 ? "10%" : "0",
+              }}>
               <Link href="/" className="logo-header">
                 <Image
                   src="/assets/site/images/logo/desa-logo.svg"
@@ -191,7 +228,7 @@ export default function Header() {
                 />
               </Link>
             </div>
-            <div className="col-xl-2 tf-md-hidden text-center overflow-hidden">
+            <div className="col-4 tf-md-hidden text-center overflow-hidden">
               <div
                 className="swiper tf-sw-top_bar"
                 data-preview="1"
@@ -207,16 +244,6 @@ export default function Header() {
                       <Link href="/products" className="tf-btn btn-line">
                         Shop now<i className="icon icon-arrow1-top-left"></i>
                       </Link>
-                    </p>
-                  </div>
-                  <div className="swiper-slide">
-                    <p className="top-bar-text fw-5">
-                      Summer sale discount off 70%
-                    </p>
-                  </div>
-                  <div className="swiper-slide">
-                    <p className="top-bar-text fw-5">
-                      Time to refresh your wardrobe.
                     </p>
                   </div>
                 </div>
@@ -238,9 +265,12 @@ export default function Header() {
                 </select>
               </div>
             </div> */}
-            <div className="col-xl-5 col-md-6 col-6">
+            <div className="col-4 d-flex justify-content-end"
+              style={{
+                paddingRight: windowWidth > 1024 ? "10%" : "25px",
+              }}>
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
-                <li className="nav-search">
+                <li className="nav-search tf-md-hidden">
                   <button onClick={toggleSearch} className="nav-icon-item">
                     <i className="icon icon-search"></i>
                   </button>
@@ -271,13 +301,11 @@ export default function Header() {
                               <div className="user-name">
                                 {showAdminFeatures
                                   ? "Admin"
-                                  : `${
-                                      userProfile?.applicationUser?.firstName ||
-                                      "Kullanıcı"
-                                    } ${
-                                      userProfile?.applicationUser?.lastName ||
-                                      ""
-                                    }`}
+                                  : `${userProfile?.applicationUser?.firstName ||
+                                  "Kullanıcı"
+                                  } ${userProfile?.applicationUser?.lastName ||
+                                  ""
+                                  }`}
                               </div>
                             </div>
                           </div>
@@ -361,13 +389,25 @@ export default function Header() {
                     </button>
                   )}
                 </li>
-                <li className="nav-wishlist">
-                  <Link href={PathEnums.FAVORITES} className="nav-icon-item">
-                    <i className="icon icon-heart"></i>
-                    {totalFavorites > 0 && (
-                      <span className="count-box">{totalFavorites}</span>
+                <li className="nav-wishlist tf-md-hidden">
+                  <button
+                    className={`nav-icon-item ${totalFavorites > 0 ? 'has-favorites' : ''}`}
+                    onClick={() => router.push("/favorites")}
+                    style={{ marginTop: '3px' }}
+                  >
+                    {totalFavorites > 0 ? (
+                      // Dolu kalp SVG - büyük ve geniş
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#000000ff" >
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                      </svg>
+                    ) : (
+                      // Boş kalp icon - normal boyutta
+                      <i className="icon icon-heart" style={{ fontSize: '17px' }}></i>
                     )}
-                  </Link>
+                    {totalFavorites > 0 && (
+                      <span className="count-box" style={{ marginTop: '2px' }}>{totalFavorites}</span>
+                    )}
+                  </button>
                 </li>
                 <li className="nav-cart">
                   <button
@@ -404,31 +444,16 @@ export default function Header() {
       {/* /Top Bar */}
 
       {/* Header */}
-      <header id="header" className="header-default">
+      <header id="header" className="header-default" >
         <div className="px_15 lg-px_40">
           <div className="row wrapper-header align-items-center">
-            <div className="col-md-4 col-3 tf-lg-hidden">
-              <button onClick={toggleMobileMenu} className="nav-icon-item">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="16"
-                  viewBox="0 0 24 16"
-                  fill="none"
-                >
-                  <path
-                    d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
-              </button>
-            </div>
+
             <div className="tf-md-hidden align-items-center">
               <nav className="box-navigation text-center">
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
                   <li className="menu-item">
-                    <Link href={PathEnums.HOME} className="item-link">
-                      Anasayfa
+                    <Link href={PathEnums.HAFSANUR_DESA} className="item-link">
+                      HAFSANUR X DESA
                     </Link>
                   </li>
                   {categories?.items?.length &&
@@ -485,6 +510,10 @@ export default function Header() {
                                                             subIdx === 0
                                                               ? "#333"
                                                               : "#666",
+                                                          fontSize:
+                                                            subIdx === 0
+                                                              ? "16px"
+                                                              : "12px",
                                                         }}
                                                       >
                                                         {subCategory.name}
@@ -511,99 +540,79 @@ export default function Header() {
                     </Link>
 
                     {/* Sürdürülebilirlik Dropdown */}
-                    {/* <div className="sub-menu mega-menu">
-                      <div className="container">
-                        <div className="row">
-                          <div className="col-lg-12">
-                            <div className="mega-menu-item">
-                              <div className="menu-heading">
-                                Sürdürülebilirlik Konuları
-                              </div>
-                              <ul className="menu-list">
-                                <li>
-                                  <Link
-                                    href="/sustainability/enerji"
-                                    className="menu-link-text link"
-                                  >
-                                    Enerjimizi Güneşten Alıyoruz
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/leather-working-group"
-                                    className="menu-link-text link"
-                                  >
-                                    Leather Working Group
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/hatira-ormani"
-                                    className="menu-link-text link"
-                                  >
-                                    Desa Hatıra Ormanı
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/higg-index"
-                                    className="menu-link-text link"
-                                  >
-                                    Higg Index
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/sosyal-sorumluluk"
-                                    className="menu-link-text link"
-                                  >
-                                    Sosyal Sorumluluk
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/sorumlu-uretim"
-                                    className="menu-link-text link"
-                                  >
-                                    Sorumlu Üretim
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/nitelikli-is-gucu"
-                                    className="menu-link-text link"
-                                  >
-                                    Nitelikli İş Gücü
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/izlenebilirlik"
-                                    className="menu-link-text link"
-                                  >
-                                    İzlenebilirlik
-                                  </Link>
-                                </li>
-                                <li>
-                                  <Link
-                                    href="/sustainability/atik-yonetimi"
-                                    className="menu-link-text link"
-                                  >
-                                    Atık Yönetimi
-                                  </Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
+                    <div className="sub-menu">
+                      <div className="dropdown-content-wrapper">
+                        <ul className="menu-list-small">
+                          <li>
+                            <Link
+                              href="/sustainability"
+                              className="menu-link-text"
+                            >
+                              Sürdürülebilirlik Hikayemiz
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/sustainability/leather-working-group"
+                              className="menu-link-text"
+                            >
+                              LWG Golf Certificate
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/sustainability/enerji"
+                              className="menu-link-text"
+                            >
+                              Güneşin Enerjisi
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/her-ilmek-bir-kadina-destek"
+                              className="menu-link-text"
+                            >
+                              Her İlmek Bir Kadına Destek
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/sustainability/hatira-ormani"
+                              className="menu-link-text"
+                            >
+                              Desa Ormanı
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="#"
+                              className="menu-link-text"
+                            >
+                              Sürdürülebilir Tasarımlar
+                            </Link>
+                          </li>
+
+                        </ul>
+
+                        {/* sol taraftaki resim */}
+                        <div className="dropdown-image">
+                          <Link href="/sustainability/featured-project">
+                            <img
+                              src="/assets/site/images/header/her-ilmek-resim.png"
+                              alt="Sürdürülebilirlik Projesi"
+                              className="dropdown-banner-img"
+                            />
+                          </Link>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                   </li>
                 </ul>
               </nav>
             </div>
           </div>
         </div>
+
       </header>
       {/* /Header */}
       {/* Mobil Menü */}
@@ -611,111 +620,182 @@ export default function Header() {
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       )}
       <style jsx>{`
-        .nav-icon-item {
-          background: none !important;
-          border: none !important;
-          padding: 0 !important;
-          margin: 0;
-          color: inherit;
-          font-size: inherit;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-        }
+  .tf-top-bar.sticky-top {
+    position: relative !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
 
-        .nav-icon-item:hover {
-          background: none !important;
-          border: none !important;
-        }
+  .header-default {
+    position: relative;
+    z-index: 10;
+      }
 
-        .nav-icon-item:focus {
-          outline: none;
-          box-shadow: none;
-        }
+  .nav-icon-item {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
 
-        .nav-icon-item i {
-          font-size: 16px;
-          line-height: 1;
-        }
+  .nav-icon-item:hover {
+    background: none !important;
+    border: none !important;
+  }
 
-        .nav-icon-item .count-box {
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          background: #ff0000;
-          color: white;
-          border-radius: 50%;
-          width: 18px;
-          height: 18px;
-          font-size: 11px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-        }
+  .nav-icon-item:focus {
+    outline: none;
+    box-shadow: none;
+  }
 
-        .nav-account {
-          position: relative;
-        }
+  .nav-icon-item i {
+    font-size: 16px;
+    line-height: 1;
+  }
 
-        .nav-account .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          min-width: 200px;
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          z-index: 1000;
-          margin-top: 5px;
-        }
+  .nav-icon-item .count-box {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background: #ff0000;
+    color: white;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+    /* Heart icon - normal durumda */
+  .nav-wishlist .nav-icon-item i.icon-heart {
+    color: #333;
+    transition: all 0.3s ease;
+  }
 
-        .nav-account .dropdown-menu.show {
-          display: block;
-        }
+  /* Heart icon - favoriler varsa siyah dolu */
+  .nav-wishlist .nav-icon-item.has-favorites i.icon-heart {
+    background-color: #000 !important;
+    font-weight: 900 !important;
+  }
 
-        .menu-columns {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 2rem;
-          max-width: 100%;
-        }
+  .nav-account {
+    position: relative;
+  }
 
-        .menu-list-column {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          min-width: 200px;
-          flex: 1;
-        }
+  .nav-account .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 200px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    margin-top: 5px;
+  }
 
-        .menu-list-column li {
-          margin-bottom: 0.5rem;
-        }
+  .nav-account .dropdown-menu.show {
+    display: block;
+  }
 
-        .menu-link-text.link {
-          font-size: 0.95em;
-          color: #666;
-          transition: color 0.2s ease;
-        }
+  .sub-menu {
+    position: absolute;
+    top: 100%;
+    right: 5%;
+    z-index: 1000;
+    margin-top: 5px;
+  }
 
-        .menu-link-text.link:hover {
-          color: #333;
-        }
+  .dropdown-content-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    background: white;
+    min-width: 420px;
+    width: 420px;
+    margin-left: 40px;
+  }
 
-        .menu-link-text.link.group-header {
-          font-weight: 700 !important;
-          font-size: 1.1em !important;
-          color: #333 !important;
-          border-bottom: 1px solid #eee;
-          padding-bottom: 0.5rem !important;
-          margin-bottom: 0.75rem !important;
-          display: block;
-        }
-      `}</style>
+  .menu-list-small {
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+    background: white;
+    min-width: 280px;
+    flex: 1;
+  }
+
+  .menu-list-small li {
+    margin-bottom: 12px;
+  }
+
+  .menu-list-small li:last-child {
+    margin-bottom: 0;
+  }
+
+  .menu-list-small .menu-link-text {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    position: relative;
+    padding-right: 40px;
+  }
+
+  .menu-list-small .menu-link-text:hover {
+    background-color: #f8f8f8;
+    color: #000;
+  }
+
+  .menu-list-small .menu-link-text::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .dropdown-image {
+    width: 180px;
+    min-width: 180px;
+    height: auto;
+    background: #ffffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropdown-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .dropdown-image:hover .dropdown-banner-img {
+    transform: scale(1.02);
+  }
+`}</style>
     </>
   );
 }

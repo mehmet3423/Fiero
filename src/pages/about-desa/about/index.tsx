@@ -3,11 +3,11 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function AboutPage() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/84c62133-acc8-4495-8417-d340480c715a.jpg" alt="DESA" />
+            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/84c62133-acc8-4495-8417-d340480c715a.jpg" alt="DESA" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <h1><strong>ABOUT DESA</strong></h1>
@@ -17,7 +17,7 @@ function AboutPage() {
           </p>
           
           <p>
-            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/2ada40e9-a9f3-454a-ae11-04e00cd68bcf.jpg" alt="DESA Company" />
+            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/2ada40e9-a9f3-454a-ae11-04e00cd68bcf.jpg" alt="DESA Company" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <p>
@@ -27,7 +27,7 @@ function AboutPage() {
           <p>As of December, 2024, DESA's market value is 5.2 billion Turkish Lira.</p>
           
           <p>
-            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/c647979c-617e-45c0-9c35-022b9b2ca398.jpg" alt="DESA Manufacturing" />
+            <img src="https://cdn-ayae.akinon.net/cms/2018/10/09/c647979c-617e-45c0-9c35-022b9b2ca398.jpg" alt="DESA Manufacturing" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
         </div>
       </div>

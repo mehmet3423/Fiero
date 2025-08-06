@@ -3,11 +3,11 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function CorporateGovernance() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img src="https://akn-desa.a-cdn.akinoncloud.com/cms/2024/03/29/3b54fefe-fdc8-4f40-9a97-c8fab3c61e14.jpe" alt="Corporate Governance" />
+            <img src="https://akn-desa.a-cdn.akinoncloud.com/cms/2024/03/29/3b54fefe-fdc8-4f40-9a97-c8fab3c61e14.jpe" alt="Corporate Governance" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <h1><strong>CORPORATE GOVERNANCE</strong></h1>
@@ -25,7 +25,7 @@ function CorporateGovernance() {
           <h2 className={styles["section-title"]}>Shareholding Structure</h2>
           
           <p>
-            <img src="/assets/site/images/about-desa/shareholding-structure.png" alt="Shareholding Structure" className={styles["shareholding-image"]} />
+            <img src="/assets/site/images/about-desa/shareholding-structure.png" alt="Shareholding Structure" className={styles["shareholding-image"]} style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <h2 className={styles["section-title"]}>Board of Directors</h2>
