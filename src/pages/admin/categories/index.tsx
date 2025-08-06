@@ -267,7 +267,7 @@ function CategoryManagementPage() {
               Kategoriler
             </h6>
           </div>
-          <div className="card" style={{maxHeight: '450px', overflowY: 'auto'}}>
+          <div className="card">
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -283,18 +283,29 @@ function CategoryManagementPage() {
                 Bir kategori seçiniz.
               </span>
             </div>
-            <div className="card-body p-0">
+            <div className="card-body p-0" style={{
+              height: 'auto',
+              minHeight: '200px',
+              maxHeight: '444px'
+            }}>
               {categories?.items?.length === 0 ? (
                 <div className="text-center p-4">
                   <i className="bx bx-category fs-1 text-muted mb-3"></i>
                   <p className="text-muted">Henüz kategori bulunmuyor</p>
                 </div>
               ) : (
-                <div className="table-responsive">
-                  <table className="table table-bordered">
-                    <DragDropContext onDragEnd={onDragEnd}>
-                      <Droppable droppableId="mainCategories">
-                        {(provided) => (
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable droppableId="mainCategories">
+                    {(provided) => (
+                      <div
+                        className="table-responsive"
+                        style={{
+                          maxHeight: '444px',
+                          overflowY: 'auto',
+                          overflowX: 'hidden'
+                        }}
+                      >
+                        <table className="table table-bordered" style={{ marginBottom: '0' }}>
                           <tbody
                             ref={provided.innerRef}
                             {...provided.droppableProps}
@@ -307,7 +318,7 @@ function CategoryManagementPage() {
                                   draggableId={category.id}
                                   index={index}
                                 >
-                                  {(provided) => (
+                                  {(provided, snapshot) => (
                                     <tr
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
@@ -319,52 +330,62 @@ function CategoryManagementPage() {
                                         cursor: "pointer",
                                         backgroundColor:
                                           selectedMainCategory?.id ===
-                                          category.id
+                                            category.id
                                             ? "#f5f7fb"
                                             : "transparent",
+                                        transform: snapshot.isDragging
+                                          ? "rotate(5deg)"
+                                          : "none",
+                                        boxShadow: snapshot.isDragging
+                                          ? "0 8px 16px rgba(0,0,0,0.15)"
+                                          : "none",
+                                        zIndex: snapshot.isDragging ? 1000 : 1,
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td style={{ fontSize: "0.813rem" }}>
+                                      <td style={{ fontSize: "0.813rem", width: "70%" }}>
                                         <div
                                           style={{
                                             display: "flex",
                                             alignItems: "center",
                                             gap: "0.5rem",
-                                            minWidth: "330px", // zorunlu genişlik
                                           }}
                                         >
-                                          <FontAwesomeIcon icon={faBars} style={{paddingRight: "1rem", paddingLeft: "0.5rem"}}/>
+                                          <FontAwesomeIcon
+                                            icon={faBars}
+                                            style={{
+                                              paddingRight: "1rem",
+                                              paddingLeft: "0.5rem",
+                                              color: snapshot.isDragging ? "#007bff" : "#6c757d"
+                                            }}
+                                          />
                                           <span>{category.name}</span>
                                         </div>
                                       </td>
 
-                                      <td className="text-end">
+                                      <td className="text-end" style={{ width: "30%" }}>
                                         <button
                                           className="btn btn-link btn-sm text-muted"
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setEditingMainCategory(category);
-                                            $("#editMainCategoryModal").modal(
-                                              "show"
-                                            );
+                                            $("#editMainCategoryModal").modal("show");
                                           }}
                                         >
+                                          <i className="bx bx-edit-alt me-1"></i>
                                           Düzenle
                                         </button>
                                         <button
                                           className="btn btn-link btn-sm text-danger"
+                                          style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            setDeletingMainCategory(
-                                              category.id
-                                            );
-                                            $("#deleteMainCategoryModal").modal(
-                                              "show"
-                                            );
+                                            setDeletingMainCategory(category.id);
+                                            $("#deleteMainCategoryModal").modal("show");
                                           }}
                                         >
+                                          <i className="bx bx-trash me-1"></i>
                                           Sil
                                         </button>
                                       </td>
@@ -374,19 +395,18 @@ function CategoryManagementPage() {
                               ))}
                             {provided.placeholder}
                           </tbody>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </table>
-                </div>
+                        </table>
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               )}
             </div>
           </div>
         </div>
 
-        {/* Alt Kategoriler - Mevcut yapıyı koruyarak sadece görsel güncelleme */}
-        <div className="col-lg-6 " >
-          <div className="card" style={{ marginTop: "70px", marginLeft: "auto", maxHeight: '444px', overflowY: 'auto' }}>
+        <div className="col-lg-6">
+          <div className="card" style={{ marginTop: "70px", marginLeft: "auto" }}>
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -409,13 +429,24 @@ function CategoryManagementPage() {
                 </button>
               )}
             </div>
-            <div className="card-body p-0">
+            <div className="card-body p-0" style={{
+              height: 'auto',
+              minHeight: '200px',
+              maxHeight: '444px'
+            }}>
               {selectedMainCategory ? (
-                <div className="table-responsive">
-                  <table className="table table-bordered">
-                    <DragDropContext onDragEnd={onDragEnd}>
-                      <Droppable droppableId="subCategories">
-                        {(provided) => (
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable droppableId="subCategories">
+                    {(provided) => (
+                      <div
+                        className="table-responsive"
+                        style={{
+                          maxHeight: '444px',
+                          overflowY: 'auto',
+                          overflowX: 'hidden'
+                        }}
+                      >
+                        <table className="table table-bordered" style={{ marginBottom: '0' }}>
                           <tbody
                             ref={provided.innerRef}
                             {...provided.droppableProps}
@@ -428,22 +459,24 @@ function CategoryManagementPage() {
                                   draggableId={subCategory.id}
                                   index={index}
                                 >
-                                  {(provided) => (
+                                  {(provided, snapshot) => (
                                     <tr
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
                                       style={{
                                         cursor: "grab",
+                                        transform: snapshot.isDragging
+                                          ? "rotate(5deg)"
+                                          : "none",
+                                        boxShadow: snapshot.isDragging
+                                          ? "0 8px 16px rgba(0,0,0,0.15)"
+                                          : "none",
+                                        zIndex: snapshot.isDragging ? 1000 : 1,
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td
-                                        style={{
-                                          fontSize: "0.813rem",
-                                          width: "70%",
-                                        }}
-                                      >
+                                      <td style={{ fontSize: "0.813rem", width: "70%" }}>
                                         <div
                                           style={{
                                             display: "flex",
@@ -451,14 +484,18 @@ function CategoryManagementPage() {
                                             gap: "0.5rem",
                                           }}
                                         >
-                                          <FontAwesomeIcon icon={faBars} style={{paddingRight: "1rem", paddingLeft: "0.5rem"}} />
+                                          <FontAwesomeIcon
+                                            icon={faBars}
+                                            style={{
+                                              paddingRight: "1rem",
+                                              paddingLeft: "0.5rem",
+                                              color: snapshot.isDragging ? "#007bff" : "#6c757d"
+                                            }}
+                                          />
                                           <span>{subCategory.name}</span>
                                         </div>
                                       </td>
-                                      <td
-                                        className="text-end"
-                                        style={{ width: "30%" }}
-                                      >
+                                      <td className="text-end" style={{ width: "30%" }}>
                                         <button
                                           className="btn btn-link btn-sm text-muted"
                                           style={{ fontSize: "0.75rem" }}
@@ -467,14 +504,10 @@ function CategoryManagementPage() {
                                             setEditingSubCategory({
                                               id: subCategory.id,
                                               name: subCategory.name,
-                                              mainCategoryId:
-                                                selectedMainCategory.id,
-                                              displayIndex:
-                                                subCategory.displayIndex,
+                                              mainCategoryId: selectedMainCategory.id,
+                                              displayIndex: subCategory.displayIndex,
                                             });
-                                            $("#editSubCategoryModal").modal(
-                                              "show"
-                                            );
+                                            $("#editSubCategoryModal").modal("show");
                                           }}
                                         >
                                           <i className="bx bx-edit-alt me-1"></i>
@@ -486,12 +519,8 @@ function CategoryManagementPage() {
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            setDeletingSubCategory(
-                                              subCategory.id
-                                            );
-                                            $("#deleteSubCategoryModal").modal(
-                                              "show"
-                                            );
+                                            setDeletingSubCategory(subCategory.id);
+                                            $("#deleteSubCategoryModal").modal("show");
                                           }}
                                         >
                                           <i className="bx bx-trash me-1"></i>
@@ -504,11 +533,11 @@ function CategoryManagementPage() {
                               ))}
                             {provided.placeholder}
                           </tbody>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </table>
-                </div>
+                        </table>
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               ) : (
                 <div className="text-center p-4 text-muted">
                   <i className="bx bx-list fs-1 mb-3"></i>
@@ -824,7 +853,7 @@ function CategoryManagementPage() {
           }
         }
       `}</style>
-    </div>
+    </div >
   );
 }
 

@@ -121,7 +121,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             />
                           )}
                         </Link>
-                        <div className="list-product-btn">
+                        <div className="list-product-btn pt-6" >
                           <a
                             href="javascript:void(0);"
                             className="box-icon bg_white quick-add tf-btn-loading"
@@ -165,9 +165,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             <span className="icon icon-view"></span>
                             <span className="tooltip">Quick View</span>
                           </a>
-                        </div>
-                        <div className="size-list">
-                          <span>4 sizes available</span>
                         </div>
                         {isPercentageDiscount && (
                           <div className="on-sale-wrap">

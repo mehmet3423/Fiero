@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <title>Nors</title>
+        <title>Desa</title>
       </Head>
 
       <Header />

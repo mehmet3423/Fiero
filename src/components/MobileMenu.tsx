@@ -264,11 +264,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-      <style jsx>{`
-  .first-item {
-    margin-top: 50% !important;
-  }
-`}</style>
     </>
 
   );

@@ -28,22 +28,21 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
     isLoading: isFavoritesLoading,
   } = useFavorites();
 
-  // ✅ Tüm state'leri buraya taşı
   const colors = ["Orange", "Black", "White"];
   const sizes = ["S", "M", "L", "XL"];
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [quantity, setQuantity] = useState(1);
 
-  // ✅ Computed values'ları hooks'lardan sonra hesapla
   const totalImages = [product.baseImageUrl, ...product.contentImageUrls].filter(Boolean).length;
   const hasDiscount = product.discountDTO !== null;
   const isPercentageDiscount = hasDiscount && (product.discountDTO as any)?.discountValueType === 0;
   const discountPercentage = isPercentageDiscount ? product.discountDTO.discountValue : null;
+  const [sizeChartOpen, setSizeChartOpen] = useState(false);
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen && !fullscreenOpen) {
+      if (event.key === "Escape" && isOpen && !fullscreenOpen && !sizeChartOpen) {
         onClose();
       }
     };
@@ -53,13 +52,14 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
         modalRef.current &&
         !modalRef.current.contains(event.target as Node) &&
         isOpen &&
-        !fullscreenOpen
+        !fullscreenOpen &&
+        !sizeChartOpen // Bu satırı ekleyin
       ) {
         onClose();
       }
     };
 
-    if (isOpen && !fullscreenOpen) {
+    if (isOpen && !fullscreenOpen && !sizeChartOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -73,7 +73,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.body.style.overflow = "";
     };
-  }, [isOpen, onClose, fullscreenOpen]);
+  }, [isOpen, onClose, fullscreenOpen, sizeChartOpen]);
 
   useEffect(() => {
     console.log("=== DISCOUNT DEBUG ===");
@@ -160,6 +160,126 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
           z-index: 1040;
           opacity: 1;
         }
+          /* Modal responsive */
+  .modal-content {
+    max-width: 95vw !important;
+    max-height: 95vh !important;
+  }
+  
+  .wrap {
+  margin-top: 3% !important;
+    display: flex !important;
+    gap: 20px !important;
+  }
+  
+  .tf-product-media-wrap {
+    flex: 0 0 55% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+  
+  .tf-product-info-wrap {
+    flex: 0 0 45% !important;
+    overflow-y: auto !important;
+    padding: 20px !important;
+  }
+  
+  .swiper.tf-single-slide {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .swiper-slide .item {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important; /* flex yerine block */
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  .swiper-slide .item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .swiper-slide {
+    display: flex !important;
+    align-items: stretch !important;
+    line-height: 0 !important;
+  }
+  
+  /* Tablet responsive */
+  @media (max-width: 1024px) {
+    .wrap {
+      flex-direction: row !important;
+      gap: 15px !important;
+    }
+    
+    .tf-product-media-wrap {
+      justify-content: center !important;
+      align-items: center !important;
+      flex: 0 0 auto !important;
+      height: 400px !important;
+    }
+    
+    .tf-product-info-wrap {
+      flex-shrink: 1 !important;
+      height: auto !important;
+    }
+  }
+  
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .modal-dialog {
+      max-width: 95vw !important;
+      margin: 10px !important;
+    }
+      .modal-content {
+      height: 95vh !important;
+    }
+    
+    .wrap {
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+    
+    .tf-product-media-wrap {
+      height: 250px !important;
+      flex-shrink: 0 !important;
+    }
+    
+    .tf-product-info-wrap {
+      flex: 1 !important;
+      padding: 15px !important;
+      overflow-y: auto !important;
+      min-height: 0 !important;
+    }
+    
+    .swiper-slide .item {
+      padding: 10px !important;
+    }
+  }
+  
+  /* Small mobile */
+  @media (max-width: 480px) {
+    .tf-product-media-wrap {
+      height: 250px !important;
+    }
+    
+    .tf-product-info-wrap {
+      padding: 10px !important;
+    }
+  }
       `}</style>
 
       <div
@@ -170,7 +290,8 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
       {/* modal quick_view */}
       <div className="modal fade modalDemo show" id="quick_view" style={{ display: 'block', zIndex: 1050 }}>
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content" ref={modalRef}>
+          <div className="modal-content" ref={modalRef}
+          >
             <div className="header">
               <span
                 className="icon-close icon-close-popup"
@@ -178,7 +299,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                 aria-label="Close"
               ></span>
             </div>
-            <div className="wrap">
+            <div className="wrap"
+              style={{
+                minHeight: window.innerWidth <= 768 ? '550px' : window.innerWidth <= 1024 ? '650px' : '700px',
+                height: 'auto'
+              }}>
+
               <div className="tf-product-media-wrap">
                 <div className="swiper tf-single-slide" style={{ position: "relative" }}>
                   {hasDiscount && product.discountDTO?.discountValue > 0 && (
@@ -200,6 +326,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                       loop={totalImages > 1}
                       spaceBetween={0}
                       slidesPerView={1}
+                      style={{ height: '100%' }}
                     >
                       <SwiperSlide>
                         <div className="item">
@@ -208,6 +335,15 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                             alt={product.title}
                             width={500}
                             height={500}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              display: "block",
+                              margin: 0,
+                              padding: 0
+                            }}
+
                             onClick={() => {
                               setFullscreenInitialSlide(0);
                               setFullscreenOpen(true);
@@ -224,6 +360,14 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                               alt={product.title + " " + (idx + 1)}
                               width={500}
                               height={500}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                display: "block",
+                                margin: 0,
+                                padding: 0
+                              }}
                               onClick={() => {
                                 setFullscreenInitialSlide(idx + 1);
                                 setFullscreenOpen(true);
@@ -239,6 +383,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                   <div className="swiper-button-prev button-style-arrow single-slide-next"></div>
                 </div>
               </div>
+
               <div className="tf-product-info-wrap position-relative">
                 <div className="tf-product-info-list">
                   <div className="tf-product-info-title">
@@ -305,7 +450,16 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         <div className="variant-picker-label">
                           Size: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
                         </div>
-                        <div className="find-size btn-choose-size fw-6">Find your size</div>
+                        <a
+                          className="find-size btn-choose-size fw-6"
+                          href="/assets/site/images/products/beden-tablosu.png"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSizeChartOpen(true);
+                          }}
+                        >
+                          Find your size
+                        </a>
                       </div>
                       <div className="variant-picker-values">
                         {sizes.map((size) => (
@@ -413,6 +567,73 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
         }))}
         initialSlide={fullscreenInitialSlide}
       />
+      {/* Size Chart Fullscreen */}
+      {sizeChartOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
+          onClick={() => setSizeChartOpen(false)}
+        >
+          <div
+            style={{
+              position: 'relative',
+              maxWidth: '70vw',
+              maxHeight: '80vh'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src="/assets/site/images/products/beden-tablosu.png"
+              alt="Beden Tablosu"
+              width={800}
+              height={600}
+              style={{
+                maxWidth: '80vw',
+                maxHeight: '80vh',
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
+                display: 'block'
+              }}
+              unoptimized
+            />
+
+            {/* Çarpı butonu - resmin sağ üstünde */}
+            <button
+              onClick={() => setSizeChartOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'white',
+                color: 'black',
+                border: 'none',
+                width: '30px',
+                height: '30px',
+                fontSize: '18px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold'
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };
