@@ -3,11 +3,11 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function OtherReports() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img src="/assets/site/images/about-desa/other-reports.jpg" alt="Other Reports" />
+            <img src="/assets/site/images/about-desa/other-reports.jpg" alt="Other Reports" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <p><strong>OTHER REPORTS</strong></p>

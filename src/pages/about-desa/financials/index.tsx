@@ -3,11 +3,11 @@ import styles from "../../../styles/AboutDesa.module.css";
 
 function Financials() {
   return (
-    <div style={{ width: '100%', maxWidth: 'none' }}>
-      <div className={styles["flatpage-content"]}>
-        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
+    <div style={{ width: '100%', maxWidth: 'none', border: 'none', boxShadow: 'none' }}>
+      <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
+        <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img src="https://14231c.cdn.akinoncloud.com/cms/2023/08/09/076fe574-38f3-4099-9879-caf178c19477.jpe" alt="Financials" />
+            <img src="https://14231c.cdn.akinoncloud.com/cms/2023/08/09/076fe574-38f3-4099-9879-caf178c19477.jpe" alt="Financials" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
           
           <h1><strong>FINANCIALS</strong></h1>

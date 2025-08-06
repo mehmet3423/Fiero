@@ -110,9 +110,9 @@ function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
           margin: 0 auto 4px auto;
           height: 378px;
           overflow: hidden;
-          border-radius: 16px;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.13);
-          background: #f7f7f7;
+          border-radius: 0;
+          box-shadow: none;
+          background: none;
         }
         .custom-slider-img {
           width: 100%;
@@ -277,8 +277,7 @@ function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
                     ) : (
                       <Link
                         href={item.href}
-                        className={`my-account-nav-item about-desa-nav-item ${router.pathname === item.href ? "active" : ""
-                          }`}
+                        className={`my-account-nav-item about-desa-nav-item ${router.pathname === item.href ? "active" : ""}`}
                         style={aboutDesaNavItemStyles}
                         title={item.label}
                       >
@@ -292,17 +291,18 @@ function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
             <div className="col-lg-9">
               <div
                 style={{
-                  background: '#fff',
                   padding: 30,
-                  borderRadius: 8,
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                   width: '100%',
                   maxWidth: 'none',
                   marginBottom: 32,
+                  background: 'none',
+                  border: 'none',
+                  boxShadow: 'none',
+                  borderRadius: 0,
                 }}
               >
                 {/* Custom React slider */}
-                <div className="custom-slider">
+                <div className="custom-slider" style={{ marginBottom: 50 }}>
                   {sliderImages.map((img, idx) => (
                     <img
                       key={img}
