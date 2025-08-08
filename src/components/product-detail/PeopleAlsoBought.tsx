@@ -119,7 +119,7 @@ const PeopleAlsoBought: React.FC = () => {
     <section className="flat-spacing-1 pt_0">
       <div className="container">
         <div className="flat-title">
-          <span className="title">People Also Bought</span>
+          <span className="title">Benzer ürünler</span>
         </div>
         <div className="hover-sw-nav hover-sw-2">
           <div className="swiper tf-sw-product-sell wrap-sw-over">
