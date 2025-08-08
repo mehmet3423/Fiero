@@ -24,7 +24,6 @@ import ServiceIcons from "../components/home/ServiceIcons";
 import { GetStaticProps } from "next";
 import { useGetProductListByIds } from "@/hooks/services/products/useGetProductListByIds";
 
-
 // SEO prop interface
 interface HomeSEOData {
   id?: string;
@@ -60,6 +59,8 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
   const [mainProductList1Contents, setMainProductList1Contents] =
     useState<GeneralContentModel[]>();
   const [mainProductList2Contents, setMainProductList2Contents] =
+    useState<GeneralContentModel[]>();
+  const [testimonialContents, setTestimonialContents] =
     useState<GeneralContentModel[]>();
 
   //index showcase bannerleri
@@ -97,7 +98,12 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     refetchContents: refetchMainProductListContents,
   } = useGeneralContents(GeneralContentType.MainProductList);
 
-
+  //testimonial
+  const {
+    contents: testimonialContentsData,
+    isLoading: testimonialContentsLoading,
+    refetchContents: refetchTestimonialContents,
+  } = useGeneralContents(GeneralContentType.Explore);
 
   //burda contents içindeki showcase bannerleri alıyoruz hepsini alamıyoruz
   useEffect(() => {
@@ -108,6 +114,7 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
       setMainBannerContents(mainBannerContentsData?.items || []);
       setMainProductList1Contents(mainProductListContentsData?.items || []);
       setMainProductList2Contents(mainProductListContentsData?.items || []);
+      setTestimonialContents(testimonialContentsData?.items || []);
     };
     fetchGeneralContents();
   }, [
@@ -116,6 +123,7 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     secondSliderContentsData,
     mainBannerContentsData,
     mainProductListContentsData,
+    testimonialContentsData,
   ]);
 
   const homeSlides = [
@@ -143,7 +151,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     // },
   ];
 
-
   const secondHomeSlides = [
     ...(secondSliderContentsData?.items
       ?.slice()
@@ -159,14 +166,29 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     // },
   ];
 
-
   const banners = [
     ...(mainBannerContents
       ?.slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      .map((item) => ({
+      .map((item, index) => ({
+        id: item.id || index,
+        title: item.title || "",
+        alt: item.title || "Banner",
         image: item.imageUrl || "",
-        link: item.contentUrl || "",
+        link: item.contentUrl || "#",
+      })) || []),
+  ];
+
+  const testimonials = [
+    ...(testimonialContents
+      ?.slice()
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((item) => ({
+        id: item.id,
+        title: item.title || "",
+        text: item.content || "",
+        image: item.imageUrl || "",
+        link: item.contentUrl || "#",
       })) || []),
   ];
 
@@ -259,13 +281,13 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
 
           {/* Banner Collection Alanı */}
           <div className="home-section home-section--collectionbanners">
-            <BannerCollection />
+            <BannerCollection banners={banners} />
           </div>
 
           {/* Ecomus's Favorites Alanı */}
           <div className="home-section home-section--bestseller">
             <FeaturedProducts
-              productHeader="Ecomus's Favorites" 
+              productHeader="Ecomus's Favorites"
               productIds={mainProductList2ProductIds}
             />
           </div>
@@ -274,7 +296,7 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
           </div>
 
           <div className="home-section home-section--testimonial">
-            <TestimonialSection />
+            <TestimonialSection testimonials={testimonials} />
           </div>
 
           <div className="home-section home-section--iconboxmodern">

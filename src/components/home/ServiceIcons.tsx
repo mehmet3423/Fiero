@@ -5,6 +5,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
 import { useCategories } from "@/hooks/services/categories/useCategories";
+import Image from "next/image";
 
 // Varsayılan kategori resimleri (kategori resmi yoksa kullanılacak)
 const defaultCategoryImages = [
@@ -87,19 +88,28 @@ function ServiceIcons() {
                           href={`/products?categoryId=${category.id}`}
                           className="collection-image img-style"
                         >
-                          <img
+                          <Image
                             className="lazyload"
                             data-src={
+                              category.imageUrl ||
                               defaultCategoryImages[
                                 index % defaultCategoryImages.length
                               ]
                             }
                             src={
+                              category.imageUrl ||
                               defaultCategoryImages[
                                 index % defaultCategoryImages.length
                               ]
                             }
                             alt={`${category.name} kategorisi`}
+                            width={500}
+                            height={500}
+                            style={{
+                              width: "250px",
+                              height: "300px",
+                              borderRadius: "8px",
+                            }}
                           />
                         </Link>
                         <div className="collection-content">
