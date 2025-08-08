@@ -279,24 +279,25 @@ function SubCategorySpecifications() {
                   </div>
 
                   {selectedMainCategory && (
-                    <div className="subcategory-list mb-4">
+                    <div className="subcategory-list mb-4 overflow-container">
                       {selectedMainCategory.subCategories.map((subCategory) => (
                         <div
                           key={subCategory.id}
-                          className={`category-item ${
-                            selectedSubCategoryId === subCategory.id
-                              ? "active"
-                              : ""
-                          }`}
+                          className={`category-item ${selectedSubCategoryId === subCategory.id
+                            ? "active"
+                            : ""
+                            }`}
                           onClick={() =>
                             handleSubCategorySelect(subCategory.id)
                           }
                           style={{ cursor: "pointer" }}
                         >
-                          <span className="category-name">
-                            {subCategory.name}
-                          </span>
-                          <i className="icon-arrow-right"></i>
+                          <div className="d-flex justify-content-between ">
+                            <span className="category-name">
+                              {subCategory.name}
+                            </span>
+                            <i className="icon-arrow-right"></i>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -553,6 +554,11 @@ function SubCategorySpecifications() {
       </GeneralModal>
 
       <style jsx>{`
+      .overflow-container {
+        max-height: 300px; 
+        overflow-y: auto; 
+        overflow-x: hidden; 
+}
         .container {
           padding-left: 0.5rem;
           padding-right: 0.5rem;

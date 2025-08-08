@@ -56,6 +56,7 @@ export default function Header() {
     userRole === UserRole.CUSTOMER || userRole === null;
   const showSellerFeatures = userRole === UserRole.SELLER;
   const showAdminFeatures = userRole === UserRole.ADMIN;
+  const [sustainabilityDropdownOpen, setSustainabilityDropdownOpen] = useState(false);
 
   if (userProfileLoading) {
     return <></>;
@@ -198,7 +199,7 @@ export default function Header() {
       <div className="tf-top-bar bg_white line py-4 sticky-top">
         <div className="px_15 lg-px_40">
           <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
-            <div className="col-4 tf-lg-hidden" style={{paddingLeft: '25px'}}>
+            <div className="col-4 tf-lg-hidden" style={{ paddingLeft: '25px' }}>
               <button onClick={toggleMobileMenu} className="nav-icon-item">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -448,9 +449,9 @@ export default function Header() {
         <div className="px_15 lg-px_40">
           <div className="row wrapper-header align-items-center">
 
-            <div className="tf-md-hidden align-items-center">
-              <nav className="box-navigation text-center">
-                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
+            <div className="tf-md-hidden align-items-center ">
+              <nav className="box-navigation text-center" >
+                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30" >
                   <li className="menu-item">
                     <Link href={PathEnums.HAFSANUR_DESA} className="item-link">
                       HAFSANUR X DESA
@@ -464,12 +465,13 @@ export default function Header() {
                         <li
                           key={category.id}
                           className="menu-item"
-                          onMouseEnter={() => setHoveredCategoryId(category.id)}
-                          onMouseLeave={() => setHoveredCategoryId("")}
+
                         >
                           <Link
                             href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
                             className="item-link"
+                            onMouseEnter={() => setHoveredCategoryId(category.id)}
+                            onMouseLeave={() => setHoveredCategoryId("")}
                           >
                             {category.name}
                             <i className="icon icon-arrow-down"></i>
@@ -533,79 +535,85 @@ export default function Header() {
                             )}
                         </li>
                       ))}
-                  <li className="menu-item">
+                  <li className="menu-item"
+                    onMouseEnter={() => setSustainabilityDropdownOpen(true)}
+                    onMouseLeave={() => setSustainabilityDropdownOpen(false)}
+                    style={{ position: 'relative' }}
+                  >
                     <Link href={PathEnums.SUSTAINABILITY} className="item-link">
                       SÜRDÜRÜLEBİLİRLİK
                       <i className="icon icon-arrow-down"></i>
                     </Link>
 
                     {/* Sürdürülebilirlik Dropdown */}
-                    <div className="sub-menu">
-                      <div className="dropdown-content-wrapper">
-                        <ul className="menu-list-small">
-                          <li>
-                            <Link
-                              href="/sustainability"
-                              className="menu-link-text"
-                            >
-                              Sürdürülebilirlik Hikayemiz
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/sustainability/leather-working-group"
-                              className="menu-link-text"
-                            >
-                              LWG Golf Certificate
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/sustainability/enerji"
-                              className="menu-link-text"
-                            >
-                              Güneşin Enerjisi
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/her-ilmek-bir-kadina-destek"
-                              className="menu-link-text"
-                            >
-                              Her İlmek Bir Kadına Destek
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/sustainability/hatira-ormani"
-                              className="menu-link-text"
-                            >
-                              Desa Ormanı
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="#"
-                              className="menu-link-text"
-                            >
-                              Sürdürülebilir Tasarımlar
-                            </Link>
-                          </li>
+                    {sustainabilityDropdownOpen && (
+                      <div className="ss-sub-menu">
+                        <div className="dropdown-content-wrapper">
+                          <ul className="menu-list-small">
+                            <li>
+                              <Link
+                                href="/sustainability"
+                                className="menu-link-text"
+                              >
+                                Sürdürülebilirlik Hikayemiz
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/sustainability/leather-working-group"
+                                className="menu-link-text"
+                              >
+                                LWG Golf Certificate
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/sustainability/enerji"
+                                className="menu-link-text"
+                              >
+                                Güneşin Enerjisi
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/her-ilmek-bir-kadina-destek"
+                                className="menu-link-text"
+                              >
+                                Her İlmek Bir Kadına Destek
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="/sustainability/hatira-ormani"
+                                className="menu-link-text"
+                              >
+                                Desa Ormanı
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                href="#"
+                                className="menu-link-text"
+                              >
+                                Sürdürülebilir Tasarımlar
+                              </Link>
+                            </li>
 
-                        </ul>
+                          </ul>
 
-                        {/* sol taraftaki resim */}
-                        <div className="dropdown-image">
-                          <Link href="/sustainability/featured-project">
-                            <img
-                              src="/assets/site/images/header/her-ilmek-resim.png"
-                              alt="Sürdürülebilirlik Projesi"
-                              className="dropdown-banner-img"
-                            />
-                          </Link>
+                          {/* sol taraftaki resim */}
+                          <div className="dropdown-image">
+                            <Link href="/sustainability/featured-project">
+                              <img
+                                src="/assets/site/images/header/her-ilmek-resim.png"
+                                alt="Sürdürülebilirlik Projesi"
+                                className="dropdown-banner-img"
+                              />
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </li>
                 </ul>
               </nav>
@@ -620,20 +628,24 @@ export default function Header() {
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       )}
       <style jsx>{`
+      
+      
   .tf-top-bar.sticky-top {
     position: relative !important;
-    top: 0;
+    top: 0px;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1002;
     background: white !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-
+    
   .header-default {
     position: relative;
-    z-index: 10;
+    z-index: 1001;
+    margin-top: 0px;
       }
+    
 
   .nav-icon-item {
     background: none !important;
@@ -715,75 +727,90 @@ export default function Header() {
   .sub-menu {
     position: absolute;
     top: 100%;
-    right: 5%;
     z-index: 1000;
-    margin-top: 5px;
   }
-
-  .dropdown-content-wrapper {
-    display: flex;
-    flex-direction: row-reverse;
-    background: white;
-    min-width: 420px;
-    width: 420px;
-    margin-left: 40px;
-  }
-
-  .menu-list-small {
-    list-style: none;
-    padding: 20px;
-    margin: 0;
-    background: white;
-    min-width: 280px;
-    flex: 1;
-  }
-
-  .menu-list-small li {
-    margin-bottom: 12px;
-  }
-
-  .menu-list-small li:last-child {
-    margin-bottom: 0;
-  }
-
-  .menu-list-small .menu-link-text {
-    display: block;
-    padding: 10px 15px;
-    color: #333;
-    text-decoration: none;
-    transition: background-color 0.2s;
-    font-size: 14px;
-    position: relative;
-    padding-right: 40px;
-  }
-
-  .menu-list-small .menu-link-text:hover {
-    background-color: #f8f8f8;
-    color: #000;
-  }
-
-  .menu-list-small .menu-link-text::after {
-    content: "";
+    .mega-menu {
     position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow-bottom: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 20px 0;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
   }
 
-  .dropdown-image {
-    width: 180px;
-    min-width: 180px;
-    height: auto;
-    background: #ffffffff;
+  .menu-columns {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    gap: 40px;
+    justify-content: flex-start;
   }
+
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 150px;
+  }
+
+  .menu-list li {
+    margin-bottom: 8px;
+  }
+
+  .menu-link-text {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 4px 0;
+    display: block;
+    transition: color 0.2s ease;
+  }
+
+  .menu-link-text:hover {
+    color: #333;
+  }
+
+  .ss-sub-menu {
+  position: absolute; 
+  top: 100%; 
+  right: 0; 
+  z-index: 1000; 
+  background: white; 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+  border-radius: 4px; 
+}
+
+.dropdown-content-wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  min-width: 420px; 
+  padding: 20px; 
+}
+
+.menu-list-small {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-list-small li {
+  margin-bottom: 12px;
+}
+
+.menu-list-small li:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-image {
+  width: 180px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
   .dropdown-banner-img {
     width: 100%;

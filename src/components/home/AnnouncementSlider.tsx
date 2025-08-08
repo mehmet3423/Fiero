@@ -26,6 +26,7 @@ const AnnouncementSlider: React.FC = () => {
         .announcement-bar {
           height: 30px !important;
           padding: 0 65px 0 0 !important;
+          z-index: 1002 !important;
         }
         .announcement-bar-item p {
           padding: 5px 0px !important;

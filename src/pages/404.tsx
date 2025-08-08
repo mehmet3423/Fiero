@@ -26,9 +26,9 @@ function NotFound() {
         }}
       >
         <div className="container">
-          <h1 className="error-title">Error 404</h1>
-          <p>Üzgünüz, istenilen sayfa bulunamadı.</p>
-          <Link href="/" className="btn btn-outline-primary-2 btn-minwidth-lg">
+          <h1 className="error-title mb-5">Error 404</h1>
+          <p className="mb-5">Üzgünüz, istenilen sayfa bulunamadı.</p>
+          <Link href="/" className="btn btn-outline-light-2 btn-minwidth-lg mb-5 border border-dark">
             <span>Geri Dön</span>
             <i className="icon-long-arrow-right"></i>
           </Link>

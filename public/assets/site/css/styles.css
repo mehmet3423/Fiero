@@ -1766,7 +1766,7 @@ label {
 .box-nav-ul .menu-item {
   padding: 36px 0px;
 }
-.box-nav-ul .menu-item:hover .sub-menu {
+.box-nav-ul .item-link:hover .sub-menu {
   pointer-events: all;
   opacity: 1;
   visibility: visible;
