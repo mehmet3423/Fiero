@@ -15,6 +15,7 @@ import { useGetCollectionDetail } from "@/hooks/services/affiliate/useGetCollect
 import { useActiveCollectionCookie } from "@/hooks/useActiveCollectionCookie";
 import { useParams } from "next/navigation";
 import { toast } from "react-hot-toast";
+import NotFound from "@/pages/404";
 
 function AffiliateCollectionPage() {
   const params = useParams();
@@ -73,10 +74,7 @@ function AffiliateCollectionPage() {
   if (error || !collectionDetail) {
     return (
       <main className="main">
-        <div className="container py-5 text-center">
-          <h2 className="text-danger">Koleksiyon bulunamadı</h2>
-          <p>Lütfen geçerli bir koleksiyon linki ile tekrar deneyin.</p>
-        </div>
+        <NotFound />
       </main>
     );
   }
@@ -169,8 +167,12 @@ function AffiliateCollectionPage() {
 
               <div className="card shadow-sm border-0 mb-4">
                 <div className="card-body p-4">
-                  <h2 className="mb-3 text-primary fw-bold">{collectionDetail.name}</h2>
-                  <p className="mb-4 text-muted">{collectionDetail.description}</p>
+                  <h2 className="mb-3 text-primary fw-bold">
+                    {collectionDetail.name}
+                  </h2>
+                  <p className="mb-4 text-muted">
+                    {collectionDetail.description}
+                  </p>
 
                   <div className="row mb-4 align-items-center">
                     {/* URL metni */}
@@ -187,7 +189,10 @@ function AffiliateCollectionPage() {
                       }}
                     >
                       <strong>URL:</strong>{" "}
-                      <span className="text-secondary" style={{ wordBreak: "break-all" }}>
+                      <span
+                        className="text-secondary"
+                        style={{ wordBreak: "break-all" }}
+                      >
                         {collectionDetail.url}
                       </span>
                     </div>
@@ -210,7 +215,6 @@ function AffiliateCollectionPage() {
                           lineHeight: "1.2",
                           transition: "background-color 0.3s ease",
                         }}
-
                         onMouseOver={(e) =>
                           (e.currentTarget.style.backgroundColor = "gray")
                         }
@@ -218,12 +222,13 @@ function AffiliateCollectionPage() {
                           (e.currentTarget.style.backgroundColor = "black")
                         }
                       >
-                        <i className="bx bx-copy" style={{ fontSize: "1.2rem" }}></i>
+                        <i
+                          className="bx bx-copy"
+                          style={{ fontSize: "1.2rem" }}
+                        ></i>
                       </button>
                     </div>
                   </div>
-
-
 
                   <hr />
                   <h5 className="fw-semibold mb-3">
@@ -271,7 +276,7 @@ function AffiliateCollectionPage() {
           </div>
         </div>
       </div>
-    </main >
+    </main>
   );
 }
 
