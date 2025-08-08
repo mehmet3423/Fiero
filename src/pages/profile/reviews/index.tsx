@@ -258,9 +258,9 @@ function ReviewsPage() {
                 href="/products"
                 style={{
                   padding: "12px 24px",
-                  border: "1px solid #007bff",
+                  border: "1px solid #000",
                   borderRadius: "4px",
-                  backgroundColor: "#007bff",
+                  backgroundColor: "#000",
                   color: "#fff",
                   textDecoration: "none",
                   fontSize: "14px",
