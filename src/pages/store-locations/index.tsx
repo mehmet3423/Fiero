@@ -86,18 +86,11 @@ const StoreLocationsPage: React.FC = () => {
                             <select
                                 id="country-select"
                                 className="form-select form-select-sm"
-                                value={selectedCountry}
-                                onChange={(e) => {
-                                    setSelectedCountry(e.target.value);
-                                    setSelectedCity("Tümü");
-                                    setActiveStoreIndex(0);
-                                }}
+                                
                                 style={{ height: "38px", boxShadow: "none", outline: "none" }}
                             >
                                 <option value="Tümü">Tümü</option>
-                                {countries.map((country) => (
-                                    <option key={country.country} value={country.country}>{country.country}</option>
-                                ))}
+                                
                             </select>
                         </div>
 
@@ -107,23 +100,12 @@ const StoreLocationsPage: React.FC = () => {
                             <select
                                 id="city-select"
                                 className="form-select form-select-sm"
-                                value={selectedCity}
-                                onChange={(e) => {
-                                    setSelectedCity(e.target.value);
-                                    setActiveStoreIndex(0);
-                                }}
+                                
                                 disabled={selectedCountry === "Tümü"}
                                 style={{ height: "38px", boxShadow: "none", outline: "none" }}
                             >
                                 <option value="Tümü">Tümü</option>
-                                {selectedCountry !== "Tümü" &&
-                                    countries
-                                        .find((country) => country.country === selectedCountry)
-                                        ?.stores.map((store) => store.city)
-                                        .filter((city, index, self) => self.indexOf(city) === index)
-                                        .map((city) => (
-                                            <option key={city} value={city}>{city}</option>
-                                        ))}
+                               
                             </select>
                         </div>
 
@@ -133,16 +115,12 @@ const StoreLocationsPage: React.FC = () => {
                             <select
                                 id="brand-select"
                                 className="form-select form-select-sm"
-                                value={selectedBrand}
-                                onChange={(e) => {
-                                    setSelectedBrand(e.target.value);
-                                    setActiveStoreIndex(0);
-                                }}
+                                
+                            
                                 style={{ height: "38px", boxShadow: "none", outline: "none" }}
                             >
                                 <option value="Tümü">Tümü</option>
-                                <option value="SAMSONITE">SAMSONITE</option>
-                                <option value="DESA">DESA</option>
+                                
                             </select>
                         </div>
 
@@ -154,8 +132,7 @@ const StoreLocationsPage: React.FC = () => {
                                 type="text"
                                 className="form-control form-control-sm"
                                 placeholder="Mağaza ismine göre ara"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                
                                 style={{ height: "38px", boxShadow: "none", outline: "none" }}
                             />
                         </div>
@@ -191,8 +168,8 @@ const StoreLocationsPage: React.FC = () => {
                                                 setShowDetails(true);
                                             }}
                                         >
-                                            <h6 className="tf-store-title mb-1" style={{ fontSize: "1rem" }}>{store.name}</h6>
-                                            <p className="mb-0 text-muted" style={{ fontSize: "0.9rem" }}>{store.city}</p>
+                                            <h6 className="tf-store-title mb-1" style={{ fontSize: "1rem" }}></h6>
+                                            <p className="mb-0 text-muted" style={{ fontSize: "0.9rem" }}></p>
                                         </div>
                                     ))}
                                 </div>
@@ -203,19 +180,14 @@ const StoreLocationsPage: React.FC = () => {
                                     style={{ height: "600px", position: "relative" }}
                                 >
                                     <div style={{ maxWidth: "80%" }}>
-                                        <h6 className="text-dark mb-3" style={{ fontSize: "1.2rem" }}>{filteredStores[activeStoreIndex]?.name}</h6>
-                                        <p className="text-secondary mb-3"><strong>Adres:</strong> {filteredStores[activeStoreIndex]?.address || "Bilgi yok"}</p>
-                                        <p className="text-secondary mb-3"><strong>Telefon:</strong> {filteredStores[activeStoreIndex]?.phone || "Bilgi yok"}</p>
+                                        <h6 className="text-dark mb-3" style={{ fontSize: "1.2rem" }}></h6>
+                                        <p className="text-secondary mb-3"><strong>Adres:</strong>  || "Bilgi yok"</p>
+                                        <p className="text-secondary mb-3"><strong>Telefon:</strong>  || "Bilgi yok"</p>
                                         <div style={{ marginBottom: "1rem" }}></div>
                                         <p className="text-secondary mb-3"><strong>Çalışma Saatleri:</strong></p>
                                         <ul className="list-unstyled">
-                                            {filteredStores[activeStoreIndex]?.workingHours
-                                                ? Object.entries(filteredStores[activeStoreIndex].workingHours).map(([day, hours]) => (
-                                                    <li key={day} className="text-dark mb-2">
-                                                        <strong>{day}:</strong> {hours}
-                                                    </li>
-                                                ))
-                                                : <li className="text-muted">Bilgi yok</li>}
+                                           
+                                                 <li className="text-muted">Bilgi yok</li>
                                         </ul>
                                     </div>
                                     <button
@@ -241,14 +213,12 @@ const StoreLocationsPage: React.FC = () => {
                             >
                                 {filteredStores.length > 0 ? (
                                     <iframe
-                                        src={filteredStores[activeStoreIndex]?.map}
                                         width="100%"
                                         height="100%"
                                         style={{ border: 0 }}
                                         allowFullScreen
                                         loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
-                                        title={filteredStores[activeStoreIndex]?.name}
                                     ></iframe>
                                 ) : (
                                     <p style={{ padding: "20px", textAlign: "center" }}>

@@ -7,48 +7,13 @@ function AnalystReports() {
       <div className={styles["flatpage-content"]} style={{ border: 'none', boxShadow: 'none' }}>
         <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`} style={{ border: 'none', boxShadow: 'none' }}>
           <p>
-            <img 
-              src="/assets/site/images/about-desa/analyst-reports-banner.jpg" 
-              alt="Analyst Reports"
-              style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }}
-            />
+            <img src="/assets/site/images/collections/collection-69.jpg" alt="DESA" style={{ boxShadow: 'none', border: 'none', borderRadius: 0 }} />
           </p>
-          
-          <h1><strong>ANALYST REPORTS</strong></h1>
-          
-          <h2 className={styles["section-title"]}>Brokerage Reports</h2>
-          
-          <div className={styles["corporate-links"]}>
-            <p>
-              <a
-                href="https://14231c.cdn.akinoncloud.com/cms/2023/07/31/34683219-4398-4544-900f-e5b8d2f5856a.pdf"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Tacirler Yatırım – Model Portfolio – ENG
-              </a>
-            </p>
-
-            <p>
-              <a
-                href="https://14231c.cdn.akinoncloud.com/cms/2023/07/10/3e3c8f0b-1f54-4716-9239-6f1566e63e74.pdf"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                TFG İstanbul Menkul – DESA Company Report – ENG – July 2023
-              </a>
-            </p>
-
-            <p>
-              <a
-                href="https://14231c.cdn.akinoncloud.com/cms/2023/06/08/71f26ed1-99f7-44cf-b27c-fb8d8d497246.pdf"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Tacirler Yatırım – DESA Company Report – ENG – May 2023
-              </a>
-            </p>
-          </div>
+          <h1><strong>TASLAK BAŞLIK</strong></h1>
+          <p>Lorem ipsum dolor sit amet, analyst reports taslak içerik.</p>
+          <p>Rasgele metin: 24680 qwertyuiop!</p>
+          <p>Bu alan geçici olarak doldurulmuştur.</p>
+          <p>Örnek yazı: test, deneme, rapor, taslak.</p>
         </div>
       </div>
     </div>
