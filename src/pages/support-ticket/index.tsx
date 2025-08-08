@@ -36,9 +36,9 @@ function SupportTicketPage() {
           style={{ backgroundImage: 'url("/assets/images/page-header-bg.jpg")' }}
         >
           <div className="container">
-            <h1 className="page-title">
-              Destek Talebi<span>Yardım</span>
-            </h1>
+            <h3 className="page-title">
+              Destek Talebi
+            </h3>
           </div>
         </div>
 

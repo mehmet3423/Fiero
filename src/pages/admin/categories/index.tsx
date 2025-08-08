@@ -8,7 +8,7 @@ import { useDeleteMainCategory } from "@/hooks/services/categories/useDeleteMain
 import { useDeleteSubCategory } from "@/hooks/services/categories/useDeleteSubCategory";
 import { useUpdateMainCategory } from "@/hooks/services/categories/useUpdateMainCategory";
 import { useUpdateSubCategory } from "@/hooks/services/categories/useUpdateSubCategory";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -17,6 +17,8 @@ import {
 } from "@hello-pangea/dnd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faFolder } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-hot-toast";
+import { useCloudinaryImageUpload } from "@/hooks/useCloudinaryImageUpload";
 
 function CategoryManagementPage() {
   const { categories, isLoading: categoriesLoading } = useCategories();
@@ -37,6 +39,16 @@ function CategoryManagementPage() {
 
   const [newMainCategoryName, setNewMainCategoryName] = useState("");
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
+  const [newMainCategoryImageUrl, setNewMainCategoryImageUrl] = useState("");
+  const [newSubCategoryImageUrl, setNewSubCategoryImageUrl] = useState("");
+
+  // File upload hooks
+  const mainImageUpload = useCloudinaryImageUpload();
+  const subImageUpload = useCloudinaryImageUpload();
+
+  // File input refs
+  const mainImageInputRef = useRef<HTMLInputElement>(null);
+  const subImageInputRef = useRef<HTMLInputElement>(null);
   const [mainCategoryError, setMainCategoryError] = useState<string | null>(
     null
   );
@@ -50,6 +62,7 @@ function CategoryManagementPage() {
     name: string;
     mainCategoryId: string;
     displayIndex: number;
+    imageUrl?: string;
   } | null>(null);
   const [deletingMainCategory, setDeletingMainCategory] = useState<
     string | null
@@ -163,11 +176,56 @@ function CategoryManagementPage() {
     }
   };
 
+  const handleMainImageSelect = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      mainImageUpload.setSelectedFile(file);
+      mainImageUpload.setImageUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      subImageUpload.setSelectedFile(file);
+      subImageUpload.setImageUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadMainImage = async (): Promise<string | null> => {
+    const result = await mainImageUpload.uploadImage();
+    if (result) {
+      setNewMainCategoryImageUrl(result);
+    }
+    return result;
+  };
+
+  const uploadSubImage = async (): Promise<string | null> => {
+    const result = await subImageUpload.uploadImage();
+    if (result) {
+      setNewSubCategoryImageUrl(result);
+    }
+    return result;
+  };
+
   const handleCreateMainCategory = async () => {
     if (!newMainCategoryName.trim() || mainCategoryError) return;
+
+    let imageUrl = newMainCategoryImageUrl;
+    if (mainImageUpload.selectedFile && !imageUrl) {
+      const uploadedUrl = await uploadMainImage();
+      if (!uploadedUrl) return;
+      imageUrl = uploadedUrl;
+    }
+
     const index = mainCategories.length;
-    await createMainCategory(newMainCategoryName, index);
+    await createMainCategory(newMainCategoryName, index, imageUrl || "");
     setNewMainCategoryName("");
+    setNewMainCategoryImageUrl("");
+    mainImageUpload.setSelectedFile(null);
+    mainImageUpload.setImageUrl("");
     setMainCategoryError(null);
     $("#newMainCategoryModal").modal("hide");
   };
@@ -175,9 +233,24 @@ function CategoryManagementPage() {
   const handleCreateSubCategory = async () => {
     if (!newSubCategoryName.trim() || !selectedMainCategory || subCategoryError)
       return;
+
+    let imageUrl = newSubCategoryImageUrl;
+    if (subImageUpload.selectedFile && !imageUrl) {
+      const uploadedUrl = await uploadSubImage();
+      if (!uploadedUrl) return;
+      imageUrl = uploadedUrl;
+    }
+
     const index = selectedMainCategory.subCategories.length;
-    await createSubCategory(newSubCategoryName, selectedMainCategory.id);
+    await createSubCategory(
+      newSubCategoryName,
+      selectedMainCategory.id,
+      imageUrl
+    );
     setNewSubCategoryName("");
+    setNewSubCategoryImageUrl("");
+    subImageUpload.setSelectedFile(null);
+    subImageUpload.setImageUrl("");
     setSubCategoryError(null);
     $("#newSubCategoryModal").modal("hide");
 
@@ -189,23 +262,47 @@ function CategoryManagementPage() {
 
   const handleUpdateMainCategory = async () => {
     if (!editingMainCategory) return;
+
+    let imageUrl = editingMainCategory.imageUrl;
+    if (mainImageUpload.selectedFile) {
+      const uploadedUrl = await uploadMainImage();
+      if (!uploadedUrl) return;
+      imageUrl = uploadedUrl;
+    }
+
     await updateMainCategory(
       editingMainCategory.id,
       editingMainCategory.name,
-      editingMainCategory.displayIndex
+      editingMainCategory.displayIndex,
+      imageUrl
     );
     setEditingMainCategory(null);
+    setNewMainCategoryImageUrl("");
+    mainImageUpload.setSelectedFile(null);
+    mainImageUpload.setImageUrl("");
     $("#editMainCategoryModal").modal("hide");
   };
 
   const handleUpdateSubCategory = async () => {
     if (!editingSubCategory) return;
+
+    let imageUrl = editingSubCategory.imageUrl;
+    if (subImageUpload.selectedFile) {
+      const uploadedUrl = await uploadSubImage();
+      if (!uploadedUrl) return;
+      imageUrl = uploadedUrl;
+    }
+
     await updateSubCategory(
       editingSubCategory.id,
       editingSubCategory.name,
-      editingSubCategory.displayIndex
+      editingSubCategory.displayIndex,
+      imageUrl
     );
     setEditingSubCategory(null);
+    setNewSubCategoryImageUrl("");
+    subImageUpload.setSelectedFile(null);
+    subImageUpload.setImageUrl("");
     $("#editSubCategoryModal").modal("hide");
 
     const updatedCategory = categories?.items.find(
@@ -235,7 +332,7 @@ function CategoryManagementPage() {
 
   if (categoriesLoading) {
     return (
-      <div className="card" >
+      <div className="card">
         <h5
           className="card-header"
           style={{ fontSize: "1.2rem", fontWeight: "bold", padding: "20px" }}
@@ -283,11 +380,14 @@ function CategoryManagementPage() {
                 Bir kategori seçiniz.
               </span>
             </div>
-            <div className="card-body p-0" style={{
-              height: 'auto',
-              minHeight: '200px',
-              maxHeight: '444px'
-            }}>
+            <div
+              className="card-body p-0"
+              style={{
+                height: "auto",
+                minHeight: "200px",
+                maxHeight: "444px",
+              }}
+            >
               {categories?.items?.length === 0 ? (
                 <div className="text-center p-4">
                   <i className="bx bx-category fs-1 text-muted mb-3"></i>
@@ -300,12 +400,15 @@ function CategoryManagementPage() {
                       <div
                         className="table-responsive"
                         style={{
-                          maxHeight: '444px',
-                          overflowY: 'auto',
-                          overflowX: 'hidden'
+                          maxHeight: "444px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
                         }}
                       >
-                        <table className="table table-bordered" style={{ marginBottom: '0' }}>
+                        <table
+                          className="table table-bordered"
+                          style={{ marginBottom: "0" }}
+                        >
                           <tbody
                             ref={provided.innerRef}
                             {...provided.droppableProps}
@@ -330,7 +433,7 @@ function CategoryManagementPage() {
                                         cursor: "pointer",
                                         backgroundColor:
                                           selectedMainCategory?.id ===
-                                            category.id
+                                          category.id
                                             ? "#f5f7fb"
                                             : "transparent",
                                         transform: snapshot.isDragging
@@ -343,7 +446,12 @@ function CategoryManagementPage() {
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td style={{ fontSize: "0.813rem", width: "70%" }}>
+                                      <td
+                                        style={{
+                                          fontSize: "0.813rem",
+                                          width: "70%",
+                                        }}
+                                      >
                                         <div
                                           style={{
                                             display: "flex",
@@ -356,21 +464,31 @@ function CategoryManagementPage() {
                                             style={{
                                               paddingRight: "1rem",
                                               paddingLeft: "0.5rem",
-                                              color: snapshot.isDragging ? "#007bff" : "#6c757d"
+                                              color: snapshot.isDragging
+                                                ? "#007bff"
+                                                : "#6c757d",
                                             }}
                                           />
                                           <span>{category.name}</span>
                                         </div>
                                       </td>
 
-                                      <td className="text-end" style={{ width: "30%" }}>
+                                      <td
+                                        className="text-end"
+                                        style={{ width: "30%" }}
+                                      >
                                         <button
                                           className="btn btn-link btn-sm text-muted"
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setEditingMainCategory(category);
-                                            $("#editMainCategoryModal").modal("show");
+                                            setNewMainCategoryImageUrl(
+                                              category.imageUrl || ""
+                                            );
+                                            $("#editMainCategoryModal").modal(
+                                              "show"
+                                            );
                                           }}
                                         >
                                           <i className="bx bx-edit-alt me-1"></i>
@@ -381,8 +499,12 @@ function CategoryManagementPage() {
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            setDeletingMainCategory(category.id);
-                                            $("#deleteMainCategoryModal").modal("show");
+                                            setDeletingMainCategory(
+                                              category.id
+                                            );
+                                            $("#deleteMainCategoryModal").modal(
+                                              "show"
+                                            );
                                           }}
                                         >
                                           <i className="bx bx-trash me-1"></i>
@@ -406,7 +528,10 @@ function CategoryManagementPage() {
         </div>
 
         <div className="col-lg-6">
-          <div className="card" style={{ marginTop: "70px", marginLeft: "auto" }}>
+          <div
+            className="card"
+            style={{ marginTop: "70px", marginLeft: "auto" }}
+          >
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -429,11 +554,14 @@ function CategoryManagementPage() {
                 </button>
               )}
             </div>
-            <div className="card-body p-0" style={{
-              height: 'auto',
-              minHeight: '200px',
-              maxHeight: '444px'
-            }}>
+            <div
+              className="card-body p-0"
+              style={{
+                height: "auto",
+                minHeight: "200px",
+                maxHeight: "444px",
+              }}
+            >
               {selectedMainCategory ? (
                 <DragDropContext onDragEnd={onDragEnd}>
                   <Droppable droppableId="subCategories">
@@ -441,12 +569,15 @@ function CategoryManagementPage() {
                       <div
                         className="table-responsive"
                         style={{
-                          maxHeight: '444px',
-                          overflowY: 'auto',
-                          overflowX: 'hidden'
+                          maxHeight: "444px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
                         }}
                       >
-                        <table className="table table-bordered" style={{ marginBottom: '0' }}>
+                        <table
+                          className="table table-bordered"
+                          style={{ marginBottom: "0" }}
+                        >
                           <tbody
                             ref={provided.innerRef}
                             {...provided.droppableProps}
@@ -476,7 +607,12 @@ function CategoryManagementPage() {
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td style={{ fontSize: "0.813rem", width: "70%" }}>
+                                      <td
+                                        style={{
+                                          fontSize: "0.813rem",
+                                          width: "70%",
+                                        }}
+                                      >
                                         <div
                                           style={{
                                             display: "flex",
@@ -489,13 +625,18 @@ function CategoryManagementPage() {
                                             style={{
                                               paddingRight: "1rem",
                                               paddingLeft: "0.5rem",
-                                              color: snapshot.isDragging ? "#007bff" : "#6c757d"
+                                              color: snapshot.isDragging
+                                                ? "#007bff"
+                                                : "#6c757d",
                                             }}
                                           />
                                           <span>{subCategory.name}</span>
                                         </div>
                                       </td>
-                                      <td className="text-end" style={{ width: "30%" }}>
+                                      <td
+                                        className="text-end"
+                                        style={{ width: "30%" }}
+                                      >
                                         <button
                                           className="btn btn-link btn-sm text-muted"
                                           style={{ fontSize: "0.75rem" }}
@@ -504,10 +645,18 @@ function CategoryManagementPage() {
                                             setEditingSubCategory({
                                               id: subCategory.id,
                                               name: subCategory.name,
-                                              mainCategoryId: selectedMainCategory.id,
-                                              displayIndex: subCategory.displayIndex,
+                                              mainCategoryId:
+                                                selectedMainCategory.id,
+                                              displayIndex:
+                                                subCategory.displayIndex,
+                                              imageUrl: subCategory.imageUrl,
                                             });
-                                            $("#editSubCategoryModal").modal("show");
+                                            setNewSubCategoryImageUrl(
+                                              subCategory.imageUrl || ""
+                                            );
+                                            $("#editSubCategoryModal").modal(
+                                              "show"
+                                            );
                                           }}
                                         >
                                           <i className="bx bx-edit-alt me-1"></i>
@@ -519,8 +668,12 @@ function CategoryManagementPage() {
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            setDeletingSubCategory(subCategory.id);
-                                            $("#deleteSubCategoryModal").modal("show");
+                                            setDeletingSubCategory(
+                                              subCategory.id
+                                            );
+                                            $("#deleteSubCategoryModal").modal(
+                                              "show"
+                                            );
                                           }}
                                         >
                                           <i className="bx bx-trash me-1"></i>
@@ -557,6 +710,9 @@ function CategoryManagementPage() {
         title="Yeni Ana Kategori"
         onClose={() => {
           setNewMainCategoryName("");
+          setNewMainCategoryImageUrl("");
+          mainImageUpload.setSelectedFile(null);
+          mainImageUpload.setImageUrl("");
           setMainCategoryError(null);
         }}
         onApprove={handleCreateMainCategory}
@@ -582,13 +738,83 @@ function CategoryManagementPage() {
             <div className="invalid-feedback">{mainCategoryError}</div>
           )}
         </div>
+        <div className="mt-3">
+          <label className="form-label">Kategori Görseli (Opsiyonel)</label>
+          <div className="row">
+            <div className="col-md-8">
+              <input
+                type="file"
+                className="form-control"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onChange={handleMainImageSelect}
+                ref={mainImageInputRef}
+              />
+              <small className="text-muted">
+                Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
+              </small>
+            </div>
+            <div className="col-md-4">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm w-100"
+                onClick={uploadMainImage}
+                disabled={
+                  !mainImageUpload.selectedFile || mainImageUpload.isUploading
+                }
+              >
+                {mainImageUpload.isUploading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Yükleniyor...
+                  </>
+                ) : (
+                  <>
+                    <i className="bx bx-upload me-1"></i> Görseli Yükle
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          {mainImageUpload.imageUrl && (
+            <div className="mt-2">
+              <img
+                src={mainImageUpload.imageUrl}
+                alt="Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                }}
+              />
+            </div>
+          )}
+          {newMainCategoryImageUrl && (
+            <div className="mt-2">
+              <small className="text-success">
+                <i className="bx bx-check-circle me-1"></i>
+                Görsel yüklendi: {newMainCategoryImageUrl.substring(0, 50)}...
+              </small>
+            </div>
+          )}
+        </div>
       </GeneralModal>
 
       {/* Edit Ana Kategori Modal */}
       <GeneralModal
         id="editMainCategoryModal"
         title="Ana Kategori Düzenle"
-        onClose={() => setEditingMainCategory(null)}
+        onClose={() => {
+          setEditingMainCategory(null);
+          setNewMainCategoryImageUrl("");
+          mainImageUpload.setSelectedFile(null);
+          mainImageUpload.setImageUrl("");
+        }}
         onApprove={handleUpdateMainCategory}
         approveButtonText="Güncelle"
         isLoading={isUpdatingMain}
@@ -613,6 +839,75 @@ function CategoryManagementPage() {
             required
           />
         </div>
+        <div className="mt-3">
+          <label className="form-label">Kategori Görseli (Opsiyonel)</label>
+          <div className="row">
+            <div className="col-md-8">
+              <input
+                type="file"
+                className="form-control"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onChange={handleMainImageSelect}
+                ref={mainImageInputRef}
+              />
+              <small className="text-muted">
+                Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
+              </small>
+            </div>
+            <div className="col-md-4">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm w-100"
+                onClick={uploadMainImage}
+                disabled={
+                  !mainImageUpload.selectedFile || mainImageUpload.isUploading
+                }
+              >
+                {mainImageUpload.isUploading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Yükleniyor...
+                  </>
+                ) : (
+                  <>
+                    <i className="bx bx-upload me-1"></i> Görseli Yükle
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          {mainImageUpload.imageUrl && (
+            <div className="mt-2">
+              <img
+                src={mainImageUpload.imageUrl}
+                alt="Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                }}
+              />
+            </div>
+          )}
+          {(editingMainCategory?.imageUrl || newMainCategoryImageUrl) && (
+            <div className="mt-2">
+              <small className="text-success">
+                <i className="bx bx-check-circle me-1"></i>
+                Mevcut görsel:{" "}
+                {(
+                  editingMainCategory?.imageUrl || newMainCategoryImageUrl
+                ).substring(0, 50)}
+                ...
+              </small>
+            </div>
+          )}
+        </div>
       </GeneralModal>
 
       {/* Yeni Alt Kategori Modal */}
@@ -621,6 +916,9 @@ function CategoryManagementPage() {
         title="Yeni Alt Kategori"
         onClose={() => {
           setNewSubCategoryName("");
+          setNewSubCategoryImageUrl("");
+          subImageUpload.setSelectedFile(null);
+          subImageUpload.setImageUrl("");
           setSubCategoryError(null);
         }}
         onApprove={handleCreateSubCategory}
@@ -646,13 +944,83 @@ function CategoryManagementPage() {
             <div className="invalid-feedback">{subCategoryError}</div>
           )}
         </div>
+        <div className="mt-3">
+          <label className="form-label">Alt Kategori Görseli (Opsiyonel)</label>
+          <div className="row">
+            <div className="col-md-8">
+              <input
+                type="file"
+                className="form-control"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onChange={handleSubImageSelect}
+                ref={subImageInputRef}
+              />
+              <small className="text-muted">
+                Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
+              </small>
+            </div>
+            <div className="col-md-4">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm w-100"
+                onClick={uploadSubImage}
+                disabled={
+                  !subImageUpload.selectedFile || subImageUpload.isUploading
+                }
+              >
+                {subImageUpload.isUploading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Yükleniyor...
+                  </>
+                ) : (
+                  <>
+                    <i className="bx bx-upload me-1"></i> Görseli Yükle
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          {subImageUpload.imageUrl && (
+            <div className="mt-2">
+              <img
+                src={subImageUpload.imageUrl}
+                alt="Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                }}
+              />
+            </div>
+          )}
+          {newSubCategoryImageUrl && (
+            <div className="mt-2">
+              <small className="text-success">
+                <i className="bx bx-check-circle me-1"></i>
+                Görsel yüklendi: {newSubCategoryImageUrl.substring(0, 50)}...
+              </small>
+            </div>
+          )}
+        </div>
       </GeneralModal>
 
       {/* Edit Alt Kategori Modal */}
       <GeneralModal
         id="editSubCategoryModal"
         title="Alt Kategori Düzenle"
-        onClose={() => setEditingSubCategory(null)}
+        onClose={() => {
+          setEditingSubCategory(null);
+          setNewSubCategoryImageUrl("");
+          subImageUpload.setSelectedFile(null);
+          subImageUpload.setImageUrl("");
+        }}
         onApprove={handleUpdateSubCategory}
         approveButtonText="Güncelle"
         isLoading={isUpdatingSub}
@@ -676,6 +1044,75 @@ function CategoryManagementPage() {
             }
             required
           />
+        </div>
+        <div className="mt-3">
+          <label className="form-label">Alt Kategori Görseli (Opsiyonel)</label>
+          <div className="row">
+            <div className="col-md-8">
+              <input
+                type="file"
+                className="form-control"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                onChange={handleSubImageSelect}
+                ref={subImageInputRef}
+              />
+              <small className="text-muted">
+                Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
+              </small>
+            </div>
+            <div className="col-md-4">
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm w-100"
+                onClick={uploadSubImage}
+                disabled={
+                  !subImageUpload.selectedFile || subImageUpload.isUploading
+                }
+              >
+                {subImageUpload.isUploading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Yükleniyor...
+                  </>
+                ) : (
+                  <>
+                    <i className="bx bx-upload me-1"></i> Görseli Yükle
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          {subImageUpload.imageUrl && (
+            <div className="mt-2">
+              <img
+                src={subImageUpload.imageUrl}
+                alt="Preview"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "1px solid #dee2e6",
+                }}
+              />
+            </div>
+          )}
+          {(editingSubCategory?.imageUrl || newSubCategoryImageUrl) && (
+            <div className="mt-2">
+              <small className="text-success">
+                <i className="bx bx-check-circle me-1"></i>
+                Mevcut görsel:{" "}
+                {(
+                  editingSubCategory?.imageUrl || newSubCategoryImageUrl
+                ).substring(0, 50)}
+                ...
+              </small>
+            </div>
+          )}
         </div>
       </GeneralModal>
 
@@ -853,7 +1290,7 @@ function CategoryManagementPage() {
           }
         }
       `}</style>
-    </div >
+    </div>
   );
 }
 

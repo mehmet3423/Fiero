@@ -12,6 +12,7 @@ export interface Category {
   name: string;
   subCategories: SubCategory[];
   displayIndex: number;
+  imageUrl?: string;
 }
 
 export interface SubCategory {
@@ -20,4 +21,5 @@ export interface SubCategory {
   name: string;
   products: Product[];
   displayIndex: number;
+  imageUrl?: string;
 }

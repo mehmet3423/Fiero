@@ -672,7 +672,7 @@ const AddProductPage: React.FC = () => {
                   </div>
 
                   {/* SEO Bilgileri */}
-                  <div className="col-12 mb-3">
+                  {/* <div className="col-12 mb-3">
                     <div className="card border p-4">
                       <div className="card-header bg-light">
                         <h6 className="mb-0">SEO Bilgileri</h6>
@@ -983,7 +983,7 @@ const AddProductPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Alt Kategori Özellikleri */}
                   {selectedSubCategoryId &&

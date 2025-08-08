@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useFavorites } from "@/hooks/context/useFavorites";
+import { useRouter } from "next/router";
 
 interface ProductDetailsProps {
   product: any;
@@ -7,10 +9,7 @@ interface ProductDetailsProps {
   quantity: number;
   setQuantity: (value: number) => void;
   handleAddToCart: () => void;
-  handleToggleFavorite: () => void;
   isAddingToCart: boolean;
-  isInFavorites: (productId: string) => boolean;
-  isFavoritesLoading: boolean;
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
@@ -20,10 +19,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   quantity,
   setQuantity,
   handleAddToCart,
-  handleToggleFavorite,
   isAddingToCart,
-  isInFavorites,
-  isFavoritesLoading,
 }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
@@ -32,6 +28,42 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     minutes: 0,
     seconds: 0,
   });
+
+  // Favori mantığı RecentlyViewed ile aynı şekilde
+  const {
+    addToFavorites,
+    removeFromFavorites,
+    isInFavorites,
+    isLoading: isFavoritesLoading,
+  } = useFavorites();
+
+  // Karşılaştır mantığı RecentlyViewed ile aynı şekilde
+  const router = useRouter();
+  const handleCompare = (productId: string) => {
+    if (typeof window !== "undefined") {
+      const key = "compareProducts";
+      let compareList: string[] = [];
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored) compareList = JSON.parse(stored);
+        if (!compareList.includes(productId)) {
+          compareList.push(productId);
+          localStorage.setItem(key, JSON.stringify(compareList));
+        }
+      } catch {
+        // ignore
+      }
+      router.push("/compare-products");
+    }
+  };
+
+  const handleToggleFavorite = async (productId: string) => {
+    if (isInFavorites(productId)) {
+      await removeFromFavorites(productId);
+    } else {
+      await addToFavorites(productId);
+    }
+  };
 
   const hasDiscount = product.discountDTO !== null;
   const discountPercentage = hasDiscount
@@ -72,18 +104,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <h5>{product.title}</h5>
           </div>
 
-          {/* Badges */}
-          <div className="tf-product-info-badges">
-            <div className="badges">Best seller</div>
-            <div className="product-status-content">
-              <i className="icon-lightning"></i>
-              <p className="fw-6">
-                Selling fast! {Math.floor(Math.random() * 100)} people have this
-                in their carts.
-              </p>
-            </div>
-          </div>
-
           {/* Price */}
           <div className="tf-product-info-price">
             {hasDiscount && product.price !== product.discountedPrice ? (
@@ -101,7 +121,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   })}
                 </div>
                 <div className="badges-on-sale">
-                  <span>{discountPercentage}</span>% OFF
+                  <span>{discountPercentage}</span>% İNDİRİM
                 </div>
               </>
             ) : (
@@ -117,7 +137,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {/* Live View */}
           <div className="tf-product-info-liveview">
             <div className="liveview-count">{product.viewCount || 20}</div>
-            <p className="fw-6">People are viewing this right now</p>
+            <p className="fw-6">kişi şu anda bu ürünü görüntülüyor</p>
           </div>
 
           {/* Countdown Timer */}
@@ -125,12 +145,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <div className="countdown-wrap">
               <div className="countdown-title">
                 <i className="icon-time tf-ani-tada"></i>
-                <p>HURRY UP! SALE ENDS IN:</p>
+                <p>ACELE EDİN! İNDİRİM BİTİYOR:</p>
               </div>
               <div className="tf-countdown style-1">
                 <p>
-                  {timeLeft.days} Days : {timeLeft.hours} Hours :{" "}
-                  {timeLeft.minutes} Mins : {timeLeft.seconds} Secs
+                  {timeLeft.days} Gün : {timeLeft.hours} Saat :{" "}
+                  {timeLeft.minutes} Dakika : {timeLeft.seconds} Saniye
                 </p>
               </div>
             </div>
@@ -140,9 +160,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <div className="tf-product-info-variant-picker">
             <div className="variant-picker-item">
               <div className="variant-picker-label">
-                Color:{" "}
+                Renk:{" "}
                 <span className="fw-6 variant-picker-label-value">
-                  {product.selectedColor || "Beige"}
+                  {product.selectedColor || "Bej"}
                 </span>
               </div>
               <div className="variant-picker-values">
@@ -168,7 +188,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <div className="variant-picker-item">
               <div className="d-flex justify-content-between align-items-center">
                 <div className="variant-picker-label">
-                  Size:{" "}
+                  Beden:{" "}
                   <span className="fw-6 variant-picker-label-value">
                     {product.selectedSize || "S"}
                   </span>
@@ -178,7 +198,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   data-bs-toggle="modal"
                   className="find-size fw-6"
                 >
-                  Find your size
+                  Bedenini bul
                 </a>
               </div>
               <div className="variant-picker-values">
@@ -197,7 +217,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
           {/* Quantity Selector */}
           <div className="tf-product-info-quantity">
-            <div className="quantity-title fw-6">Quantity</div>
+            <div className="quantity-title fw-6">Adet</div>
             <div className="wg-quantity">
               <span
                 className="btn-quantity minus-btn"
@@ -261,24 +281,25 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             >
               <span>
                 {isAddingToCart
-                  ? "Adding..."
+                  ? "Ekleniyor..."
                   : product.sellableQuantity > 0
-                  ? "Add to Cart - "
-                  : "Out of Stock"}
+                  ? "Sepete Ekle "
+                  : "Stokta Yok"}
+                {product.sellableQuantity > 0 && (
+                  <span style={{ marginLeft: "8px" }} className="tf-qty-price">
+                    {product.discountedPrice
+                      ? product.discountedPrice.toLocaleString("tr-TR", {
+                          style: "currency",
+                          currency: "TRY",
+                        })
+                      : product.price.toLocaleString("tr-TR", {
+                          style: "currency",
+                          currency: "TRY",
+                        })}
+                  </span>
+                )}
               </span>
-              {product.sellableQuantity > 0 && (
-                <span className="tf-qty-price">
-                  {product.discountedPrice
-                    ? product.discountedPrice.toLocaleString("tr-TR", {
-                        style: "currency",
-                        currency: "TRY",
-                      })
-                    : product.price.toLocaleString("tr-TR", {
-                        style: "currency",
-                        currency: "TRY",
-                      })}
-                </span>
-              )}
+              
             </a>
             <a
               href="#"
@@ -288,40 +309,44 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               style={{
                 padding: "15px 20px",
                 fontSize: "18px",
-                flexShrink: 0, // Prevents the button from growing
+                flexShrink: 0,
               }}
-              onClick={(e) => {
-                if (isFavoritesLoading) {
-                  e.preventDefault();
-                  return;
-                }
-                handleToggleFavorite();
+              onClick={async (e) => {
+                e.preventDefault();
+                if (isFavoritesLoading) return;
+                await handleToggleFavorite(product.id);
               }}
               title={
                 isInFavorites(product.id)
-                  ? "Remove from Wishlist"
-                  : "Add to Wishlist"
+                  ? "Favorilerden Kaldır"
+                  : "Favorilere Ekle"
               }
             >
               <span className="icon icon-heart"></span>
               <span className="tooltip">
                 {isInFavorites(product.id)
-                  ? "Remove from Wishlist"
-                  : "Add to Wishlist"}
+                  ? "Favorilerden Kaldır"
+                  : "Favorilere Ekle"}
               </span>
+              <span className="icon icon-delete"></span>
             </a>
             <a
-              href="#compare"
+              href="#"
               className="tf-product-btn-wishlist hover-tooltip box-icon bg_white compare btn-icon-action"
               style={{
                 padding: "15px 20px",
                 fontSize: "18px",
-                flexShrink: 0, // Prevents the button from growing
+                flexShrink: 0,
               }}
-              title="Add to Compare"
+              onClick={(e) => {
+                e.preventDefault();
+                handleCompare(product.id);
+              }}
+              title="Karşılaştırmaya Ekle"
             >
               <span className="icon icon-compare"></span>
-              <span className="tooltip">Add to Compare</span>
+              <span className="tooltip">Karşılaştırmaya Ekle</span>
+              <span className="icon icon-check"></span>
             </a>
           </div>
         </div>

@@ -106,6 +106,7 @@ export default function SearchSidebar({
                                     className="icon-close icon-close-popup"
                                     onClick={onClose}
                                     aria-label="Close"
+                                    style={{ cursor: 'pointer' }}
                                 ></span>
                             </div>
                         </div>
@@ -151,6 +152,7 @@ export default function SearchSidebar({
                                                     key={product.id}
                                                     className="tf-loop-item"
                                                     onClick={() => handleResultClick(product.id)}
+                                                    style={{ cursor: 'pointer' }}
                                                 >
                                                     <div className="image">
                                                         <img
@@ -212,12 +214,10 @@ export default function SearchSidebar({
                                     <div className="tf-col-quicklink">
                                         <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
                                         <ul className="tf-quicklink-list">
-                                            <li className="tf-quicklink-item">
-                                                <Link href="/products" className="">TÜM ÜRÜNLER</Link>
-                                            </li>
+                                            
                                             {categories?.items?.slice(0, 4).map((category) => (
                                                 <li key={category.id} className="tf-quicklink-item">
-                                                    <Link href={`/products?categoryId=${category.id}`} className="">
+                                                    <Link href={`/products?categoryId=${category.id}`} className="" onClick={onClose}>
                                                         {category.name}
                                                     </Link>
                                                 </li>

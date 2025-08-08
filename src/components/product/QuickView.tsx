@@ -9,6 +9,7 @@ import DiscountBadge from "./DiscountBadge";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import { Product } from "@/constants/models/Product";
+import { useProductDetail } from "@/hooks/services/products/useProductDetail";
 
 interface QuickViewProps {
   isOpen: boolean;
@@ -28,16 +29,23 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
     isLoading: isFavoritesLoading,
   } = useFavorites();
 
+  // Backend'den ürün verisini al
+  const { product: backendProduct, isLoading, error } = useProductDetail(product.id);
+
+  // Backend verisini yoksa prop'tan geleni kullan
+  const displayProduct = backendProduct || product;
+
   const colors = ["Orange", "Black", "White"];
   const sizes = ["S", "M", "L", "XL"];
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [quantity, setQuantity] = useState(1);
 
-  const totalImages = [product.baseImageUrl, ...product.contentImageUrls].filter(Boolean).length;
-  const hasDiscount = product.discountDTO !== null;
-  const isPercentageDiscount = hasDiscount && (product.discountDTO as any)?.discountValueType === 0;
-  const discountPercentage = isPercentageDiscount ? product.discountDTO.discountValue : null;
+  const totalImages = [displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].filter(Boolean).length;
+  const hasDiscount = displayProduct.discountedPrice !== displayProduct.price;
+  const discountPercentage = hasDiscount 
+    ? Math.round(((displayProduct.price - displayProduct.discountedPrice) / displayProduct.price) * 100)
+    : 0;
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
 
   useEffect(() => {
@@ -53,7 +61,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
         !modalRef.current.contains(event.target as Node) &&
         isOpen &&
         !fullscreenOpen &&
-        !sizeChartOpen // Bu satırı ekleyin
+        !sizeChartOpen
       ) {
         onClose();
       }
@@ -75,14 +83,10 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
     };
   }, [isOpen, onClose, fullscreenOpen, sizeChartOpen]);
 
+  // Debug için backend'den gelen product.description'ı konsola yazdır
   useEffect(() => {
-    console.log("=== DISCOUNT DEBUG ===");
-    console.log("product.discountDTO:", product.discountDTO);
-    console.log("hasDiscount:", hasDiscount);
-    console.log("isPercentageDiscount:", isPercentageDiscount);
-    console.log("discountPercentage:", discountPercentage);
-    console.log("discountValueType:", product.discountDTO?.discountValueType);
-  }, [product, hasDiscount, isPercentageDiscount, discountPercentage]);
+    console.log("Backend'den gelen product.description:", backendProduct?.description);
+  }, [backendProduct]);
 
   const closeFullscreen = () => {
     setFullscreenOpen(false);
@@ -96,23 +100,21 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
   };
 
   const handleAddToCart = () => {
-    addToCart(product.id, quantity);
+    addToCart(displayProduct.id, quantity);
   };
 
   const handleToggleFavorite = () => {
-    if (isInFavorites(product.id)) {
-      removeFromFavorites(product.id);
+    if (isInFavorites(displayProduct.id)) {
+      removeFromFavorites(displayProduct.id);
     } else {
-      addToFavorites(product.id);
+      addToFavorites(displayProduct.id);
     }
   };
 
-  // ✅ Early return'ü en sona taşı
   if (!isOpen) return null;
 
   return (
     <>
-      {/* CSS Override for Navigation Arrows */}
       <style jsx>{`
         .tf-single-slide .swiper-button-next::after,
         .tf-single-slide .swiper-button-prev::after {
@@ -161,125 +163,112 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
           opacity: 1;
         }
           /* Modal responsive */
-  .modal-content {
-    max-width: 95vw !important;
-    max-height: 95vh !important;
-  }
-  
-  .wrap {
-  margin-top: 3% !important;
-    display: flex !important;
-    gap: 20px !important;
-  }
-  
-  .tf-product-media-wrap {
-    flex: 0 0 55% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-  }
-  
-  .tf-product-info-wrap {
-    flex: 0 0 45% !important;
-    overflow-y: auto !important;
-    padding: 20px !important;
-  }
-  
-  .swiper.tf-single-slide {
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-  
-  .swiper-slide .item {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important; /* flex yerine block */
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-  }
-  
-  .swiper-slide .item img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  
-  .swiper-slide {
-    display: flex !important;
-    align-items: stretch !important;
-    line-height: 0 !important;
-  }
-  
-  /* Tablet responsive */
-  @media (max-width: 1024px) {
-    .wrap {
-      flex-direction: row !important;
-      gap: 15px !important;
-    }
-    
-    .tf-product-media-wrap {
-      justify-content: center !important;
-      align-items: center !important;
-      flex: 0 0 auto !important;
-      height: 400px !important;
-    }
-    
-    .tf-product-info-wrap {
-      flex-shrink: 1 !important;
-      height: auto !important;
-    }
-  }
-  
-  /* Mobile responsive */
-  @media (max-width: 768px) {
-    .modal-dialog {
-      max-width: 95vw !important;
-      margin: 10px !important;
-    }
-      .modal-content {
-      height: 95vh !important;
-    }
-    
-    .wrap {
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-    
-    .tf-product-media-wrap {
-      height: 250px !important;
-      flex-shrink: 0 !important;
-    }
-    
-    .tf-product-info-wrap {
-      flex: 1 !important;
-      padding: 15px !important;
-      overflow-y: auto !important;
-      min-height: 0 !important;
-    }
-    
-    .swiper-slide .item {
-      padding: 10px !important;
-    }
-  }
-  
-  /* Small mobile */
-  @media (max-width: 480px) {
-    .tf-product-media-wrap {
-      height: 250px !important;
-    }
-    
-    .tf-product-info-wrap {
-      padding: 10px !important;
-    }
-  }
+        .modal-content {
+          max-width: 95vw !important;
+          max-height: 95vh !important;
+        }
+        
+        .wrap {
+        margin-top: 0% !important;
+          display: flex !important;
+          gap: 0px !important;
+        }
+        
+        .tf-product-media-wrap {
+          flex: 0 0 65% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          overflow: hidden !important;
+        }
+        
+        .tf-product-info-wrap {
+          flex: 0 0 35% !important;
+          overflow-y: auto !important;
+          margin-bottom: 40px !important;
+        }
+        
+        .swiper.tf-single-slide {
+          width: 100% !important;
+          height: 100% !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+        
+        .swiper-slide .item {
+          width: 100% !important;
+          height: 100% !important;
+          display: block !important; /* flex yerine block */
+          padding: 0 !important;
+          margin: 0 !important;
+          overflow: hidden !important;
+        }
+        
+        .swiper-slide .item img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          object-position: center !important;
+          display: block !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
+        .swiper-slide {
+          display: flex !important;
+          align-items: stretch !important;
+          line-height: 0 !important;
+        }
+        
+        /* Tablet responsive */
+        @media (max-width: 1024px) {
+          .wrap {
+            flex-direction: row !important;
+            display: flex !important;
+          }
+          
+          .tf-product-media-wrap {
+            justify-content: center !important;
+            align-items: center !important;
+            flex: 0 0 60% !important;
+          }
+          
+          .tf-product-info-wrap {
+            flex-shrink: 1 !important;
+            height: auto !important;
+          }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+          
+          .wrap {
+            flex-direction: column !important;
+            gap: 10px !important;
+          }
+          
+          .tf-product-media-wrap {
+            height: 250px !important;
+            flex-shrink: 0 !important;
+          }
+          
+          .tf-product-info-wrap {
+            flex: 1 !important;
+            overflow-y: auto !important;
+          }
+          
+        }
+        
+        /* Small mobile */
+        @media (max-width: 300px) {
+          .tf-product-media-wrap {
+            height: 250px !important;
+          }
+          
+          .tf-product-info-wrap {
+            padding: 10px !important;
+          }
+        }
       `}</style>
 
       <div
@@ -287,11 +276,9 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
         onClick={onClose}
       ></div>
 
-      {/* modal quick_view */}
       <div className="modal fade modalDemo show" id="quick_view" style={{ display: 'block', zIndex: 1050 }}>
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content" ref={modalRef}
-          >
+          <div className="modal-content" ref={modalRef}>
             <div className="header">
               <span
                 className="icon-close icon-close-popup"
@@ -299,22 +286,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                 aria-label="Close"
               ></span>
             </div>
-            <div className="wrap"
-              style={{
-                minHeight: window.innerWidth <= 768 ? '550px' : window.innerWidth <= 1024 ? '650px' : '700px',
-                height: 'auto'
-              }}>
+            <div className="wrap">
 
               <div className="tf-product-media-wrap">
                 <div className="swiper tf-single-slide" style={{ position: "relative" }}>
-                  {hasDiscount && product.discountDTO?.discountValue > 0 && (
-                    <DiscountBadge
-                      percentage={
-                        product.discountDTO.discountValueType === 0
-                          ? product.discountDTO.discountValue
-                          : Math.round(((product.price - product.discountedPrice) / product.price) * 100)
-                      }
-                    />
+                  {hasDiscount && discountPercentage > 0 && (
+                    <DiscountBadge percentage={discountPercentage} />
                   )}
                   <div className="swiper-wrapper">
                     <Swiper
@@ -331,8 +308,8 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                       <SwiperSlide>
                         <div className="item">
                           <Image
-                            src={product.baseImageUrl || "/assets/images/products/no-image.jpg"}
-                            alt={product.title}
+                            src={displayProduct.baseImageUrl || "/assets/images/products/no-image.jpg"}
+                            alt={displayProduct.title}
                             width={500}
                             height={500}
                             style={{
@@ -352,12 +329,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                           />
                         </div>
                       </SwiperSlide>
-                      {product.contentImageUrls.map((img, idx) => (
+                      {displayProduct.contentImageUrls.map((img, idx) => (
                         <SwiperSlide key={idx}>
                           <div className="item">
                             <Image
                               src={img}
-                              alt={product.title + " " + (idx + 1)}
+                              alt={displayProduct.title + " " + (idx + 1)}
                               width={500}
                               height={500}
                               style={{
@@ -388,40 +365,53 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                 <div className="tf-product-info-list">
                   <div className="tf-product-info-title">
                     <h5>
-                      <a className="link" href={`/products/${product.id}`}>
-                        {product.title}
+                      <a className="link" href={`/products/${displayProduct.id}`}>
+                        {displayProduct.title}
                       </a>
                     </h5>
                   </div>
                   <div className="tf-product-info-badges">
                     <div className="badges text-uppercase">Best seller</div>
-                    {product.sellableQuantity > 10 && (
+                    {displayProduct.sellableQuantity > 10 && (
                       <div className="product-status-content">
                         <i className="icon-lightning"></i>
                         <p className="fw-6">
-                          Selling fast! {product.sellableQuantity} people have this in their carts.
+                          SON {displayProduct.sellableQuantity} ÜRÜN
                         </p>
                       </div>
                     )}
                   </div>
                   <div className="tf-product-info-price">
                     <div className="price">
-                      {hasDiscount && product.discountedPrice !== product.price ? (
+                      {hasDiscount ? (
                         <>
-                          {product.discountedPrice.toFixed(2)} ₺
+                          {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.discountedPrice)}
                         </>
                       ) : (
-                        product.price.toFixed(2) + " ₺"
+                        new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.price)
                       )}
                     </div>
                   </div>
                   <div className="tf-product-description">
-                    <p>{product.description || "Nunc arcu faucibus a et lorem eu a mauris adipiscing conubia ac aptent ligula facilisis a auctor habitant parturient a a.Interdum fermentum."}</p>
+                    {isLoading ? (
+                      <p>Açıklama yükleniyor...</p>
+                    ) : error ? (
+                      <p style={{ color: "#666", fontSize: "14px" }}>
+                        Ürün açıklaması yüklenemedi.
+                      </p>
+                    ) : (
+                      <p>
+                        {displayProduct.description && displayProduct.description.trim() !== ''
+                          ? displayProduct.description
+                          : "Ürün Açıklaması."
+                        }
+                      </p>
+                    )}
                   </div>
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item">
                       <div className="variant-picker-label">
-                        Color: <span className="fw-6 variant-picker-label-value">{selectedColor}</span>
+                        Renk: <span className="fw-6 variant-picker-label-value">{selectedColor}</span>
                       </div>
                       <div className="variant-picker-values">
                         {colors.map((color) => (
@@ -448,17 +438,17 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     <div className="variant-picker-item">
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="variant-picker-label">
-                          Size: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
+                          Beden: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
                         </div>
                         <a
-                          className="find-size btn-choose-size fw-6"
-                          href="/assets/site/images/products/beden-tablosu.png"
+                          className="find-size btn-choose-size fw-6 d-none d-lg-block"
+                          href="/assets/site/images/products/beden-tablosu.jpg"
                           onClick={(e) => {
                             e.preventDefault();
                             setSizeChartOpen(true);
                           }}
                         >
-                          Find your size
+                          Beden Tablosu
                         </a>
                       </div>
                       <div className="variant-picker-values">
@@ -512,9 +502,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                           handleAddToCart();
                         }}
                       >
-                        <span>Add to cart -&nbsp;</span>
+                        <span>SEPETE EKLE &nbsp;</span>
                         <span className="tf-qty-price">
-                          {((product.discountedPrice || product.price) * quantity).toFixed(2)} ₺
+                          {new Intl.NumberFormat("tr-TR", {
+                            style: "currency",
+                            currency: "TRY"
+                          }).format((displayProduct.discountedPrice || displayProduct.price) * quantity)}
                         </span>
                       </a>
                       <a
@@ -523,7 +516,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         onClick={handleToggleFavorite}
                       >
                         <span className="icon icon-heart"></span>
-                        <span className="tooltip">Add to Wishlist</span>
+                        <span className="tooltip">FAVORİLERE EKLE</span>
                         <span className="icon icon-delete"></span>
                       </a>
                       <a
@@ -532,22 +525,22 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         onClick={(e) => e.preventDefault()}
                       >
                         <span className="icon icon-compare"></span>
-                        <span className="tooltip">Add to Compare</span>
+                        <span className="tooltip">KARŞILAŞTIR</span>
                         <span className="icon icon-check"></span>
                       </a>
                       <div className="w-100">
                         <a href="#" className="btns-full">
-                          Buy with <img src="/assets/images/payments/paypal.png" alt="" />
+                          <img src="/assets/site/images/payments/paypal.png" alt="" /> ile satın alın
                         </a>
                         <a href="#" className="payment-more-option">
-                          More payment options
+                          Daha Fazla Ödeme Seçeneği
                         </a>
                       </div>
                     </form>
                   </div>
                   <div>
-                    <a href={`/products/${product.id}`} className="tf-btn fw-6 btn-line">
-                      View full details<i className="icon icon-arrow1-top-left"></i>
+                    <a href={`/products/${displayProduct.id}`} className="tf-btn fw-6 btn-line">
+                      Tüm Detayları İncele<i className="icon icon-arrow1-top-left"></i>
                     </a>
                   </div>
                 </div>
@@ -556,18 +549,17 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
           </div>
         </div>
       </div>
-      {/* /modal quick_view */}
 
       <FullscreenGallery
         isOpen={fullscreenOpen}
         onClose={closeFullscreen}
-        media={[product.baseImageUrl, ...product.contentImageUrls].map((url) => ({
+        media={[displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].map((url) => ({
           url,
           type: "image" as const,
         }))}
         initialSlide={fullscreenInitialSlide}
       />
-      {/* Size Chart Fullscreen */}
+
       {sizeChartOpen && (
         <div
           style={{
@@ -594,7 +586,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src="/assets/site/images/products/beden-tablosu.png"
+              src="/assets/site/images/products/beden-tablosu.jpg"
               alt="Beden Tablosu"
               width={800}
               height={600}
@@ -609,7 +601,6 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
               unoptimized
             />
 
-            {/* Çarpı butonu - resmin sağ üstünde */}
             <button
               onClick={() => setSizeChartOpen(false)}
               style={{
@@ -621,7 +612,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                 border: 'none',
                 width: '30px',
                 height: '30px',
-                fontSize: '18px',
+                fontSize: '24px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',

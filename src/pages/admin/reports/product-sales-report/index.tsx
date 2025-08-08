@@ -102,7 +102,7 @@ function ProductSalesReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y px-4">
+    <div className="container-xxxl flex-grow-1 container-p-y px-4">
       <h5 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /

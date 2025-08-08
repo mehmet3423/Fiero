@@ -9,13 +9,21 @@ export const useCreateMainCategory = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<string>();
 
-  const createMainCategory = async (name: string, displayIndex?: number) => {
+  const createMainCategory = async (
+    name: string,
+    displayIndex?: number,
+    imageUrl?: string
+  ) => {
     try {
       const params = new URLSearchParams();
       params.append("Name", name);
 
       if (displayIndex !== undefined) {
         params.append("DisplayIndex", displayIndex.toString());
+      }
+
+      if (imageUrl) {
+        params.append("ImageUrl", imageUrl);
       }
 
       await mutateAsync(
