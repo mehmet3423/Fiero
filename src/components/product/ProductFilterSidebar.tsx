@@ -120,7 +120,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                         step: 100,
                         range: {
                             min: [0],
-                            max: [5000],
+                            max: [99999],
                         },
                         connect: true,
                     });
@@ -193,7 +193,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                             <ul className="list-categoris current-scrollbar mb_36">
                                 {categories.length === 0 ? (
                                     <li className="cate-item">
-                                        <span>kategori yok</span>
+                                        <span>Kategori Yok</span>
                                     </li>
                                 ) : (
                                     categories

@@ -31,6 +31,9 @@ export default function AdminSupportTicketsPage() {
   const [from, setFrom] = useState<string | undefined>(
     query.from as string | undefined
   );
+  // Diğer state'lerin yanına ekleyin
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   // API'den destek taleplerini al
   const { tickets, totalCount, isLoading, error } = useGetSupportTickets({
@@ -249,15 +252,15 @@ export default function AdminSupportTicketsPage() {
                 placeholder="Başlık ara..."
                 value={searchTitle || ""}
                 onChange={handleTitleSearch}
-                style={{ fontSize: "0.813rem" }}
+                style={{ fontSize: "0.813rem" , height: "40px"}}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 ">
               <select
                 className="form-select form-select-sm"
                 value={requestType?.toString() || "all"}
                 onChange={handleRequestTypeChange}
-                style={{ fontSize: "0.813rem" }}
+                style={{ fontSize: "0.813rem", height: "40px" }}
               >
                 <option value="all">Tüm Sorunlar</option>
                 <option value="0">Diğer Sorunlar</option>
@@ -299,7 +302,7 @@ export default function AdminSupportTicketsPage() {
                   <th style={{ fontSize: "0.813rem" }}>Açıklama</th>
                   <th style={{ fontSize: "0.813rem" }}>Talep Türü</th>
                   <th style={{ fontSize: "0.813rem" }}>Durum</th>
-                  <th style={{ fontSize: "0.813rem" }}>İşlemler</th>
+                  <th style={{ fontSize: "0.813rem", textAlign: "center" }}>İşlemler</th>
                 </tr>
               </thead>
               <tbody className="table-border-bottom-0">
@@ -318,24 +321,31 @@ export default function AdminSupportTicketsPage() {
                 ) : (
                   tickets.map((ticket) => (
                     <tr key={ticket.id}>
-                      <td style={{ fontSize: "0.813rem" }}>{ticket.title}</td>
                       <td style={{ fontSize: "0.813rem" }}>
-                        {ticket.description}
+                        {ticket.title.length > 30
+                          ? `${ticket.title.substring(0, 30)}...`
+                          : ticket.title
+                        }
+                      </td>
+                      <td style={{ fontSize: "0.813rem" }}>
+                        {(ticket.description || "").length > 250
+                          ? `${(ticket.description || "").substring(0, 250)}...`
+                          : ticket.description || "Açıklama yok"
+                        }
                       </td>
                       <td style={{ fontSize: "0.813rem" }}>
                         {GeneralSupportRequestType[ticket.requestType]}
                       </td>
                       <td>
                         <span
-                          className={`badge bg-${
-                            ticket.status === 1 ? "success" : "warning"
-                          }`}
+                          className={`badge bg-${ticket.status === 1 ? "success" : "warning"
+                            }`}
                           style={{ fontSize: "0.75rem" }}
                         >
                           {ticket.status === 1 ? "Yanıtlandı" : "Bekliyor"}
                         </span>
                       </td>
-                      <td>
+                      <td className="d-flex flex-direction-row gap-1">
                         <button
                           className="btn btn-link btn-sm text-danger"
                           style={{ fontSize: "0.75rem" }}
@@ -343,7 +353,21 @@ export default function AdminSupportTicketsPage() {
                           disabled={deleteMutation.isPending}
                         >
                           <i className="bx bx-trash me-1"></i>
-                          Sil
+                          
+                        </button>
+
+                        <button
+                          className="btn btn-link btn-sm text-primary"
+                          style={{ fontSize: "0.75rem" }}
+                          onClick={() => {
+                            setSelectedTicket(ticket);
+                            setShowDetailModal(true);
+                            $("#ticketDetailModal").modal("show");
+                          }}
+                          disabled={deleteMutation.isPending}
+                        >
+                          <i className="bx bx-edit me-1"></i>
+                          
                         </button>
                       </td>
                     </tr>
@@ -364,9 +388,8 @@ export default function AdminSupportTicketsPage() {
               <nav>
                 <ul className="pagination pagination-sm mb-0">
                   <li
-                    className={`page-item ${
-                      displayPage === 1 ? "disabled" : ""
-                    }`}
+                    className={`page-item ${displayPage === 1 ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -391,9 +414,8 @@ export default function AdminSupportTicketsPage() {
                     return (
                       <li
                         key={pageNum}
-                        className={`page-item ${
-                          displayPage === pageNum ? "active" : ""
-                        }`}
+                        className={`page-item ${displayPage === pageNum ? "active" : ""
+                          }`}
                       >
                         <button
                           className="page-link"
@@ -416,9 +438,8 @@ export default function AdminSupportTicketsPage() {
                     );
                   })}
                   <li
-                    className={`page-item ${
-                      displayPage === totalPages ? "disabled" : ""
-                    }`}
+                    className={`page-item ${displayPage === totalPages ? "disabled" : ""
+                      }`}
                   >
                     <button
                       className="page-link"
@@ -461,6 +482,75 @@ export default function AdminSupportTicketsPage() {
             alınamaz.
           </p>
         </div>
+      </GeneralModal>
+
+      {/* Ticket Detail Modal */}
+      <GeneralModal
+        id="ticketDetailModal"
+        title="Destek Talebi Detayı"
+        size="xl"
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedTicket(null);
+        }}
+        showFooter={false}
+      >
+        {selectedTicket && (
+          <div className="d-flex flex-column flex-xl-row" style={{  zIndex: 1000 }}>
+
+            <div className="col-xl-8 col-sm-12">
+              <div className="mb-3">
+                <label className="form-label fw-bold" style={{ fontSize: "0.9rem" }}>
+                  Başlık:
+                </label>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>
+                  {selectedTicket.title}
+                </p>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label fw-bold" style={{ fontSize: "0.9rem" }}>
+                  Açıklama:
+                </label>
+                <div
+                  className="p-3 bg-light rounded"
+                  style={{
+                    fontSize: "0.9rem",
+                    minHeight: "100px",
+                    maxHeight: "300px",
+                    overflowY: "auto"
+                  }}
+                >
+                  {selectedTicket.description || "Açıklama bulunmuyor."}
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xl-4 col-sm-12 m-5">
+              <div className="col-md-6">
+                <label className="form-label fw-bold" style={{ fontSize: "0.9rem" }}>
+                  Talep Türü:
+                </label>
+                <p className="mb-5" style={{ fontSize: "0.9rem" }}>
+                  {GeneralSupportRequestType[selectedTicket.requestType]}
+                </p>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-bold" style={{ fontSize: "0.9rem" }}>
+                  Durum:
+                </label>
+                <p className="mb-0">
+                  <span
+                    className={`badge bg-${selectedTicket.status === 1 ? "success" : "warning"}`}
+                    style={{ fontSize: "0.75rem" }}
+                  >
+                    {selectedTicket.status === 1 ? "Yanıtlandı" : "Bekliyor"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </GeneralModal>
 
       <style jsx>{`

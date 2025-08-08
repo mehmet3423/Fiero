@@ -20,7 +20,7 @@ const ShopCollection = () => (
           <p className="description">
             Here is your chance to upgrade your wardrobe with a variation of styles
           </p>
-          <Link href="/shop-collection-list" className="tf-btn style-2 btn-fill rounded-full animate-hover-btn">
+          <Link href="/about-us" className="tf-btn style-2 btn-fill rounded-full animate-hover-btn">
             Read our stories
           </Link>
         </div>

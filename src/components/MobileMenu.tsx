@@ -85,14 +85,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
               <li className="nav-mb-item first-item" >
                 <a
                   href="#"
-                  className={`mb-menu-link ${router.pathname === PathEnums.HOME ? "current" : ""
+                  className={`mb-menu-link ${router.pathname === PathEnums.HAFSANUR_DESA ? "current" : ""
                     }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleLinkClick(PathEnums.HOME);
+                    handleLinkClick(PathEnums.HAFSANUR_DESA);
                   }}
                 >
-                  <span>Anasayfa</span>
+                  <span>HAFSANUR X DESA</span>
                 </a>
               </li>
 
@@ -156,10 +156,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    handleLinkClick(`${PathEnums.PRODUCTS}?categoryId=outlet`);
+                    handleLinkClick(`${PathEnums.SUSTAINABILITY}?categoryId=outlet`);
                   }}
                 >
-                  <span>Outlet</span>
+                  <span>SÜRDÜRÜLEBİLİRLİK</span>
                 </a>
               </li>
 
