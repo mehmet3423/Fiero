@@ -6,16 +6,16 @@ export default function Page() {
   return (
     <AboutDesaTrLayout>
       <div className={styles["flatpage-text"]}>
-          <h1><strong>DESA Hakkında</strong></h1>
-          <p>1972 yılında bir aile şirketi olarak kurulan DESA, 50 yıl boyunca büyük başarılara imza atarak Türkiye’nin lider deri ve deri mamulleri üreticisi olarak faaliyetlerine devam etmektedir. 2010, 2011, 2012 ve 2014 yıllarında Türkiye’de kendi alanında ihracat şampiyonu olmanın haklı gururunu yaşayan ve dikey entegrasyonunu tamamlamış benzersiz iş modeline sahip olan DESA, yüksek kalitedeki ürünleriyle mevcut profilini güçlendirerek uluslararası prestijli bir marka olarak yoluna devam etmektedir.</p>
-          <p>DESA’nın operasyonları arasında deri tabakhanesinin yanında iki fabrikasındaki kadın ve erkek giyim ürünleri, çanta ve aksesuar üretiminin yanı sıra bu ürünlerin hem toptan hem de perakende satış kanalları yoluyla dağıtımı yer almaktadır. Yüksek kalitedeki ürünleriyle mevcut profilini güçlendirerek ulusal ve uluslararası piyasalarda prestijli bir marka olarak yoluna devam eden DESA Türkiye genelinde, 54 DESA, 37 DESA Samsonite, 2 DESA franchise, 14 Samsonite JV, 3 Tumi JV, olmak üzere toplam 110 mağazaya ve 14.774 metrekare mağaza alanına ulaştı. Fiziki mağazaların yanı sıra DESA 4 sanal mağaza ve 1 dijital showroom ile e-ticaret operasyonlarına devam etmektedir.</p>
-          <p>İstanbul ve Düzce’de toplam 25.500 metrekare alana yayılan üretim tesislerine sahip olan DESA’nın Çorlu’daki tabakhanesi 20.000 metrekare alana sahiptir. Şirket, Prada, Miu Miu, Furla, Chanel, Emporio Armani ve Armani Collezioni gibi pek çok uluslararası lüks markaya entegre çözüm sağlayıcı olarak hizmet vermektedir. DESA, dünyanın en büyük seyahat ürünleri markası olan Samsonite’ın Türkiye’de 24 yıl boyunca distribütörlüğünün ardından, 2007 yılında Samsonite ile %40 - %60 ortaklık yapısıyla kurduğu ortak girişim sayesinde uluslararası profilini daha da güçlendirmiştir.</p>
-          <p>Deri modasına yön veren ve Türkiye'nin deri mamulleri alanında öncü markası DESA, dünya markaları ile olan ilişkisini geliştirmek, deri çanta ve saraciye ürünleri üretimini ve satış hacmini artırmak amacıyla 2022 yılının ikinci yarısında İtalya’da Ar-Ge merkezi ve üretim tesisi yatırımı gerçekleştirdi. DESA’nın üretim operasyonlarının yürütüleceği yeni fabrikası, Casentino Vadisi'nin Arezzo ilindeki Poppi’de 5 dönüm arazi içerisinde 1.896 m² kapalı alana kuruldu. 2023 yılı Şubat ayında satın alma sözleşmesinin ve imza sürecinin tamamlanmasının ardından DESA Internazionale fabrikasında işe alım ve oryantasyon aşaması 9 kişilik çekirdek bir kadroyla başladı. 2024 yılı Mayıs ayında “Made in Italy” etiketi için gümrük izni alan DESA, 2024 sonu itibarıyla 65 olan çalışan sayısını düzenlediği eğitim programlarıyla 100 kişiye ulaştırmayı hedefliyor.</p>
-          <p>DESA, ürünlerine üstün kalite ve dayanıklılık sağlayan yüksek standarda sahip malzeme ve işçiliğe büyük önem vermektedir. Şirket, www.desa.com.tr üzerinden açtığı internet satış mağazası ile ürünlerini online olarak da satışa sunmaktadır. Servis kalitesinde benimsediği mükemmeliyetçilik anlayışı ile DESA, tasarım, araştırma ve geliştirme ile insan kaynağına aralıksız yatırım yapmaktadır. Şirketin uzun vadede stratejik hedefi, DESA markalı ürün satışlarını hem yurt içinde hem de yurt dışında artırmaktır.</p>
-          <p>DESA ürünleri 31 Ocak 2023 itibarıyla Avrupa'nın önde gelen moda e-ihracat/e-ticaret platformu Zalando'da satılıyor. İlk olarak Zalando Almanya’da, daha sonra Fransa, Hollanda, Belçika ve Avusturya’da satışa sunulan DESA ürünleri, ayakkabıdan konfeksiyona, çantadan küçük deri mamullerine kadar birçok farklı kategoride Avrupa'da geniş bir tüketici kitlesiyle buluşuyor. 2025 yılında, yurt dışı satış kanallarına iki büyük platform ekleyen DESA, Bol.com ile Hollanda ve Belçika'da satışa sunulurken, Amazon.com ise Almanya ve Fransa'da satış yapmaya başlayacak.</p>
-          <p>DESA, Borsa İstanbul'da DESA kodu ile 2004 Mayıs ayından itibaren işlem görmekte olan halka açık bir şirkettir. 31.12.2024 itibariyle toplam varlıkları 4,022 milyar TL'ye ulaşan DESA'nın toplam gelirleri ise 2,98 milyar TL olarak gerçekleşmiştir.</p>
-          <p>Şirketimizin güncel bilgilerine ve duyurularına <a href="https://www.kap.org.tr/tr/sirket-bilgileri/genel/1389-desa-deri-sanayi-ve-ticaret-a-s" rel="noopener noreferrer" target="_blank"><strong>Kamuyu Aydınlatma Platformu</strong></a> üzerinden ulaşabilirsiniz.</p>
-        </div>
+        <h1>Hakkımızda (Taslak)</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac erat euismod, dictum massa at, cursus enim.</p>
+        <p>Bu sayfa henüz tamamlanmamıştır. İçerik yakında eklenecektir.</p>
+        <p>Proin euismod, urna eu tincidunt consectetur, nisi erat facilisis erat, vitae dictum enim sapien nec enim.</p>
+        <p>Burada şirketimizin vizyonu ve misyonu hakkında bilgiler yer alacaktır.</p>
+        <p>Güncellemeler için bizi takip etmeye devam edin.</p>
+        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.</p>
+        <p>Bu alan, ek bilgiler ve görseller ile zenginleştirilecektir.</p>
+        <p>Teşekkürler!</p>
+      </div>
     </AboutDesaTrLayout>
   );
 }

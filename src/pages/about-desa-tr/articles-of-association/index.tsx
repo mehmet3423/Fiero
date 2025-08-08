@@ -6,19 +6,15 @@ export default function Page() {
   return (
     <AboutDesaTrLayout>
       <div className={styles["flatpage-text"]}>
-          <h1><strong>Ana Sözleşme</strong></h1>
-          <div className={styles["corporate-links"]}>
-            <p>
-              <a
-                href="https://akn-desa.a-cdn.akinoncloud.com/cms/2025/01/21/e735b76b-8a86-4b4e-89c5-89ceaa8de62f.pdf"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Ana sözleşme için tıklayınız.
-              </a>
-            </p>
-          </div>
-        </div>
+        <h1><strong>Ana Sözleşme (Taslak)</strong></h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Bu sayfa taslak olarak hazırlanmıştır.</p>
+        <p>Ana sözleşme içeriği yakında burada yer alacaktır.</p>
+        <ul>
+          <li>2025 Ana Sözleşme - Hazırlanıyor</li>
+          <li>2024 Ana Sözleşme - Taslak</li>
+        </ul>
+        <p>Güncellemeler için lütfen daha sonra tekrar kontrol edin.</p>
+      </div>
     </AboutDesaTrLayout>
   );
 }

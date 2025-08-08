@@ -6,13 +6,14 @@ export default function Page() {
   return (
     <AboutDesaTrLayout>
       <div className={`${styles["flatpage-text"]} ${styles["flatpage-text--link"]}`}>
-        <h1><strong>YATIRIMCI İLİŞKİLERİ İLETİŞİM</strong></h1>
-        <p>
-          <span>E-posta: </span>
-          <a href="mailto:yatirimci.iliskileri@desa.com.tr" rel="noopener noreferrer" target="_blank">yatirimci.iliskileri@desa.com.tr</a>
-          {' '} &amp; {' '}
-          <a href="mailto:investor.relations@desa.com.tr" rel="noopener noreferrer" target="_blank">investor.relations@desa.com.tr</a>
-        </p>
+        <h2>Yatırımcı İlişkileri İletişim (Taslak)</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Bu sayfa taslak olarak hazırlanmıştır.</p>
+        <p>Yatırımcı ilişkileri iletişim bilgileri yakında burada yer alacaktır.</p>
+        <ul>
+          <li>2025 İletişim Bilgisi - Hazırlanıyor</li>
+          <li>2024 İletişim Bilgisi - Taslak</li>
+        </ul>
+        <p>Güncellemeler için lütfen daha sonra tekrar kontrol edin.</p>
       </div>
     </AboutDesaTrLayout>
   );

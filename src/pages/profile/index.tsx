@@ -108,7 +108,7 @@ function ProfilePage() {
       <div className="col-lg-8">
         <div className="card shadow-sm mb-4">
           <div className="card-body">
-            <h3 className="card-title border-bottom pb-3">Profil Bilgilerim</h3>
+            <h5 className="card-title border-bottom pb-3">Profil Bilgilerim</h5>
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label">Ad</label>
