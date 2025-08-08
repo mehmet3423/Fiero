@@ -25,25 +25,21 @@ function ContactUsPage() {
                   <h5 className="mb_20">Visit Our Store</h5>
                   <div className="mb_20">
                     <p className="mb_15"><strong>Adres</strong></p>
-                    <p>İnönü Mahallesi Halkalı Cad. No:208 34620 Sefaköy KÜÇÜKÇEKMECE /İSTANBUL</p>
+                    <p>İSTANBUL</p>
                   </div>                  
                   <div className="mb_20">
                     <p className="mb_15"><strong>İnternet Sitemiz</strong></p>
-                    <a  className="tf-btn btn-line" href="http://www.desa.com.tr">www.desa.com.tr</a>
+                    <a  className="tf-btn btn-line" href="http://www.desa.com.tr">site adresi</a>
                   </div>
                   <div className="mb_20">
                     <p className="mb_15"><strong>Telefon</strong></p>
-                    <p>212 473 18 00</p>
-                  </div>
-                  <div className="mb_36">
-                    <p className="mb_15"><strong>Fax</strong></p>
-                    <p className="mb_15"> 212 697 9798</p>
-                  </div>
+                    <p>444 44 44</p>
+                  </div>                  
                   <div>
                     <ul className="tf-social-icon d-flex gap-20 style-default">
-                      <li><a href="https://www.facebook.com/desafashion?fref=ts" className="box-icon link round social-facebook border-line-black"><i className="icon fs-14 icon-fb"></i></a></li>
-                      <li><a href="https://www.instagram.com/desafashion/" className="box-icon link round social-instagram border-line-black"><i className="icon fs-14 icon-instagram"></i></a></li>
-                      <li><a href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg" className="box-icon link round social-tiktok border-line-black"><i className="icon fs-14 icon-tiktok"></i></a></li>
+                      <li><a href="/" className="box-icon link round social-facebook border-line-black"><i className="icon fs-14 icon-fb"></i></a></li>
+                      <li><a href="/" className="box-icon link round social-instagram border-line-black"><i className="icon fs-14 icon-instagram"></i></a></li>
+                      <li><a href="/" className="box-icon link round social-tiktok border-line-black"><i className="icon fs-14 icon-tiktok"></i></a></li>
                     </ul>
                   </div>
                 </div>

@@ -220,13 +220,8 @@ export default function Header() {
                 paddingLeft: windowWidth > 768 ? "10%" : "0",
               }}>
               <Link href="/" className="logo-header">
-                <Image
-                  src="/assets/site/images/logo/desa-logo.svg"
-                  alt="Desa Logo"
-                  width={120}
-                  height={40}
-                  className="logo"
-                />
+              LOGO
+               
               </Link>
             </div>
             <div className="col-4 tf-md-hidden text-center overflow-hidden">
@@ -421,11 +416,7 @@ export default function Header() {
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center" >
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30" >
-                  {/* <li className="menu-item">
-                    <Link href={PathEnums.HAFSANUR_DESA} className="item-link">
-                      HAFSANUR X DESA
-                    </Link>
-                  </li> */}
+                  
                   {categories?.items?.length &&
                     categories.items
                       .slice()
@@ -511,12 +502,12 @@ export default function Header() {
                     style={{ position: 'relative' }}
                   >
                     <Link href={PathEnums.SUSTAINABILITY} className="item-link">
-                      SÜRDÜRÜLEBİLİRLİK
+                      İÇERİK
                       <i className="icon icon-arrow-down"></i>
                     </Link>
 
                     {/* Sürdürülebilirlik Dropdown */}
-                    {sustainabilityDropdownOpen && (
+                    {/* {sustainabilityDropdownOpen && (
                       <div className="ss-sub-menu">
                         <div className="dropdown-content-wrapper">
                           <ul className="menu-list-small">
@@ -571,7 +562,6 @@ export default function Header() {
 
                           </ul>
 
-                          {/* sol taraftaki resim */}
                           <div className="dropdown-image">
                             <Link href="/sustainability/featured-project">
                               <img
@@ -583,7 +573,7 @@ export default function Header() {
                           </div>
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </li>
                 </ul>
               </nav>
