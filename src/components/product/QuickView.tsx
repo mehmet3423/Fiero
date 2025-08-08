@@ -43,10 +43,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
 
   const totalImages = [displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].filter(Boolean).length;
   const hasDiscount = displayProduct.discountedPrice !== displayProduct.price;
-  const discountPercentage = hasDiscount 
+  const discountPercentage = hasDiscount
     ? Math.round(((displayProduct.price - displayProduct.discountedPrice) / displayProduct.price) * 100)
     : 0;
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -83,10 +85,17 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
     };
   }, [isOpen, onClose, fullscreenOpen, sizeChartOpen]);
 
-  // Debug için backend'den gelen product.description'ı konsola yazdır
   useEffect(() => {
-    console.log("Backend'den gelen product.description:", backendProduct?.description);
-  }, [backendProduct]);
+    if (isOpen) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+    }
+
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const closeFullscreen = () => {
     setFullscreenOpen(false);
@@ -116,6 +125,9 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
   return (
     <>
       <style jsx>{`
+      .no-scroll {
+  overflow: hidden;
+}
         .tf-single-slide .swiper-button-next::after,
         .tf-single-slide .swiper-button-prev::after {
           font-size: 16px !important;
@@ -400,12 +412,31 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         Ürün açıklaması yüklenemedi.
                       </p>
                     ) : (
-                      <p>
-                        {displayProduct.description && displayProduct.description.trim() !== ''
-                          ? displayProduct.description
-                          : "Ürün Açıklaması."
-                        }
-                      </p>
+                      <>
+                        <p>
+                          {displayProduct.description && displayProduct.description.trim() !== ""
+                            ? isDescriptionExpanded
+                              ? displayProduct.description
+                              : `${displayProduct.description.substring(0, 100)}...`
+                            : "Ürün Açıklaması."}
+                        </p>
+                        {displayProduct.description && displayProduct.description.length > 100 && (
+                          <button
+                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#000000ff",
+                              cursor: "pointer",
+                              paddingTop: "5px",
+                              fontSize: "14px",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            {isDescriptionExpanded ? "Daha Az Göster" : "Daha Fazla Göster"}
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                   <div className="tf-product-info-variant-picker">

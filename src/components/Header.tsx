@@ -241,9 +241,9 @@ export default function Header() {
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
                     <p className="top-bar-text fw-5">
-                      Spring Fashion Sale{" "}
+                      Bahar İndirimi{" "}
                       <Link href="/products" className="tf-btn btn-line">
-                        Shop now<i className="icon icon-arrow1-top-left"></i>
+                        Şimdi Al<i className="icon icon-arrow1-top-left"></i>
                       </Link>
                     </p>
                   </div>
@@ -287,104 +287,73 @@ export default function Header() {
                 <li className="nav-account">
                   {userProfile ? (
                     <div className="dropdown">
-                      <button
-                        className="nav-icon-item"
-                        onClick={() => {
-                          setIsAccountDropdownOpen(!isAccountDropdownOpen);
-                        }}
-                      >
+                      <button className="nav-icon-item">
                         <i className="icon icon-account"></i>
                       </button>
-                      {isAccountDropdownOpen && (
-                        <div className="dropdown-menu dropdown-menu-end show">
-                          <div className="dropdown-header">
-                            <div className="user-info">
-                              <div className="user-name">
-                                {showAdminFeatures
-                                  ? "Admin"
-                                  : `${userProfile?.applicationUser?.firstName ||
-                                  "Kullanıcı"
-                                  } ${userProfile?.applicationUser?.lastName ||
-                                  ""
-                                  }`}
-                              </div>
+                      <div className="dropdown-menu dropdown-menu-end">
+                        <div className="dropdown-header">
+                          <div className="user-info">
+                            <div className="user-name">
+                              {showAdminFeatures
+                                ? "Admin"
+                                : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
+                                }`}
                             </div>
                           </div>
-                          <div className="dropdown-body">
-                            {!showAdminFeatures && (
-                              <Link
-                                href={PathEnums.PROFILE}
-                                className="dropdown-item"
-                                onClick={() => setIsAccountDropdownOpen(false)}
-                              >
-                                <i className="icon-user"></i>
-                                <span> Profil</span>
-                              </Link>
-                            )}
-                            {showCustomerFeatures && (
-                              <>
-                                <Link
-                                  href={`${PathEnums.PROFILE}/orders`}
-                                  className="dropdown-item"
-                                  onClick={() =>
-                                    setIsAccountDropdownOpen(false)
-                                  }
-                                >
-                                  <i className="bx bx-shopping-bag"></i>
-                                  <span>Siparişlerim</span>
-                                </Link>
-                                <Link
-                                  href={`${PathEnums.PROFILE}/addresses`}
-                                  className="dropdown-item"
-                                  onClick={() =>
-                                    setIsAccountDropdownOpen(false)
-                                  }
-                                >
-                                  <i className="icon-map-marker"></i>
-                                  <span>Adreslerim</span>
-                                </Link>
-                              </>
-                            )}
-                            {showSellerFeatures && (
-                              <Link
-                                href={PathEnums.SELLER_PRODUCTS}
-                                className="dropdown-item"
-                                onClick={() => setIsAccountDropdownOpen(false)}
-                              >
-                                <i className="bx bx-user-pin"></i>
-                                <span>Ürünleri Yönet</span>
-                              </Link>
-                            )}
-                            {showAdminFeatures && (
-                              <Link
-                                href={PathEnums.ADMIN_DASHBOARD}
-                                className="dropdown-item"
-                                onClick={() => setIsAccountDropdownOpen(false)}
-                              >
-                                <i className="icon-cog"></i>
-                                <span>Admin Paneli</span>
-                              </Link>
-                            )}
-                          </div>
-                          <div className="dropdown-footer">
-                            <button
-                              className="dropdown-item text-danger"
-                              onClick={() => {
-                                setIsAccountDropdownOpen(false);
-                                handleLogout();
-                              }}
-                            >
-                              <i className="icon-sign-out"></i>
-                              <span>Çıkış Yap</span>
-                            </button>
-                          </div>
                         </div>
-                      )}
+                        <div className="dropdown-body">
+                          {!showAdminFeatures && (
+                            <Link href={PathEnums.PROFILE} className="dropdown-item">
+                              <i className="icon-user"></i>
+                              <span> Profil</span>
+                            </Link>
+                          )}
+                          {showCustomerFeatures && (
+                            <>
+                              <Link
+                                href={`${PathEnums.PROFILE}/orders`}
+                                className="dropdown-item"
+                              >
+                                <i className="bx bx-shopping-bag"></i>
+                                <span>Siparişlerim</span>
+                              </Link>
+                              <Link
+                                href={`${PathEnums.PROFILE}/addresses`}
+                                className="dropdown-item"
+                              >
+                                <i className="icon-map-marker"></i>
+                                <span>Adreslerim</span>
+                              </Link>
+                            </>
+                          )}
+                          {showSellerFeatures && (
+                            <Link href={PathEnums.SELLER_PRODUCTS} className="dropdown-item">
+                              <i className="bx bx-user-pin"></i>
+                              <span>Ürünleri Yönet</span>
+                            </Link>
+                          )}
+                          {showAdminFeatures && (
+                            <Link href={PathEnums.ADMIN_DASHBOARD} className="dropdown-item">
+                              <i className="icon-cog"></i>
+                              <span>Admin Paneli</span>
+                            </Link>
+                          )}
+                        </div>
+                        <div className="dropdown-footer">
+                          <button
+                            className="dropdown-item text-danger"
+                            onClick={handleLogout}
+                          >
+                            <i className="icon-sign-out"></i>
+                            <span>Çıkış Yap</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <button
                       className="nav-icon-item"
-                      onClick={() => router.push("/login")} // Giriş yapmamış kullanıcı için login sayfası
+                      onClick={() => router.push("/login")}
                     >
                       <i className="icon icon-account"></i>
                     </button>
@@ -452,11 +421,11 @@ export default function Header() {
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center" >
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30" >
-                  <li className="menu-item">
+                  {/* <li className="menu-item">
                     <Link href={PathEnums.HAFSANUR_DESA} className="item-link">
                       HAFSANUR X DESA
                     </Link>
-                  </li>
+                  </li> */}
                   {categories?.items?.length &&
                     categories.items
                       .slice()
@@ -704,27 +673,30 @@ export default function Header() {
     font-weight: 900 !important;
   }
 
-  .nav-account {
-    position: relative;
   }
-
+    .nav-account .dropdown {
+  position: relative;
+}
   .nav-account .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    min-width: 200px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-    margin-top: 5px;
-  }
-
-  .nav-account .dropdown-menu.show {
-    display: block;
-  }
-
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.nav-account:hover .dropdown-menu {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
   .sub-menu {
     position: absolute;
     top: 100%;
