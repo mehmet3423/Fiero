@@ -465,13 +465,14 @@ export default function Header() {
                         <li
                           key={category.id}
                           className="menu-item"
+                          onMouseEnter={() => setHoveredCategoryId(category.id)}
+                          onMouseLeave={() => setHoveredCategoryId("")}
 
                         >
                           <Link
                             href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
                             className="item-link"
-                            onMouseEnter={() => setHoveredCategoryId(category.id)}
-                            onMouseLeave={() => setHoveredCategoryId("")}
+
                           >
                             {category.name}
                             <i className="icon icon-arrow-down"></i>
@@ -742,6 +743,11 @@ export default function Header() {
     opacity: 1;
     visibility: visible;
   }
+    .menu-item:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Eğer tıklanabilir öğeler varsa */
+}
 
   .menu-columns {
     display: flex;
