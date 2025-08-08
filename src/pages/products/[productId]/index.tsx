@@ -26,7 +26,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import ProductGallery from "@/components/product-detail/ProductGallery";
 import ProductDetails from "@/components/product-detail/ProductDetails";
-import ProductTabs from "@/components/product-detail/ProductTabs";
 import AccordionSection from "@/components/product-detail/AccordionSection"; // Import AccordionSection
 import PeopleAlsoBought from "@/components/product-detail/PeopleAlsoBought";
 import RecentlyViewed from "@/components/product-detail/RecentlyViewed";
@@ -456,7 +455,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
               <AccordionSection />
               <PeopleAlsoBought />
               <RecentlyViewed /> {/* Add this component here */}
-              <ProductTabs
+              {/* <ProductTabs
                 activeTab={activeTab}
                 handleTabChange={handleTabChange}
                 reviews={reviews}
@@ -468,7 +467,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
                 getRatingPercentage={getRatingPercentage}
                 extendedProduct={extendedProduct}
                 productId={productId as string}
-              />
+              /> */}
             </div>
           </div>
         </div>

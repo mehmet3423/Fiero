@@ -303,23 +303,33 @@ const AffiliateApplicationModal: React.FC<AffiliateApplicationModalProps> = ({
           letter-spacing: 0.5px;
         }
 
+        .input-group {
+          display: flex;
+          align-items: stretch;
+        }
         .input-group-text {
           background-color: #f8f9fa;
           border: 1px solid #ebebeb;
           font-weight: 600;
-          max-height: 40px;
           color: #333;
+          border-right: 0;
+          border-radius: 0.375rem 0 0 0.375rem;
+          display: flex;
+          align-items: center;
+          height: 40px;
+          min-width: 48px;
+          padding: 0 12px;
         }
-
         .input-group .form-control {
           border-left: 0;
+          border-radius: 0 0.375rem 0.375rem 0;
+          height: 40px;
+          box-sizing: border-box;
         }
-
         .input-group .form-control:focus {
           border-color: #040404;
           box-shadow: none;
         }
-
         .input-group .form-control:focus + .input-group-text,
         .input-group .input-group-text:has(+ .form-control:focus) {
           border-color: #040404;

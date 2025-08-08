@@ -23,13 +23,7 @@ export default function Footer() {
                 <div className="footer-infor">
                   <div className="footer-logo">
                     <Link href="/">
-                      <Image
-                        src="/assets/site/images/logo/desa-logo.svg"
-                        alt="Desa Logo"
-                        title="Desa - Ana Sayfaya Dön"
-                        width="120"
-                        height="40"
-                      />
+                      LOGO
                     </Link>
                   </div>
                   <ul>
@@ -40,7 +34,7 @@ export default function Footer() {
                       <p>
                         Email:{" "}
                         <a href="mailto:siparis@desa.com.tr">
-                          siparis@desa.com.tr
+                          email@hotmail.com
                         </a>
                       </p>
                     </li>
@@ -48,7 +42,7 @@ export default function Footer() {
                       <p>
                         Telefon:{" "}
                         <a href="tel:02124731800">
-                          0212 473 18 00
+                          444 44 44
                         </a>
                       </p>
                     </li>
@@ -60,7 +54,7 @@ export default function Footer() {
                   <ul className="tf-social-icon d-flex gap-10">
                     <li>
                       <a
-                        href="https://www.facebook.com/desafashion?fref=ts"
+                        href="/"
                         className="box-icon w_34 round social-facebook social-line"
                         target="_blank"
                       >
@@ -69,7 +63,7 @@ export default function Footer() {
                     </li>
                     <li>
                       <a
-                        href="https://www.instagram.com/desafashion/"
+                        href="/"
                         className="box-icon w_34 round social-instagram social-line"
                         target="_blank"
                       >
@@ -78,7 +72,7 @@ export default function Footer() {
                     </li>
                     <li>
                       <a
-                        href="https://www.youtube.com/channel/UCgapbfRp7RWO60AREk6OFtg/"
+                        href="/"
                         className="box-icon w_34 round social-youtube social-line"
                         target="_blank"
                       >
@@ -104,7 +98,7 @@ export default function Footer() {
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Yardım</h6>
                 </div>
-                <div 
+                <div
                   className="footer-heading footer-heading-mobile"
                   onClick={() => toggleSection('help')}
                   style={{ cursor: 'pointer' }}
@@ -155,7 +149,7 @@ export default function Footer() {
                 <div className="footer-heading footer-heading-desktop">
                   <h6>Hakkımızda</h6>
                 </div>
-                <div 
+                <div
                   className="footer-heading footer-heading-mobile"
                   onClick={() => toggleSection('about')}
                   style={{ cursor: 'pointer' }}
@@ -195,7 +189,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <Link href="/about-desa/about" className="footer-menu_item">
-                      About DESA
+                      About Us
                     </Link>
                   </li>
                   <li>
@@ -212,7 +206,7 @@ export default function Footer() {
                   <div className="footer-heading footer-heading-desktop">
                     <h6>E-posta Kaydı</h6>
                   </div>
-                  <div 
+                  <div
                     className="footer-heading footer-heading-mobile"
                     onClick={() => toggleSection('newsletter')}
                     style={{ cursor: 'pointer' }}
@@ -274,7 +268,7 @@ export default function Footer() {
               <div className="col-12">
                 <div className="footer-bottom-wrap d-flex gap-20 flex-wrap justify-content-between align-items-center">
                   <div className="footer-menu_item">
-                    © DESA 2025
+                    Copyright
                   </div>
                   <div className="tf-payment col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
                     <div className="d-flex justify-content-center justify-content-md-end gap-1 align-items-center flex-wrap">

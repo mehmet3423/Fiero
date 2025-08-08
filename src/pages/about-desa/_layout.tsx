@@ -33,17 +33,17 @@ function AboutDesaLayout({ children }: AboutDesaLayoutProps) {
   };
 
   const navLinks = [
-    { href: "/about-desa/investors", label: "INVESTORS" },
-    { href: "/about-desa/about", label: "ABOUT DESA" },
-    { href: "/about-desa/corporate-governance", label: "CORPORATE GOVERNANCE" },
-    { href: "/about-desa/investor-presentations", label: "INVESTOR PRESENTATIONS" },
-    { href: "/about-desa/financials", label: "FINANCIALS" },
-    { href: "/about-desa/analyst-reports", label: "ANALYST REPORTS" },
-    { href: "/about-desa/annual-reports", label: "ANNUAL REPORTS" },
-    { href: "/about-desa/other-reports", label: "OTHER REPORTS" },
-    { href: "/about-desa/press-releases", label: "PRESS RELEASES" },
-    { href: "/about-desa/investor-relations-contact", label: "INVESTOR RELATIONS CONTACT" },
-    { href: "/about-desa-tr", label: "TR-YATIRIMCI İLİŞKİLERİ" },
+    { href: "/about-desa/investors", label: "-----" },
+    { href: "/about-desa/about", label: "-----" },
+    { href: "/about-desa/corporate-governance", label: "-----" },
+    { href: "/about-desa/investor-presentations", label: "-----" },
+    { href: "/about-desa/financials", label: "-----" },
+    { href: "/about-desa/analyst-reports", label: "-----" },
+    { href: "/about-desa/annual-reports", label: "-----" },
+    { href: "/about-desa/other-reports", label: "-----" },
+    { href: "/about-desa/press-releases", label: "-----" },
+    { href: "/about-desa/investor-relations-contact", label: "-----" },
+    { href: "/about-desa-tr", label: "-----" },
   ];
 
   return (

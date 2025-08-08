@@ -54,13 +54,13 @@ const BannerCollection: React.FC<BannerCollectionProps> = ({ banners }) => {
               <div className="collection-item-v4 hover-img">
                 <div className="collection-inner">
                   <Link
-                    href={item.link}
+                    href="/"
                     className="collection-image img-style radius-10"
                     style={{ position: "relative", height: "610px" }}
                   >
                     <Image
-                      src={item.image}
-                      alt={item.alt || item.title || "Banner"}
+                      src="/assets/site/images/collections/collection-69.jpg"
+                      alt={ "Banner"}
                       fill
                       className="object-cover rounded-[10px]"
                       unoptimized
@@ -71,11 +71,11 @@ const BannerCollection: React.FC<BannerCollectionProps> = ({ banners }) => {
                     className="collection-content wow fadeInUp"
                     data-wow-delay="0s"
                   >
-                    {item.title && (
-                      <h5 className="heading text_white">{item.title}</h5>
+                    {item.title !== null && (
+                      <h5 className="heading text_white">BAŞLIK</h5>
                     )}
                     <Link
-                      href={item.link}
+                      href="/"
                       className="tf-btn style-3 fw-6 btn-light-icon rounded-full animate-hover-btn"
                     >
                       <span>Keşfet</span>

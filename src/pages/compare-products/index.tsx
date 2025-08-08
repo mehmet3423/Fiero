@@ -25,17 +25,17 @@ const CompareProducts = () => {
   useEffect(() => {
     if (router.isReady && router.query.add) {
       const productIdToAdd = router.query.add as string;
-      
+
       if (typeof window !== "undefined") {
         const currentIds = JSON.parse(localStorage.getItem('compareProducts') || '[]');
-        
+
         // Eğer ürün zaten listede değilse ekle
         if (!currentIds.includes(productIdToAdd)) {
           const updatedIds = [...currentIds, productIdToAdd];
           localStorage.setItem('compareProducts', JSON.stringify(updatedIds));
           setCompareIds(updatedIds);
         }
-        
+
         // URL'den parametreyi temizle
         router.replace('/compare-products', undefined, { shallow: true });
       }
@@ -104,19 +104,21 @@ const CompareProducts = () => {
                         )}
                       </div>
                       <div className="tf-compare-group-btns d-flex gap-10">
-                        <button 
+                        <button
                           className="tf-btn btn-outline-dark radius-3"
                           onClick={() => handleQuickView(product)}
+                          style={{ fontWeight: 600 }}
                         >
                           <span className="icon icon-view"></span>
-                          <span>QUICK VIEW</span>
+                          <span>HIZLI BAKIŞ</span>
                         </button>
-                        <button 
+                        <button
                           className="tf-btn btn-outline-dark radius-3"
                           onClick={() => addToCart(product.id)}
+                          style={{ fontWeight: 600 }}
                         >
                           <span className="icon icon-bag"></span>
-                          <span>QUICK ADD</span>
+                          <span>SEPETE EKLE</span>
                         </button>
                       </div>
                     </div>
@@ -127,31 +129,37 @@ const CompareProducts = () => {
               )}
             </div>
             {/* Özellikler */}
-            <div className="tf-compare-row">
+            <div className="tf-compare-row mx-6" >
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Availability</h6>
+                <h6>Stok Durumu</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
-                <div className="tf-compare-col tf-compare-field tf-compare-stock" key={product.id}>
+                <div className="tf-compare-col tf-compare-field tf-compare-stock" key={product.id} >
                   <div className="icon">
-                    <span className="icon-check" style={{ color: '#4caf50', fontWeight: 700 }}>&#10003;</span>
+                    {product.sellableQuantity > 0 ? (
+                      <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem' }}>&#10003;</span> // Check icon
+                    ) : (
+                      <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem', backgroundColor: 'rgba(177, 32, 32, 1)', borderRadius: '50%', height: '17px', width: '17px' }}>&#10007;</span> // Cross icon
+                    )}
                   </div>
-                  <span className="fw-5">{product.sellableQuantity > 0 ? "In Stock" : "Out of Stock"}</span>
+                  <span className="fw-5 " style={{ color: product.sellableQuantity > 0 ? 'green' : 'red' }}>
+                    {product.sellableQuantity > 0 ? "Stokta var" : "Stokta yok"}
+                  </span>
                 </div>
               ))}
             </div>
             <div className="tf-compare-row">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Vendor</h6>
+                <h6>Satıcı</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
-                <div className="tf-compare-col tf-compare-value text-center" key={product.id}>NORS</div>
+                <div className="tf-compare-col tf-compare-value text-center" key={product.id}></div>
               ))}
             </div>
           </div>
         </div>
       </section>
-      
+
       {selectedProduct && (
         <QuickView
           isOpen={quickViewOpen}
@@ -159,8 +167,7 @@ const CompareProducts = () => {
           product={selectedProduct}
         />
       )}
-      
-      {/* ...style jsx kısmı aynı kalabilir... */}
+
     </>
   );
 };

@@ -46,7 +46,7 @@ export default function Login({ onSuccess }: LoginProps) {
       {/* Page Title */}
       <div className="tf-page-title style-2">
         <div className="container-full">
-          <div className="heading text-center">Log in</div>
+          <div className="heading text-center">Giriş Yap</div>
         </div>
       </div>
       {/* /Page Title */}
@@ -57,8 +57,8 @@ export default function Login({ onSuccess }: LoginProps) {
             <div className="tf-login-form">
               {showRecover ? (
                 <div id="recover">
-                  <h5 className="mb_24">Reset your password</h5>
-                  <p className="mb_30">We will send you an email to reset your password</p>
+                  <h5 className="mb_24">Şifrenizi sıfırlayın</h5>
+                  <p className="mb_30">Şifrenizi sıfırlamak için size bir e-posta göndereceğiz</p>
                   <form id="recover-form" onSubmit={onRecoverSubmit} acceptCharset="utf-8">
                     <div className="tf-field style-1 mb_15">
                       <input
@@ -79,7 +79,7 @@ export default function Login({ onSuccess }: LoginProps) {
                         className="tf-btn btn-line"
                         onClick={() => setShowRecover(false)}
                       >
-                        Cancel
+                        İptal Et
                       </button>
                     </div>
                     <div>
@@ -87,14 +87,14 @@ export default function Login({ onSuccess }: LoginProps) {
                         type="submit"
                         className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
                       >
-                        Reset password
+                        Şifreyi Sıfırla
                       </button>
                     </div>
                   </form>
                 </div>
               ) : (
                 <div id="login">
-                  <h5 className="mb_36">Log in</h5>
+                  <h5 className="mb_36">Giriş Yap</h5>
                   <form id="login-form" onSubmit={onSubmit} acceptCharset="utf-8">
                     <div className="tf-field style-1 mb_15">
                       <input
@@ -128,7 +128,7 @@ export default function Login({ onSuccess }: LoginProps) {
                           required
                         />
                         <label className="tf-field-label fw-4 text_black-2" htmlFor="property4">
-                          Password *
+                          Şifre *
                         </label>
                         <button
                           type="button"
@@ -170,7 +170,7 @@ export default function Login({ onSuccess }: LoginProps) {
                         className="tf-btn btn-line"
                         onClick={() => setShowRecover(true)}
                       >
-                        Forgot your password?
+                        Şifrenizi mi unuttunuz?
                       </button>
                     </div>
                     <div>
@@ -179,7 +179,7 @@ export default function Login({ onSuccess }: LoginProps) {
                         className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
                         disabled={isPending}
                       >
-                        Log in
+                        Giriş Yap
                       </button>
                     </div>
                   </form>
@@ -187,12 +187,12 @@ export default function Login({ onSuccess }: LoginProps) {
               )}
             </div>
             <div className="tf-login-content">
-              <h5 className="mb_36">I'm new here</h5>
+              <h5 className="mb_36">Burada yeniyim</h5>
               <p className="mb_20">
-                Sign up for early Sale access plus tailored new arrivals, trends and promotions. To opt out, click unsubscribe in our emails.
+                Kampanyalar, yeni ürünler, trendler ve promosyonlar için kaydolun. Abonelikten çıkmak için e-postalarımızdaki abonelikten çıkma bağlantısını tıklayın.
               </p>
               <a href="/register" className="tf-btn btn-line">
-                Register<i className="icon icon-arrow1-top-left"></i>
+                Kayıt Ol<i className="icon icon-arrow1-top-left"></i>
               </a>
             </div>
           </div>

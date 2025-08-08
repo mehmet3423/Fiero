@@ -60,8 +60,8 @@ function AboutUs({ seoData }: AboutProps) {
             <div className="box-content text-center">
               <div className="container">
                 <div className="text text-white">
-                  Empowering women to achieve{" "}
-                  <br className="d-xl-block d-none" /> fitness goals with style
+                 
+                  <br className="d-xl-block d-none" />
                 </div>
               </div>
             </div>
@@ -72,14 +72,10 @@ function AboutUs({ seoData }: AboutProps) {
           <div className="container">
             <div className="flat-title my-0">
               <span className="title">
-                {"Desa Hakkında"}
+                {"Hakkımızda - Rastgele Şirket Başlığı"}
               </span>
               <p className="sub-title text_black-2">
-                {(
-                  <>
-                    1972 yılında bir aile şirketi olarak kurulan Desa, 50 yıl boyunca büyük başarılara imza atarak Türkiye’nin lider deri ve deri mamulleri üreticisi olarak faaliyetlerine devam etmektedir. 2010, 2011, 2012 ve 2014 yıllarında Türkiye’de kendi alanında ihracat şampiyonu olmanın haklı gururunu yaşayan ve dikey entegrasyonunu tamamlamış benzersiz iş modeline sahip olan Desa, yüksek kalitedeki ürünleriyle mevcut profilini güçlendirerek uluslararası prestijli bir marka olarak yoluna devam etmektedir.
-                  </>
-                )}
+                {"Bu alan, bir şirketin vizyonunu ve misyonunu özetleyen rastgele bir metindir. Hayal gücünüzü kullanın!"}
               </p>
             </div>
           </div>
@@ -102,23 +98,13 @@ function AboutUs({ seoData }: AboutProps) {
               <div className="tf-content-wrap px-0 d-flex justify-content-center w-100">
                 <div>
                   <div className="heading">
-                    { }
+                    {"Şirketimizin hikayesi burada başlar. Rastgele bir başlık örneği."}
                   </div>
                   <div className="text">
                     {(
                       <>
-
-                        Desa’nın operasyonları arasında deri tabakhanesinin yanında iki fabrikasındaki kadın ve erkek giyim ürünleri, çanta ve aksesuar üretiminin yanı sıra bu ürünlerin hem toptan hem de perakende satış kanalları yoluyla dağıtımı yer almaktadır. Yüksek kalitedeki ürünleriyle mevcut profilini güçlendirerek ulusal ve uluslararası piyasalarda prestijli bir marka olarak yoluna devam eden DESA Türkiye genelinde, 53 DESA, 36 Samsonite, 2 DESA franchise, 14 Samsonite JV, 2 Tumi JV, 1 1972 DESA ve 1 sanal mağaza olmak üzere toplam 109 mağazaya ve 14.663,7 metrekare mağaza alanına ulaştı.
-                        <br></br>
-                        <br></br>
-                        İstanbul ve Düzce’de toplam 25.500 metrekare alana yayılan üretim tesislerine sahip olan Desa’nın Çorlu’daki tabakhanesi 20.000 metrekare alana sahiptir. Şirket, Prada, Miu Miu, Furla, Chanel, Emporio Armani ve Armani Collezioni gibi pek çok uluslararası lüks markaya entegre çözüm sağlayıcı olarak hizmet vermektedir. Desa, dünyanın en büyük seyahat ürünleri markası olan Samsonite’ın Türkiye’de 24 yıl boyunca distribütörlüğünün ardından, 2007 yılında Samsonite ile %40 - %60 ortaklık yapısıyla kurduğu ortak girişim sayesinde uluslararası profilini daha da güçlendirilmiştir.
-                        <br></br>
-                        <br></br>
-                        Deri modasına yön veren ve Türkiye'nin deri mamulleri alanında öncü markası DESA, dünya markaları ile olan ilişkisini geliştirmek, deri çanta ve saraciye ürünleri üretimini ve satış hacmini artırmak amacıyla 2022 yılının ikinci yarısında İtalya’da Ar-Ge merkezi ve üretim tesisi yatırımı gerçekleştirdi. DESA’nın üretim operasyonlarının yürütüleceği yeni fabrikası, Casentino Vadisi'nin Arezzo ilindeki Poppi’de 5 dönüm arazi içerisinde 1.896 m² kapalı alana kuruldu. 2023 yılı Mart ayında satın alma sözleşmesinin ve imza sürecinin tamamlandığı DESA Internazionale fabrikası önümüzdeki günlerde faaliyete geçecek.
-
-
+                        {"2000 yılında kurulan şirketimiz, yenilikçi çözümler ve eğlenceli projelerle tanınır. Rastgele içerik örneği."}
                       </>
-
                     )}
                   </div>
                 </div>
@@ -132,16 +118,12 @@ function AboutUs({ seoData }: AboutProps) {
               <div className="tf-content-wrap px-0 d-flex justify-content-center w-100">
                 <div>
                   <div className="heading">
-                    {}
+                    {"Tasarımda mükemmellik - Rastgele başlık"}
                   </div>
                   <div className="text">
                     {(
                       <>
-                        Desa, ürünlerine üstün kalite ve dayanıklılık sağlayan yüksek standarda sahip malzeme ve işçiliğe büyük önem vermektedir. Şirket, www.desa.com.tr üzerinden açtığı internet satış mağazası ile ürünlerini online olarak da satışa sunmaktadır. Servis kalitesinde benimsediği mükemmeliyetçilik anlayışı ile DESA, tasarım, araştırma ve geliştirme ile insan kaynağına aralıksız yatırım yapmaktadır. Şirketin uzun vadede stratejik hedefi, DESA markalı ürün satışlarını hem yurt içinde hem de yurt dışında artırmaktır.
-                        <br></br><br></br>
-                        DESA ürünleri 31 Ocak 2023 itibarıyla Avrupa'nın önde gelen moda e-ihracat/e-ticaret platformu Zalando'da satılıyor. İlk olarak Zalando Almanya’da, daha sonra Fransa, Hollanda, Belçika ve Avusturya’da satışa sunulan DESA ürünleri, ayakkabıdan konfeksiyona, çantadan küçük deri mamullerine kadar birçok farklı kategoride Avrupa'da geniş bir tüketici kitlesiyle buluşuyor.
-                        <br></br><br></br>
-                        Desa, Borsa İstanbul'da DESA kodu ile 2004 Mayıs ayından itibaren işlem görmekte olan halka açık bir şirkettir. 31.12.2022 itibariyle toplam varlıkları 1,283 Milyar TL'ye ulaşan Desa'nın toplam gelirleri ise 1,358 Milyar TL olarak gerçekleşmiştir.
+                        {"Şirketimiz, modern ve klasik tasarımları bir araya getirir. Rastgele metin örneği."}
                       </>
                     )}
                   </div>
@@ -177,15 +159,14 @@ function AboutUs({ seoData }: AboutProps) {
           <div className="container">
             <div className="bg_grey-2 radius-10 flat-wrap-iconbox">
               <div className="flat-title lg">
-                <span className="title fw-5">Quality is our priority</span>
+                <span className="title fw-5"></span>
+                <span className="title fw-5">Malzeme, Tasarım ve Boyutlarda Rastgele Başlık</span>
                 <div>
                   <p className="sub-title text_black-2">
-                    Our talented stylists have put together outfits that are
-                    perfect for the season.
+                    {"Ürünlerimizde kullanılan malzemeler hakkında rastgele bir açıklama. Hayal gücünüzü kullanın!"}
                   </p>
                   <p className="sub-title text_black-2">
-                    They've variety of ways to inspire your next fashion-forward
-                    look.
+                    {"Tasarımda yenilikçi yaklaşımlar ve fonksiyonellik. Rastgele metin."}
                   </p>
                 </div>
               </div>
@@ -203,12 +184,10 @@ function AboutUs({ seoData }: AboutProps) {
                             <i className="icon-materials"></i>
                           </div>
                           <div className="content">
-                            <div className="title">High-Quality Materials</div>
+                            <div className="title"></div>
+                            <div className="title">Malzeme Kalitesi</div>
                             <p className="text_black-2">
-                              Crafted with precision and excellence, our
-                              activewear is meticulously engineered using
-                              premium materials to ensure unmatched comfort and
-                              durability.
+                              {"Ürünlerimizde kullanılan malzemeler, dayanıklılığı ve estetiğiyle öne çıkar. Rastgele metin."}
                             </p>
                           </div>
                         </div>
@@ -219,11 +198,10 @@ function AboutUs({ seoData }: AboutProps) {
                             <i className="icon-design"></i>
                           </div>
                           <div className="content">
-                            <div className="title">Laconic Design</div>
+                            <div className="title"></div>
+                            <div className="title">Tasarım Detayları</div>
                             <p className="text_black-2">
-                              Simplicity refined. Our activewear embodies the
-                              essence of minimalistic design, delivering
-                              effortless style that speaks volumes.
+                              {"Her ürünümüz, özgün tasarım anlayışıyla üretilir. Rastgele metin."}
                             </p>
                           </div>
                         </div>
@@ -234,11 +212,10 @@ function AboutUs({ seoData }: AboutProps) {
                             <i className="icon-sizes"></i>
                           </div>
                           <div className="content">
-                            <div className="title">Various Sizes</div>
+                            <div className="title"></div>
+                            <div className="title">Boyut Seçenekleri</div>
                             <p className="text_black-2">
-                              Designed for every body and anyone, our activewear
-                              embraces diversity with a wide range of sizes and
-                              shapes, celebrating the beauty of individuality.
+                              {"Farklı boyut seçenekleriyle her ihtiyaca uygun ürünler. Rastgele metin."}
                             </p>
                           </div>
                         </div>
@@ -274,7 +251,8 @@ function AboutUs({ seoData }: AboutProps) {
                 >
                   <SwiperSlide>
                     <div className="testimonial-item lg lg-2">
-                        <h4 className="mb_40">Our customer’s reviews</h4>
+                        <h4 className="mb_40"></h4>
+                        <h4 className="mb_40">Müşteri Yorumları - Rastgele Başlık</h4>
                         <div className="icon">
                           <img
                             className="lazyload"
@@ -291,12 +269,7 @@ function AboutUs({ seoData }: AboutProps) {
                           <i className="icon-start"></i>
                         </div>
                         <p className="text">
-                          "I have been shopping with this web fashion site for
-                          over a year now and I can confidently say it is the
-                          best online fashion site out there.The shipping is
-                          always fast and the customer service team is friendly
-                          and helpful. I highly recommend this site to anyone
-                          looking for affordable clothing."
+                          {"Ürünlerinizden çok memnun kaldım. Rastgele müşteri yorumu."}
                         </p>
                         <div className="author box-author">
                           <div className="box-img d-md-none rounded-0">
@@ -308,14 +281,16 @@ function AboutUs({ seoData }: AboutProps) {
                             />
                           </div>
                           <div className="content">
-                            <div className="name">Robert smith</div>
+                            <div className="name"></div>
+                            <div className="name">Rastgele İsim</div>
                           </div>
                         </div>
                       </div>
                     </SwiperSlide>
                   <SwiperSlide>
                     <div className="testimonial-item lg lg-2">
-                        <h4 className="mb_40">Our customer’s reviews</h4>
+                        <h4 className="mb_40"></h4>
+                        <h4 className="mb_40">Müşteri Yorumları - Rastgele Başlık 2</h4>
                         <div className="icon">
                           <img
                             className="lazyload"
@@ -332,12 +307,7 @@ function AboutUs({ seoData }: AboutProps) {
                           <i className="icon-start"></i>
                         </div>
                         <p className="text">
-                          "I have been shopping with this web fashion site for
-                          over a year now and I can confidently say it is the
-                          best online fashion site out there.The shipping is
-                          always fast and the customer service team is friendly
-                          and helpful. I highly recommend this site to anyone
-                          looking for affordable clothing."
+                          {"Kalite ve tasarım harika! Rastgele müşteri yorumu 2. Hayal gücünüzü kullanın!"}
                         </p>
                         <div className="author box-author">
                           <div className="box-img d-md-none rounded-0">
@@ -349,7 +319,8 @@ function AboutUs({ seoData }: AboutProps) {
                             />
                           </div>
                           <div className="content">
-                            <div className="name">Jenifer Unix</div>
+                            <div className="name"></div>
+                            <div className="name">Rastgele İsim 2</div>
                           </div>
                         </div>
                       </div>
@@ -420,11 +391,10 @@ function AboutUs({ seoData }: AboutProps) {
                   marginBottom: "10px",
                 }}
               >
-                Shop Gram
+                {"Galeri - Rastgele Başlık"}
               </span>
               <p style={{ color: "#666", fontSize: "16px" }}>
-                Inspire and let yourself be inspired, from one unique fashion to
-                another.
+                {"Rastgele ürünlerden seçilmiş galeri açıklaması."}
               </p>
             </div>
 
@@ -479,7 +449,7 @@ function AboutUs({ seoData }: AboutProps) {
             </Swiper>
           </div>
         </section>
-        );
+        ;
       </main>
     </>
   );
