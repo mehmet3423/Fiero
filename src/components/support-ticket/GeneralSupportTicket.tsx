@@ -22,6 +22,17 @@ function GeneralSupportTicket() {
     }
 
     await handleSubmitTicket(formData);
+
+    // Form gönderildikten sonra alanları sıfırla
+    setFormData({
+      title: "",
+      requestType: GeneralSupportRequestType.Other,
+      description: "",
+      attachments: [],
+    });
+    // Dosya inputunu da sıfırla
+    const fileInput = document.getElementById("attachments") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   };
 
   return (
@@ -93,7 +104,7 @@ function GeneralSupportTicket() {
         />
       </div>
 
-      <button type="submit" className="btn btn-primary" disabled={isPending}>
+      <button type="submit" className="btn btn-dark" disabled={isPending}>
         <span>{isPending ? "Gönderiliyor..." : "Gönder"}</span>
         <i className="icon-long-arrow-right"></i>
       </button>

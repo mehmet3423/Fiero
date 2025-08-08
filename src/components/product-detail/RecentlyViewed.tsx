@@ -182,7 +182,7 @@ const RecentlyViewed: React.FC = () => {
     <section className="flat-spacing-4 pt_0">
       <div className="container">
         <div className="flat-title">
-          <span className="title">Recently Viewed</span>
+          <span className="title">Son Baktıklarınız</span>
         </div>
 
         <div className="hover-sw-nav hover-sw-2">

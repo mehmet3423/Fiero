@@ -128,11 +128,6 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/shipping-delivery" className="footer-menu_item">
-                      Kargo
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/terms" className="footer-menu_item">
                       Şartlar & Koşullar
                     </Link>
@@ -199,8 +194,13 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/about-desa" className="footer-menu_item">
-                      Investor Relations
+                    <Link href="/about-desa/about" className="footer-menu_item">
+                      About DESA
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/support-ticket" className="footer-menu_item">
+                      Destek Talebi
                     </Link>
                   </li>
                 </ul>
