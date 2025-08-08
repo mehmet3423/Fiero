@@ -18,16 +18,8 @@ const ReturnExchangePolicyPage = () => {
                 <img className="lazyload flatpage__img" src="" alt="İade &amp; Değişim Politikası" style={{ display: "none" }} />
               </div>
               <div className="flatpage__text">
-                <p>Desa.com.tr internet satış müşterilerinin “Sebep Göstermeden Cayma Hakkı” 14 gündür. Desa.com.tr’den satın aldığınız, bedeni uymayan ve/veya kullanmadığınız, hasar görmemiş, kutusu ve etiketleri orijinal olan her ürünü; faturanızı ibraz ederek fatura tarihinizden itibaren (hediye ise hediye değiştirme kartınızın üzerinde yazılı olan tarihten itibaren) 14 gün içinde iade edebilir ya da desa.com.tr ve Desa mağazalarından aynı değerde ürün ile fatura veya hediye değişim kartı ibraz ederek değiştirebilirsiniz.</p>
-                <p>İade için ürünlerinizi, sipariş tarihinden 14 gün içinde, siparişlerim ekranından alacağınız iade kodu ile anlaşmalı kargo firmamız aracılığı ile ücret ödemeden gönderebilirsiniz.</p>
-                <p><strong>İADE VE İŞLEM SÜRESİ</strong></p>
-                <p>İade durumunda ödeme şeklinize göre iade yapılır. Ürünün iade şartlarına uygunluğu kontrol edildikten sonra Desa.com.tr tarafından kredi kartınıza iade işlemi 10-14 iş günü içerisinde gerçekleşir.</p>
-                <p>Taksitli yapılan ödemelerin iadeleri banka tarafından aynı taksit sayısında iade edilir.</p>
-                <p>Havale ödemelerinde banka hesap bilgilerinizi tarafımıza bildirmeniz gerekmektedir, havale tutarının iadesi sadece sipariş veren kişiye ait bir hesap numarasına yapılır.</p>
-                <p>Bir siparişte müşterinin satın aldığı ürünlerin kısmen iade edilmesi durumunda yararlanılan kampanyanın koşulları bozuluyorsa, müşteriye iade edilecek tutar; o siparişe ait toplam sipariş tutarı ile iade etmediği ürünün/ürünlerin birlikte satın alımında oluşan yeni tutarın farkı şeklinde hesaplanır. Ürünlerin tamamının iade edildiği durumlarda ise o siparişe ait toplam tutar müşteriye iade edilir.</p>
-                <p>İade edilecek ürünlerin, orijinal ambalajlarında, tüm aksesuar ve ambalaj malzemeleriyle birlikte eksiksiz bir şekilde, fiziksel açıdan hasar görmemiş, kullanılmamış, yeniden satılabilir durumda olması ve ürünün orijinal faturasının, faturanın arka sayfasındaki form doldurularak gönderilmesi gerekmektedir. Faturasız iadeler kabul edilmemektedir.</p>
-                <p>desa.com.tr’den verdiğiniz siparişleriniz için Desa mağazalarımızdan iade kabulü yapılmamaktadır. İade etmek istediğiniz ürünü iade protokolüne uygun şekilde anlaşmalı kargo şirketi ile iade kodu/iade adresine göndermeniz gerekmektedir.</p>
-              </div>
+                <p>lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </div>
             </div>
           </div>
         </div>
