@@ -7,8 +7,10 @@ import { useGetUserOrders } from "@/hooks/services/order/useGetUserOrders";
 import Link from "next/link";
 import { useState } from "react";
 import { withProfileLayout } from "../_layout";
+import { useLanguage } from "@/context/LanguageContext"; // Import useLanguage
 
 function OrdersPage() {
+  const { t } = useLanguage(); // Initialize useLanguage
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10); // Sayfa başına gösterilecek sipariş sayısı
   const {
@@ -49,7 +51,7 @@ function OrdersPage() {
         style={{ minHeight: "200px" }}
       >
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
+          <span className="visually-hidden">{t("orders.loading")}</span>
         </div>
       </div>
     );
@@ -64,9 +66,9 @@ function OrdersPage() {
             style={{ fontSize: "3rem", color: "#ccc" }}
           ></i>
         </div>
-        <p className="lead mb-4">Siparişiniz bulunmamaktadır.</p>
+        <p className="lead mb-4">{t("orders.noOrders")}</p>
         <Link href="/products" className="btn btn-outline-primary-2">
-          <span>ALIŞVERİŞE BAŞLA</span>
+          <span>{t("orders.startShopping")}</span>
           <i className="icon-long-arrow-right"></i>
         </Link>
       </div>
@@ -80,11 +82,11 @@ function OrdersPage() {
           <table>
             <thead>
               <tr>
-                <th className="fw-6">Sipariş</th>
-                <th className="fw-6">Tarih</th>
-                <th className="fw-6">Durum</th>
-                <th className="fw-6">Toplam</th>
-                <th className="fw-6">İşlemler</th>
+                <th className="fw-6">{t("orders.order")}</th>
+                <th className="fw-6">{t("orders.date")}</th>
+                <th className="fw-6">{t("orders.status")}</th>
+                <th className="fw-6">{t("orders.total")}</th>
+                <th className="fw-6">{t("orders.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +110,7 @@ function OrdersPage() {
                           style: "currency",
                           currency: "TRY",
                         })
-                        : "0,00 ₺"}
+                        : t("orders.zeroAmount")}
                     </td>
                     <td style={{ display: "flex", justifyContent: "space-between" }}>
                       <Link
@@ -123,11 +125,11 @@ function OrdersPage() {
                           fontWeight: "500",
                           borderRadius: "4px",
                           color: "#fff",
-                          backgroundColor: "#000000ff", // Daha uygun bir renk
+                          backgroundColor: "#000000ff",
                           border: "none",
                         }}
                       >
-                        Görüntüle
+                        {t("orders.view")}
                       </Link>
                       <button
                         className="btn btn-danger btn-sm"
@@ -141,10 +143,10 @@ function OrdersPage() {
                           fontSize: "14px",
                           fontWeight: "500",
                           borderRadius: "4px",
-                          marginLeft: "auto", // Sil butonunu en sağa taşır
+                          marginLeft: "auto",
                         }}
                       >
-                        Sil
+                        {t("orders.delete")}
                       </button>
                     </td>
                   </tr>
@@ -158,9 +160,9 @@ function OrdersPage() {
         {totalPages > 1 && (
           <div className="d-flex justify-content-between align-items-center mt-4">
             <div className="text-muted" style={{ fontSize: "1.7rem" }}>
-              {(currentPage - 1) * pageSize + 1}-
+              {(currentPage - 1) * pageSize + 1}-{" "}
               {Math.min(currentPage * pageSize, totalCount)} / {totalCount}{" "}
-              kayıt
+              {t("orders.records")}
             </div>
             <CirclePagination
               totalCount={totalCount}
@@ -182,10 +184,10 @@ function OrdersPage() {
         <ConfirmModal
           onConfirm={handleConfirmDelete}
           isLoading={isDeleting}
-          title="Siparişi Silmek İstediğinize Emin Misiniz?"
-          message="Bu siparişi silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-          confirmButtonText="Evet, Siparişi Sil"
-          cancelButtonText="İptal"
+          title={t("orders.confirmDeleteTitle")}
+          message={t("orders.confirmDeleteMessage")}
+          confirmButtonText={t("orders.confirmDeleteButton")}
+          cancelButtonText={t("orders.cancel")}
         />
       </GeneralModal>
     </div>

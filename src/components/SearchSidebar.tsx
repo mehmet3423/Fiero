@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface SearchSidebarProps {
     isOpen: boolean;
@@ -27,6 +28,7 @@ export default function SearchSidebar({
     const { searchResults, isSearching } = useSearch();
     const { categories } = useMainCategoriesLookUp();
     const searchRef = useRef<HTMLDivElement>(null);
+    const { t } = useLanguage()
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -100,7 +102,7 @@ export default function SearchSidebar({
                 <div ref={searchRef} className="canvas-wrapper">
                     <header className="tf-search-head">
                         <div className="title fw-5">
-                            Sitemizde Ara
+                            {t("searchBar.searchSite")}
                             <div className="close">
                                 <span
                                     className="icon-close icon-close-popup"
@@ -115,7 +117,7 @@ export default function SearchSidebar({
                                 <fieldset className="text">
                                     <input
                                         type="text"
-                                        placeholder="Ürün ara..."
+                                        placeholder={t("searchBar.search")}
                                         className=""
                                         name="text"
                                         tabIndex={0}
@@ -138,12 +140,12 @@ export default function SearchSidebar({
                             {/* Arama sonuçları varsa göster */}
                             {showResults && (
                                 <div className="tf-cart-has-results">
-                                    <div className="tf-search-content-title fw-5">Arama Sonuçları</div>
+                                    <div className="tf-search-content-title fw-5">{t("searchBar.results")}</div>
 
                                     {isSearching ? (
                                         <div className="tf-search-loading">
                                             <i className="icon icon-refresh"></i>
-                                            <span>Aranıyor...</span>
+                                            <span>{t("searchBar.searching")}</span>
                                         </div>
                                     ) : searchResults.length > 0 ? (
                                         <div className="tf-search-hidden-inner">
@@ -197,12 +199,12 @@ export default function SearchSidebar({
                                     ) : searchTerm.length >= 3 ? (
                                         <div className="tf-search-no-results">
                                             <i className="icon icon-search"></i>
-                                            <span>Ürün bulunamadı</span>
+                                            <span>{t("searchBar.notFound")}</span>
                                         </div>
                                     ) : searchTerm.length > 0 ? (
                                         <div className="tf-search-no-results">
                                             <i className="icon icon-info"></i>
-                                            <span>En az 3 karakter girmelisiniz</span>
+                                            <span>{t("searchBar.mustEnter")}</span>
                                         </div>
                                     ) : null}
                                 </div>
@@ -212,7 +214,7 @@ export default function SearchSidebar({
                             {!showResults && (
                                 <div className="tf-cart-hide-has-results">
                                     <div className="tf-col-quicklink">
-                                        <div className="tf-search-content-title fw-5">Hızlı Bağlantılar</div>
+                                        <div className="tf-search-content-title fw-5">{t("searchBar.quickLinks")}</div>
                                         <ul className="tf-quicklink-list">
                                             
                                             {categories?.items?.slice(0, 4).map((category) => (
@@ -223,7 +225,7 @@ export default function SearchSidebar({
                                                 </li>
                                             )) || (
                                                     <li className="tf-quicklink-item">
-                                                        <span>Kategoriler yükleniyor...</span>
+                                                        <span>{t("searchBar.loadingCat")}</span>
                                                     </li>
                                                 )}
                                         </ul>

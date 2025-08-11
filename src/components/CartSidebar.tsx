@@ -2,6 +2,7 @@ import { PathEnums } from "@/constants/enums/PathEnums";
 import { useCart } from "@/hooks/context/useCart";
 import Link from "next/link";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     totalPrice, // Backend'den gelen toplam fiyat
     totalDiscountedPrice, // Backend'den gelen indirimli toplam fiyat
   } = useCart();
-  
+  const { t } = useLanguage() 
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const handleUpdateQuantity = (productId: string, quantity: number) => {
@@ -59,7 +60,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           <div className="modal-dialog">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="header">
-                <div className="title fw-5">Alışveriş Sepeti</div>
+                <div className="title fw-5">{t("shoppingSideCart.shoppingCart")}</div>
                 <span className="icon-close icon-close-popup" onClick={onClose} style={{ cursor: 'pointer' }}></span>
               </div>
               <div className="wrap">
@@ -68,7 +69,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <div className="tf-mini-cart-sroll">
                       <div className="tf-mini-cart-items">
                         <div style={{ textAlign: 'center', padding: '20px' }}>
-                          <p>Sepet yükleniyor...</p>
+                          <p>{t("shoppingSideCart.loadingCart")}</p>
                         </div>
                       </div>
                     </div>
@@ -121,7 +122,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
         <div className="modal-dialog">
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="header">
-              <div className="title fw-5">Alışveriş Sepeti</div>
+              <div className="title fw-5">{t("shoppingSideCart.shoppingCart")}</div>
               <span className="icon-close icon-close-popup" onClick={onClose} style={{ cursor: 'pointer' }}></span>
             </div>
             <div className="wrap">
@@ -233,7 +234,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                                       if (target) target.style.color = '';
                                     }}
                                   >
-                                    Kaldır
+                                    {t("shoppingSideCart.remove")}
                                   </div>
                                 </div>
                               </div>
@@ -242,7 +243,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         })
                       ) : (
                         <div className="empty-cart" style={{ textAlign: 'center', padding: '20px' }}>
-                          <p>Sepetiniz boş</p>
+                          <p>{t("shoppingSideCart.emptyCart")}</p>
                         </div>
                       )}
                     </div>
@@ -274,7 +275,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                               }}
                             ></i>
                             <span style={{ fontSize: "12px", color: "#495057" }}>
-                              Ücretsiz Ürün Kampanyası
+                              {t("shoppingSideCart.freeProduct")}
                             </span>
                           </div>
                           <span
@@ -284,14 +285,14 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                               fontWeight: "500",
                             }}
                           >
-                            Aktif
+                            {t("shoppingSideCart.active")}
                           </span>
                         </div>
                       </div>
                     )}
 
                     <div className="tf-cart-totals-discounts">
-                      <div className="tf-cart-total">Ara Toplam</div>
+                      <div className="tf-cart-total">{t("shoppingSideCart.subtotal")}</div>
                       <div className="tf-totals-total-value fw-6">
                         {backendSubtotal.toFixed(2)} ₺
                       </div>
@@ -299,7 +300,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
                     {frontendDiscountAmount > 0 && (
                       <div className="tf-cart-totals-discounts">
-                        <div className="tf-cart-total">Ürün İndirimleri</div>
+                        <div className="tf-cart-total">{t("shoppingSideCart.productDiscounts")}</div>
                         <div className="tf-totals-total-value fw-6" style={{ color: "green" }}>
                           -{frontendDiscountAmount.toFixed(2)} ₺
                         </div>
@@ -307,7 +308,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     )}
 
                     <div className="tf-cart-totals-discounts">
-                      <div className="tf-cart-total">Kargo</div>
+                      <div className="tf-cart-total">{t("shoppingSideCart.cargo")}</div>
                       <div className="tf-totals-total-value fw-6">
                         {cargoDiscountedPrice && cargoPrice !== cargoDiscountedPrice ? (
                           <div>
@@ -325,7 +326,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <div className="tf-mini-cart-line"></div>
                     
                     <div className="tf-cart-totals-discounts">
-                      <div className="tf-cart-total fw-6">Toplam</div>
+                      <div className="tf-cart-total fw-6">{t("shoppingSideCart.total")}</div>
                       <div className="tf-totals-total-value fw-6" style={{ fontSize: "16px", color: "#040404" }}>
                         {backendTotal.toFixed(2)} ₺
                       </div>
@@ -334,14 +335,14 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <div className="tf-mini-cart-line"></div>
                     <div className="tf-mini-cart-view-checkout">
                       <Link href={PathEnums.CART} onClick={onClose} className="tf-btn btn-outline radius-3 link w-100 justify-content-center">
-                        Sepeti Görüntüle
+                        {t("shoppingSideCart.viewCart")}
                       </Link>
                       <Link
                         href={PathEnums.CHECKOUT}
                         onClick={onClose}
                         className={`tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center ${!agreeTerms ? 'disabled' : ''}`}
                       >
-                        <span>Ödemeye Geç</span>
+                        <span>{t("shoppingSideCart.checkout")}</span>
                       </Link>
                     </div>
                   </div>
