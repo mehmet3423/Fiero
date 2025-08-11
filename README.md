@@ -1,40 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# DesaDeri Frontend
 
-## Getting Started
+Bu proje Next.js ile geliştirilmiş bir e-ticaret frontend uygulamasıdır.
 
-First, run the development server:
+## Özellikler
+
+- **Çok Dilli Destek**: Türkçe ve İngilizce dil desteği
+- **Responsive Tasarım**: Mobil ve masaüstü uyumlu
+- **E-ticaret Fonksiyonları**: Ürün listeleme, sepet, ödeme
+- **Kullanıcı Yönetimi**: Kayıt, giriş, profil yönetimi
+- **Admin Paneli**: Ürün ve kategori yönetimi
+
+## Lokalizasyon (Çok Dilli Destek)
+
+Proje `next-intl` kütüphanesi kullanılarak çok dilli destek sağlanmıştır.
+
+### Kurulum
+
+1. **Bağımlılıklar yüklü olmalı**:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install next-intl
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Çeviri dosyaları** `src/locales/` klasöründe bulunur:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```
+src/locales/
+├── tr/
+│   ├── common.json
+│   └── auth.json
+├── en/
+│   ├── common.json
+│   └── auth.json
+└── index.ts
+```
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Kullanım
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+#### Bileşenlerde Çeviri Kullanımı
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```tsx
+import { useTranslations } from "next-intl";
 
-## Learn More
+export default function MyComponent() {
+  const t = useTranslations("auth.register");
+  const tCommon = useTranslations("common");
 
-To learn more about Next.js, take a look at the following resources:
+  return (
+    <div>
+      <h1>{t("title")}</h1>
+      <p>{t("subtitle")}</p>
+      <button>{tCommon("buttons.save")}</button>
+    </div>
+  );
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+#### Sayfalarda Çeviri Kullanımı
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```tsx
+import { NextPage } from "next";
+import { useTranslations } from "next-intl";
 
-## Deploy on Vercel
+const MyPage: NextPage = () => {
+  const t = useTranslations("auth.register");
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  return (
+    <div>
+      <h1>{t("title")}</h1>
+    </div>
+  );
+};
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+export default MyPage;
+```
+
+#### Dil Değiştirme
+
+Header bileşeninde bulunan `LanguageSwitcher` bileşeni ile dil değiştirilebilir.
+
+### Çeviri Dosyası Yapısı
+
+```json
+{
+  "auth": {
+    "register": {
+      "title": "Kayıt Ol",
+      "subtitle": "Yeni hesap oluşturun",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "password": "Şifre",
+      "confirmPassword": "Şifre Tekrarı",
+      "registerButton": "Kayıt Ol",
+      "errors": {
+        "passwordMismatch": "Şifreler eşleşmiyor",
+        "termsRequired": "Kullanım şartlarını kabul etmelisiniz"
+      }
+    }
+  },
+  "common": {
+    "buttons": {
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "loading": "Yükleniyor..."
+    },
+    "validation": {
+      "required": "Bu alan zorunludur",
+      "email": "Geçerli bir e-posta adresi giriniz"
+    }
+  }
+}
+```
+
+### Yeni Dil Ekleme
+
+1. `src/locales/` klasöründe yeni dil klasörü oluşturun (örn: `de/`)
+2. Gerekli çeviri dosyalarını ekleyin
+3. `src/locales/index.ts` dosyasında `locales` array'ine yeni dili ekleyin
+
+### URL Yapısı
+
+- Türkçe (varsayılan): `/register`
+- İngilizce: `/en/register`
+
+## Kurulum
+
+```bash
+# Bağımlılıkları yükle
+npm install
+
+# Geliştirme sunucusunu başlat
+npm run dev
+
+# Production build
+npm run build
+
+# Production sunucusunu başlat
+npm start
+```
+
+## Teknolojiler
+
+- **Next.js 15**: React framework
+- **TypeScript**: Tip güvenliği
+- **next-intl**: Lokalizasyon
+- **React Query**: Veri yönetimi
+- **Bootstrap**: CSS framework
+- **React Hot Toast**: Bildirimler
+
+## Proje Yapısı
+
+```
+src/
+├── components/          # React bileşenleri
+├── locales/            # Çeviri dosyaları
+├── hooks/              # Custom hooks
+├── constants/          # Sabitler ve enum'lar
+├── pages/              # Next.js sayfaları
+├── styles/             # CSS dosyaları
+└── utils/              # Yardımcı fonksiyonlar
+```
+
+## Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit yapın (`git commit -m 'Add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.

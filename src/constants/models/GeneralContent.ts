@@ -27,6 +27,7 @@ export enum GeneralContentType {
   MainBanner = 22,
   MainProductList = 23,
   Explore = 25,
+  HomeCategories = 26,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -67,6 +68,7 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.MainBanner]: IsCustomizable.No,
   [GeneralContentType.MainProductList]: IsCustomizable.No,
   [GeneralContentType.Explore]: IsCustomizable.No,
+  [GeneralContentType.HomeCategories]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -165,6 +167,8 @@ export const getGeneralContentTypeName = (
       return "Ana Sayfa Ürün Listesi";
     case GeneralContentType.Explore:
       return "Anasayfa Keşfet";
+    case GeneralContentType.HomeCategories:
+      return "Ana Sayfa Kategorileri";
     default:
       return "Bilinmeyen İçerik Türü";
   }

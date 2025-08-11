@@ -16,8 +16,11 @@ import MobileMenu from "./MobileMenu";
 import CartSidebar from "./CartSidebar";
 import SearchSidebar from "./SearchSidebar";
 import AnnouncementSlider from "./home/AnnouncementSlider";
+import LanguageSwitcher from "./shared/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
+  const { t } = useLanguage()
   const router = useRouter();
   const {
     userRole,
@@ -56,7 +59,8 @@ export default function Header() {
     userRole === UserRole.CUSTOMER || userRole === null;
   const showSellerFeatures = userRole === UserRole.SELLER;
   const showAdminFeatures = userRole === UserRole.ADMIN;
-  const [sustainabilityDropdownOpen, setSustainabilityDropdownOpen] = useState(false);
+  const [sustainabilityDropdownOpen, setSustainabilityDropdownOpen] =
+    useState(false);
 
   if (userProfileLoading) {
     return <></>;
@@ -124,10 +128,10 @@ export default function Header() {
       setWindowWidth(window.innerWidth);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,7 +203,7 @@ export default function Header() {
       <div className="tf-top-bar bg_white line py-4 sticky-top">
         <div className="px_15 lg-px_40">
           <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
-            <div className="col-4 tf-lg-hidden" style={{ paddingLeft: '25px' }}>
+            <div className="col-4 tf-lg-hidden" style={{ paddingLeft: "25px" }}>
               <button onClick={toggleMobileMenu} className="nav-icon-item">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -215,13 +219,14 @@ export default function Header() {
                 </svg>
               </button>
             </div>
-            <div className="col-4 justify-content-center align-items-center mx-4"
+            <div
+              className="col-4 justify-content-center align-items-center mx-4"
               style={{
                 paddingLeft: windowWidth > 768 ? "10%" : "0",
-              }}>
+              }}
+            >
               <Link href="/" className="logo-header">
-              LOGO
-               
+                LOGO
               </Link>
             </div>
             <div className="col-4 tf-md-hidden text-center overflow-hidden">
@@ -236,35 +241,26 @@ export default function Header() {
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
                     <p className="top-bar-text fw-5">
-                      Bahar İndirimi{" "}
+                      {t("header.springSale")}
                       <Link href="/products" className="tf-btn btn-line">
-                        Şimdi Al<i className="icon icon-arrow1-top-left"></i>
+                        {t("header.shopNow")}<i className="icon icon-arrow1-top-left"></i>
                       </Link>
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            {/* <div className="top-bar-language tf-cur justify-content-end">
-              <div className="tf-currencies">
-                <select className="image-select center style-default type-currencies">
-                  <option data-thumbnail="images/country/tr.svg">TRY <span>₺ | Turkey</span></option>
-                  <option data-thumbnail="images/country/us.svg">USD <span>$ | United States</span></option>
-                  <option data-thumbnail="images/country/de.svg">EUR <span>€ | Germany</span></option>
-                </select>
-              </div>
+            <div className="top-bar-language tf-cur justify-content-end">
               <div className="tf-languages">
-                <select className="image-select center style-default type-languages">
-                  <option>Türkçe</option>
-                  <option>English</option>
-                  <option>العربية</option>
-                </select>
+                <LanguageSwitcher />
               </div>
-            </div> */}
-            <div className="col-4 d-flex justify-content-end"
+            </div>
+            <div
+              className="col-4 d-flex justify-content-end"
               style={{
                 paddingRight: windowWidth > 1024 ? "10%" : "25px",
-              }}>
+              }}
+            >
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                 <li className="nav-search tf-md-hidden">
                   <button onClick={toggleSearch} className="nav-icon-item">
@@ -291,16 +287,23 @@ export default function Header() {
                             <div className="user-name">
                               {showAdminFeatures
                                 ? "Admin"
-                                : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""
-                                }`}
+                                : `${
+                                    userProfile?.applicationUser?.firstName ||
+                                    "Kullanıcı"
+                                  } ${
+                                    userProfile?.applicationUser?.lastName || ""
+                                  }`}
                             </div>
                           </div>
                         </div>
                         <div className="dropdown-body">
                           {!showAdminFeatures && (
-                            <Link href={PathEnums.PROFILE} className="dropdown-item">
+                            <Link
+                              href={PathEnums.PROFILE}
+                              className="dropdown-item"
+                            >
                               <i className="icon-user"></i>
-                              <span> Profil</span>
+                              <span>  {t("header.profile")}</span>
                             </Link>
                           )}
                           {showCustomerFeatures && (
@@ -310,27 +313,33 @@ export default function Header() {
                                 className="dropdown-item"
                               >
                                 <i className="bx bx-shopping-bag"></i>
-                                <span>Siparişlerim</span>
+                                <span>{t("header.orders")}</span>
                               </Link>
                               <Link
                                 href={`${PathEnums.PROFILE}/addresses`}
                                 className="dropdown-item"
                               >
                                 <i className="icon-map-marker"></i>
-                                <span>Adreslerim</span>
+                                <span>{t("header.adres")}</span>
                               </Link>
                             </>
                           )}
                           {showSellerFeatures && (
-                            <Link href={PathEnums.SELLER_PRODUCTS} className="dropdown-item">
+                            <Link
+                              href={PathEnums.SELLER_PRODUCTS}
+                              className="dropdown-item"
+                            >
                               <i className="bx bx-user-pin"></i>
-                              <span>Ürünleri Yönet</span>
+                              <span>{t("header.manageProducts")}</span>
                             </Link>
                           )}
                           {showAdminFeatures && (
-                            <Link href={PathEnums.ADMIN_DASHBOARD} className="dropdown-item">
+                            <Link
+                              href={PathEnums.ADMIN_DASHBOARD}
+                              className="dropdown-item"
+                            >
                               <i className="icon-cog"></i>
-                              <span>Admin Paneli</span>
+                              <span>{t("header.adminPanel")}</span>
                             </Link>
                           )}
                         </div>
@@ -340,7 +349,7 @@ export default function Header() {
                             onClick={handleLogout}
                           >
                             <i className="icon-sign-out"></i>
-                            <span>Çıkış Yap</span>
+                            <span>{t("header.logOut")}</span>
                           </button>
                         </div>
                       </div>
@@ -356,21 +365,33 @@ export default function Header() {
                 </li>
                 <li className="nav-wishlist tf-md-hidden">
                   <button
-                    className={`nav-icon-item ${totalFavorites > 0 ? 'has-favorites' : ''}`}
+                    className={`nav-icon-item ${
+                      totalFavorites > 0 ? "has-favorites" : ""
+                    }`}
                     onClick={() => router.push("/favorites")}
-                    style={{ marginTop: '3px' }}
+                    style={{ marginTop: "3px" }}
                   >
                     {totalFavorites > 0 ? (
                       // Dolu kalp SVG - büyük ve geniş
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#000000ff" >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="#000000ff"
+                      >
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                       </svg>
                     ) : (
                       // Boş kalp icon - normal boyutta
-                      <i className="icon icon-heart" style={{ fontSize: '17px' }}></i>
+                      <i
+                        className="icon icon-heart"
+                        style={{ fontSize: "17px" }}
+                      ></i>
                     )}
                     {totalFavorites > 0 && (
-                      <span className="count-box" style={{ marginTop: '2px' }}>{totalFavorites}</span>
+                      <span className="count-box" style={{ marginTop: "2px" }}>
+                        {totalFavorites}
+                      </span>
                     )}
                   </button>
                 </li>
@@ -409,14 +430,12 @@ export default function Header() {
       {/* /Top Bar */}
 
       {/* Header */}
-      <header id="header" className="header-default" >
+      <header id="header" className="header-default">
         <div className="px_15 lg-px_40">
           <div className="row wrapper-header align-items-center">
-
             <div className="tf-md-hidden align-items-center ">
-              <nav className="box-navigation text-center" >
-                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30" >
-                  
+              <nav className="box-navigation text-center">
+                <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
                   {categories?.items?.length &&
                     categories.items
                       .slice()
@@ -427,12 +446,10 @@ export default function Header() {
                           className="menu-item"
                           onMouseEnter={() => setHoveredCategoryId(category.id)}
                           onMouseLeave={() => setHoveredCategoryId("")}
-
                         >
                           <Link
                             href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
                             className="item-link"
-
                           >
                             {category.name}
                             <i className="icon icon-arrow-down"></i>
@@ -496,13 +513,14 @@ export default function Header() {
                             )}
                         </li>
                       ))}
-                  <li className="menu-item"
+                  <li
+                    className="menu-item"
                     onMouseEnter={() => setSustainabilityDropdownOpen(true)}
                     onMouseLeave={() => setSustainabilityDropdownOpen(false)}
-                    style={{ position: 'relative' }}
+                    style={{ position: "relative" }}
                   >
                     <Link href={PathEnums.SUSTAINABILITY} className="item-link">
-                      İÇERİK
+                      {t("header.content")}
                       <i className="icon icon-arrow-down"></i>
                     </Link>
 
@@ -580,7 +598,6 @@ export default function Header() {
             </div>
           </div>
         </div>
-
       </header>
       {/* /Header */}
       {/* Mobil Menü */}

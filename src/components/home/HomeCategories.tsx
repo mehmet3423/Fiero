@@ -3,8 +3,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { SORT_OPTIONS } from "@/constants/enums/SortOptions";
 
-const HomeCategories: React.FC = () => {
-  const categories = [
+interface HomeCategoriesProps {
+  categories?: {
+    id: number | string;
+    title: string;
+    img: string;
+    link: string;
+    sortBy?: string;
+    sale?: string;
+  }[];
+}
+
+const HomeCategories: React.FC<HomeCategoriesProps> = ({ categories }) => {
+  // Fallback data
+  const fallbackCategories = [
     {
       title: "New Arrivals",
       img: "/assets/site/images/collections/collection-circle-8.jpg",
@@ -50,6 +62,9 @@ const HomeCategories: React.FC = () => {
     },
   ];
 
+  const categoryData =
+    categories && categories.length > 0 ? categories : fallbackCategories;
+
   return (
     <section className="flat-spacing-20">
       <div className="container">
@@ -57,7 +72,7 @@ const HomeCategories: React.FC = () => {
           <div className="col-12">
             <div className="tf-categories-wrap">
               <div className="tf-categories-container">
-                {categories.map((category, index) => (
+                {categoryData.map((category, index) => (
                   <div key={index} className="collection-item-circle hover-img">
                     {category.sale ? (
                       <div className="has-saleoff-wrap position-relative">
