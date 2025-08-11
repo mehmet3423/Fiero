@@ -5,6 +5,7 @@ import { FavoritesProvider } from "@/context/FavoritesContext";
 import { SearchProvider } from "@/context/SearchContext";
 import AdminGuard from "@/guards/AdminGuard";
 import AuthGuard from "@/guards/AuthGuard";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
@@ -120,41 +121,43 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SearchProvider>
-          <Toaster
-            position="top-right"
-            reverseOrder={false}
-            toastOptions={{
-              error: {
-                duration: 3000,
-                style: {
-                  background: "#f44336",
-                  color: "#fff",
+      <LanguageProvider>
+        <AuthProvider>
+          <SearchProvider>
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                error: {
+                  duration: 3000,
+                  style: {
+                    background: "#f44336",
+                    color: "#fff",
+                  },
                 },
-              },
-              success: {
-                duration: 3000,
-                style: {
-                  background: "#4CAF50",
-                  color: "#fff",
+                success: {
+                  duration: 3000,
+                  style: {
+                    background: "#4CAF50",
+                    color: "#fff",
+                  },
                 },
-              },
-            }}
-          />
-          <AuthGuard>
-            <AdminGuard>
-              <FavoritesProvider>
-                <CartProvider>
-                  <RootLayout>
-                    <Component {...pageProps} />
-                  </RootLayout>
-                </CartProvider>
-              </FavoritesProvider>
-            </AdminGuard>
-          </AuthGuard>
-        </SearchProvider>
-      </AuthProvider>
+              }}
+            />
+            <AuthGuard>
+              <AdminGuard>
+                <FavoritesProvider>
+                  <CartProvider>
+                    <RootLayout>
+                      <Component {...pageProps} />
+                    </RootLayout>
+                  </CartProvider>
+                </FavoritesProvider>
+              </AdminGuard>
+            </AuthGuard>
+          </SearchProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
