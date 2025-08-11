@@ -162,7 +162,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               if (!isAddingToCart) handleAddToCart();
             }}
           >
-            {isAddingToCart ? "EKLENİYOR..." : "HEMEN EKLE"}
+            {isAddingToCart ? "EKLENİYOR..." : "SEPETE EKLE"}
           </a>
 
           <Link href={`/products/${product.id}`} className="title link">

@@ -239,7 +239,7 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
       <div>
         {/* SEO için gizli H1 başlığı */}
         <h1 style={{ position: "absolute", left: "-9999px", fontSize: "1px" }}>
-          Nors - Kaliteli Ürünler ve Harika Tasarımlar Online Mağazası
+          Mağaza - Kaliteli Ürünler ve Harika Tasarımlar Online Mağazası
         </h1>
 
         <div className="home-section home-section--categories">
@@ -296,16 +296,11 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
           </div>
 
           <div className="home-section home-section--testimonial">
-            <TestimonialSection testimonials={testimonials} />
+            <TestimonialSection />
           </div>
 
-          <div className="home-section home-section--iconboxmodern">
+          <div className="home-section home-section--iconboxmodern my-4">
             <IconBoxModern />
-          </div>
-
-          {/* Brand Carousel Section */}
-          <div className="home-section home-section--brandcarousel">
-            <BrandCarousel />
           </div>
 
           {/* <CustomerReviews />

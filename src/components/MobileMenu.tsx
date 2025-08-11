@@ -3,8 +3,6 @@ import { UserRole } from "@/constants/enums/UserRole";
 import { useSearch } from "@/context/SearchContext";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useCategories } from "@/hooks/services/categories/useCategories";
-import { useSubCategories } from "@/hooks/services/categories/useSubCategories";
-import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
 import { useSubCategoriesLookUp } from "@/hooks/services/categories/useSubCategoriesLookUp";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Link from "next/link";
@@ -29,9 +27,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const { searchTerm, setSearchTerm } = useSearch();
   const [localSearchTerm, setLocalSearchTerm] = useState("");
 
-  // Kategori verisi (ana)
-  const { categories: mainCategories } = useMainCategoriesLookUp();
-
   // Alt kategori verisi
   const { categories: subCategories = [] } = useSubCategoriesLookUp(
     expandedCategoryId || ""
@@ -43,11 +38,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const showAdminFeatures = userRole === UserRole.ADMIN;
 
   const handleCategoryClick = (categoryId: string) => {
-    if (expandedCategoryId === categoryId) {
-      setExpandedCategoryId(null);
-    } else {
-      setExpandedCategoryId(categoryId);
-    }
+    setExpandedCategoryId((prevId) => (prevId === categoryId ? null : categoryId));
   };
 
   const handleLinkClick = (path: string) => {
@@ -81,28 +72,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         <div className="mb-canvas-content">
           <div className="mb-body">
             <ul className="nav-ul-mb" id="wrapper-menu-navigation">
-              {/* Anasayfa */}
-              <li className="nav-mb-item first-item" >
-                <a
-                  href="#"
-                  className={`mb-menu-link ${router.pathname === PathEnums.HAFSANUR_DESA ? "current" : ""
-                    }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(PathEnums.HAFSANUR_DESA);
-                  }}
-                >
-                  <span>HAFSANUR X DESA</span>
-                </a>
-              </li>
-
-              {/* Kategoriler */}
               {categories?.items?.length &&
                 categories.items.map((category) => (
                   <li key={category.id} className="nav-mb-item">
                     <a
                       href={`#dropdown-menu-${category.id}`}
-                      className={`collapsed mb-menu-link ${router.query.categoryId === category.id ? "current" : ""
+                      className={`collapsed mb-menu-link ${expandedCategoryId === category.id ? "current" : ""
                         }`}
                       data-bs-toggle="collapse"
                       aria-expanded={expandedCategoryId === category.id}
@@ -148,22 +123,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   </li>
                 ))}
 
-              {/* Outlet */}
-              <li className="nav-mb-item">
-                <a
-                  href="#"
-                  className={`mb-menu-link ${router.query.categoryId === "outlet" ? "current" : ""
-                    }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick(`${PathEnums.SUSTAINABILITY}?categoryId=outlet`);
-                  }}
-                >
-                  <span>SÜRDÜRÜLEBİLİRLİK</span>
-                </a>
-              </li>
-
-              {/* Satıcı Özellikleri */}
               {showSellerFeatures && (
                 <li className="nav-mb-item">
                   <a
@@ -182,7 +141,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 </li>
               )}
 
-              {/* Admin Özellikleri */}
               {showAdminFeatures && (
                 <li className="nav-mb-item">
                   <a
@@ -217,7 +175,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   className="site-nav-icon"
                   onClick={(e) => {
                     e.preventDefault();
-                    // Arama modalını aç
                   }}
                 >
                   <i className="icon icon-search"></i>Ara
@@ -265,9 +222,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
     </>
-
   );
-
 };
 
 export default MobileMenu;

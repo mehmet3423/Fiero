@@ -97,102 +97,42 @@ const ReviewForm = ({
   };
 
   return (
-    <form
-      className="review-form"
-      style={{
-        backgroundColor: "#f8f9fa",
-        padding: "2rem",
-        borderRadius: "8px",
-        marginTop: "2rem",
-        border: "1px solid #dee2e6",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-      }}
-      onSubmit={handleSubmit}
-    >
-      <h3
-        style={{
-          color: "#333",
-          marginBottom: "1.5rem",
-          fontSize: "1.5rem",
-          fontWeight: "600",
-        }}
-      >
-        Yorum Yap
-      </h3>
-      <div style={{ marginBottom: "1rem" }}>
-        <label
-          htmlFor="title"
-          style={{
-            display: "block",
-            marginBottom: "0.5rem",
-            color: "#333",
-            fontWeight: "500",
-          }}
-        >
-          Başlık
-        </label>
+    <form onSubmit={handleSubmit} className="review-form">
+      <div className="form-group mb-3">
+        <label>Başlık</label>
         <input
           type="text"
-          id="title"
+          className="form-control"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Yorum başlığı girin"
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            border: "1px solid #ced4da",
-            borderRadius: "4px",
-            fontSize: "1rem",
-          }}
           required
+          style={{
+            outline: "none",
+            boxShadow: "none",
+            border: "1px solid #ced4da",
+          }}
         />
       </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label
-          htmlFor="content"
-          style={{
-            display: "block",
-            marginBottom: "0.5rem",
-            color: "#333",
-            fontWeight: "500",
-          }}
-        >
-          Yorum
-        </label>
+      <div className="form-group mb-3">
+        <label>Yorum</label>
         <textarea
-          id="content"
+          className="form-control"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Yorumunuzu yazın"
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            border: "1px solid #ced4da",
-            borderRadius: "4px",
-            fontSize: "1rem",
-            minHeight: "120px",
-            resize: "vertical",
-          }}
           required
-        />
-      </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label
-          htmlFor="rating"
           style={{
-            display: "block",
-            marginBottom: "0.5rem",
-            color: "#333",
-            fontWeight: "500",
+            outline: "none",
+            boxShadow: "none",
+            border: "1px solid #ced4da",
           }}
-        >
-          Puan
-        </label>
-        <div className="rating-stars">
+        ></textarea>
+      </div>
+      <div className="form-group mb-3">
+        <label>Puan</label>
+        <div>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
               key={star}
-              className={`star ${star <= rating ? "active" : ""}`}
               onClick={() => handleRatingChange(star)}
               style={{
                 cursor: "pointer",
@@ -206,39 +146,16 @@ const ReviewForm = ({
           ))}
         </div>
       </div>
-      <div style={{ marginBottom: "1rem" }}>
-        <label
-          htmlFor="imageFile"
-          style={{
-            display: "block",
-            marginBottom: "0.5rem",
-            color: "#333",
-            fontWeight: "500",
-          }}
-        >
-          Fotoğraf Yükle (Opsiyonel)
-        </label>
+      <div className="form-group mb-3">
+        <label>Fotoğraf (opsiyonel)</label>
         <input
           type="file"
-          id="imageFile"
           accept="image/*"
           onChange={handleImageSelect}
           ref={fileInputRef}
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            border: "1px solid #ced4da",
-            borderRadius: "4px",
-          }}
         />
         {imagePreview && (
-          <div
-            style={{
-              position: "relative",
-              marginTop: "1rem",
-              display: "inline-block",
-            }}
-          >
+          <div style={{ marginTop: "10px" }}>
             <Image
               width={200}
               height={150}
@@ -249,7 +166,6 @@ const ReviewForm = ({
                 height: "150px",
                 objectFit: "cover",
                 borderRadius: "4px",
-                border: "1px solid #dee2e6",
               }}
             />
             <button
@@ -285,48 +201,15 @@ const ReviewForm = ({
           </div>
         )}
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "1.5rem",
-        }}
-      >
-        {userRole === UserRole.CUSTOMER ? (
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#000",
-              color: "white",
-              border: "none",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              cursor: "pointer",
-              fontWeight: "500",
-              transition: "background-color 0.3s",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#333")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#000")
-            }
-          >
-            Gönder
-          </button>
-        ) : (
-          <p
-            style={{
-              color: "red",
-              margin: 0,
-              fontSize: "0.9rem",
-            }}
-          >
-            Yorum yapabilmek için kaydolmanız gerekmektedir.
-          </p>
-        )}
-      </div>
+      {userRole === UserRole.CUSTOMER ? (
+        <button type="submit" className="btn btn-dark">
+          Gönder
+        </button>
+      ) : (
+        <p style={{ color: "red" }}>
+          Yorum yapabilmek için kaydolmanız gerekmektedir.
+        </p>
+      )}
     </form>
   );
 };

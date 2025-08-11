@@ -10,7 +10,7 @@ import AffiliatePaymentsPage from "./payment";
 function AffiliatePage() {
   const [activeTab, setActiveTab] = useState<
     "status" | "collections" | "payment"
-  >("collections");
+  >("status");
 
   const {
     affiliateUser,
@@ -46,6 +46,21 @@ function AffiliatePage() {
       <div className="card mb-4">
         <div className="card-body p-0">
           <nav className="nav nav-tabs" style={{ borderBottom: "none" }}>
+            <button
+              className={`nav-link ${activeTab === "status" ? "active" : ""}`}
+              onClick={() => setActiveTab("status")}
+              data-tab="status"
+              style={{
+                border: "none",
+                borderRadius: "0",
+                padding: "1rem 2rem",
+                fontSize: "1.5rem",
+                fontWeight: "500",
+              }}
+            >
+              <i className="bx bx-user-check me-2"></i>
+              Affiliate Durumum
+            </button>
             {affiliateUser.status === AffiliateStatus.Approved && (
               <button
                 className={`nav-link ${
@@ -78,22 +93,6 @@ function AffiliatePage() {
             >
               <i className="bx bx-credit-card me-2"></i>
               Ödeme Bilgilerim
-            </button>
-
-            <button
-              className={`nav-link ${activeTab === "status" ? "active" : ""}`}
-              onClick={() => setActiveTab("status")}
-              data-tab="status"
-              style={{
-                border: "none",
-                borderRadius: "0",
-                padding: "1rem 2rem",
-                fontSize: "1.5rem",
-                fontWeight: "500",
-              }}
-            >
-              <i className="bx bx-user-check me-2"></i>
-              Affiliate Durumum
             </button>
           </nav>
         </div>

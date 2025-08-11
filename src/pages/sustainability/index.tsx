@@ -12,8 +12,8 @@ function Sustainability() {
                     <div className="banner-wrapper" style={{ minWidth: "100vw", }}>
                         <img
                             className="lazyload w-100"
-                            src="/assets/site/images/sustainability/index/desa-ile-yarina-deger.jpg"
-                            data-src="/assets/site/images/sustainability/index/desa-ile-yarina-deger.jpg"
+                            src="/assets/site/images/collections/collection-70.jpg"
+                            data-src="/assets/site/images/collections/collection-70.jpg"
                             alt="image-collection"
                             style={{
                                 width: "100%",
@@ -37,19 +37,15 @@ function Sustainability() {
                             <div className="tf-image-wrap">
                                 <img
                                     className="lazyload w-100"
-                                    data-src="/assets/site/images/sustainability/index/filizlenmis-toprak.jpg"
-                                    src="/assets/site/images/sustainability/index/filizlenmis-toprak.jpg"
+                                    data-src="/assets/site/images/collections/collection-69.jpg"
+                                    src="/assets/site/images/collections/collection-69.jpg"
                                     alt="collection-img"
                                 />
                             </div>
                             <div className="tf-content-wrap px-0 d-flex justify-content-center align-items-center w-100" style={{ minHeight: "400px" }}>
                                 <div className="text-center w-100">
                                     <div className="text fs-5">
-                                        Her adımda, her kararda geleceği düşünerek ilerliyoruz. Doğayı koruyor, kaynakları
-                                        özenle kullanıyoruz. Sürdürülebilir üretim ve çevreye saygıyla, yarına değer katıyoruz.
-                                        Çünkü yarının değeri, bugünde başlar.<br /><br />
-                                        DESA ile doğayı ve geleceği koruyarak, yarına umut bırakıyoruz.<br /><br />
-                                        <br></br><b>#desaileyarınadeğer</b>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +63,7 @@ function Sustainability() {
                         <div className="row" style={{ columnGap: '0px', rowGap: '3.5rem' }}>
                             {sustainabilityCollections.map((col) => (
                                 <div key={col.key} className="col-lg-4 col-md-6 col-sm-6 col-12 d-flex justify-content-center align-items-center">
-                                    <Link href={`/sustainability/${col.slug}`} passHref>
+                                    <Link href="/">
                                         <div
                                             className="position-relative overflow-hidden rounded my-0"
                                             style={{
@@ -119,10 +115,7 @@ function Sustainability() {
                             <div className="tf-content-wrap col-xl-8 px-0 d-flex align-items-center w-100" style={{ minHeight: "400px" }}>
                                 <div className="text-end w-100">
                                     <div className="text fs-5">
-                                        <b>Türkiyenin Altın Dereceli Markasını #farket</b><br />
-                                        Uluslararası deri üretici markalarını denetleyen Leather Working Group'un denetimleri sonucunda; çevre koruma,
-                                        sürdürülebilirlik politikaları, üretim kalitesi ve güvenlik uygulamaları konularında Desa, en yüksek derece olan
-                                        "Altın Derece"nin sahibi oldu.
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                     </div>
                                 </div>
                             </div>
@@ -130,8 +123,8 @@ function Sustainability() {
                                 <div className="tf-image-wrap col-xl-2 d-flex justify-content-center align-items-center" style={{ maxHeight: "200px", width: "200px", }}>
                                     <img
                                         className="lazyload w-100"
-                                        data-src="/assets/site/images/sustainability/index/leather-working-group.png"
-                                        src="/assets/site/images/sustainability/index/leather-working-group.png"
+                                        data-src="/assets/site/images/collections/gallery-image-1.jpg"
+                                        src="/assets/site/images/collections/gallery-image-1.jpg"
                                         alt="collection-img"
                                         width="200px"
                                         height="200px"
@@ -141,27 +134,7 @@ function Sustainability() {
                         </div>
                     </div>
                 </section>
-                <div className="container mt-4 align-items-center d-flex justify-content-center">
-                        <a
-                            href="/mevzu-derin"                            
-                        >
-                            <img
-                                src="/assets/site/images/sustainability/index/mevzu-derin.jpg"
-                                data-src="/assets/site/images/sustainability/index/mevzu-derin.jpg"
-                                alt="collection-img"
-                            />
-                        </a>                    
-                </div>
-                <div className="container mt-4">
-                    <div className="tf-image-wrap">
-                        <img
-                            className="lazyload w-100"
-                            data-src="/assets/site/images/sustainability/index/kuresel-amaclar.jpg"
-                            src="/assets/site/images/sustainability/index/kuresel-amaclar.jpg"
-                            alt="collection-img"
-                        />
-                    </div>
-                </div>
+                
                 {/* Text section */}
                 <section className="flat-image-text-section w-100">
                     <div className="container w-100 d-flex justify-content-center">
@@ -170,8 +143,8 @@ function Sustainability() {
                                 <div className="tf-image-wrap col-xl-2 d-flex justify-content-center align-items-center" style={{ maxHeight: "200px", width: "200px", }}>
                                     <img
                                         className="lazyload w-100"
-                                        data-src="/assets/site/images/sustainability/index/higg-logo.jpg"
-                                        src="/assets/site/images/sustainability/index/higg-logo.jpg"
+                                        data-src="/assets/site/images/collections/gallery-image-2.jpg"
+                                        src="/assets/site/images/collections/gallery-image-2.jpg"
                                         alt="collection-img"
                                         width="200px"
                                         height="200px"
@@ -181,11 +154,7 @@ function Sustainability() {
                             <div className="tf-content-wrap col-xl-8 px-0 d-flex align-items-center w-100" style={{ minHeight: "400px" }}>
                                 <div className="text-start w-100">
                                     <div className="text fs-5">
-                                        <b>Sürdürülebilirlik Yolculuğunu #farket</b><br />
-                                        Çevresel ve sosyal sürdürülebilirlik değerlendirmemizi; sürdürülebilirlik yolculuğunun her aşamasında markaların,
-                                        tesislerin, bir şirketin veya ürünün sürdürülebilirlik performansını doğru bir şekilde ölçmesini ve puanlamasını
-                                        sağlayan Higg Index FEM(Facility Environmental Module) ve FSLM(Facility Social & Labor Module) modülleri ile
-                                        gerçekleştiriyoruz.
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                                     </div>
                                 </div>
                             </div>

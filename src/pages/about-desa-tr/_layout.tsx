@@ -10,18 +10,16 @@ interface AboutDesaTrLayoutProps {
 function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
   // Slider images array
   const sliderImages = [
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/f027f06a-d7f2-40f3-aff1-ff4d404c7baa.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/35e725f4-a03f-4e7f-8b03-4c9a464510dc.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/f9b42bed-319e-48c3-8fdd-2ae8edf6daee.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/7a02b235-f7b8-4b8e-b49b-17487ca67d02.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/b4c4ccf5-f4a3-4c6e-be1f-b8d0e7c728f5.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/823fda7d-59b5-4fc8-b126-cb289ce94eec.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/249d624d-89e7-4215-9f5a-a3ad5169f4f1.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/e2954d57-53f3-4513-b12a-92875bc7d87b.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2023/03/31/cdcfeed4-fc93-4aaf-81b5-f9aa5c073011.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2025/04/14/1b9b3a10-7aa2-41a4-b9ec-e164cd23df12.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2025/04/14/407a8a18-9d69-4c53-bfe8-c4db07f78dea.jpg",
-    "https://akn-desa.a-cdn.akinoncloud.com/cms/2025/04/14/478298a1-904c-483e-859d-bda6471c7a24.jpg"
+   "/assets/site/images/blog/blog-1.jpg",
+    "/assets/site/images/blog/blog-2.jpg",
+    "/assets/site/images/blog/blog-3.jpg",
+    "/assets/site/images/blog/blog-4.jpg",
+    "/assets/site/images/blog/blog-5.jpg",
+    "/assets/site/images/blog/blog-6.jpg",
+    "/assets/site/images/blog/blog-7.jpg",
+    "/assets/site/images/blog/blog-8.jpg",
+    "/assets/site/images/blog/blog-9.jpg",
+    "/assets/site/images/blog/blog-10.jpg"
 
   ];
 
@@ -77,20 +75,20 @@ function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
   };
 
   const navLinks = [
-    { href: "/about-desa-tr/about", label: "DESA HAKKINDA" },
-    { href: "/about-desa-tr/corporate-governance", label: "KURUMSAL YÖNETİM" },
-    { href: "/about-desa-tr/general-assembly", label: "GENEL KURUL BİLGİLERİ" },
-    { href: "/about-desa-tr/articles-of-association", label: "ANA SÖZLEŞME" },
-    { href: "/about-desa-tr/commercial-info", label: "TİCARİ BİLGİLER" },
-    { href: "/about-desa-tr/financials", label: "FİNANSAL VERİLER" },
-    { href: "/about-desa-tr/annual-reports", label: "FAALİYET RAPORLARI" },
-    { href: "/about-desa-tr/investor-presentations", label: "YATIRIMCI SUNUMLARI" },
-    { href: "https://www.kap.org.tr/tr/sirket-bilgileri/ozet/1389-desa-deri-sanayi-ve-ticaret-a-s", label: "DUYURULAR", external: true },
-    { href: "/about-desa-tr/other-reports", label: "DİĞER RAPORLAR" },
-    { href: "/about-desa-tr/brokerage-reports", label: "ARACI KURUM RAPORLARI" },
-    { href: "/about-desa-tr/press-releases", label: "BASIN BÜLTENLERİ" },
-    { href: "/about-desa-tr/investor-relations-contact", label: "YATIRIMCI İLİŞKİLERİ İLETİŞİM" },
-    { href: "/about-desa/investors", label: "ENG - INVESTOR RELATIONS" },
+    { href: "/about-desa-tr/about", label: "" },
+    { href: "/about-desa-tr/corporate-governance", label: "" },
+    { href: "/about-desa-tr/general-assembly", label: "" },
+    { href: "/about-desa-tr/articles-of-association", label: "" },
+    { href: "/about-desa-tr/commercial-info", label: "" },
+    { href: "/about-desa-tr/financials", label: "" },
+    { href: "/about-desa-tr/annual-reports", label: "" },
+    { href: "/about-desa-tr/investor-presentations", label: "" },
+    { href: "https://www.kap.org.tr/tr/sirket-bilgileri/ozet/1389-desa-deri-sanayi-ve-ticaret-a-s", label: "", external: true },
+    { href: "/about-desa-tr/other-reports", label: "" },
+    { href: "/about-desa-tr/brokerage-reports", label: "" },
+    { href: "/about-desa-tr/press-releases", label: "" },
+    { href: "/about-desa-tr/investor-relations-contact", label: "" },
+    { href: "/about-desa/investors", label: "" },
   ];
 
   return (
@@ -347,7 +345,6 @@ function AboutDesaTrLayout({ children }: AboutDesaTrLayoutProps) {
                 </div>
                 {/* Video iframe */}
                 <div style={{ lineHeight: 1.6, color: '#333', marginBottom: 2 }}>
-                  <iframe width="100%" height="545px" className="ql-video" style={{marginTop:0, marginBottom:2}} frameBorder="0" allowFullScreen src="https://player.vimeo.com/video/876270670?badge=0&autopause=0&quality_selector=1&progress_bar=1&player_id=0&app_id=58479"></iframe>
                 </div>
                 {/* Page content */}
                 <div style={{ lineHeight: 1.6, color: '#333' }}>
