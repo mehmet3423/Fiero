@@ -16,40 +16,78 @@ export interface MainSlideshowSlide {
 }
 
 interface MainSlideshowProps {
-  slides: MainSlideshowSlide[];
+  slides?: MainSlideshowSlide[];
   className?: string;
 }
 
-const MainSlideshow: React.FC<MainSlideshowProps> = ({ slides, className = "" }) => {
+const MainSlideshow: React.FC<MainSlideshowProps> = ({
+  slides,
+  className = "",
+}) => {
+  // Fallback data
+  const fallbackSlides: MainSlideshowSlide[] = [
+    {
+      image: "/assets/site/images/slider/women-slideshow-1.jpg",
+      title: "Elegance",
+      subtitle: "From casual to formal, we've got you covered",
+      buttonText: "Shop collection",
+      buttonLink: "/products",
+    },
+    {
+      image: "/assets/site/images/slider/women-slideshow-2.jpg",
+      title: "Boutique",
+      subtitle: "From casual to formal, we've got you covered",
+      buttonText: "Shop collection",
+      buttonLink: "/products",
+    },
+    {
+      image: "/assets/site/images/slider/women-slideshow-3.jpg",
+      title: "Luxury",
+      subtitle: "From casual to formal, we've got you covered",
+      buttonText: "Shop collection",
+      buttonLink: "/products",
+    },
+  ];
+
+  const slideData = slides && slides.length > 0 ? slides : fallbackSlides;
   return (
-    <div className={`tf-slideshow slider-women slider-effect-fade position-relative ${className}`}>
+    <div
+      className={`tf-slideshow slider-women slider-effect-fade position-relative ${className}`}
+    >
       <Swiper
         modules={[EffectFade, Pagination, Autoplay]}
         effect="fade"
         pagination={{ clickable: true, el: ".sw-pagination-slider" }}
         autoplay={{
-          delay: 4000, 
-          disableOnInteraction: false, 
-          pauseOnMouseEnter: true 
+          delay: 4000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
         }}
         loop={true}
         slidesPerView={1}
         className="swiper tf-sw-slideshow"
       >
-        {slides.map((slide, idx) => (
+        {slideData.map((slide, idx) => (
           <SwiperSlide key={idx}>
             <div className="wrap-slider">
-              <img 
+              <img
                 src={slide.image}
                 alt={slide.title || "Slideshow"}
                 className="lazyload"
               />
               <div className="box-content">
                 <div className="container">
-                  {slide.title && <h1 className="fade-item fade-item-1">{slide.title}</h1>}
-                  {slide.subtitle && <p className="fade-item fade-item-2">{slide.subtitle}</p>}
+                  {slide.title && (
+                    <h1 className="fade-item fade-item-1">{slide.title}</h1>
+                  )}
+                  {slide.subtitle && (
+                    <p className="fade-item fade-item-2">{slide.subtitle}</p>
+                  )}
                   {slide.buttonText && slide.buttonLink && (
-                    <Link href={slide.buttonLink} className="fade-item fade-item-3 tf-btn btn-fill animate-hover-btn btn-xl radius-60">
+                    <Link
+                      href={slide.buttonLink}
+                      className="fade-item fade-item-3 tf-btn btn-fill animate-hover-btn btn-xl radius-60"
+                    >
                       <span>{slide.buttonText}</span>
                       <i className="icon icon-arrow-right"></i>
                     </Link>

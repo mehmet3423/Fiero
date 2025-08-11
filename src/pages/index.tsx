@@ -12,11 +12,8 @@ import {
 import { blogPosts } from "@/data/blogData";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
-import Image from "next/image";
-import Link from "next/link";
+import { SORT_OPTIONS } from "@/constants/enums/SortOptions";
 import React, { useEffect, useState } from "react";
-import BannerGroup from "../components/home/BannerGroup";
-import BlogPosts from "../components/home/BlogPosts";
 import FeaturedProducts from "../components/home/FeaturedProducts";
 import MainSlideshow from "../components/home/MainSlideshow";
 import Newsletter from "../components/home/Newsletter";
@@ -104,6 +101,13 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     isLoading: testimonialContentsLoading,
     refetchContents: refetchTestimonialContents,
   } = useGeneralContents(GeneralContentType.Explore);
+
+  //home categories
+  const {
+    contents: homeCategoriesContentsData,
+    isLoading: homeCategoriesContentsLoading,
+    refetchContents: refetchHomeCategoriesContents,
+  } = useGeneralContents(GeneralContentType.HomeCategories);
 
   //burda contents içindeki showcase bannerleri alıyoruz hepsini alamıyoruz
   useEffect(() => {
@@ -243,34 +247,36 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
         </h1>
 
         <div className="home-section home-section--categories">
-          <HomeCategories />
+          <HomeCategories
+            categories={
+              homeCategoriesContentsData?.items
+                ?.slice()
+                .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+                .map((item: any) => ({
+                  id: item.id,
+                  title: item.title || "",
+                  img: item.imageUrl || "",
+                  link: item.contentUrl || "/products",
+                  sortBy: SORT_OPTIONS.POPULARITY,
+                })) || []
+            }
+          />
         </div>
 
         <div className="home-section home-section--heroslider">
           <MainSlideshow
-            slides={[
-              {
-                image: "/assets/site/images/slider/women-slideshow-1.jpg",
-                title: "Elegance",
-                subtitle: "From casual to formal, we've got you covered",
-                buttonText: "Shop collection",
-                buttonLink: "/products",
-              },
-              {
-                image: "/assets/site/images/slider/women-slideshow-2.jpg",
-                title: "Boutique",
-                subtitle: "From casual to formal, we've got you covered",
-                buttonText: "Shop collection",
-                buttonLink: "/products",
-              },
-              {
-                image: "/assets/site/images/slider/women-slideshow-3.jpg",
-                title: "Luxury",
-                subtitle: "From casual to formal, we've got you covered",
-                buttonText: "Shop collection",
-                buttonLink: "/products",
-              },
-            ]}
+            slides={
+              mainSliderContents
+                ?.slice()
+                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                .map((item) => ({
+                  image: item.imageUrl || "",
+                  title: item.title || "",
+                  subtitle: item.content || "",
+                  buttonText: "Shop collection",
+                  buttonLink: item.contentUrl || "/products",
+                })) || []
+            }
           />
         </div>
 
