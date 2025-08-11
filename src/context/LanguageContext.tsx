@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import trCommon from "@/locales/tr/common.json";
 import trAuth from "@/locales/tr/auth.json";
+import trProfile from "@/locales/tr/profile.json";
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
+import enProfile from "@/locales/en/profile.json";
 
 type Language = "tr" | "en";
 
@@ -16,15 +18,36 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
   undefined
 );
 
-// JSON dosyalarından çeviri verilerini birleştir
+// Nested objeleri düzleştiren yardımcı fonksiyon
+function flattenObject(obj: any, prefix = ""): Record<string, string> {
+  const flattened: Record<string, string> = {};
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        Object.assign(flattened, flattenObject(obj[key], newKey));
+      } else {
+        flattened[newKey] = obj[key];
+      }
+    }
+  }
+
+  return flattened;
+}
+
+// JSON dosyalarından çeviri verilerini birleştir ve düzleştir
 const translations = {
   tr: {
-    ...trCommon,
-    ...trAuth,
+    ...flattenObject(trCommon),
+    ...flattenObject(trAuth),
+    ...flattenObject(trProfile),
   },
   en: {
-    ...enCommon,
-    ...enAuth,
+    ...flattenObject(enCommon),
+    ...flattenObject(enAuth),
+    ...flattenObject(enProfile),
   },
 };
 

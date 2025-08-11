@@ -17,8 +17,10 @@ import CartSidebar from "./CartSidebar";
 import SearchSidebar from "./SearchSidebar";
 import AnnouncementSlider from "./home/AnnouncementSlider";
 import LanguageSwitcher from "./shared/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
+  const { t } = useLanguage()
   const router = useRouter();
   const {
     userRole,
@@ -239,9 +241,9 @@ export default function Header() {
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
                     <p className="top-bar-text fw-5">
-                      Bahar İndirimi{" "}
+                      {t("header.springSale")}
                       <Link href="/products" className="tf-btn btn-line">
-                        Şimdi Al<i className="icon icon-arrow1-top-left"></i>
+                        {t("header.shopNow")}<i className="icon icon-arrow1-top-left"></i>
                       </Link>
                     </p>
                   </div>
@@ -301,7 +303,7 @@ export default function Header() {
                               className="dropdown-item"
                             >
                               <i className="icon-user"></i>
-                              <span> Profil</span>
+                              <span>  {t("header.profile")}</span>
                             </Link>
                           )}
                           {showCustomerFeatures && (
@@ -311,14 +313,14 @@ export default function Header() {
                                 className="dropdown-item"
                               >
                                 <i className="bx bx-shopping-bag"></i>
-                                <span>Siparişlerim</span>
+                                <span>{t("header.orders")}</span>
                               </Link>
                               <Link
                                 href={`${PathEnums.PROFILE}/addresses`}
                                 className="dropdown-item"
                               >
                                 <i className="icon-map-marker"></i>
-                                <span>Adreslerim</span>
+                                <span>{t("header.adres")}</span>
                               </Link>
                             </>
                           )}
@@ -328,7 +330,7 @@ export default function Header() {
                               className="dropdown-item"
                             >
                               <i className="bx bx-user-pin"></i>
-                              <span>Ürünleri Yönet</span>
+                              <span>{t("header.manageProducts")}</span>
                             </Link>
                           )}
                           {showAdminFeatures && (
@@ -337,7 +339,7 @@ export default function Header() {
                               className="dropdown-item"
                             >
                               <i className="icon-cog"></i>
-                              <span>Admin Paneli</span>
+                              <span>{t("header.adminPanel")}</span>
                             </Link>
                           )}
                         </div>
@@ -347,7 +349,7 @@ export default function Header() {
                             onClick={handleLogout}
                           >
                             <i className="icon-sign-out"></i>
-                            <span>Çıkış Yap</span>
+                            <span>{t("header.logOut")}</span>
                           </button>
                         </div>
                       </div>
@@ -518,7 +520,7 @@ export default function Header() {
                     style={{ position: "relative" }}
                   >
                     <Link href={PathEnums.SUSTAINABILITY} className="item-link">
-                      İÇERİK
+                      {t("header.content")}
                       <i className="icon icon-arrow-down"></i>
                     </Link>
 

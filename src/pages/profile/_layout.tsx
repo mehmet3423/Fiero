@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import NotFound from "@/pages/404";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProfileLayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
   const { userProfile } = useAuth();
   const router = useRouter();
   const { handleLogout, isPending } = useLogout();
+  const { t } = useLanguage();
 
   if (!userProfile) return <NotFound />;
 
@@ -22,9 +24,9 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
   };
 
   const navLinks = [
-    { href: "/profile", label: "Profilim" },
-    { href: "/profile/orders", label: "Siparişlerim" },
-    { href: "/profile/addresses", label: "Adreslerim" },
+    { href: "/profile", label: t("profile.myAccount") },
+    { href: "/profile/orders", label: t("orders.myOrders") },
+    { href: "/profile/addresses", label: t("myAddresses.myAddress") },
     { href: "/profile/cards", label: "Kartlarım" },
     { href: "/profile/reviews", label: "Yorumlarım" },
     { href: "/shopping-cart", label: "Alışveriş Sepetim" },
@@ -40,7 +42,7 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
       {/* Page Title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Hesabım</div>
+          <div className="heading text-center">{t("profile.myAccount")}</div>
         </div>
       </div>
 

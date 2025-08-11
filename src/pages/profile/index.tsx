@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { withProfileLayout } from "./_layout";
 import { useUpdateUserProfile } from "@/hooks/services/user-profile/useUpdateUserProfile";
 import { useAuth } from "@/hooks/context/useAuth";
+import { useLanguage } from "@/context/LanguageContext"; // Import useLanguage
 
 function ProfilePage() {
   const { userProfile } = useAuth();
   const { updateProfile, isPending } = useUpdateUserProfile();
+  const { t } = useLanguage(); // Initialize useLanguage
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -100,7 +102,7 @@ function ProfilePage() {
     }
   };
 
-  if (!userProfile) return <>Profil bilgileri bulunmamaktadır</>;
+  if (!userProfile) return <>{t("profile.noProfileInfo")}</>;
 
   return (
     <div className="row">
@@ -108,10 +110,10 @@ function ProfilePage() {
       <div className="col-lg-8">
         <div className="card shadow-sm mb-4">
           <div className="card-body">
-            <h5 className="card-title border-bottom pb-3">Profil Bilgilerim</h5>
+            <h5 className="card-title border-bottom pb-3">{t("profile.myProfileInfo")}</h5>
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">Ad</label>
+                <label className="form-label">{t("profile.firstName")}</label>
                 <input
                   type="text"
                   className="form-control shadow-none"
@@ -122,7 +124,7 @@ function ProfilePage() {
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">Soyad</label>
+                <label className="form-label">{t("profile.lastName")}</label>
                 <input
                   type="text"
                   className="form-control shadow-none"
@@ -133,7 +135,7 @@ function ProfilePage() {
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">E-posta</label>
+                <label className="form-label">{t("profile.email")}</label>
                 <input
                   type="email"
                   className="form-control shadow-none"
@@ -144,7 +146,7 @@ function ProfilePage() {
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">Telefon</label>
+                <label className="form-label">{t("profile.phone")}</label>
                 <input
                   type="tel"
                   className="form-control shadow-none"
@@ -155,7 +157,7 @@ function ProfilePage() {
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">Doğum Tarihi</label>
+                <label className="form-label">{t("profile.birthDate")}</label>
                 <input
                   type="date"
                   className="form-control shadow-none"
@@ -166,31 +168,21 @@ function ProfilePage() {
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">Cinsiyet</label>
+                <label className="form-label">{t("profile.gender")}</label>
                 <select
                   className="form-select shadow-none"
                   name="gender"
                   value={formData.gender}
                   disabled={!isEditing}
-                  style={{ 
-                    outline: 'none',
-                    boxShadow: 'none',
-                    border: '1px solid #ced4da'
-                  }}
                   onChange={(e) => {
                     setFormData((prev) => ({
                       ...prev,
                       gender: e.target.value,
                     }));
                   }}
-                  onFocus={(e) => {
-                    e.target.style.outline = 'none';
-                    e.target.style.boxShadow = 'none';
-                    e.target.style.borderColor = '#ced4da';
-                  }}
                 >
-                  <option value="0">Erkek</option>
-                  <option value="1">Kadın</option>
+                  <option value="0">{t("profile.male")}</option>
+                  <option value="1">{t("profile.female")}</option>
                 </select>
               </div>
             </div>
@@ -201,7 +193,7 @@ function ProfilePage() {
                   className="btn btn-dark"
                   onClick={handleEdit}
                 >
-                  Bilgilerimi Güncelle
+                  {t("profile.updateInfo")}
                 </button>
               ) : (
                 <>
@@ -211,14 +203,14 @@ function ProfilePage() {
                     onClick={handleSave}
                     disabled={isPending}
                   >
-                    {isPending ? "Kaydediliyor..." : "Kaydet"}
+                    {isPending ? t("profile.saving") : t("profile.save")}
                   </button>
                   <button
                     type="button"
                     className="btn btn-light"
                     onClick={handleCancel}
                   >
-                    İptal
+                    {t("profile.cancel")}
                   </button>
                 </>
               )}
@@ -231,13 +223,13 @@ function ProfilePage() {
       <div className="col-lg-4">
         <div className="card shadow-sm">
           <div className="card-body">
-            <h5 className="card-title border-bottom pb-3">Bildirim Tercihleri</h5>
+            <h5 className="card-title border-bottom pb-3">{t("profile.notificationPreferences")}</h5>
             <div className="d-flex flex-column gap-3">
               <div className="d-flex justify-content-between align-items-start p-3 border rounded bg-light">
                 <label htmlFor="smsNotification" className="form-check-label">
-                  <h6 className="mb-1">SMS Bildirimleri</h6>
+                  <h6 className="mb-1">{t("profile.smsNotifications")}</h6>
                   <p className="mb-0 text-muted small">
-                    Kampanya ve fırsatlardan SMS ile haberdar olun
+                    {t("profile.smsDescription")}
                   </p>
                 </label>
                 <input
@@ -251,9 +243,9 @@ function ProfilePage() {
               </div>
               <div className="d-flex justify-content-between align-items-start p-3 border rounded bg-light">
                 <label htmlFor="emailNotification" className="form-check-label">
-                  <h6 className="mb-1">E-posta Bildirimleri</h6>
+                  <h6 className="mb-1">{t("profile.emailNotifications")}</h6>
                   <p className="mb-0 text-muted small">
-                    Özel tekliflerden e-posta ile haberdar olun
+                    {t("profile.emailDescription")}
                   </p>
                 </label>
                 <input
