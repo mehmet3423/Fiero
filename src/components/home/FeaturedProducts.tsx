@@ -64,7 +64,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
       <div className="container">
         <div className="flat-title wow fadeInUp" data-wow-delay="0s">
           <span className="title">{productHeader}</span>
-          <p className="sub-title">{t("productsCard.subHeader")}</p>
+          <p className="sub-title">{t("productCard.subHeader")}</p>
         </div>
         <div className="hover-sw-nav hover-sw-3">
           <div className="swiper tf-sw-product-sell wrap-sw-over" data-preview="4" data-tablet="3" data-mobile="2" data-space-lg="30" data-space-md="15" data-pagination="2" data-pagination-md="3" data-pagination-lg="3">
