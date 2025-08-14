@@ -16,8 +16,10 @@ import {
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const useUpdateProductBasedCollection = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
     const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -32,11 +34,11 @@ export const useUpdateProductBasedCollection = () => {
             },
             {
                 onSuccess: () => {
-                    toast.success("Koleksiyon başarıyla güncellendi");
+                    toast.success(t("updateSuccess"));
                     queryClient.invalidateQueries({ queryKey: [QueryKeys.AFFILIATE_COLLECTION_BY_AFFILIATE_USER_ID] });
                 },
                 onError: (error) => {
-                    toast.error("Koleksiyon güncellenirken bir hata oluştu");
+                    toast.error(t("updateError"));
                     console.log(error.response?.data)
                 }
             }
@@ -51,6 +53,7 @@ export const useUpdateProductBasedCollection = () => {
 
 // Diğer koleksiyon tipleri için de aynı yapıyı kullan:
 export const useUpdateCollectionBasedCollection = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
     const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -66,13 +69,13 @@ export const useUpdateCollectionBasedCollection = () => {
                 },
                 {
                     onSuccess: () => {
-                        toast.success("Koleksiyon başarıyla güncellendi");
+                        toast.success(t("updateSuccess"));
                         queryClient.invalidateQueries({ queryKey: [QueryKeys.AFFILIATE_COLLECTION_BY_AFFILIATE_USER_ID] });
                     },
                 }
             );
         } catch (error) {
-            toast.error("Koleksiyon güncellenirken bir hata oluştu");
+            toast.error(t("updateError"));
         }
     };
 
@@ -83,6 +86,7 @@ export const useUpdateCollectionBasedCollection = () => {
 };
 
 export const useUpdateCombinationBasedCollection = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
     const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -98,13 +102,13 @@ export const useUpdateCombinationBasedCollection = () => {
                 },
                 {
                     onSuccess: () => {
-                        toast.success("Koleksiyon başarıyla güncellendi");
+                        toast.success(t("updateSuccess"));
                         queryClient.invalidateQueries({ queryKey: [QueryKeys.AFFILIATE_COLLECTION_BY_AFFILIATE_USER_ID] });
                     },
                 }
             );
         } catch (error) {
-            toast.error("Koleksiyon güncellenirken bir hata oluştu");
+            toast.error(t("updateError"));
         }
     };
 
@@ -115,6 +119,7 @@ export const useUpdateCombinationBasedCollection = () => {
 };
 
 export const useUpdateCategoryBasedCollection = () => {
+    const { t } = useLanguage();
     const queryClient = useQueryClient();
     const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -129,11 +134,11 @@ export const useUpdateCategoryBasedCollection = () => {
             },
             {
                 onSuccess: () => {
-                    toast.success("Koleksiyon başarıyla güncellendi");
+                    toast.success(t("updateSuccess"));
                     queryClient.invalidateQueries({ queryKey: [QueryKeys.AFFILIATE_COLLECTION_BY_AFFILIATE_USER_ID] });
                 },
                 onError: (error) => {
-                    toast.error("Koleksiyon güncellenirken bir hata oluştu");
+                    toast.error(t("updateError"));
                 }
             }
         );

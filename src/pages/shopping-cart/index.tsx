@@ -8,6 +8,8 @@ import BundleSlider from "@/components/product/BundleSlider";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 function ShoppingCartPage() {
   const {
@@ -22,6 +24,7 @@ function ShoppingCartPage() {
     cargoPrice,
     cargoDiscountedPrice,
   } = useCart();
+  const { t } = useLanguage();
 
   // Bundle discount'ları getir
   const { discounts: bundleDiscounts } = useGetDiscountList({
@@ -44,7 +47,7 @@ function ShoppingCartPage() {
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Alışveriş Sepeti</div>
+          <div className="heading text-center">{t("shoppingCart.pageTitle")}</div>
         </div>
       </div>
       {/* /page-title */}
@@ -53,13 +56,13 @@ function ShoppingCartPage() {
         <div className="container">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <Link href="/">Anasayfa</Link>
+              <Link href="/">{t("home")}</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link href="/products">Ürünler</Link>
+              <Link href="/products">{t("products")}</Link>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
-              Alışveriş Sepeti
+              {t("shoppingCart.breadcrumbShoppingCart")}
             </li>
           </ol>
         </div>
@@ -74,13 +77,12 @@ function ShoppingCartPage() {
               marginBottom: "1.25rem",
             }}
           ></i>
-          <h3 className="mb-3">Sepetiniz boş</h3>
+          <h3 className="mb-3">{t("shoppingCart.emptyCartTitle")}</h3>
           <p className="mb-4">
-            Sepetinizde henüz ürün bulunmamaktadır. Hemen alışverişe
-            başlayabilirsiniz.
+            S{t("shoppingCart.emptyCartMessage")}
           </p>
-          <Link href="/" className="btn btn-primary">
-            <span>ALIŞVERİŞE BAŞLA</span>
+          <Link href="/" className="btn btn-dark">
+            <span>{t("shoppingCart.startShoppingButton")}</span>
             <i className="icon-long-arrow-right ml-2"></i>
           </Link>
         </div>
@@ -112,7 +114,7 @@ function ShoppingCartPage() {
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Alışveriş Sepeti</div>
+          <div className="heading text-center">{t("shoppingCart.pageTitle")}</div>
         </div>
       </div>
       {/* /page-title */}
@@ -121,13 +123,13 @@ function ShoppingCartPage() {
         <div className="container">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <Link href="/">Anasayfa</Link>
+              <Link href="/">{t("home")}</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link href="/products">Mağaza</Link>
+              <Link href="/products">{t("store")}</Link>
             </li>
             <li className="breadcrumb-item active" aria-current="page">
-              Alışveriş Sepeti
+              {t("shoppingCart.breadcrumbShoppingCart")}
             </li>
           </ol>
         </div>
@@ -166,10 +168,10 @@ function ShoppingCartPage() {
                 <table className="tf-table-page-cart">
                   <thead>
                     <tr>
-                      <th>Ürün</th>
-                      <th>Fiyat</th>
-                      <th>Adet</th>
-                      <th>Toplam</th>
+                      <th>{t("product")}</th>
+                      <th>{t("price")}</th>
+                      <th>{t("quantity")}</th>
+                      <th>{t("total")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -178,7 +180,7 @@ function ShoppingCartPage() {
                         (item.price || 0) === (item.discountedPrice || 0)
                           ? Number(item.price || 0) * Number(item.quantity)
                           : Number(item.discountedPrice || 0) *
-                            Number(item.quantity);
+                          Number(item.quantity);
 
                       return (
                         <tr key={item.id} className="tf-cart-item file-delete">
@@ -210,7 +212,7 @@ function ShoppingCartPage() {
                                 {item.title}
                               </Link>
                               <div className="cart-meta-variant">
-                                Adet: {item.quantity}
+                                {t("quantity")}: {item.quantity}
                               </div>
                               <button
                                 onClick={() => removeFromCart(item.id)}
@@ -224,13 +226,13 @@ function ShoppingCartPage() {
                                   cursor: "pointer",
                                 }}
                               >
-                                Kaldır
+                                {t("remove")}
                               </button>
                             </div>
                           </td>
                           <td
                             className="tf-cart-item_price"
-                            data-cart-title="Fiyat"
+                            data-cart-title={t("price")}
                           >
                             <div className="cart-price">
                               {(() => {
@@ -241,7 +243,7 @@ function ShoppingCartPage() {
                                 if (
                                   hasDiscount ||
                                   (item.price || 0) !==
-                                    (item.discountedPrice || 0)
+                                  (item.discountedPrice || 0)
                                 ) {
                                   return (
                                     <div style={{ position: "relative" }}>
@@ -286,7 +288,7 @@ function ShoppingCartPage() {
                           </td>
                           <td
                             className="tf-cart-item_quantity"
-                            data-cart-title="Adet"
+                            data-cart-title={t("quantity")}
                           >
                             <div className="cart-quantity">
                               <div className="wg-quantity">
@@ -362,7 +364,7 @@ function ShoppingCartPage() {
                           </td>
                           <td
                             className="tf-cart-item_total"
-                            data-cart-title="Toplam"
+                            data-cart-title={t("total")}
                           >
                             <div className="cart-total">
                               {(() => {
@@ -373,7 +375,7 @@ function ShoppingCartPage() {
                                 if (
                                   hasDiscount ||
                                   (item.price || 0) !==
-                                    (item.discountedPrice || 0)
+                                  (item.discountedPrice || 0)
                                 ) {
                                   return (
                                     <div style={{ position: "relative" }}>
@@ -457,9 +459,10 @@ function ShoppingCartPage() {
                     </span>
                   </div>
                   <div className="tf-progress-msg">
-                    <span className="price fw-6">75.00 ₺</span> daha alışveriş
-                    yaparak <span className="fw-6">Ücretsiz Kargo</span> keyfini
-                    yaşayın
+                    <span className="price fw-6">75.00 ₺</span>
+                    {t("shoppingCart.freeShippingMessage1")}<span className="fw-6">
+                      {t("shoppingCart.freeShippingMessage2")}</span>
+                    {t("shoppingCart.freeShippingMessage3")}
                   </div>
                 </div>
                 <div className="tf-page-cart-checkout">
@@ -522,29 +525,29 @@ function ShoppingCartPage() {
                       id="cart-gift-checkbox"
                     />
                     <label htmlFor="cart-gift-checkbox" className="fw-4">
-                      <span>Hediye paketi ister misiniz?</span> Sadece{" "}
+                      <span>{t("giftWrap")}</span> {t("giftWrapPrice")}
                       <span className="fw-5">5.00 ₺</span>
                     </label>
                   </div>
                   <div className="tf-cart-totals-discounts">
-                    <h3>Ara Toplam</h3>
+                    <h3>{t("shoppingCart.subtotalLabel")}</h3>
                     <span className="total-value">
                       {normalTotal.toFixed(2)} ₺
                     </span>
                   </div>
                   {cartTotal !== normalTotal && (
                     <div className="tf-cart-totals-discounts">
-                      <h3>Ürün İndirimleri</h3>
+                      <h3>{t("shoppingCart.discountLabel")}</h3>
                       <span className="total-value" style={{ color: "green" }}>
                         -{cartDiscountAmount.toFixed(2)} ₺
                       </span>
                     </div>
                   )}
                   <div className="tf-cart-totals-discounts">
-                    <h3>Kargo</h3>
+                    <h3>{t("shoppingCart.shippingLabel")}</h3>
                     <span className="total-value">
                       {cargoDiscountedPrice &&
-                      cargoPrice !== cargoDiscountedPrice ? (
+                        cargoPrice !== cargoDiscountedPrice ? (
                         <>
                           <span
                             style={{
@@ -565,7 +568,7 @@ function ShoppingCartPage() {
                     </span>
                   </div>
                   <div className="tf-cart-totals-discounts">
-                    <h3>Toplam</h3>
+                    <h3>{t("total")}</h3>
                     <span className="total-value">
                       {normalTotalWithCargo !== finalTotal ? (
                         <>
@@ -590,8 +593,9 @@ function ShoppingCartPage() {
                     </span>
                   </div>
                   <p className="tf-cart-tax">
-                    Vergiler ve <Link href="/shipping-delivery">kargo</Link>{" "}
-                    ödeme sırasında hesaplanır
+                    {t("taxAndShippingNote1")} <Link href="/shipping-delivery">
+                      {t("taxAndShippingNote2")}</Link>{" "}
+                    {t("taxAndShippingNote3")}
                   </p>
                   <div className="cart-checkbox">
                     <input
@@ -600,8 +604,7 @@ function ShoppingCartPage() {
                       id="check-agree"
                     />
                     <label htmlFor="check-agree" className="fw-4">
-                      <Link href="/terms">Şartlar ve koşullar</Link> ile aynı
-                      fikirdeyim
+                      <Link href="/terms">{t("agreeTerms1")}</Link> {t("agreeTerms2")}
                     </label>
                   </div>
                   <div className="cart-checkout-btn">
@@ -609,11 +612,11 @@ function ShoppingCartPage() {
                       href="/checkout"
                       className="tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
                     >
-                      <span>Ödemeye Geç</span>
+                      <span>{t("proceedToCheckout")}</span>
                     </Link>
                   </div>
                   <div className="tf-page-cart_imgtrust">
-                    <p className="text-center fw-6">Güvenli Ödeme Garantisi</p>
+                    <p className="text-center fw-6">{t("securePayment")}</p>
                     <div className="cart-list-social">
                       <div className="payment-item">
                         <svg

@@ -5,8 +5,10 @@ import { UpdateAffiliateCollectionRequest } from "@/constants/models/Affiliate";
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const useUpdateAffiliateCollection = () => {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -22,7 +24,7 @@ export const useUpdateAffiliateCollection = () => {
         },
         {
           onSuccess: () => {
-            toast.success("Koleksiyon başarıyla güncellendi!");
+            toast.success(t("updateSuccess"));
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.AFFILIATE_COLLECTIONS],
             });
@@ -30,7 +32,7 @@ export const useUpdateAffiliateCollection = () => {
           onError: (error: any) => {
             console.error("Collection update error:", error);
             toast.error(
-              "Koleksiyon güncellenirken bir hata oluştu. Lütfen tekrar deneyin."
+              t("updateError")
             );
           },
         }

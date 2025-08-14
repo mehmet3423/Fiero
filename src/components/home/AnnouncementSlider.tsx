@@ -2,14 +2,17 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
-const announcements = [
-  "Tüm ürünlerde %30 indirim!",
-  "5000TL alışverişe Çanta hediye!",
-  "Kargo ücretsiz!",
-];
+
 
 const AnnouncementSlider: React.FC = () => {
+  const { t } = useLanguage();
+  const announcements = [
+    t("announcementSlider.announcements.0"),
+    t("announcementSlider.announcements.1"),
+    t("announcementSlider.announcements.2"),
+  ];
   const [isVisible, setIsVisible] = useState(true);
 
   const closeAnnouncement = () => {
@@ -24,9 +27,11 @@ const AnnouncementSlider: React.FC = () => {
     <>
       <style jsx>{`
         .announcement-bar {
+        position: sticky !important;
+        top: 0;
           height: 30px !important;
           padding: 0 65px 0 0 !important;
-          z-index: 1002 !important;
+          z-index: 1003 !important;
         }
         .announcement-bar-item p {
           padding: 5px 0px !important;

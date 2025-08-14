@@ -2,8 +2,10 @@ import { GeneralSupportRequestType } from "@/constants/enums/GeneralRequestType"
 import { getAllGeneralRequestTypes } from "@/helpers/enum/generalRequestType";
 import { useGeneralSupport } from "@/hooks/services/support/useGeneralSupport";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 function GeneralSupportTicket() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: "",
     requestType: GeneralSupportRequestType.Other,
@@ -39,7 +41,7 @@ function GeneralSupportTicket() {
     <form onSubmit={handleSubmit} className="pt-2">
       <div className="form-group mb-3">
         <label htmlFor="subject" className="form-label">
-          Başlık
+          {t("generalSupportTicket.title")}
         </label>
         <input
           type="text"
@@ -53,7 +55,7 @@ function GeneralSupportTicket() {
 
       <div className="form-group mb-3">
         <label htmlFor="requestType" className="form-label">
-          Talep Türü
+          {t("generalSupportTicket.requestType")}
         </label>
         <select
           className="form-control"
@@ -74,7 +76,7 @@ function GeneralSupportTicket() {
 
       <div className="form-group mb-3">
         <label htmlFor="message" className="form-label">
-          Açıklama
+          {t("generalSupportTicket.description")}
         </label>
         <textarea
           className="form-control"
@@ -90,7 +92,7 @@ function GeneralSupportTicket() {
 
       <div className="form-group mb-4">
         <label htmlFor="attachments" className="form-label">
-          Dosya Ekle
+          {t("generalSupportTicket.addFile")}
         </label>
         <input
           type="file"
@@ -105,7 +107,7 @@ function GeneralSupportTicket() {
       </div>
 
       <button type="submit" className="btn btn-dark" disabled={isPending}>
-        <span>{isPending ? "Gönderiliyor..." : "Gönder"}</span>
+        <span>{isPending ? t("generalSupportTicket.submitting"): t("generalSupportTicket.submitButton")}</span>
         <i className="icon-long-arrow-right"></i>
       </button>
 

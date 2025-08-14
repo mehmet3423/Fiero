@@ -1,0 +1,242 @@
+{
+    "productCard": {
+        "addToFavorites": "Add to Favorites",
+        "removeFromFavorites": "Remove from Favorites",
+        "compare": "Compare",
+        "quickView": "Quick View",
+        "addToCart": "ADD TO CART",
+        "lowerAddCart": "Add to Cart",
+        "addingToCart": "ADDING...",
+        "addToCartError": "An error occurred while adding the product to the cart",
+        "default": "Default",
+        "subHeader": "Beautifully Functional. Purposefully Designed. Consciously Crafted."
+    },
+    "productsPage": {
+        "pageTitle": "New Arrivals",
+        "pageSubtitle": "Discover our latest selection of fashion",
+        "filterButton": "Fılter",
+        "sortBy": "Sort By",
+        "featured": "Featured",
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low",
+        "ratingHighToLow": "Best Rating",
+        "salesHighToLow": "Best Selling",
+        "salesLowToHigh": "Least Selling",
+        "likesHighToLow": "Most Liked",
+        "likesLowToHigh": "Least Liked",
+        "noProductsFoundTitle": "No products found",
+        "noProductsFoundMessage": "No products match your search criteria.",
+        "paginationInfo": "{start}-{end} / {total} products"
+    },
+    "productCategories": {
+        "accessories": "Accessories",
+        "men": "Men",
+        "shoes": "Shoes",
+        "newArrivals": "New Arrivals",
+        "handbag": "Handbags",
+        "women": "Women"
+    },
+    "productFilter": {
+        "filter": "Filter",
+        "productCategories": "Product Categories",
+        "price": "Price",
+        "priceRange": "Price Range",
+        "availability": "Availability",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock",
+        "brand": "Brand",
+        "noCategories": "No Categories",
+        "applyFilters": "Apply Filters",
+        "clearFilters": "Clear Filters"
+    },
+    "quickView": {
+        "bestSeller": "Best Seller",
+        "lastProducts1": "LAST",
+        "lastProducts2": "PRODUCTS",
+        "loadingDescription": "Loading description...",
+        "errorDescription": "Failed to load product description.",
+        "defaultDescription": "Product Description.",
+        "showMore": "Show More",
+        "showLess": "Show Less",
+        "color": "Color",
+        "size": "Size",
+        "sizeChart": "Size Chart",
+        "quantity": "Quantity",
+        "addToCart": "ADD TO CART",
+        "addToFavorites": "ADD TO FAVORITES",
+        "compare": "COMPARE",
+        "buyWith": "Buy Now",
+        "morePaymentOptions": "More Payment Options",
+        "viewDetails": "View All Details",
+        "errors": {
+            "addToCartError": "An error occurred while adding the product to the cart.",
+            "addToFavoritesError": "An error occurred while adding the product to favorites."
+        }
+    },
+    "compareProducts": {
+        "pageTitle": "Compare Products",
+        "loading": "Loading...",
+        "noProducts": "No products to compare.",
+        "remove": "Remove",
+        "quickView": "Quick View",
+        "addToCart": "Add to Cart",
+        "stockStatus": "Stock Status",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock",
+        "seller": "Seller",
+        "errors": {
+            "addToCartError": "An error occurred while adding the product to the cart.",
+            "quickViewError": "An error occurred while loading quick view."
+        }
+    },
+    "productDetail": {
+        "breadcrumb": {
+            "home": "Home",
+            "products": "Products",
+            "currentProduct": "{productTitle}"
+        },
+        "errors": {
+            "productNotFound": "Product not found",
+            "addToCartError": "An error occurred while adding the product to the cart",
+            "favoriteError": "An error occurred during the operation",
+            "reviewUpdatedSuccess": "Review updated successfully!",
+            "reviewAddError": "An error occurred while adding the review",
+            "noProductsFound": "No products found matching your search criteria.",
+            "reviewUpdateError": "An error occurred while updating the review"
+        },
+        "buttons": {
+            "addToCart": "Add to Cart",
+            "addToFavorites": "Add to Favorites",
+            "removeFromFavorites": "Remove from Favorites",
+            "viewGallery": "View Gallery",
+            "expandDescription": "Show More",
+            "collapseDescription": "Show Less"
+        },
+        "tabs": {
+            "reviews": "Reviews",
+            "details": "Details",
+            "relatedProducts": "Related Products"
+        },
+        "ratings": {
+            "averageRating": "Average Rating: {rating}",
+            "noReviews": "No reviews yet"
+        },
+        "bundleDiscount": {
+            "title": "Bundle Discount Products",
+            "noDiscounts": "No bundle discounts available for this product."
+        }
+    },
+    "recentlyViewed": {
+        "title": "Recently Viewed",
+        "buttons": {
+            "quickAdd": "Quick Add",
+            "addToWishlist": "Add to Wishlist",
+            "removeFromWishlist": "Remove from Wishlist",
+            "addToCompare": "Add to Compare",
+            "quickView": "Quick View"
+        },
+        "tooltips": {
+            "quickAdd": "Quick Add",
+            "addToWishlist": "Add to Wishlist",
+            "removeFromWishlist": "Remove from Wishlist",
+            "addToCompare": "Add to Compare",
+            "quickView": "Quick View"
+        },
+        "errors": {
+            "addToCartError": "An error occurred while adding the product to the cart.",
+            "wishlistError": "An error occurred while adding to the wishlist.",
+            "compareError": "An error occurred while adding to compare.",
+            "quickViewError": "An error occurred while opening quick view."
+        }
+    },
+    "peopleAlsoBought": {
+        "title": "People Also Bought"
+    },
+    "accordionSection": {
+        "tabs": {
+            "description": "Description",
+            "review": "Review",
+            "shipping": "Shipping",
+            "return": "Return Policies"
+        },
+        "titles": {
+            "shippingInfo": "Shipping Information",
+            "returnPolicy": "Return Policies",
+            "features": "Features",
+            "materialsCare": "Materials and Care"
+        },
+        "messages": {
+            "loading": "Loading...",
+            "productError": "Failed to fetch product data.",
+            "reviewSubmitSuccess": "Review submitted successfully!",
+            "reviewSubmitError": "An error occurred while submitting the review.",
+            "userInfoError": "Failed to retrieve user information."
+        },
+        "careInstructions": {
+            "machineWash": "Machine wash max. 30ºC. Short spin.",
+            "iron": "Iron maximum 110ºC.",
+            "bleach": "Do not bleach/bleach.",
+            "dryClean": "Do not dry clean.",
+            "tumbleDry": "Tumble dry, medium heat."
+        },
+        "shipping": {
+            "info": "We deliver to all regions of Turkey. For detailed information about delivery options, please visit our Shipping Information page."
+        },
+        "return": {
+            "policy": "You can easily return the products you purchased within the period and conditions specified in our return policies. For details, please visit our Return Policies page."
+        }
+    },
+    "reviewForm": {
+        "labels": {
+            "title": "Title",
+            "comment": "Comment",
+            "rating": "Rating",
+            "photoOptional": "Photo (optional)"
+        },
+        "buttons": {
+            "submit": "Submit",
+            "removePhoto": "Remove Photo"
+        },
+        "messages": {
+            "requiredFields": "Title, content, and rating are required.",
+            "fileTooLarge": "File size is too large (max 10MB).",
+            "unsupportedFileType": "Only JPG, JPEG, and PNG formats are supported.",
+            "uploadError": "Failed to upload image.",
+            "reviewSubmitError": "An error occurred while submitting the review.",
+            "reviewSubmitSuccess": "Review submitted successfully!",
+            "registerToComment": "You need to register to leave a comment."
+        }
+    },
+    "productDetailComponent": {
+        "titles": {
+            "hurryDiscountEnds": "HURRY UP! DISCOUNT ENDS:",
+            "sale": "SALE",
+            "quantity": "Quantity",
+            "day": "Day",
+            "hour": "Hour",
+            "minute": "Minute",
+            "second": "Second",
+            "color": "Color",
+            "size": "Size",
+            "sizeChart": "Size Chart",
+            "currentlyViewing": "people are currently viewing this product"
+        },
+        "buttons": {
+            "addToCart": "Add to Cart",
+            "addingToCart": "Adding...",
+            "outOfStock": "Out of Stock",
+            "addToFavorites": "Add to Favorites",
+            "removeFromFavorites": "Remove from Favorites",
+            "addToCompare": "Add to Compare"
+        },
+        "tooltips": {
+            "addToFavorites": "Add to Favorites",
+            "removeFromFavorites": "Remove from Favorites",
+            "addToCompare": "Add to Compare"
+        },
+        "messages": {
+            "noColorsFound": "No color options found",
+            "noSizesFound": "No size options found"
+        }
+    }
+}

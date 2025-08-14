@@ -1,0 +1,242 @@
+{
+    "productCard": {
+        "addToFavorites": "Favorilere Ekle",
+        "removeFromFavorites": "Favorilerden Çıkar",
+        "compare": "Karşılaştır",
+        "quickView": "Hızlı Görünüm",
+        "addToCart": "SEPETE EKLE",
+        "lowerAddCart": "Sepete Ekle",
+        "addingToCart": "EKLENİYOR...",
+        "addToCartError": "Ürün sepete eklenirken bir hata oluştu",
+        "default": "Varsayılan",
+        "subHeader": "Güzel işlevsel. Amaçlı tasarım. Bilinçli üretim."
+    },
+    "productsPage": {
+        "pageTitle": "Yeni Gelenler",
+        "pageSubtitle": "En son moda seçimlerimizi keşfedin",
+        "filterButton": "Filtrele",
+        "sortBy": "Sırala",
+        "featured": "En Popüler",
+        "priceLowToHigh": "Fiyat: Düşükten Yükseğe",
+        "priceHighToLow": "Fiyat: Yüksekten Düşüğe",
+        "ratingHighToLow": "En İyi Puan",
+        "salesHighToLow": "En Çok Satan",
+        "salesLowToHigh": "En Az Satan",
+        "likesHighToLow": "En Çok Beğenilen",
+        "likesLowToHigh": "En Az Beğenilen",
+        "noProductsFoundTitle": "Ürün bulunamadı",
+        "noProductsFoundMessage": "Arama kriterlerinize uygun ürün bulunmamaktadır.",
+        "paginationInfo": "{start}-{end} / {total} ürün"
+    },
+    "productCategories": {
+        "accessories": "Aksesuarlar",
+        "men": "Erkek",
+        "shoes": "Ayakkabılar",
+        "newArrivals": "Yeni Gelenler",
+        "handbag": "Çantalar",
+        "women": "Kadın"
+    },
+    "productFilter": {
+        "filter": "Filtrele",
+        "productCategories": "Ürün Kategorileri",
+        "price": "Fiyat",
+        "priceRange": "Fiyat Aralığı",
+        "availability": "Stok Durumu",
+        "inStock": "Stokta Var",
+        "outOfStock": "Stokta Yok",
+        "brand": "Marka",
+        "noCategories": "Kategori Yok",
+        "applyFilters": "Filtreleri Uygula",
+        "clearFilters": "Filtreleri Temizle"
+    },
+    "quickView": {
+        "bestSeller": "En Çok Satan",
+        "lastProducts1": "SON",
+        "lastProducts2": "ÜRÜN",
+        "loadingDescription": "Açıklama yükleniyor...",
+        "errorDescription": "Ürün açıklaması yüklenemedi.",
+        "defaultDescription": "Ürün Açıklaması.",
+        "showMore": "Daha Fazla Göster",
+        "showLess": "Daha Az Göster",
+        "color": "Renk",
+        "size": "Beden",
+        "sizeChart": "Beden Tablosu",
+        "quantity": "Adet",
+        "addToCart": "SEPETE EKLE",
+        "addToFavorites": "FAVORİLERE EKLE",
+        "compare": "KARŞILAŞTIR",
+        "buyWith": "ile satın alın",
+        "morePaymentOptions": "Daha Fazla Ödeme Seçeneği",
+        "viewDetails": "Tüm Detayları İncele",
+        "errors": {
+            "addToCartError": "Ürün sepete eklenirken bir hata oluştu.",
+            "addToFavoritesError": "Ürün favorilere eklenirken bir hata oluştu."
+        }
+    },
+    "compareProducts": {
+        "pageTitle": "Ürünleri Karşılaştır",
+        "loading": "Yükleniyor...",
+        "noProducts": "Karşılaştırılacak ürün yok.",
+        "remove": "Kaldır",
+        "quickView": "Hızlı Bakış",
+        "addToCart": "Sepete Ekle",
+        "stockStatus": "Stok Durumu",
+        "inStock": "Stokta var",
+        "outOfStock": "Stokta yok",
+        "seller": "Satıcı",
+        "errors": {
+            "addToCartError": "Ürün sepete eklenirken bir hata oluştu.",
+            "quickViewError": "Hızlı bakış yüklenirken bir hata oluştu."
+        }
+    },
+    "productDetail": {
+        "breadcrumb": {
+            "home": "Ana Sayfa",
+            "products": "Ürünler",
+            "currentProduct": "{productTitle}"
+        },
+        "errors": {
+            "productNotFound": "Ürün bulunamadı",
+            "addToCartError": "Ürün sepete eklenirken bir hata oluştu",
+            "favoriteError": "İşlem sırasında bir hata oluştu",
+            "reviewUpdatedSuccess": "Yorum başarıyla güncellendi!",
+            "reviewAddError": "Yorum eklenirken hata oluştu",
+            "noProductsFound": "Arama kriterlerinize uygun ürün bulunmamaktadır.",
+            "reviewUpdateError": "Yorum güncellenirken hata oluştu"
+        },
+        "buttons": {
+            "addToCart": "Sepete Ekle",
+            "addToFavorites": "Favorilere Ekle",
+            "removeFromFavorites": "Favorilerden Çıkar",
+            "viewGallery": "Galeriye Bak",
+            "expandDescription": "Daha Fazla Göster",
+            "collapseDescription": "Daha Az Göster"
+        },
+        "tabs": {
+            "reviews": "Yorumlar",
+            "details": "Detaylar",
+            "relatedProducts": "Benzer Ürünler"
+        },
+        "ratings": {
+            "averageRating": "Ortalama Puan: {rating}",
+            "noReviews": "Henüz yorum yapılmamış"
+        },
+        "bundleDiscount": {
+            "title": "Paket İndirimli Ürünler",
+            "noDiscounts": "Bu ürün için paket indirimi bulunmamaktadır."
+        }
+    },
+    "recentlyViewed": {
+        "title": "Son Baktıklarınız",
+        "buttons": {
+            "quickAdd": "Hızlı Ekle",
+            "addToWishlist": "Favorilere Ekle",
+            "removeFromWishlist": "Favorilerden Çıkar",
+            "addToCompare": "Karşılaştırmaya Ekle",
+            "quickView": "Hızlı Bakış"
+        },
+        "tooltips": {
+            "quickAdd": "Hızlı Ekle",
+            "addToWishlist": "Favorilere Ekle",
+            "removeFromWishlist": "Favorilerden Çıkar",
+            "addToCompare": "Karşılaştırmaya Ekle",
+            "quickView": "Hızlı Bakış"
+        },
+        "errors": {
+            "addToCartError": "Ürün sepete eklenirken bir hata oluştu.",
+            "wishlistError": "Favorilere eklenirken bir hata oluştu.",
+            "compareError": "Karşılaştırmaya eklenirken bir hata oluştu.",
+            "quickViewError": "Hızlı bakış açılırken bir hata oluştu."
+        }
+    },
+    "peopleAlsoBought": {
+        "title": "Benzer Ürünler"
+    },
+    "accordionSection": {
+        "tabs": {
+            "description": "Açıklama",
+            "review": "Değerlendirme",
+            "shipping": "Kargo",
+            "return": "İade Politikaları"
+        },
+        "titles": {
+            "shippingInfo": "Kargo Bilgileri",
+            "returnPolicy": "İade Politikaları",
+            "features": "Özellikler",
+            "materialsCare": "Malzemeler ve Bakım"
+        },
+        "messages": {
+            "loading": "Yükleniyor...",
+            "productError": "Ürün verisi alınamadı.",
+            "reviewSubmitSuccess": "Yorum başarıyla gönderildi!",
+            "reviewSubmitError": "Yorum gönderilirken bir hata oluştu.",
+            "userInfoError": "Kullanıcı bilgisi alınamadı."
+        },
+        "shipping": {
+            "info": "Türkiye'nin her yerine teslimat yapıyoruz. Teslimat seçenekleri hakkında detaylı bilgi için Kargo Bilgileri sayfamızı ziyaret edebilirsiniz."
+        },
+        "return": {
+            "policy": "Satın aldığınız ürünleri, iade politikalarımız kapsamında belirlenen süre ve koşullarda kolayca iade edebilirsiniz. Detaylar için İade Politikaları sayfamızı ziyaret edebilirsiniz."
+        },
+        "careInstructions": {
+            "machineWash": "Maksimum 30ºC'de makinede yıkayın. Kısa sıkma.",
+            "iron": "Maksimum 110ºC'de ütüleyin.",
+            "bleach": "Ağartıcı kullanmayın.",
+            "dryClean": "Kuru temizleme yapmayın.",
+            "tumbleDry": "Orta sıcaklıkta kurutma makinesinde kurutun."
+        }
+    },
+    "reviewForm": {
+        "labels": {
+            "title": "Başlık",
+            "comment": "Yorum",
+            "rating": "Puan",
+            "photoOptional": "Fotoğraf (opsiyonel)"
+        },
+        "buttons": {
+            "submit": "Gönder",
+            "removePhoto": "Resmi kaldır"
+        },
+        "messages": {
+            "requiredFields": "Başlık, içerik ve puan zorunludur.",
+            "fileTooLarge": "Dosya boyutu çok büyük (max 10MB).",
+            "unsupportedFileType": "Sadece JPG, JPEG ve PNG formatları desteklenir.",
+            "uploadError": "Resim yüklenemedi.",
+            "reviewSubmitError": "Yorum gönderilirken bir hata oluştu.",
+            "reviewSubmitSuccess": "Yorum başarıyla gönderildi!",
+            "registerToComment": "Yorum yapabilmek için kaydolmanız gerekmektedir."
+        }
+    },
+    "productDetailComponent": {
+        "titles": {
+            "hurryDiscountEnds": "ACELE EDİN! İNDİRİM BİTİYOR:",
+            "quantity": "Adet",
+            "sale": "İNDİRİM",
+            "day": "Gün",
+            "hour": "Saat",
+            "minute": "Dakika",
+            "second": "Saniye",
+            "color": "Renk",
+            "size": "Beden",
+            "sizeChart": "Beden Tablosu",
+            "currentlyViewing": "kişi şu anda bu ürünü görüntülüyor"
+        },
+        "buttons": {
+            "addToCart": "Sepete Ekle",
+            "addingToCart": "Ekleniyor...",
+            "outOfStock": "Stokta Yok",
+            "addToFavorites": "Favorilere Ekle",
+            "removeFromFavorites": "Favorilerden Kaldır",
+            "addToCompare": "Karşılaştırmaya Ekle"
+        },
+        "tooltips": {
+            "addToFavorites": "Favorilere Ekle",
+            "removeFromFavorites": "Favorilerden Kaldır",
+            "addToCompare": "Karşılaştırmaya Ekle"
+        },
+        "messages": {
+            "noColorsFound": "Renk seçenekleri bulunamadı",
+            "noSizesFound": "Beden seçenekleri bulunamadı"
+        }
+    }
+}

@@ -6,8 +6,10 @@ import AffiliateStatusPage from "./status";
 import AffiliateCollectionsPage from "./collections";
 import AffiliateApplicationPage from "./application";
 import AffiliatePaymentsPage from "./payment";
+import { useLanguage } from "@/context/LanguageContext";
 
 function AffiliatePage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<
     "status" | "collections" | "payment"
   >("status");
@@ -24,8 +26,9 @@ function AffiliatePage() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border" role="status">
-          <span className="sr-only">Yükleniyor...</span>
+          
         </div>
+        <span className="sr-only">{t("loading")}</span>
       </div>
     );
   }
@@ -59,13 +62,12 @@ function AffiliatePage() {
               }}
             >
               <i className="bx bx-user-check me-2"></i>
-              Affiliate Durumum
+              {t("affiliatePage.statusTab")}
             </button>
             {affiliateUser.status === AffiliateStatus.Approved && (
               <button
-                className={`nav-link ${
-                  activeTab === "collections" ? "active" : ""
-                }`}
+                className={`nav-link ${activeTab === "collections" ? "active" : ""
+                  }`}
                 onClick={() => setActiveTab("collections")}
                 style={{
                   border: "none",
@@ -76,7 +78,7 @@ function AffiliatePage() {
                 }}
               >
                 <i className="bx bx-collection me-2"></i>
-                Koleksiyonlarım
+                {t("affiliatePage.collectionsTab")}
               </button>
             )}
             <button
@@ -92,7 +94,7 @@ function AffiliatePage() {
               }}
             >
               <i className="bx bx-credit-card me-2"></i>
-              Ödeme Bilgilerim
+              {t("affiliatePage.paymentTab")}
             </button>
           </nav>
         </div>

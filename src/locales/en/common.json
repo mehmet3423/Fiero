@@ -132,5 +132,12 @@
     "newsletterDescription": "Sign up for new products, discounts, exclusive content, events, and more!",
     "subscribe": "Subscribe",
     "copyright": "Copyright"
+  },
+  "announcementSlider": {
+    "announcements": [
+      "30% discount on all products!",
+      "Free bag for purchases over 5000TL!",
+      "Free shipping!"
+    ]
   }
 }

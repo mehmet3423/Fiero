@@ -147,7 +147,7 @@ export default function RegisterPage() {
         return;
       }
     }
-    toast.success("Kayıt başarılı!");
+    toast.success(t("register.success.title"));
     // Burada API'ye gönderme işlemini ekleyebilirsin
   };
 
@@ -401,7 +401,7 @@ export default function RegisterPage() {
                       }}
                       required
                     />{" "}
-                    {t("register.terms")}
+                    {t("register.termsAndConditions")}
                   </label>
                   {termsError && (
                     <div className="error-message">

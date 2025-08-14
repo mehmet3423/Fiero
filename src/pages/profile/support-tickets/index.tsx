@@ -6,8 +6,10 @@ import { SupportTicket } from "@/constants/models/SupportTicket";
 import { getAllGeneralRequestTypes } from "@/helpers/enum/generalRequestType";
 import CirclePagination from "@/components/shared/CirclePagination";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 function SupportTicketsPage() {
+  const { t } = useLanguage();
   const { userProfile } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
@@ -43,9 +45,10 @@ function SupportTicketsPage() {
     return (
       <div className="text-center py-5">
         <div className="spinner-border" role="status" style={{ color: "#040404" }}>
-          <span className="sr-only">Yükleniyor...</span>
+          
         </div>
-        <p className="mt-3 text-muted">Destek talepleriniz yükleniyor...</p>
+        <span className="sr-only">{t("loading")}</span>
+        <p className="mt-3 text-muted">{t("loadingTicket")}</p>
       </div>
     );
   }
@@ -56,14 +59,14 @@ function SupportTicketsPage() {
         <div className="d-flex align-items-center">
           <i className="bx bx-error-circle me-2 fs-4"></i>
           <div>
-            <h5 className="mb-1">Hata Oluştu</h5>
-            <p className="mb-2">Destek talepleriniz yüklenirken bir hata oluştu.</p>
+            <h5 className="mb-1">{t("supportTicketsPage.errorTitle")}</h5>
+            <p className="mb-2">{t("supportTicketsPage.errorMessage")}</p>
             <button
               onClick={() => refetch()}
               className="btn btn-outline-danger btn-sm"
             >
               <i className="bx bx-refresh me-1"></i>
-              Tekrar Dene
+              {t("supportTicketsPage.retryButton")}
             </button>
           </div>
         </div>
@@ -101,7 +104,7 @@ function SupportTicketsPage() {
                 color: "#333",
               }}
             >
-              Destek Taleplerim
+              {t("supportTicketsPage.title")}
             </h3>
             <Link
               href="/support-ticket"
@@ -118,7 +121,7 @@ function SupportTicketsPage() {
                 transition: "all 0.3s ease",
               }}
             >
-              Yeni Talep
+              {t("supportTicketsPage.newRequestButton")}
             </Link>
           </div>
 
@@ -139,7 +142,7 @@ function SupportTicketsPage() {
                   marginBottom: "16px",
                 }}
               >
-                Henüz destek talebiniz bulunmuyor.
+                {t("supportTicketsPage.noTicketsMessage")}
               </p>
               <Link
                 href="/support-ticket"
@@ -156,7 +159,7 @@ function SupportTicketsPage() {
                   transition: "all 0.3s ease",
                 }}
               >
-                İlk Destek Talebinizi Oluşturun
+                {t("supportTicketsPage.createFirstTicketButton")}
               </Link>
             </div>
           ) : (
@@ -201,9 +204,9 @@ function SupportTicketsPage() {
                         color: "#555",
                       }}
                     >
-                      <span>Talep ID: #{ticket.id}</span>
-                      <span>Talep Türü: {getRequestTypeLabel(ticket.requestType)}</span>
-                      <span>Oluşturma Tarihi: {formatDate(ticket.createdOnValue)}</span>
+                      <span>{t("supportTicketsPage.ticketId")}: #{ticket.id}</span>
+                      <span>{t("supportTicketsPage.requestType")}: {getRequestTypeLabel(ticket.requestType)}</span>
+                      <span>{t("supportTicketsPage.createdDate")}: {formatDate(ticket.createdOnValue)}</span>
                     </div>
                   </div>
                 </div>

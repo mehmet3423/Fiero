@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/context/useAuth";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 const ReviewForm = ({
   productId,
@@ -11,6 +12,7 @@ const ReviewForm = ({
   productId: string;
   onSubmit: (review: any) => void;
 }) => {
+  const { t } = useLanguage();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
@@ -23,11 +25,11 @@ const ReviewForm = ({
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (file.size > 10000000) {
-        toast.error("Dosya boyutu çok büyük (max 10MB)");
+        toast.error(t("reviewForm.messages.fileTooLarge"));
         return;
       }
       if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-        toast.error("Sadece JPG, JPEG ve PNG formatları desteklenir");
+        toast.error(t("reviewForm.messages.unsupportedFileType"));
         return;
       }
       setSelectedImage(file);
@@ -44,7 +46,7 @@ const ReviewForm = ({
     event.preventDefault();
 
     if (!title || !content || !rating) {
-      toast.error("Başlık, içerik ve puan zorunludur.");
+      toast.error(t("reviewForm.messages.requiredFields"));
       return;
     }
 
@@ -92,14 +94,14 @@ const ReviewForm = ({
       setImagePreview(null);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Yorum gönderilirken bir hata oluştu.");
+      toast.error(t("reviewForm.messages.reviewSubmitError"));
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="review-form">
       <div className="form-group mb-3">
-        <label>Başlık</label>
+        <label>{t("reviewForm.labels.title")}</label>
         <input
           type="text"
           className="form-control"
@@ -114,7 +116,7 @@ const ReviewForm = ({
         />
       </div>
       <div className="form-group mb-3">
-        <label>Yorum</label>
+        <label>{t("reviewForm.labels.comment")}</label>
         <textarea
           className="form-control"
           value={content}
@@ -128,7 +130,7 @@ const ReviewForm = ({
         ></textarea>
       </div>
       <div className="form-group mb-3">
-        <label>Puan</label>
+        <label>{t("reviewForm.labels.rating")}</label>
         <div>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -147,7 +149,7 @@ const ReviewForm = ({
         </div>
       </div>
       <div className="form-group mb-3">
-        <label>Fotoğraf (opsiyonel)</label>
+        <label>{t("reviewForm.labels.photoOptional")}</label>
         <input
           type="file"
           accept="image/*"
@@ -177,7 +179,7 @@ const ReviewForm = ({
                   fileInputRef.current.value = "";
                 }
               }}
-              title="Resmi kaldır"
+              title={t("reviewForm.buttons.removePhoto")}
               style={{
                 position: "absolute",
                 top: "-10px",
@@ -203,11 +205,11 @@ const ReviewForm = ({
       </div>
       {userRole === UserRole.CUSTOMER ? (
         <button type="submit" className="btn btn-dark">
-          Gönder
+          {t("reviewForm.buttons.submit")}
         </button>
       ) : (
         <p style={{ color: "red" }}>
-          Yorum yapabilmek için kaydolmanız gerekmektedir.
+          {t("reviewForm.messages.registerToComment")}
         </p>
       )}
     </form>

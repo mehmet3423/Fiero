@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
+import { useLanguage } from "@/context/LanguageContext";
 
 declare global {
     interface Window {
@@ -48,6 +49,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
     priceRange,
     onPriceRangeChange,
 }) => {
+    const { t } = useLanguage();
     // Lookup hook'u kullanarak kategorileri çekiyoruz
     const { categories: lookupCategories } = useMainCategoriesLookUp();
 
@@ -186,14 +188,14 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                             aria-controls="categories"
                             style={{ cursor: 'pointer' }}
                         >
-                            <span>Product categories</span>
+                            <span>{t("productFilter.productCategories")}</span>
                             <span className={`icon ${openSections.categories ? 'icon-arrow-down' : 'icon-arrow-up'}`}></span>
                         </div>
                         <div id="categories" className={`collapse${openSections.categories ? " show" : ""}`}>
                             <ul className="list-categoris current-scrollbar mb_36">
                                 {categories.length === 0 ? (
                                     <li className="cate-item">
-                                        <span>Kategori Yok</span>
+                                        <span>{t("productFilter.noCategories")}</span>
                                     </li>
                                 ) : (
                                     categories
@@ -265,14 +267,14 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                 aria-controls="price"
                                 style={{ cursor: 'pointer' }}
                             >
-                                <span>Price</span>
+                                <span>{t("productFilter.price")}</span>
                                 <span className={`icon ${openSections.price ? 'icon-arrow-down' : 'icon-arrow-up'}`}></span>
                             </div>
                             <div id="price" className={`collapse${openSections.price ? " show" : ""}`}>
                                 <div className="widget-price">
                                     <div id="slider-range"></div>
                                     <div className="box-title-price">
-                                        <span className="title-price">Price :</span>
+                                        <span className="title-price">{t("productFilter.price")} :</span>
                                         <div className="caption-price">
                                             <div>
                                                 <span>₺</span>
@@ -298,7 +300,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                 aria-controls="availability"
                                 style={{ cursor: 'pointer' }}
                             >
-                                <span>Availability</span>
+                                <span>{t("productFilter.availability")}</span>
                                 <span className={`icon ${openSections.availability ? 'icon-arrow-down' : 'icon-arrow-up'}`}></span>
                             </div>
                             <div id="availability" className={`collapse${openSections.availability ? " show" : ""}`}>
@@ -312,7 +314,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                             onChange={() => handleFilter('availability', 'in-stock')}
                                         />
                                         <label htmlFor="availability-1" className="label">
-                                            <span>In stock</span>&nbsp;<span>(14)</span>
+                                            <span>{t("productFilter.inStock")}</span>&nbsp;<span>(14)</span>
                                         </label>
                                     </li>
                                     <li className="list-item d-flex gap-12 align-items-center">
@@ -324,7 +326,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                             onChange={() => handleFilter('availability', 'out-of-stock')}
                                         />
                                         <label htmlFor="availability-2" className="label">
-                                            <span>Out of stock</span>&nbsp;<span>(2)</span>
+                                            <span>{t("productFilter.outOfStock")}</span>&nbsp;<span>(2)</span>
                                         </label>
                                     </li>
                                 </ul>
@@ -340,7 +342,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                                 aria-controls="brand"
                                 style={{ cursor: 'pointer' }}
                             >
-                                <span>Brand</span>
+                                <span>{t("productFilter.brand")}</span>
                                 <span className={`icon ${openSections.brand ? 'icon-arrow-down' : 'icon-arrow-up'}`}></span>
                             </div>
                             <div id="brand" className={`collapse${openSections.brand ? " show" : ""}`}>

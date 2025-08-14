@@ -7,6 +7,7 @@ import { useUpdateAffiliateCollection } from "@/hooks/services/affiliate/useUpda
 import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface UpdateCollectionModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
   onSuccess,
   collection,
 }) => {
+  const { t } = useLanguage();
   const { updateCollection, isPending } = useUpdateAffiliateCollection();
   const { data: productsData, isLoading: productsLoading } = useGetAllProducts({
     pageSize: 100,
@@ -95,12 +97,12 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      toast.error("Koleksiyon adı gereklidir");
+      toast.error(t("affiliateCollections.validationNameRequired"));
       return;
     }
 
     if (!formData.description.trim()) {
-      toast.error("Koleksiyon açıklaması gereklidir");
+      toast.error(t("affiliateCollections.validationDescriptionRequired"));
       return;
     }
 
@@ -149,10 +151,10 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
   return (
     <GeneralModal
       id="updateCollectionModal"
-      title="Koleksiyonu Güncelle"
+      title={t("affiliateCollections.updateCollectionTitle")}
       showFooter={true}
       approveButtonText={
-        isPending ? "Güncelleniyor..." : "Koleksiyonu Güncelle"
+        isPending ? t("affiliateCollections.updateCollectionLoading") : t("affiliateCollections.updateCollectionApproveButton")
       }
       approveButtonClassName="btn-dark"
       isLoading={isPending}
@@ -163,12 +165,12 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
       <div className="row">
         <div className="col-md-6">
           <label className="form-label">
-            Koleksiyon Adı <span className="text-danger">*</span>
+            {t("affiliateCollections.collectionNameLabel")} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
             className="form-control shadow-none"
-            placeholder="Koleksiyon adını girin"
+            placeholder={t("affiliateCollections.collectionNamePlaceholder")}
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
             maxLength={100}
@@ -178,18 +180,18 @@ const UpdateCollectionModal: React.FC<UpdateCollectionModalProps> = ({
 
       <div className="mb-3">
         <label className="form-label">
-          Açıklama <span className="text-danger">*</span>
+          {t("affiliateCollections.collectionDescriptionLabel")} <span className="text-danger">*</span>
         </label>
         <textarea
           className="form-control shadow-none"
           rows={3}
-          placeholder="Koleksiyon açıklamasını girin"
+          placeholder={t("affiliateCollections.collectionDescriptionPlaceholder")}
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
           maxLength={500}
         />
         <small className="text-muted">
-          {formData.description.length}/500 karakter
+          {formData.description.length}{t("affiliateCollections.characterCount")}
         </small>
       </div>
 

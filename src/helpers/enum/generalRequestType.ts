@@ -1,6 +1,9 @@
 import { GeneralSupportRequestType } from "@/constants/enums/GeneralRequestType";
+import { useLanguage } from "@/context/LanguageContext";
+
 
 export const getGeneralRequestTypeTitle = (type: GeneralSupportRequestType): string => {
+    const { t } = useLanguage();
     switch (type) {
         case GeneralSupportRequestType.Other:
             return "Diğer";
@@ -16,10 +19,11 @@ export const getGeneralRequestTypeTitle = (type: GeneralSupportRequestType): str
 };
 
 export const getAllGeneralRequestTypes = (): { value: GeneralSupportRequestType; title: string }[] => {
+    const { t } = useLanguage();
     return [
-        { value: GeneralSupportRequestType.Other, title: "Diğer" },
-        { value: GeneralSupportRequestType.TechnicalSupport, title: "Teknik Destek" },
-        { value: GeneralSupportRequestType.Feedback, title: "Geri Bildirim" },
-        { value: GeneralSupportRequestType.AccountHelp, title: "Hesap Yardımı" },
+        { value: GeneralSupportRequestType.Other, title: t("generalSupportTicket.other") },
+        { value: GeneralSupportRequestType.TechnicalSupport, title: t("generalSupportTicket.technicalSupport") },
+        { value: GeneralSupportRequestType.Feedback, title: t("generalSupportTicket.feedback") },
+        { value: GeneralSupportRequestType.AccountHelp, title: t("generalSupportTicket.accountHelp") },
     ];
 }; 

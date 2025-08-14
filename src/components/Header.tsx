@@ -199,230 +199,227 @@ export default function Header() {
   return (
     <>
       {/* Top Bar */}
-      <AnnouncementSlider />
-      <div className="tf-top-bar bg_white line py-4 sticky-top">
-        <div className="px_15 lg-px_40">
-          <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
-            <div className="col-4 tf-lg-hidden" style={{ paddingLeft: "25px" }}>
-              <button onClick={toggleMobileMenu} className="nav-icon-item">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="16"
-                  viewBox="0 0 24 16"
-                  fill="none"
-                >
-                  <path
-                    d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-            <div
-              className="col-4 justify-content-center align-items-center mx-4"
-              style={{
-                paddingLeft: windowWidth > 768 ? "10%" : "0",
-              }}
-            >
-              <Link href="/" className="logo-header">
-                LOGO
-              </Link>
-            </div>
-            <div className="col-4 tf-md-hidden text-center overflow-hidden">
+      <div className="tf-top-bar-wrapper">
+        <AnnouncementSlider />
+        <div className="tf-top-bar bg_white line py-4 fixed-top">
+          <div className="px_15 lg-px_40">
+            <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
+              <div className="col-4 tf-lg-hidden" style={{ paddingLeft: "25px" }}>
+                <button onClick={toggleMobileMenu} className="nav-icon-item">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="16"
+                    viewBox="0 0 24 16"
+                    fill="none"
+                  >
+                    <path
+                      d="M2.00056 2.28571H16.8577C17.1608 2.28571 17.4515 2.16531 17.6658 1.95098C17.8802 1.73665 18.0006 1.44596 18.0006 1.14286C18.0006 0.839753 17.8802 0.549063 17.6658 0.334735C17.4515 0.120408 17.1608 0 16.8577 0H2.00056C1.69745 0 1.40676 0.120408 1.19244 0.334735C0.978109 0.549063 0.857702 0.839753 0.857702 1.14286C0.857702 1.44596 0.978109 1.73665 1.19244 1.95098C1.40676 2.16531 1.69745 2.28571 2.00056 2.28571ZM0.857702 8C0.857702 7.6969 0.978109 7.40621 1.19244 7.19188C1.40676 6.97755 1.69745 6.85714 2.00056 6.85714H22.572C22.8751 6.85714 23.1658 6.97755 23.3801 7.19188C23.5944 7.40621 23.7148 7.6969 23.7148 8C23.7148 8.30311 23.5944 8.59379 23.3801 8.80812C23.1658 9.02245 22.8751 9.14286 22.572 9.14286H2.00056C1.69745 9.14286 1.40676 9.02245 1.19244 8.80812C0.978109 8.59379 0.857702 8.30311 0.857702 8ZM0.857702 14.8571C0.857702 14.554 0.978109 14.2633 1.19244 14.049C1.40676 13.8347 1.69745 13.7143 2.00056 13.7143H12.2863C12.5894 13.7143 12.8801 13.8347 13.0944 14.049C13.3087 14.2633 13.4291 14.554 13.4291 14.8571C13.4291 15.1602 13.3087 15.4509 13.0944 15.6653C12.8801 15.8796 12.5894 16 12.2863 16H2.00056C1.69745 16 1.40676 15.8796 1.19244 15.6653C0.978109 15.4509 0.857702 15.1602 0.857702 14.8571Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
               <div
-                className="swiper tf-sw-top_bar"
-                data-preview="1"
-                data-space="0"
-                data-loop="true"
-                data-speed="1000"
-                data-delay="2000"
+                className="col-4 justify-content-center align-items-center mx-4"
+                style={{
+                  paddingLeft: windowWidth > 768 ? "10%" : "0",
+                }}
               >
-                <div className="swiper-wrapper">
-                  <div className="swiper-slide">
-                    <p className="top-bar-text fw-5">
-                      {t("header.springSale")}
-                      <Link href="/products" className="tf-btn btn-line">
-                        {t("header.shopNow")}<i className="icon icon-arrow1-top-left"></i>
-                      </Link>
-                    </p>
+                <Link href="/" className="logo-header">
+                  LOGO
+                </Link>
+              </div>
+              <div className="col-4 tf-md-hidden text-center overflow-hidden">
+                <div
+                  className="swiper tf-sw-top_bar"
+                  data-preview="1"
+                  data-space="0"
+                  data-loop="true"
+                  data-speed="1000"
+                  data-delay="2000"
+                >
+                  <div className="swiper-wrapper">
+                    <div className="swiper-slide">
+                      <p className="top-bar-text fw-5">
+                        {t("header.springSale")}
+                        <Link href="/products" className="tf-btn btn-line">
+                          {t("header.shopNow")}<i className="icon icon-arrow1-top-left"></i>
+                        </Link>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="top-bar-language tf-cur justify-content-end">
-              <div className="tf-languages">
-                <LanguageSwitcher />
-              </div>
-            </div>
-            <div
-              className="col-4 d-flex justify-content-end"
-              style={{
-                paddingRight: windowWidth > 1024 ? "10%" : "25px",
-              }}
-            >
-              <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
-                <li className="nav-search tf-md-hidden">
-                  <button onClick={toggleSearch} className="nav-icon-item">
-                    <i className="icon icon-search"></i>
-                  </button>
-                  <SearchSidebar
-                    isOpen={showSearchInput}
-                    onClose={closeSearch}
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
-                    showResults={showResults}
-                    setShowResults={setShowResults}
-                  />
-                </li>
-                <li className="nav-account">
-                  {userProfile ? (
-                    <div className="dropdown">
-                      <button className="nav-icon-item">
-                        <i className="icon icon-account"></i>
-                      </button>
-                      <div className="dropdown-menu dropdown-menu-end">
-                        <div className="dropdown-header">
-                          <div className="user-info">
-                            <div className="user-name">
-                              {showAdminFeatures
-                                ? "Admin"
-                                : `${
-                                    userProfile?.applicationUser?.firstName ||
-                                    "Kullanıcı"
-                                  } ${
-                                    userProfile?.applicationUser?.lastName || ""
+
+              <div
+                className="col-4 d-flex justify-content-end"
+                style={{
+                  paddingRight: windowWidth > 1024 ? "10%" : "25px",
+                }}
+              >
+
+                <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
+                  <LanguageSwitcher />
+                  <li className="nav-search tf-md-hidden">
+                    <button onClick={toggleSearch} className="nav-icon-item">
+                      <i className="icon icon-search"></i>
+                    </button>
+                    <SearchSidebar
+                      isOpen={showSearchInput}
+                      onClose={closeSearch}
+                      searchTerm={searchTerm}
+                      setSearchTerm={setSearchTerm}
+                      showResults={showResults}
+                      setShowResults={setShowResults}
+                    />
+                  </li>
+                  <li className="nav-account">
+                    {userProfile ? (
+                      <div className="dropdown">
+                        <button className="nav-icon-item">
+                          <i className="icon icon-account"></i>
+                        </button>
+                        <div className="dropdown-menu dropdown-menu-end">
+                          <div className="dropdown-header">
+                            <div className="user-info">
+                              <div className="user-name">
+                                {showAdminFeatures
+                                  ? "Admin"
+                                  : `${userProfile?.applicationUser?.firstName ||
+                                  "Kullanıcı"
+                                  } ${userProfile?.applicationUser?.lastName || ""
                                   }`}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="dropdown-body">
-                          {!showAdminFeatures && (
-                            <Link
-                              href={PathEnums.PROFILE}
-                              className="dropdown-item"
-                            >
-                              <i className="icon-user"></i>
-                              <span>  {t("header.profile")}</span>
-                            </Link>
-                          )}
-                          {showCustomerFeatures && (
-                            <>
+                          <div className="dropdown-body">
+                            {!showAdminFeatures && (
                               <Link
-                                href={`${PathEnums.PROFILE}/orders`}
+                                href={PathEnums.PROFILE}
                                 className="dropdown-item"
                               >
-                                <i className="bx bx-shopping-bag"></i>
-                                <span>{t("header.orders")}</span>
+                                <i className="icon-user"></i>
+                                <span>  {t("header.profile")}</span>
                               </Link>
+                            )}
+                            {showCustomerFeatures && (
+                              <>
+                                <Link
+                                  href={`${PathEnums.PROFILE}/orders`}
+                                  className="dropdown-item"
+                                >
+                                  <i className="bx bx-shopping-bag"></i>
+                                  <span>{t("header.orders")}</span>
+                                </Link>
+                                <Link
+                                  href={`${PathEnums.PROFILE}/addresses`}
+                                  className="dropdown-item"
+                                >
+                                  <i className="icon-map-marker"></i>
+                                  <span>{t("header.adres")}</span>
+                                </Link>
+                              </>
+                            )}
+                            {showSellerFeatures && (
                               <Link
-                                href={`${PathEnums.PROFILE}/addresses`}
+                                href={PathEnums.SELLER_PRODUCTS}
                                 className="dropdown-item"
                               >
-                                <i className="icon-map-marker"></i>
-                                <span>{t("header.adres")}</span>
+                                <i className="bx bx-user-pin"></i>
+                                <span>{t("header.manageProducts")}</span>
                               </Link>
-                            </>
-                          )}
-                          {showSellerFeatures && (
-                            <Link
-                              href={PathEnums.SELLER_PRODUCTS}
-                              className="dropdown-item"
+                            )}
+                            {showAdminFeatures && (
+                              <Link
+                                href={PathEnums.ADMIN_DASHBOARD}
+                                className="dropdown-item"
+                              >
+                                <i className="icon-cog"></i>
+                                <span>{t("header.adminPanel")}</span>
+                              </Link>
+                            )}
+                          </div>
+                          <div className="dropdown-footer">
+                            <button
+                              className="dropdown-item text-danger"
+                              onClick={handleLogout}
                             >
-                              <i className="bx bx-user-pin"></i>
-                              <span>{t("header.manageProducts")}</span>
-                            </Link>
-                          )}
-                          {showAdminFeatures && (
-                            <Link
-                              href={PathEnums.ADMIN_DASHBOARD}
-                              className="dropdown-item"
-                            >
-                              <i className="icon-cog"></i>
-                              <span>{t("header.adminPanel")}</span>
-                            </Link>
-                          )}
-                        </div>
-                        <div className="dropdown-footer">
-                          <button
-                            className="dropdown-item text-danger"
-                            onClick={handleLogout}
-                          >
-                            <i className="icon-sign-out"></i>
-                            <span>{t("header.logOut")}</span>
-                          </button>
+                              <i className="icon-sign-out"></i>
+                              <span>{t("header.logOut")}</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
+                    ) : (
+                      <button
+                        className="nav-icon-item"
+                        onClick={() => router.push("/login")}
+                      >
+                        <i className="icon icon-account"></i>
+                      </button>
+                    )}
+                  </li>
+                  <li className="nav-wishlist tf-md-hidden">
+                    <button
+                      className={`nav-icon-item ${totalFavorites > 0 ? "has-favorites" : ""
+                        }`}
+                      onClick={() => router.push("/favorites")}
+                      style={{ marginTop: "3px" }}
+                    >
+                      {totalFavorites > 0 ? (
+                        // Dolu kalp SVG - büyük ve geniş
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="#000000ff"
+                        >
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                      ) : (
+                        // Boş kalp icon - normal boyutta
+                        <i
+                          className="icon icon-heart"
+                          style={{ fontSize: "17px" }}
+                        ></i>
+                      )}
+                      {totalFavorites > 0 && (
+                        <span className="count-box" style={{ marginTop: "2px" }}>
+                          {totalFavorites}
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                  <li className="nav-cart">
                     <button
                       className="nav-icon-item"
-                      onClick={() => router.push("/login")}
+                      onClick={() => {
+                        console.log(
+                          "Cart button clicked, current state:",
+                          isCartDropdownOpen
+                        );
+                        const newState = !isCartDropdownOpen;
+                        console.log("Setting new state to:", newState);
+                        setIsCartDropdownOpen(newState);
+                      }}
                     >
-                      <i className="icon icon-account"></i>
+                      <i className="icon icon-bag"></i>
+                      {totalItems > 0 && (
+                        <span className="count-box">{totalItems}</span>
+                      )}
                     </button>
-                  )}
-                </li>
-                <li className="nav-wishlist tf-md-hidden">
-                  <button
-                    className={`nav-icon-item ${
-                      totalFavorites > 0 ? "has-favorites" : ""
-                    }`}
-                    onClick={() => router.push("/favorites")}
-                    style={{ marginTop: "3px" }}
-                  >
-                    {totalFavorites > 0 ? (
-                      // Dolu kalp SVG - büyük ve geniş
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="#000000ff"
-                      >
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                      </svg>
-                    ) : (
-                      // Boş kalp icon - normal boyutta
-                      <i
-                        className="icon icon-heart"
-                        style={{ fontSize: "17px" }}
-                      ></i>
-                    )}
-                    {totalFavorites > 0 && (
-                      <span className="count-box" style={{ marginTop: "2px" }}>
-                        {totalFavorites}
-                      </span>
-                    )}
-                  </button>
-                </li>
-                <li className="nav-cart">
-                  <button
-                    className="nav-icon-item"
-                    onClick={() => {
-                      console.log(
-                        "Cart button clicked, current state:",
-                        isCartDropdownOpen
-                      );
-                      const newState = !isCartDropdownOpen;
-                      console.log("Setting new state to:", newState);
-                      setIsCartDropdownOpen(newState);
-                    }}
-                  >
-                    <i className="icon icon-bag"></i>
-                    {totalItems > 0 && (
-                      <span className="count-box">{totalItems}</span>
-                    )}
-                  </button>
 
-                  <CartSidebar
-                    isOpen={isCartDropdownOpen}
-                    onClose={() => {
-                      console.log("CartSidebar onClose called");
-                      setIsCartDropdownOpen(false);
-                    }}
-                  />
-                </li>
-              </ul>
+                    <CartSidebar
+                      isOpen={isCartDropdownOpen}
+                      onClose={() => {
+                        console.log("CartSidebar onClose called");
+                        setIsCartDropdownOpen(false);
+                      }}
+                    />
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -605,9 +602,13 @@ export default function Header() {
         <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
       )}
       <style jsx>{`
+      .tf-top-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
       
-      
-  .tf-top-bar.sticky-top {
+  .tf-top-bar.fixed-top {
     position: relative !important;
     top: 0px;
     left: 0;

@@ -2,9 +2,14 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import trCommon from "@/locales/tr/common.json";
 import trAuth from "@/locales/tr/auth.json";
 import trProfile from "@/locales/tr/profile.json";
+import trNavigation from "@/locales/tr/navigation.json";
+import trProducts from "@/locales/tr/products.json";
+
 import enCommon from "@/locales/en/common.json";
 import enAuth from "@/locales/en/auth.json";
 import enProfile from "@/locales/en/profile.json";
+import enNavigation from "@/locales/en/navigation.json";
+import enProducts from "@/locales/en/products.json";
 
 type Language = "tr" | "en";
 
@@ -43,11 +48,15 @@ const translations = {
     ...flattenObject(trCommon),
     ...flattenObject(trAuth),
     ...flattenObject(trProfile),
+    ...flattenObject(trNavigation),
+    ...flattenObject(trProducts),
   },
   en: {
     ...flattenObject(enCommon),
     ...flattenObject(enAuth),
     ...flattenObject(enProfile),
+    ...flattenObject(enNavigation),
+    ...flattenObject(enProducts),
   },
 };
 

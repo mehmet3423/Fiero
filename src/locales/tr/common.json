@@ -132,5 +132,12 @@
     "newsletterDescription": "Yeni ürünler, indirimler, özel içerikler, etkinlikler ve daha fazlası için kayıt olun!",
     "subscribe": "Abone Ol",
     "copyright": "Copyright"
+  },
+  "announcementSlider": {
+    "announcements": [
+      "Tüm ürünlerde %30 indirim!",
+      "5000TL alışverişe Çanta hediye!",
+      "Kargo ücretsiz!"
+    ]
   }
 }

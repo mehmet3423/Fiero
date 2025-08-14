@@ -4,9 +4,11 @@ import { BASE_URL } from "@/constants/links";
 import { AffiliateCollection } from "@/constants/models/Affiliate";
 import useGetData from "@/hooks/useGetData";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const useGetAffiliateCollectionById = (collectionId: string) => {
   const url = `${BASE_URL}AffiliateCollections/${collectionId}`;
+  const { t } = useLanguage();
 
   const { data, isLoading, error, refetch } = useGetData<AffiliateCollection>({
     url,
@@ -17,7 +19,7 @@ export const useGetAffiliateCollectionById = (collectionId: string) => {
       console.error("Affiliate collection detail error:", err);
       // Check if this might be an inactive collection access attempt
       if (err?.response?.status === 403 || err?.response?.status === 404) {
-        toast.error("Koleksiyon bulunamadı veya erişim yetkiniz bulunmuyor");
+        toast.error(t("affiliateCollections.collectionNotAccessible"));
       }
     },
     onSuccess: (data: AffiliateCollection) => {
