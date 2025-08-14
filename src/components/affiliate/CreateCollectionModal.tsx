@@ -9,6 +9,7 @@ import { useCategories } from "@/hooks/services/categories/useCategories";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateApplicationStatus";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CreateCollectionModalProps {
   isOpen: boolean;
@@ -17,59 +18,7 @@ interface CreateCollectionModalProps {
   affiliateUserId: string;
 }
 
-// Validation Functions
-const validateBasicFields = (name: string, description: string): boolean => {
-  if (!name.trim()) {
-    toast.error("Koleksiyon adı gereklidir");
-    return false;
-  }
-  if (!description.trim()) {
-    toast.error("Koleksiyon açıklaması gereklidir");
-    return false;
-  }
-  return true;
-};
 
-const validateDates = (startDate: string, expirationDate: string): boolean => {
-  if (!startDate) {
-    toast.error("Başlangıç tarihi gereklidir");
-    return false;
-  }
-  if (!expirationDate) {
-    toast.error("Bitiş tarihi gereklidir");
-    return false;
-  }
-  if (new Date(startDate) >= new Date(expirationDate)) {
-    toast.error("Bitiş tarihi başlangıç tarihinden sonra olmalıdır");
-    return false;
-  }
-  return true;
-};
-
-const validateSelections = (
-  type: AffiliateCollectionType,
-  productIds: string[],
-  mainCategoryIds: string[],
-  subCategoryIds: string[]
-): boolean => {
-  switch (type) {
-    case AffiliateCollectionType.Product:
-    case AffiliateCollectionType.Combination:
-    case AffiliateCollectionType.Collection:
-      if (productIds.length === 0) {
-        toast.error("En az bir ürün seçmelisiniz");
-        return false;
-      }
-      break;
-    case AffiliateCollectionType.Category:
-      if (mainCategoryIds.length === 0 && subCategoryIds.length === 0) {
-        toast.error("En az bir kategori seçmelisiniz");
-        return false;
-      }
-      break;
-  }
-  return true;
-};
 
 // Data Factory Functions
 const createCollectionItems = (
@@ -129,7 +78,7 @@ const resetFormState = (
     name: "",
     description: "",
     affiliateUserId: affiliateUserId,
-    url: "https://nors.happencode.com/",
+    url: "https://fiero.happencode.com/",
   });
   setSelectedProductIds([]);
   setSearchTerm("");
@@ -147,6 +96,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   onSuccess,
   affiliateUserId,
 }) => {
+  const { t } = useLanguage();
   const { createCollection, isPending } = useCreateAffiliateCollection();
   const { data: productsData, isLoading: productsLoading } = useGetAllProducts({
     pageSize: 100,
@@ -157,7 +107,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
     name: "",
     description: "",
     affiliateUserId: affiliateUserId,
-    url: "https://nors.happencode.com/",
+    url: "https://fiero.happencode.com/",
   });
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -177,6 +127,62 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   >(new Set());
   const [startDate, setStartDate] = useState<string>("");
   const [expirationDate, setExpirationDate] = useState<string>("");
+  // Validation Functions
+  const validateBasicFields = (name: string, description: string): boolean => {
+    
+    if (!name.trim()) {
+      toast.error(t("affiliateCollections.validationNameRequired"));
+      return false;
+    }
+    if (!description.trim()) {
+      toast.error(t("affiliateCollections.validationDescriptionRequired"));
+      return false;
+    }
+    return true;
+  };
+
+  const validateDates = (startDate: string, expirationDate: string): boolean => {
+    
+    if (!startDate) {
+      toast.error(t("affiliateCollections.validationStartDateRequired"));
+      return false;
+    }
+    if (!expirationDate) {
+      toast.error(t("affiliateCollections.validationEndDateRequired"));
+      return false;
+    }
+    if (new Date(startDate) >= new Date(expirationDate)) {
+      toast.error(t("affiliateCollections.validationEndDateAfterStartDate"));
+      return false;
+    }
+    return true;
+  };
+
+  const validateSelections = (
+    type: AffiliateCollectionType,
+    productIds: string[],
+    mainCategoryIds: string[],
+    subCategoryIds: string[]
+  ): boolean => {
+    const { t } = useLanguage();
+    switch (type) {
+      case AffiliateCollectionType.Product:
+      case AffiliateCollectionType.Combination:
+      case AffiliateCollectionType.Collection:
+        if (productIds.length === 0) {
+          toast.error(t("affiliateCollections.validationAtLeastOneProduct"));
+          return false;
+        }
+        break;
+      case AffiliateCollectionType.Category:
+        if (mainCategoryIds.length === 0 && subCategoryIds.length === 0) {
+          toast.error(t("affiliateCollections.validationAtLeastOneCategory"));
+          return false;
+        }
+        break;
+    }
+    return true;
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -335,9 +341,9 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   return (
     <GeneralModal
       id="createCollectionModal"
-      title="Yeni Koleksiyon Oluştur"
+      title={t("affiliateCollections.createCollectionTitle")}
       showFooter={true}
-      approveButtonText={isPending ? "Oluşturuluyor..." : "Koleksiyon Oluştur"}
+      approveButtonText={isPending ? t("affiliateCollections.createCollectionLoading") : t("affiliateCollections.createCollectionApproveButton")}
       approveButtonClassName="btn-dark"
       isLoading={isPending}
       onApprove={handleSubmit}
@@ -348,7 +354,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
         <div className="col-md-6">
           <div>
             <label className="form-label">
-              Koleksiyon Türü <span className="text-danger">*</span>
+              {t("affiliateCollections.collectionTypeLabel")} <span className="text-danger">*</span>
             </label>
             <select
               className="form-select border border-light shadow-none"
@@ -364,16 +370,16 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
               }
             >
               <option value={AffiliateCollectionType.Product}>
-                Ürün Bazlı
+                {t("affiliateCollections.productBased")}
               </option>
               <option value={AffiliateCollectionType.Collection}>
-                Koleksiyon Bazlı
+                {t("affiliateCollections.collectionBased")}
               </option>
               <option value={AffiliateCollectionType.Combination}>
-                Kombinasyon Bazlı
+                {t("affiliateCollections.combinationBased")}
               </option>
               <option value={AffiliateCollectionType.Category}>
-                Kategori Bazlı
+                {t("affiliateCollections.categoryBased")}
               </option>
             </select>
           </div>
@@ -381,12 +387,12 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
         <div className="col-md-6">
           <div>
             <label className="form-label">
-              Koleksiyon Adı <span className="text-danger">*</span>
+              {t("affiliateCollections.collectionNameLabel")} <span className="text-danger">*</span>
             </label>
             <input
               type="text"
               className="form-control shadow-none border border-light"
-              placeholder="Koleksiyon adını girin"
+              placeholder={t("affiliateCollections.collectionNamePlaceholder")}
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               maxLength={100}
@@ -397,12 +403,12 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
 
       <div>
         <label className="form-label">
-          Açıklama <span className="text-danger">*</span>
+          {t("affiliateCollections.collectionDescriptionLabel")} <span className="text-danger">*</span>
         </label>
         <textarea
           className="form-control shadow-none border border-light"
           rows={3}
-          placeholder="Koleksiyon açıklamasını girin"
+          placeholder={t("affiliateCollections.collectionDescriptionPlaceholder")}
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
           maxLength={500}
@@ -412,140 +418,140 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
       {(collectionType === AffiliateCollectionType.Product ||
         collectionType === AffiliateCollectionType.Combination ||
         collectionType === AffiliateCollectionType.Collection) && (
-        <div>
-          <label className="form-label">
-            Ürünler <span className="text-danger">*</span>
-          </label>
-
-          {/* Tarih Seçim Alanları - Ürün Bazlı için */}
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <label className="form-label">
-                Başlangıç Tarihi <span className="text-danger">*</span>
-              </label>
-              <input
-                type="datetime-local"
-                className="form-control shadow-none"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
-              />
-            </div>
-            <div className="col-md-6">
-              <label className="form-label">
-                Bitiş Tarihi <span className="text-danger">*</span>
-              </label>
-              <input
-                type="datetime-local"
-                className="form-control shadow-none"
-                value={expirationDate}
-                onChange={(e) => setExpirationDate(e.target.value)}
-                min={startDate || new Date().toISOString().slice(0, 16)}
-              />
-            </div>
-          </div>
-
           <div>
-            <input
-              type="text"
-              className="form-control shadow-none"
-              placeholder="Ürün ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+            <label className="form-label">
+              {t("affiliateCollections.productsLabel")} <span className="text-danger">*</span>
+            </label>
 
-          {productsLoading ? (
-            <div className="text-center py-3">
-              <div className="spinner-border spinner-border-sm" role="status">
-                <span className="sr-only">Yükleniyor...</span>
+            {/* Tarih Seçim Alanları - Ürün Bazlı için */}
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label className="form-label">
+                  {t("affiliateCollections.startDateLabel")} <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="datetime-local"
+                  className="form-control shadow-none"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">
+                  {t("affiliateCollections.endDateLabel")} <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="datetime-local"
+                  className="form-control shadow-none"
+                  value={expirationDate}
+                  onChange={(e) => setExpirationDate(e.target.value)}
+                  min={startDate || new Date().toISOString().slice(0, 16)}
+                />
               </div>
             </div>
-          ) : (
-            <div
-              className="products-list"
-              style={{
-                maxHeight: "300px",
-                overflowY: "auto",
-                border: "1px solid #dee2e6",
-                borderRadius: "0.375rem",
-                padding: "0.5rem",
-              }}
-            >
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="form-check d-flex align-items-center p-2 border-bottom"
-                  >
-                    <input
-                      className="form-check-input me-3 border-2"
-                      type="checkbox"
-                      id={`product-${product.id}`}
-                      checked={selectedProductIds.includes(product.id)}
-                      onChange={() => handleProductToggle(product.id)}
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        borderColor: selectedProductIds.includes(product.id) ? "#212529" : "#dee2e6",
-                        backgroundColor: selectedProductIds.includes(product.id) ? "#212529" : "#ffffff",
-                      }}
-                    />
-                    <div className="d-flex align-items-center flex-grow-1">
-                      <img
-                        src={product.baseImageUrl || "/placeholder-image.jpg"}
-                        alt={product.title}
+
+            <div>
+              <input
+                type="text"
+                className="form-control shadow-none"
+                placeholder={t("affiliateCollections.productsPlaceholder")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {productsLoading ? (
+              <div className="text-center py-3">
+                <div className="spinner-border spinner-border-sm" role="status">
+                  <span className="sr-only">{t("loading")}</span>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="products-list"
+                style={{
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  border: "1px solid #dee2e6",
+                  borderRadius: "0.375rem",
+                  padding: "0.5rem",
+                }}
+              >
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="form-check d-flex align-items-center p-2 border-bottom"
+                    >
+                      <input
+                        className="form-check-input me-3 border-2"
+                        type="checkbox"
+                        id={`product-${product.id}`}
+                        checked={selectedProductIds.includes(product.id)}
+                        onChange={() => handleProductToggle(product.id)}
                         style={{
-                          width: "40px",
-                          height: "40px",
-                          objectFit: "cover",
-                          borderRadius: "4px",
-                          marginRight: "0.75rem",
-                          marginLeft: "10px",
+                          width: "20px",
+                          height: "20px",
+                          borderColor: selectedProductIds.includes(product.id) ? "#212529" : "#dee2e6",
+                          backgroundColor: selectedProductIds.includes(product.id) ? "#212529" : "#ffffff",
                         }}
                       />
-                      <div>
-                        <label
-                          className="form-check-label fw-medium"
-                          htmlFor={`product-${product.id}`}
-                          style={{ cursor: "pointer" }}
-                        >
-                          {product.title}
-                        </label>
-                        <div className="text-muted small">
-                          {product.price?.toFixed(2)} ₺
+                      <div className="d-flex align-items-center flex-grow-1">
+                        <img
+                          src={product.baseImageUrl || "/placeholder-image.jpg"}
+                          alt={product.title}
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                            marginRight: "0.75rem",
+                            marginLeft: "10px",
+                          }}
+                        />
+                        <div>
+                          <label
+                            className="form-check-label fw-medium"
+                            htmlFor={`product-${product.id}`}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {product.title}
+                          </label>
+                          <div className="text-muted small">
+                            {product.price?.toFixed(2)} ₺
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-3 text-muted">
+                    {searchTerm
+                      ? t("affiliateCollections.noProductsMatchSearch")
+                      : t("affiliateCollections.noProductsFound")}
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-3 text-muted">
-                  {searchTerm
-                    ? "Arama kriterinize uygun ürün bulunamadı"
-                    : "Ürün bulunamadı"}
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
 
-          <small className="text-muted mt-2 d-block">
-            Seçili ürün sayısı: {selectedProductIds.length}
-          </small>
-        </div>
-      )}
+            <small className="text-muted mt-2 d-block">
+              {t("affiliateCollections.selectedProductsCount")}: {selectedProductIds.length}
+            </small>
+          </div>
+        )}
 
       {collectionType === AffiliateCollectionType.Category && (
         <div>
           <label className="form-label">
-            Kategoriler <span className="text-danger">*</span>
+            {t("affiliateCollections.categoriesLabel")} <span className="text-danger">*</span>
           </label>
 
           {/* Tarih Seçim Alanları */}
           <div className="row mb-3">
             <div className="col-md-6">
               <label className="form-label">
-                Başlangıç Tarihi <span className="text-danger">*</span>
+                {t("affiliateCollections.startDateLabel")} <span className="text-danger">*</span>
               </label>
               <input
                 type="datetime-local"
@@ -557,7 +563,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
             </div>
             <div className="col-md-6">
               <label className="form-label">
-                Bitiş Tarihi <span className="text-danger">*</span>
+                {t("affiliateCollections.endDateLabel")} <span className="text-danger">*</span>
               </label>
               <input
                 type="datetime-local"
@@ -572,7 +578,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
           {categoriesLoading ? (
             <div className="text-center py-3">
               <div className="spinner-border spinner-border-sm" role="status">
-                <span className="sr-only">Yükleniyor...</span>
+                <span className="sr-only">{t("loading")}</span>
               </div>
             </div>
           ) : (
@@ -626,13 +632,12 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
                                   }
                                 >
                                   <i
-                                    className={`bx ${
-                                      expandedMainCategories.has(
-                                        mainCategory.id
-                                      )
-                                        ? "bx-chevron-down"
-                                        : "bx-chevron-right"
-                                    }`}
+                                    className={`bx ${expandedMainCategories.has(
+                                      mainCategory.id
+                                    )
+                                      ? "bx-chevron-down"
+                                      : "bx-chevron-right"
+                                      }`}
                                   ></i>
                                 </button>
                               )}
@@ -687,15 +692,15 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
                 ))
               ) : (
                 <div className="text-center py-3 text-muted">
-                  Kategori bulunamadı
+                  {t("affiliateCollections.noCategoriesFound")}
                 </div>
               )}
             </div>
           )}
 
           <small className="text-muted mt-2 d-block">
-            Seçili ana kategori sayısı: {selectedMainCategoryIds.length}, Seçili
-            alt kategori sayısı: {selectedSubCategoryIds.length}
+            {t("affiliateCollections.selectedMainCategoriesCount")}: {selectedMainCategoryIds.length},
+            {t("affiliateCollections.selectedSubCategoriesCount")}: {selectedSubCategoryIds.length}
           </small>
         </div>
       )}

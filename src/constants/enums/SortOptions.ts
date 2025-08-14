@@ -1,3 +1,5 @@
+import { useLanguage } from "@/context/LanguageContext";
+
 // Fiyat sıralaması için enum
 export enum DiscountSort {
   None = 0, // Hiç Sıralama Yapma
@@ -39,13 +41,14 @@ export const SORT_OPTIONS = {
 } as const;
 
 // Sıralama seçeneklerinin görüntü adları
-export const SORT_OPTION_LABELS = {
-  [SORT_OPTIONS.POPULARITY]: "En Popüler",
-  [SORT_OPTIONS.RATING]: "En İyi Puan",
-  [SORT_OPTIONS.PRICE_LOW]: "Fiyat Düşükten Yüksek",
-  [SORT_OPTIONS.PRICE_HIGH]: "Fiyat Yüksekten Düşük",
-  [SORT_OPTIONS.SALES_HIGH]: "En Çok Satan",
-  [SORT_OPTIONS.SALES_LOW]: "En Az Satan",
-  [SORT_OPTIONS.LIKES_HIGH]: "En Çok Beğenilen",
-  [SORT_OPTIONS.LIKES_LOW]: "En Az Beğenilen",
-} as const;
+export const SORT_OPTION_LABELS = (t: (key: string) => string) => ({
+  [SORT_OPTIONS.POPULARITY]: t("productsPage.featured"),
+  [SORT_OPTIONS.RATING]: t("productsPage.ratingHighToLow"),
+  [SORT_OPTIONS.PRICE_LOW]: t("productsPage.priceLowToHigh"),
+  [SORT_OPTIONS.PRICE_HIGH]: t("productsPage.priceHighToLow"),
+  [SORT_OPTIONS.SALES_HIGH]: t("productsPage.salesHighToLow"),
+  [SORT_OPTIONS.SALES_LOW]: t("productsPage.salesLowToHigh"),
+  [SORT_OPTIONS.LIKES_HIGH]: t("productsPage.likesHighToLow"),
+  [SORT_OPTIONS.LIKES_LOW]: t("productsPage.likesLowToHigh"),
+});
+

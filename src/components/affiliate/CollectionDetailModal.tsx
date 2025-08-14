@@ -4,6 +4,7 @@ import { useGetAffiliateCollectionById } from "@/hooks/services/affiliate/useGet
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateApplicationStatus";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CollectionDetailModalProps {
   isOpen: boolean;
@@ -11,28 +12,29 @@ interface CollectionDetailModalProps {
   collectionId: string | null;
 }
 
-const getCollectionTypeText = (collection: AffiliateCollection): string => {
-  if (collection.productBasedAffiliateItems?.length > 0) {
-    return "Ürün Bazlı";
-  } else if (collection.categoryBasedAffiliateItems?.length > 0) {
-    return "Kategori Bazlı";
-  } else if (collection.combinationBasedAffiliateItems?.length > 0) {
-    return "Kombinasyon Bazlı";
-  } else if (collection.collectionBasedAffiliateItems?.length > 0) {
-    return "Koleksiyon Bazlı";
-  }
-  return "Bilinmeyen";
-};
-
 const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
   isOpen,
   onClose,
   collectionId,
 }) => {
+  const { t } = useLanguage();
   const { collection, isLoading } = useGetAffiliateCollectionById(
     collectionId || ""
   );
   const [isCopied, setIsCopied] = useState(false);
+
+  const getCollectionTypeText = (collection: AffiliateCollection): string => {
+    if (collection.productBasedAffiliateItems?.length > 0) {
+      return t("affiliateCollections.productBased");
+    } else if (collection.categoryBasedAffiliateItems?.length > 0) {
+      return t("affiliateCollections.categoryBased");
+    } else if (collection.combinationBasedAffiliateItems?.length > 0) {
+      return t("affiliateCollections.combinationBased");
+    } else if (collection.collectionBasedAffiliateItems?.length > 0) {
+      return t("affiliateCollections.collectionBased");
+    }
+    return t("affiliateCollections.unknown");
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -59,7 +61,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("URL başarıyla kopyalandı");
+      toast.success(t("affiliateCollections.urlCopiedSuccess"));
       setIsCopied(true);
       // 2 saniye sonra ikonu geri döndür
       setTimeout(() => {
@@ -67,7 +69,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
       }, 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
-      toast.error("URL kopyalanırken hata oluştu");
+      toast.error(t("affiliateCollections.urlCopyError"));
     }
   };
 
@@ -87,7 +89,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
   return (
     <GeneralModal
       id="collectionDetailModal"
-      title="Koleksiyon Detayları"
+      title={t("affiliateCollections.collectionDetailsTitle")}
       showFooter={false}
       onClose={onClose}
       size="xl"
@@ -95,8 +97,9 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
       {isLoading ? (
         <div className="text-center py-5">
           <div className="spinner-border" role="status">
-            <span className="sr-only">Yükleniyor...</span>
+            
           </div>
+          <span className="sr-only">{t("loading")}</span>
         </div>
       ) : collection ? (
         // Check if collection is active before showing content
@@ -130,11 +133,11 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="col-md-4 text-end">
                 <div className="stats-card p-3 bg-light rounded">
                   <div className="stat-item mb-2">
-                    <small className="text-muted">Satış Sayısı</small>
+                    <small className="text-muted">{t("affiliateCollections.salesCount")}</small>
                     <h5 className="mb-0">{collection.salesCount}</h5>
                   </div>
                   <div className="stat-item">
-                    <small className="text-muted">Oluşturulma Tarihi</small>
+                    <small className="text-muted">{t("affiliateCollections.createdOn")}</small>
                     <p className="mb-0 small">
                       {formatDate(collection.createdOnValue)}
                     </p>
@@ -146,7 +149,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
 
           {/* URL Section */}
           <div className="url-section mb-4">
-            <label className="form-label fw-bold">Koleksiyon URL'si </label>
+            <label className="form-label fw-bold">{t("affiliateCollections.collectionUrlLabel")}</label>
             <div className="input-group">
               <input
                 type="text"
@@ -154,7 +157,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                 value={
                   collection.isActive
                     ? collection.url
-                    : "URL artık aktif değil."
+                    : t("affiliateCollections.urlNotActive")
                 }
                 readOnly
                 style={{
@@ -195,7 +198,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="products-section mb-4">
                 <h5 className="section-title mb-3">
                   <i className="bx bx-package me-2"></i>
-                  Ürünler ({collection.productBasedAffiliateItems.length})
+                  {t("affiliateCollections.productsSectionTitle")} ({collection.productBasedAffiliateItems.length})
                 </h5>
                 <div className="row">
                   {collection.productBasedAffiliateItems.map((item) => (
@@ -225,12 +228,12 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                               </p>
                               <small className="text-muted">
                                 <i className="bx bx-merge me-1"></i>
-                                Kombinasyon Ürünü
+                                {t("affiliateCollections.combinationProduct")}
                               </small>
                             </div>
                             <div className="d-flex gap-2">
                               <small className="text-muted">
-                                Komisyon: %
+                                {t("affiliateCollections.commission")}: %
                                 {(item.commissionRate * 100).toFixed(1)}
                               </small>
                             </div>
@@ -249,7 +252,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="categories-section mb-4 ">
                 <h5 className="section-title mb-3">
                   <i className="bx bx-category me-2"></i>
-                  Kategoriler ({collection.categoryBasedAffiliateItems.length})
+                  {t("affiliateCollections.categoriesSectionTitle")} ({collection.categoryBasedAffiliateItems.length})
                 </h5>
                 <div className="row">
                   {collection.categoryBasedAffiliateItems.map((item) => (
@@ -267,12 +270,12 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                               </h6>
                               <small className="text-muted">
                                 {item.mainCategory
-                                  ? "Ana Kategori"
-                                  : "Alt Kategori"}
+                                  ? t("affiliateCollections.mainCategory")
+                                  : t("affiliateCollections.subCategory")}
                               </small>
                               <br />
                               <small className="text-muted">
-                                Komisyon: %
+                                {t("affiliateCollections.commission")}: %
                                 {(item.commissionRate * 100).toFixed(1)}
                               </small>
                             </div>
@@ -291,7 +294,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="collection-items-section mb-4">
                 <h5 className="section-title mb-3">
                   <i className="bx bx-collection me-2"></i>
-                  Koleksiyon Öğeleri (
+                  {t("affiliateCollections.collectionItemsSectionTitle")} (
                   {collection.collectionBasedAffiliateItems.length})
                 </h5>
                 <div className="row">
@@ -322,7 +325,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                               </p>
                               <small className="text-muted">
                                 <i className="bx bx-merge me-1"></i>
-                                Kombinasyon Ürünü
+                                {t("affiliateCollections.combinationProduct")}
                               </small>
                             </div>
                           </div>
@@ -340,7 +343,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="combination-items-section mb-4">
                 <h5 className="section-title mb-3">
                   <i className="bx bx-merge me-2"></i>
-                  Kombinasyon Öğeleri (
+                  {t("affiliateCollections.combinationItemsSectionTitle")} (
                   {collection.combinationBasedAffiliateItems.length})
                 </h5>
                 <div className="row">
@@ -371,7 +374,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                               </p>
                               <small className="text-muted">
                                 <i className="bx bx-merge me-1"></i>
-                                Kombinasyon Ürünü
+                                {t("affiliateCollections.combinationProduct")}
                               </small>
                             </div>
                           </div>
@@ -389,15 +392,15 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
               <div className="commissions-section">
                 <h5 className="section-title mb-3">
                   <i className="bx bx-money me-2"></i>
-                  Komisyon Geçmişi ({collection.affiliateCommissions.length})
+                  {t("affiliateCollections.commissionsSectionTitle")} ({collection.affiliateCommissions.length})
                 </h5>
                 <div className="table-responsive">
                   <table className="table table-bordered">
                     <thead>
                       <tr>
-                        <th>Tarih</th>
-                        <th>Miktar</th>
-                        <th>Durum</th>
+                        <th>{t("affiliateCollections.commissionDate")}</th>
+                        <th>{t("affiliateCollections.commissionAmount")}</th>
+                        <th>{t("affiliateCollections.commissionStatus")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -410,7 +413,7 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                             <td>{commission.amount?.toFixed(2)} ₺</td>
                             <td>
                               <span className="badge bg-success">
-                                Onaylandı
+                                {t("affiliateCollections.commissionApproved")}
                               </span>
                             </td>
                           </tr>
@@ -437,10 +440,10 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
                   style={{ fontSize: "4rem", color: "#ccc" }}
                 ></i>
                 <h5 className="mt-3 text-muted">
-                  Bu koleksiyonda öğe bulunmuyor
+                  {t("affiliateCollections.noItemsInCollection")}
                 </h5>
                 <p className="text-muted">
-                  Koleksiyonu düzenleyerek öğe ekleyebilirsiniz.
+                  {t("affiliateCollections.editCollectionToAddItems")}
                 </p>
               </div>
             )}
@@ -451,9 +454,9 @@ const CollectionDetailModal: React.FC<CollectionDetailModalProps> = ({
             className="bx bx-error"
             style={{ fontSize: "4rem", color: "#dc3545" }}
           ></i>
-          <h5 className="mt-3 text-danger">Koleksiyon bulunamadı</h5>
+          <h5 className="mt-3 text-danger">{t("affiliateCollections.collectionNotFound")}</h5>
           <p className="text-muted">
-            Bu koleksiyon mevcut değil veya erişim izniniz yok.
+            {t("affiliateCollections.collectionNotAccessible")}
           </p>
         </div>
       )}

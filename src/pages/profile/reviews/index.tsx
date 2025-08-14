@@ -9,8 +9,10 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { withProfileLayout } from "../_layout";
 import router from "next/router";
+import { useLanguage } from "@/context/LanguageContext";
 
 function ReviewsPage() {
+  const { t } = useLanguage();
   const { userProfile } = useAuth();
   const { reviews, isLoading, refetchReviews } = useGetUserReviews(
     userProfile?.id || ""
@@ -68,7 +70,7 @@ function ReviewsPage() {
       refetchReviews();
     } catch (error) {
       console.error("Error updating review:", error);
-      toast.error("Yorum güncellenirken bir hata oluştu");
+      toast.error(t("myReviews.updateError"));
     }
   };
 
@@ -84,7 +86,7 @@ function ReviewsPage() {
       refetchReviews();
     } catch (error) {
       console.error("Error deleting review:", error);
-      toast.error("Yorum silinirken bir hata oluştu");
+      toast.error(t("myReviews.deleteError"));
     }
   };
 
@@ -130,13 +132,13 @@ function ReviewsPage() {
               paddingBottom: "12px",
             }}
           >
-            Yorumlarım
+            {t("myReviews.myReviewsTitle")}
           </h3>
 
           {isLoading ? (
             <div className="text-center py-5">
               <div className="spinner-border text-primary" role="status">
-                <span className="sr-only">Yükleniyor...</span>
+                <span className="sr-only">{t("loading")}</span>
               </div>
             </div>
           ) : reviews && reviews.length > 0 ? (
@@ -196,7 +198,7 @@ function ReviewsPage() {
                           fontSize: "12px",
                         }}
                       >
-                        Düzenle
+                        {t("edit")}
                       </button>
                       <button
                         className="btn btn-sm"
@@ -214,7 +216,7 @@ function ReviewsPage() {
                           fontSize: "12px",
                         }}
                       >
-                        Sil
+                        {t("delete")}
                       </button>
                     </div>
                   </div>
@@ -243,7 +245,7 @@ function ReviewsPage() {
                       }}
                       onClick={() => router.push(`/products/${review.productId}`)}
                     >
-                      Ürün ID: {review.productId}
+                     {t("myReviews.productIdLabel")}: {review.productId}
                     </small>
                   </div>
                 </div>
@@ -252,7 +254,7 @@ function ReviewsPage() {
           ) : (
             <div className="text-center py-5">
               <p style={{ fontSize: "14px", color: "#555" }}>
-                Henüz bir yorum yapmadınız.
+                {t("myReviews.noReviewsMessage")}
               </p>
               <Link
                 href="/products"
@@ -267,7 +269,7 @@ function ReviewsPage() {
                   fontWeight: "500",
                 }}
               >
-                Ürünlere Göz At
+                {t("myReviews.browseProductsButton")}
               </Link>
             </div>
           )}
@@ -277,16 +279,16 @@ function ReviewsPage() {
       {/* Düzenleme Modalı */}
       <GeneralModal
         id="editReviewModal"
-        title="Yorumu Düzenle"
+        title={t("myReviews.editReviewTitle")}
         size="lg"
         onClose={() => setEditingReview(null)}
-        approveButtonText="Güncelle"
+        approveButtonText={t("myReviews.updateButton")}
         isLoading={isUpdating}
         onApprove={handleSaveEdit}
         showFooter
       >
         <div className="form-group">
-          <label>Başlık</label>
+          <label>{t("myReviews.titleLabel")}</label>
           <input
             type="text"
             className="form-control"
@@ -297,7 +299,7 @@ function ReviewsPage() {
           />
         </div>
         <div className="form-group">
-          <label>Yorum</label>
+          <label>{t("myReviews.reviewLabel")}</label>
           <textarea
             className="form-control"
             rows={5}
@@ -308,7 +310,7 @@ function ReviewsPage() {
           ></textarea>
         </div>
         <div className="form-group">
-          <label>Değerlendirme</label>
+          <label>{t("myReviews.ratingLabel")}</label>
           <div className="rating-stars">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
@@ -332,14 +334,14 @@ function ReviewsPage() {
       {/* Silme Onay Modalı */}
       <GeneralModal
         id="deleteConfirmModal"
-        title="Yorumu Sil"
+        title={t("myReviews.deleteReviewTitle")}
         size="sm"
         onClose={() => {
           setDeletingReviewId(null);
           setDeletingProductId(null);
         }}
         onApprove={handleConfirmDelete}
-        approveButtonText="Sil"
+        approveButtonText={t("delete")}
         isLoading={isDeleting}
         showFooter
       >
@@ -348,10 +350,9 @@ function ReviewsPage() {
             className="icon-exclamation"
             style={{ fontSize: "3rem", color: "#dc3545" }}
           ></i>
-          <h4 className="mt-3">Emin misiniz?</h4>
+          <h4 className="mt-3">{t("myReviews.deleteConfirmTitle")}</h4>
           <p className="text-muted">
-            Bu yorumu silmek istediğinizden emin misiniz? Bu işlem geri
-            alınamaz.
+            {t("myReviews.deleteConfirmMessage")}
           </p>
         </div>
       </GeneralModal>
@@ -396,4 +397,4 @@ function ReviewsPage() {
 }
 
 export default withProfileLayout(ReviewsPage);
- 
+

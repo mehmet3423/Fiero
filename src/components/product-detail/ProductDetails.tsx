@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductDetailsProps {
   product: any;
@@ -25,6 +26,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   handleAddToCart,
   isAddingToCart,
 }) => {
+  const { t } = useLanguage();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -70,10 +72,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   };
 
-  const hasDiscount = product.discountDTO !== null;
+  /* const hasDiscount = product.discountDTO !== null;
   const discountPercentage = hasDiscount
     ? product.discountDTO.discountValue
-    : null;
+    : null; */
+  const discountPercentage = product.discountDTO?.discountValue ?? null;
+  const hasDiscount = discountPercentage !== null;
 
   // Countdown Timer Logic
   useEffect(() => {
@@ -174,7 +178,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     })}
                   </div>
                   <div className="badges-on-sale">
-                    <span>{discountPercentage}</span>% İNDİRİM
+                    <span>{discountPercentage}</span>% {t("productDetailComponent.titles.sale")}
                   </div>
                 </>
               ) : (
@@ -190,7 +194,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             {/* Live View */}
             <div className="tf-product-info-liveview">
               <div className="liveview-count">{product.viewCount || 20}</div>
-              <p className="fw-6">kişi şu anda bu ürünü görüntülüyor</p>
+              <p className="fw-6">{t("productDetailComponent.titles.currentlyViewing")}</p>
             </div>
 
             {/* Countdown Timer */}
@@ -198,12 +202,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <div className="countdown-wrap">
                 <div className="countdown-title">
                   <i className="icon-time tf-ani-tada"></i>
-                  <p>ACELE EDİN! İNDİRİM BİTİYOR:</p>
+                  <p>{t("productDetailComponent.titles.hurryDiscountEnds")}</p>
                 </div>
                 <div className="tf-countdown style-1">
                   <p>
-                    {timeLeft.days} Gün : {timeLeft.hours} Saat :{" "}
-                    {timeLeft.minutes} Dakika : {timeLeft.seconds} Saniye
+                    {timeLeft.days} {t("productDetailComponent.titles.day")} : {timeLeft.hours} {t("productDetailComponent.titles.hour")} :{" "}
+                    {timeLeft.minutes} {t("productDetailComponent.titles.minute")} : {timeLeft.seconds} {t("productDetailComponent.titles.second")}
                   </p>
                 </div>
               </div>
@@ -213,7 +217,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <div className="tf-product-info-variant-picker">
               <div className="variant-picker-item">
                 <div className="variant-picker-label">
-                  Renk:{" "}
+                  {t("productDetailComponent.titles.color")}:{" "}
                   <span className="fw-6 variant-picker-label-value">
                     {product.selectedColor || "Bej"}
                   </span>
@@ -233,7 +237,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       </label>
                     ))
                   ) : (
-                    <p>Renk seçenekleri bulunamadı</p>
+                    <p>{t("productDetailComponent.messages.noColorsFound")}</p>
                   )}
                 </div>
               </div>
@@ -241,7 +245,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <div className="variant-picker-item">
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="variant-picker-label">
-                    Beden:{" "}
+                    {t("productDetailComponent.titles.size")}:{" "}
                     <span className="fw-6 variant-picker-label-value">
                       {product.selectedSize || "S"}
                     </span>
@@ -254,7 +258,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       setSizeChartOpen(true);
                     }}
                   >
-                    Beden Tablosu
+                    {t("productDetailComponent.titles.sizeChart")}
                   </a>
                 </div>
                 <div className="variant-picker-values">
@@ -269,7 +273,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       </label>
                     ))
                   ) : (
-                    <p>Beden seçenekleri bulunamadı</p>
+                    <p>{t("productDetailComponent.messages.noSizesFound")}</p>
                   )}
                 </div>
               </div>
@@ -277,7 +281,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
             {/* Quantity Selector */}
             <div className="tf-product-info-quantity">
-              <div className="quantity-title fw-6">Adet</div>
+              <div className="quantity-title fw-6">{t("productDetailComponent.titles.quantity")}</div>
               <div className="wg-quantity">
                 <span
                   className="btn-quantity minus-btn"
@@ -321,11 +325,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             >
               <a
                 href="#"
-                className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn ${
-                  isAddingToCart || product.sellableQuantity <= 0
-                    ? "disabled"
-                    : ""
-                }`}
+                className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn ${isAddingToCart || product.sellableQuantity <= 0
+                  ? "disabled"
+                  : ""
+                  }`}
                 style={{
                   padding: "15px 20px",
                   fontSize: "18px",
@@ -341,10 +344,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               >
                 <span>
                   {isAddingToCart
-                    ? "Ekleniyor..."
+                    ? t("productDetailComponent.buttons.addingToCart")
                     : product.sellableQuantity > 0
-                    ? "Sepete Ekle "
-                    : "Stokta Yok"}
+                      ? t("productDetailComponent.buttons.addToCart")
+                      : t("productDetailComponent.buttons.outOfStock")}
                   {product.sellableQuantity > 0 && (
                     <span
                       style={{ marginLeft: "8px" }}
@@ -352,22 +355,21 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     >
                       {product.discountedPrice
                         ? product.discountedPrice.toLocaleString("tr-TR", {
-                            style: "currency",
-                            currency: "TRY",
-                          })
+                          style: "currency",
+                          currency: "TRY",
+                        })
                         : product.price.toLocaleString("tr-TR", {
-                            style: "currency",
-                            currency: "TRY",
-                          })}
+                          style: "currency",
+                          currency: "TRY",
+                        })}
                     </span>
                   )}
                 </span>
               </a>
               <a
                 href="#"
-                className={`tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action ${
-                  isInFavorites(product.id) ? "added" : ""
-                } ${isFavoritesLoading ? "disabled" : ""}`}
+                className={`tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action ${isInFavorites(product.id) ? "added" : ""
+                  } ${isFavoritesLoading ? "disabled" : ""}`}
                 style={{
                   padding: "15px 20px",
                   fontSize: "18px",
@@ -380,15 +382,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 }}
                 title={
                   isInFavorites(product.id)
-                    ? "Favorilerden Kaldır"
-                    : "Favorilere Ekle"
+                    ? t("productDetailComponent.buttons.removeFromFavorites")
+                    : t("productDetailComponent.buttons.addToFavorites")
                 }
               >
                 <span className="icon icon-heart"></span>
                 <span className="tooltip">
                   {isInFavorites(product.id)
-                    ? "Favorilerden Kaldır"
-                    : "Favorilere Ekle"}
+                    ? t("productDetailComponent.buttons.removeFromFavorites")
+                    : t("productDetailComponent.buttons.addToFavorites")}
                 </span>
                 <span className="icon icon-delete"></span>
               </a>
@@ -404,10 +406,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   e.preventDefault();
                   handleCompare(product.id);
                 }}
-                title="Karşılaştırmaya Ekle"
+                title={t("productDetailComponent.buttons.addToCompare")}
               >
                 <span className="icon icon-compare"></span>
-                <span className="tooltip">Karşılaştırmaya Ekle</span>
+                <span className="tooltip">{t("productDetailComponent.buttons.addToCompare")}</span>
                 <span className="icon icon-check"></span>
               </a>
             </div>

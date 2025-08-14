@@ -1,3 +1,4 @@
+import { useLanguage } from "@/context/LanguageContext";
 interface ConfirmModalProps {
   onConfirm: () => void;
   isLoading?: boolean;
@@ -10,11 +11,18 @@ interface ConfirmModalProps {
 function ConfirmModal({
   onConfirm,
   isLoading,
-  title = "Emin misiniz?",
-  message = "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-  confirmButtonText = "Evet, Sil",
-  cancelButtonText = "İptal",
+  title,
+  message,
+  confirmButtonText,
+  cancelButtonText,
 }: ConfirmModalProps) {
+  const { t } = useLanguage(); // useLanguage hook'u burada çağrıldı
+
+  // Varsayılan değerleri burada tanımlıyoruz
+  const defaultTitle = title || t("modalProps.confirmTitle");
+  const defaultMessage = message || t("modalProps.confirmMessage");
+  const defaultConfirmButtonText = confirmButtonText || t("modalProps.confirmButton");
+  const defaultCancelButtonText = cancelButtonText || t("modalProps.cancel");
   return (
     <div className="text-center">
       <i
@@ -29,7 +37,7 @@ function ConfirmModal({
           className="btn btn-outline-secondary mr-2"
           data-bs-dismiss="modal"
         >
-          {cancelButtonText}
+          {defaultCancelButtonText}
         </button>
         <button
           type="button"
@@ -38,7 +46,7 @@ function ConfirmModal({
           disabled={isLoading}
           data-bs-dismiss="modal"
         >
-          {isLoading ? "Siliniyor..." : confirmButtonText}
+          {isLoading ? t("confirmModal.deleting") : defaultConfirmButtonText}
         </button>
       </div>
     </div>

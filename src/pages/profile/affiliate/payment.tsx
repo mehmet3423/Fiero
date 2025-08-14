@@ -4,47 +4,51 @@ import { useGetAffiliatePayouts } from "@/hooks/services/affiliate/useGetAffilia
 import { useCreatePayoutRequest } from "@/hooks/services/affiliate/useCreatePayoutRequest";
 import { useTransferEligibleCommissions } from "@/hooks/services/affiliate/useTransferEligibleCommissions";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AffiliatePaymentPageProps {
   affiliateUser: AffiliateUser;
 }
 
-const getPayoutStatusText = (status: number): string => {
-  switch (status) {
-    case 0:
-      return "Beklemede";
-    case 1:
-      return "Onaylandı";
-    case 2:
-      return "Reddedildi";
-    case 3:
-      return "Ödendi";
-    default:
-      return "Bilinmiyor";
-  }
-};
-
-const getPayoutStatusColor = (status: number): string => {
-  switch (status) {
-    case 0:
-      return "warning";
-    case 1:
-      return "success";
-    case 2:
-      return "danger";
-    case 3:
-      return "primary";
-    default:
-      return "secondary";
-  }
-};
 
 export default function AffiliatePaymentPage({
   affiliateUser,
 }: AffiliatePaymentPageProps) {
+  const { t } = useLanguage();
   const [page, setPage] = useState(1);
   const [requestAmount, setRequestAmount] = useState<string>("");
   const [showPayoutForm, setShowPayoutForm] = useState(false);
+
+
+  const getPayoutStatusText = (status: number): string => {
+    switch (status) {
+      case 0:
+        return t("affiliatePayment.payoutStatusPending");
+      case 1:
+        return t("affiliatePayment.payoutStatusApproved");
+      case 2:
+        return t("affiliatePayment.payoutStatusRejected");
+      case 3:
+        return t("affiliatePayment.payoutStatusPaid");
+      default:
+        return t("unknown");
+    }
+  };
+
+  const getPayoutStatusColor = (status: number): string => {
+    switch (status) {
+      case 0:
+        return "warning";
+      case 1:
+        return "success";
+      case 2:
+        return "danger";
+      case 3:
+        return "primary";
+      default:
+        return "secondary";
+    }
+  };
 
   const {
     payouts,
@@ -78,14 +82,14 @@ export default function AffiliatePaymentPage({
 
   const handleCreatePayoutRequest = async () => {
     if (!requestAmount || parseFloat(requestAmount) <= 0) {
-      alert("Lütfen geçerli bir tutar girin");
+      alert(t("affiliatePayment.invalidAmount"));
       return;
     }
 
     const amount = parseFloat(requestAmount);
     if (amount > transferableAmount) {
       toast.error(
-        "Talep edilen tutar transfer edilebilir tutardan fazla olamaz"
+        t("affiliatePayment.amountExceedsTransferable")
       );
       return;
     }
@@ -124,7 +128,7 @@ export default function AffiliatePaymentPage({
                 <i className="bx bx-shopping-bag text-muted" style={{ fontSize: "2.5rem" }}></i>
               </div>
               <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                TOPLAM SATIŞ
+                {t("affiliatePayment.totalSales")}
               </h6>
               <h4 className="text-dark mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {totalSales.toFixed(2)} ₺
@@ -140,7 +144,7 @@ export default function AffiliatePaymentPage({
                 <i className="bx bx-money text-info" style={{ fontSize: "2.5rem" }}></i>
               </div>
               <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                AKTARILABİLİR
+                {t("affiliatePayment.transferable")}
               </h6>
               <h4 className="text-info mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {transferableAmount.toFixed(2)} ₺
@@ -156,7 +160,7 @@ export default function AffiliatePaymentPage({
                 <i className="bx bx-time-five text-warning" style={{ fontSize: "2.5rem" }}></i>
               </div>
               <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                ONAY BEKLEYEN
+                {t("affiliatePayment.pendingApproval")}
               </h6>
               <h4 className="text-warning mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {pendingAmount.toFixed(2)} ₺
@@ -172,7 +176,7 @@ export default function AffiliatePaymentPage({
                 <i className="bx bx-check-circle text-success" style={{ fontSize: "2.5rem" }}></i>
               </div>
               <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                TRANSFER EDİLEN
+                {t("affiliatePayment.transferred")}
               </h6>
               <h4 className="text-success mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                 {transferredAmount.toFixed(2)} ₺
@@ -191,10 +195,9 @@ export default function AffiliatePaymentPage({
                 <div className="card-icon mb-3">
                   <i className="bx bx-block text-danger" style={{ fontSize: "3rem" }}></i>
                 </div>
-                <h6 className="text-danger mb-2 fw-bold">Hesap Askıya Alındı</h6>
+                <h6 className="text-danger mb-2 fw-bold">{t("affiliatePayment.accountSuspended")}</h6>
                 <small className="text-muted">
-                  Affiliate hesabınız askıya alındığından dolayı çekim talebi
-                  oluşturamazsınız
+                  {t("affiliatePayment.affiliateSuspendedMessage")}
                 </small>
               </div>
             </div>
@@ -207,10 +210,9 @@ export default function AffiliatePaymentPage({
               <div className="card-body p-3">
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
-                    <h6 className="mb-1 fw-bold text-dark">Ödeme Talebi Oluştur</h6>
+                    <h6 className="mb-1 fw-bold text-dark">{t("affiliatePayment.createPayoutRequestTitle")}</h6>
                     <small className="text-muted">
-                      Transfer edilebilir kazancınızdan ödeme talebinde
-                      bulunabilirsiniz.
+                      {t("affiliatePayment.createPayoutRequestMessage")}
                     </small>
                   </div>
                   <button
@@ -219,7 +221,7 @@ export default function AffiliatePaymentPage({
                     disabled={false}
                   >
                     <i className="bx bx-plus me-2"></i>
-                    Yeni Talep
+                    {t("affiliatePayment.newRequestButton")}
                   </button>
                 </div>
               </div>
@@ -238,7 +240,7 @@ export default function AffiliatePaymentPage({
                   <div className="col-md-6">
                     <div className="mb-3">
                       <label className="form-label fw-semibold text-dark">
-                        Talep Edilecek Tutar (₺)
+                        {t("affiliatePayment.requestAmountLabel")}
                       </label>
                       <input
                         type="number"
@@ -251,7 +253,7 @@ export default function AffiliatePaymentPage({
                         placeholder="0.00"
                       />
                       <small className="text-muted">
-                        Maksimum: {transferableAmount.toFixed(2)} ₺
+                        {t("affiliatePayment.maxAmount")}: {transferableAmount.toFixed(2)} ₺
                       </small>
                     </div>
                   </div>
@@ -268,12 +270,12 @@ export default function AffiliatePaymentPage({
                           className="spinner-border spinner-border-sm me-2"
                           role="status"
                         ></span>
-                        Oluşturuluyor...
+                        {t("affiliatePayment.creatingRequest")}
                       </>
                     ) : (
                       <>
                         <i className="bx bx-check me-2"></i>
-                        Talep Oluştur
+                        {t("affiliatePayment.createRequestButton")}
                       </>
                     )}
                   </button>
@@ -284,7 +286,7 @@ export default function AffiliatePaymentPage({
                       setRequestAmount("");
                     }}
                   >
-                    İptal
+                    {t("affiliatePayment.cancelButton")}
                   </button>
                 </div>
               </div>
@@ -300,31 +302,31 @@ export default function AffiliatePaymentPage({
             <div className="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-2">
               <h6 className="mb-0 fw-bold text-dark">
                 <i className="bx bx-receipt me-2"></i>
-                Ödeme Talepleri
+                {t("affiliatePayment.payoutRequestsTitle")}
               </h6>
               <span className="badge bg-light text-dark border rounded-pill px-2 py-1">
                 <i className="bx bx-list-ul me-1"></i>
-                {payouts.length} talep
+                {payouts.length} {t("affiliatePayment.payoutRequestsCount")}
               </span>
             </div>
             <div className="card-body p-0">
               {payoutsLoading ? (
                 <div className="text-center py-3">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Yükleniyor...</span>
+                  <div className="spinner-border text-dark" role="status">
+                    
                   </div>
-                  <p className="text-muted mt-2 mb-0">Ödeme talepleri yükleniyor...</p>
+                  <span className="sr-only">{t("affiliatePayment.loading")}</span>
+                  <p className="text-muted mt-2 mb-0">{t("affiliatePayment.loadingPayoutRequests")}</p>
                 </div>
               ) : payouts.length === 0 ? (
                 <div className="text-center py-3">
                   <div className="empty-state">
                     <i className="bx bx-receipt text-muted mb-2" style={{ fontSize: "3rem" }}></i>
                     <h6 className="mt-2 text-muted fw-bold">
-                      Henüz ödeme talebiniz bulunmuyor
+                      {t("affiliatePayment.noPayoutRequests")}
                     </h6>
                     <small className="text-muted">
-                      İlk ödeme talebinizi oluşturmak için yukarıdaki butonu
-                      kullanın
+                      {t("affiliatePayment.createFirstPayoutRequest")}
                     </small>
                   </div>
                 </div>
@@ -334,19 +336,19 @@ export default function AffiliatePaymentPage({
                     <thead className="table-light">
                       <tr>
                         <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
-                          Talep Tarihi
+                          {t("affiliatePayment.requestDate")}
                         </th>
                         <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
-                          Tutar
+                          {t("affiliatePayment.amount")}
                         </th>
                         <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
-                          Durum
+                          {t("affiliatePayment.status")}
                         </th>
                         <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
-                          İşlenme Tarihi
+                          {t("affiliatePayment.processedDate")}
                         </th>
                         <th className="border-0 fw-bold text-uppercase py-2" style={{ fontSize: "0.75rem", letterSpacing: "0.5px" }}>
-                          Açıklama
+                          {t("affiliatePayment.description")}
                         </th>
                       </tr>
                     </thead>

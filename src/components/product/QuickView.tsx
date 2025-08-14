@@ -10,6 +10,7 @@ import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import { Product } from "@/constants/models/Product";
 import { useProductDetail } from "@/hooks/services/products/useProductDetail";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface QuickViewProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface QuickViewProps {
 }
 
 const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
+  const { t } = useLanguage();
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [fullscreenInitialSlide, setFullscreenInitialSlide] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -127,7 +129,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
       <style jsx>{`
       .no-scroll {
   overflow: hidden;
-}
+  }
         .tf-single-slide .swiper-button-next::after,
         .tf-single-slide .swiper-button-prev::after {
           font-size: 16px !important;
@@ -383,12 +385,12 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     </h5>
                   </div>
                   <div className="tf-product-info-badges">
-                    <div className="badges text-uppercase">Best seller</div>
+                    <div className="badges text-uppercase">{t("quickView.bestSeller")}</div>
                     {displayProduct.sellableQuantity > 10 && (
                       <div className="product-status-content">
                         <i className="icon-lightning"></i>
                         <p className="fw-6">
-                          SON {displayProduct.sellableQuantity} ÜRÜN
+                          {t("quickView.lastProducts1")} {displayProduct.sellableQuantity} {t("quickView.lastProducts2")}
                         </p>
                       </div>
                     )}
@@ -406,10 +408,10 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                   </div>
                   <div className="tf-product-description">
                     {isLoading ? (
-                      <p>Açıklama yükleniyor...</p>
+                      <p>{t("quickView.loadingDescription")}</p>
                     ) : error ? (
                       <p style={{ color: "#666", fontSize: "14px" }}>
-                        Ürün açıklaması yüklenemedi.
+                        {t("quickView.errorDescription")}
                       </p>
                     ) : (
                       <>
@@ -418,7 +420,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                             ? isDescriptionExpanded
                               ? displayProduct.description
                               : `${displayProduct.description.substring(0, 100)}...`
-                            : "Ürün Açıklaması."}
+                            : t("quickView.defaultDescription")}
                         </p>
                         {displayProduct.description && displayProduct.description.length > 100 && (
                           <button
@@ -433,7 +435,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                               textDecoration: "underline",
                             }}
                           >
-                            {isDescriptionExpanded ? "Daha Az Göster" : "Daha Fazla Göster"}
+                            {isDescriptionExpanded ? t("quickView.showLess") : t("quickView.showMore")}
                           </button>
                         )}
                       </>
@@ -442,7 +444,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item">
                       <div className="variant-picker-label">
-                        Renk: <span className="fw-6 variant-picker-label-value">{selectedColor}</span>
+                        {t("quickView.color")}: <span className="fw-6 variant-picker-label-value">{selectedColor}</span>
                       </div>
                       <div className="variant-picker-values">
                         {colors.map((color) => (
@@ -469,7 +471,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     <div className="variant-picker-item">
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="variant-picker-label">
-                          Beden: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
+                          {t("quickView.size")}: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
                         </div>
                         <a
                           className="find-size btn-choose-size fw-6 d-none d-lg-block"
@@ -479,7 +481,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                             setSizeChartOpen(true);
                           }}
                         >
-                          Beden Tablosu
+                          {t("quickView.sizeChart")}
                         </a>
                       </div>
                       <div className="variant-picker-values">
@@ -501,7 +503,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     </div>
                   </div>
                   <div className="tf-product-info-quantity">
-                    <div className="quantity-title fw-6">Quantity</div>
+                    <div className="quantity-title fw-6">{t("quickView.quantity")}</div>
                     <div className="wg-quantity">
                       <span
                         className="btn-quantity minus-btn"
@@ -533,7 +535,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                           handleAddToCart();
                         }}
                       >
-                        <span>SEPETE EKLE &nbsp;</span>
+                        <span>{t("quickView.addToCart")} &nbsp;</span>
                         <span className="tf-qty-price">
                           {new Intl.NumberFormat("tr-TR", {
                             style: "currency",
@@ -547,7 +549,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         onClick={handleToggleFavorite}
                       >
                         <span className="icon icon-heart"></span>
-                        <span className="tooltip">FAVORİLERE EKLE</span>
+                        <span className="tooltip">{t("quickView.addToFavorites")}</span>
                         <span className="icon icon-delete"></span>
                       </a>
                       <a
@@ -556,22 +558,22 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         onClick={(e) => e.preventDefault()}
                       >
                         <span className="icon icon-compare"></span>
-                        <span className="tooltip">KARŞILAŞTIR</span>
+                        <span className="tooltip">{t("quickView.compare")}</span>
                         <span className="icon icon-check"></span>
                       </a>
                       <div className="w-100">
                         <a href="#" className="btns-full">
-                          <img src="/assets/site/images/payments/paypal.png" alt="" /> ile satın alın
+                          <img src="/assets/site/images/payments/paypal.png" alt="" /> {t("quickView.buyWith")}
                         </a>
                         <a href="#" className="payment-more-option">
-                          Daha Fazla Ödeme Seçeneği
+                          {t("quickView.morePaymentOptions")}
                         </a>
                       </div>
                     </form>
                   </div>
                   <div>
                     <a href={`/products/${displayProduct.id}`} className="tf-btn fw-6 btn-line">
-                      Tüm Detayları İncele<i className="icon icon-arrow1-top-left"></i>
+                      {t("quickView.viewDetails")}<i className="icon icon-arrow1-top-left"></i>
                     </a>
                   </div>
                 </div>

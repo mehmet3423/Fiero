@@ -4,8 +4,10 @@ import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import ProductCard from "@/components/home/ProductCard";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 function FavoritesPage() {
+  const { t } = useLanguage();
   const { userProfile } = useAuth();
   const {
     favorites,
@@ -20,13 +22,12 @@ function FavoritesPage() {
     <div className="py-5 text-center">
       <div className="container">
         <i className="icon-heart-o display-1 text-muted mb-4"></i>
-        <h3 className="mb-3">Favori listeniz boş</h3>
+        <h3 className="mb-3">{t("favorites.emptyFavoritesTitle")}</h3>
         <p className="mb-4">
-          Beğendiğiniz ürünleri favorilerinize ekleyerek daha sonra kolayca
-          ulaşabilirsiniz.
+          {t("favorites.emptyFavoritesMessage")}
         </p>
         <Link href="/" className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center">
-          <span>ALIŞVERİŞE BAŞLA</span>
+          <span>{t("favorites.startShoppingButton")}</span>
           <i className="icon-long-arrow-right ml-2"></i>
         </Link>
       </div>
@@ -35,11 +36,11 @@ function FavoritesPage() {
 
   return (
     <main className="main">
-      
+
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Your wishlist</div>
+          <div className="heading text-center">{t("favorites.breadcrumbFavorites")}</div>
         </div>
       </div>
       {/* /page-title */}
@@ -49,10 +50,10 @@ function FavoritesPage() {
           <div className="tf-breadcrumb-wrap d-flex justify-content-between flex-wrap align-items-center">
             <div className="tf-breadcrumb-list">
               <Link href="/" className="text">
-                Anasayfa
+                {t("home")}
               </Link>
               <i className="icon icon-arrow-right"></i>
-              <span className="text">Favorilerim</span>
+              <span className="text">{t("favorites.breadcrumbFavorites")}</span>
             </div>
           </div>
         </div>

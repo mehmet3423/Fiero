@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AffiliateApplicationModal from "@/components/affiliate/AffiliateApplicationModal";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AffiliateApplicationPageProps {
   hasExistingRecord?: boolean;
@@ -8,6 +9,7 @@ interface AffiliateApplicationPageProps {
 export default function AffiliateApplicationPage({
   hasExistingRecord,
 }: AffiliateApplicationPageProps) {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (hasExistingRecord) {
@@ -27,7 +29,7 @@ export default function AffiliateApplicationPage({
                   fontWeight: "600",
                 }}
               >
-                Affiliate Kaydınız Mevcut
+                {t("affiliateApplication.existingRecordTitle")}
               </h3>
             </div>
 
@@ -39,7 +41,7 @@ export default function AffiliateApplicationPage({
                     onClick={() => window.location.reload()}
                   >
                     <i className="bx bx-refresh me-2"></i>
-                    Sayfayı Yenile
+                    {t("refreshPage")}
                   </button>
                 </div>
               </div>
@@ -108,7 +110,7 @@ export default function AffiliateApplicationPage({
               fontWeight: "600",
             }}
           >
-            Affiliate Programına Katılın!
+            {t("affiliateApplication.joinProgramTitle")}
           </h3>
           <p
             className="text-muted"
@@ -119,8 +121,7 @@ export default function AffiliateApplicationPage({
               lineHeight: "1.6",
             }}
           >
-            Ürünlerimizi tanıtarak komisyon kazanın. Affiliate programımıza
-            katılmak için aşağıdaki butona tıklayın.
+             {t("affiliateApplication.joinProgramDescription")}
           </p>
 
           <button
@@ -133,7 +134,7 @@ export default function AffiliateApplicationPage({
             }}
           >
             <i className="bx bx-user-check me-2"></i>
-            Affiliate Onayı Al
+             {t("affiliateApplication.getApprovalButton")}
           </button>
         </div>
       </div>

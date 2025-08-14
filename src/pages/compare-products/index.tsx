@@ -6,8 +6,10 @@ import { useCart } from "@/hooks/context/useCart";
 import QuickView from "@/components/product/QuickView";
 import { useGetProductListByIds } from "@/hooks/services/products/useGetProductListByIds";
 import { Product } from "@/constants/models/Product";
+import { useLanguage } from "@/context/LanguageContext";
 
 const CompareProducts = () => {
+  const { t } = useLanguage();
   const router = useRouter();
   const { addToCart } = useCart();
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -60,11 +62,11 @@ const CompareProducts = () => {
   return (
     <>
       <Head>
-        <title>Compare Products</title>
+        <title>{t("compareProducts.pageTitle")}</title>
       </Head>
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Compare Products</div>
+          <div className="heading text-center">{t("compareProducts.pageTitle")}</div>
         </div>
       </div>
       <section className="flat-spacing-12">
@@ -74,13 +76,13 @@ const CompareProducts = () => {
             <div className="tf-compare-row tf-compare-grid">
               <div className="tf-compare-col d-md-block d-none"></div>
               {isLoading ? (
-                <div>Loading...</div>
+                <div>{t("compareProducts.loading")}</div>
               ) : products && products.length > 0 ? (
                 products.map((product) => (
                   <div className="tf-compare-col" key={product.id}>
                     <div className="tf-compare-item">
                       <div className="tf-compare-remove link" onClick={() => handleRemove(product.id)}>
-                        Remove
+                        {t("compareProducts.remove")}
                       </div>
                       <a className="tf-compare-image" href={`/products/${product.id}`}>
                         <Image
@@ -110,7 +112,7 @@ const CompareProducts = () => {
                           style={{ fontWeight: 600 }}
                         >
                           <span className="icon icon-view"></span>
-                          <span>HIZLI BAKIŞ</span>
+                          <span>{t("compareProducts.quickView")}</span>
                         </button>
                         <button
                           className="tf-btn btn-outline-dark radius-3"
@@ -118,20 +120,20 @@ const CompareProducts = () => {
                           style={{ fontWeight: 600 }}
                         >
                           <span className="icon icon-bag"></span>
-                          <span>SEPETE EKLE</span>
+                          <span>{t("compareProducts.addToCart")}</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center" style={{ flex: 1, padding: "2rem" }}>Karşılaştırılacak ürün yok.</div>
+                <div className="text-center" style={{ flex: 1, padding: "2rem" }}>{t("compareProducts.noProducts")}</div>
               )}
             </div>
             {/* Özellikler */}
-            <div className="tf-compare-row mx-6" >
+            <div className="tf-compare-row" >
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Stok Durumu</h6>
+                <h6>{t("compareProducts.stockStatus")}</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
                 <div className="tf-compare-col tf-compare-field tf-compare-stock" key={product.id} >
@@ -143,14 +145,14 @@ const CompareProducts = () => {
                     )}
                   </div>
                   <span className="fw-5 " style={{ color: product.sellableQuantity > 0 ? 'green' : 'red' }}>
-                    {product.sellableQuantity > 0 ? "Stokta var" : "Stokta yok"}
+                    {product.sellableQuantity > 0 ? t("compareProducts.inStock") : t("compareProducts.outOfStock")}
                   </span>
                 </div>
               ))}
             </div>
             <div className="tf-compare-row">
               <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>Satıcı</h6>
+                <h6>{t("compareProducts.seller")}</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
                 <div className="tf-compare-col tf-compare-value text-center" key={product.id}></div>

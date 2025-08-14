@@ -5,8 +5,10 @@ import { useOrderSupportTicket } from "@/hooks/services/support/useOrderSupportT
 import { useState } from "react";
 import { Order, OrderItem } from "@/constants/models/Order";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 function OrderSupportTicket() {
+  const { t } = useLanguage();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem | null>(
     null
@@ -38,12 +40,12 @@ function OrderSupportTicket() {
     e.preventDefault();
 
     if (!selectedOrderItem) {
-      toast.error("Lütfen bir sipariş ürünü seçin");
+      toast.error(t("orderSupportTicket.errors.selectOrderItem"));
       return;
     }
 
     if (!formData.title.trim() || !formData.description.trim()) {
-      toast.error("Lütfen tüm alanları doldurun");
+      toast.error(t("orderSupportTicket.errors.fillAllFields"));
       return;
     }
 
@@ -72,8 +74,9 @@ function OrderSupportTicket() {
     return (
       <div className="text-center py-4">
         <div className="spinner-border" role="status">
-          <span className="sr-only">Yükleniyor...</span>
+
         </div>
+        <span className="sr-only">{t("loading")}</span>
       </div>
     );
   }
@@ -82,23 +85,22 @@ function OrderSupportTicket() {
     <div className="pt-2">
       {/* Sipariş Seçimi */}
       <div className="form-group mb-4">
-        <label className="form-label">Sipariş Seçimi</label>
+        <label className="form-label">{t("orderSupportTicket.selectOrder")}</label>
         {orders.length === 0 ? (
           <div className="alert alert-info">
-            Henüz hiç siparişiniz bulunmuyor.
+            {t("orderSupportTicket.noOrders")}
           </div>
         ) : (
           <div className="order-list">
             {orders.map((order) => (
               <div
                 key={order.id}
-                className={`order-card ${
-                  selectedOrder?.id === order.id ? "selected" : ""
-                }`}
+                className={`order-card ${selectedOrder?.id === order.id ? "selected" : ""
+                  }`}
                 onClick={() => handleOrderSelect(order)}
               >
                 <div className="order-header">
-                  <strong>Sipariş No: {order.orderNumber}</strong>
+                  <strong> {t("orderSupportTicket.orderNumber") + ": #" + order.orderNumber}</strong>
                   <span className="order-date">
                     {new Date(order.createdOnValue).toLocaleDateString("tr-TR")}
                   </span>
@@ -107,7 +109,7 @@ function OrderSupportTicket() {
                   {order.recipientFirstName} {order.recipientLastName}
                 </div>
                 <div className="order-items-count">
-                  {order.orderItems?.length || 0} ürün
+                  {order.orderItems?.length || 0} {t("orderSupportTicket.product")}
                 </div>
               </div>
             ))}
@@ -119,15 +121,14 @@ function OrderSupportTicket() {
       {selectedOrder && (
         <div className="form-group mb-4">
           <label className="form-label">
-            Hangi ürün ile ilgili destek talep ediyorsunuz?
+            {t("orderSupportTicket.selectOrderItem")}
           </label>
           <div className="order-items-list">
             {selectedOrder.orderItems?.map((orderItem) => (
               <div
                 key={orderItem.id}
-                className={`order-item-card ${
-                  selectedOrderItem?.id === orderItem.id ? "selected" : ""
-                }`}
+                className={`order-item-card ${selectedOrderItem?.id === orderItem.id ? "selected" : ""
+                  }`}
                 onClick={() => handleOrderItemSelect(orderItem)}
               >
                 <div className="order-item-content">
@@ -145,11 +146,11 @@ function OrderSupportTicket() {
                       {orderItem.product?.title || "Ürün Adı Yok"}
                     </div>
                     <div className="order-item-info">
-                      Adet: {orderItem.quantity} • Fiyat:{" "}
+                      {t("orderSupportTicket.quantity")}: {orderItem.quantity} • {t("orderSupportTicket.price")}:{" "}
                       {orderItem.discountedPrice || orderItem.price}₺
                     </div>
                     <div className="order-item-number">
-                      Ürün No: {orderItem.orderItemNumber}
+                      {t("orderSupportTicket.productNumber")}: {orderItem.orderItemNumber}
                     </div>
                   </div>
                 </div>
@@ -164,7 +165,7 @@ function OrderSupportTicket() {
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
             <label htmlFor="requestType" className="form-label">
-              Talep Türü
+              {t("orderSupportTicket.requestType")}
             </label>
             <select
               className="form-control"
@@ -188,7 +189,7 @@ function OrderSupportTicket() {
 
           <div className="form-group mb-3">
             <label htmlFor="title" className="form-label">
-              Konu Başlığı
+              {t("orderSupportTicket.title")}
             </label>
             <input
               type="text"
@@ -199,13 +200,13 @@ function OrderSupportTicket() {
                 setFormData({ ...formData, title: e.target.value })
               }
               required
-              placeholder="Kısa bir başlık yazın..."
+              placeholder={t("orderSupportTicket.titlePlaceholder")}
             />
           </div>
 
           <div className="form-group mb-4">
             <label htmlFor="description" className="form-label">
-              Açıklama
+              {t("orderSupportTicket.description")}
             </label>
             <textarea
               className="form-control"
@@ -216,7 +217,7 @@ function OrderSupportTicket() {
                 setFormData({ ...formData, description: e.target.value })
               }
               required
-              placeholder="Lütfen sorununuzu detaylı bir şekilde açıklayın..."
+              placeholder={t("orderSupportTicket.descriptionPlaceholder")}
             ></textarea>
           </div>
 
@@ -226,7 +227,7 @@ function OrderSupportTicket() {
             disabled={isSubmitting}
           >
             <span>
-              {isSubmitting ? "Gönderiliyor..." : "Destek Talebi Oluştur"}
+              {isSubmitting ? t("orderSupportTicket.submitting") : t("orderSupportTicket.submitButton")}
             </span>
             <i className="icon-long-arrow-right"></i>
           </button>
