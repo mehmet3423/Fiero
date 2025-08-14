@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import SEOHead from "@/components/SEO/SEOHead";
+import { useLanguage } from "@/context/LanguageContext";
 
 function SupportTicketPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("general");
 
@@ -37,7 +39,7 @@ function SupportTicketPage() {
         >
           <div className="container">
             <h3 className="page-title">
-              Destek Talebi
+              {t("supportTicketPage.pageTitle")}
             </h3>
           </div>
         </div>
@@ -92,7 +94,7 @@ function SupportTicketPage() {
                               className="bx bx-support me-2 mr-2"
                               style={{ fontSize: "1.3rem" }}
                             ></i>
-                            Genel Destek
+                            {t("supportTicketPage.generalSupportTab")}
                           </button>
                         </li>
                         <li className="nav-item" style={{ flex: 1 }}>
@@ -128,7 +130,7 @@ function SupportTicketPage() {
                               className="bx bx-package me-2"
                               style={{ fontSize: "1.3rem" }}
                             ></i>
-                            Sipariş Desteği
+                            {t("supportTicketPage.orderSupportTab")}
                           </button>
                         </li>
                       </ul>

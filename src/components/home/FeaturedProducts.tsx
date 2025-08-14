@@ -9,6 +9,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface FeaturedProductsProps {
   productHeader: string;
@@ -19,6 +20,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   productHeader,
   productIds,
 }) => {
+  const { t } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const { addToCart } = useCart();
@@ -62,7 +64,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
       <div className="container">
         <div className="flat-title wow fadeInUp" data-wow-delay="0s">
           <span className="title">{productHeader}</span>
-          <p className="sub-title">Beautifully Functional. Purposefully Designed. Consciously Crafted.</p>
+          <p className="sub-title">{t("productsCard.subHeader")}</p>
         </div>
         <div className="hover-sw-nav hover-sw-3">
           <div className="swiper tf-sw-product-sell wrap-sw-over" data-preview="4" data-tablet="3" data-mobile="2" data-space-lg="30" data-space-md="15" data-pagination="2" data-pagination-md="3" data-pagination-lg="3">
@@ -125,11 +127,11 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                           <a
                             href="javascript:void(0);"
                             className="box-icon bg_white quick-add tf-btn-loading"
-                            title="Quick Add"
+                            title={t("productCard.lowerAddCart")}
                             onClick={() => addToCart(product.id)}
                           >
                             <span className="icon icon-bag"></span>
-                            <span className="tooltip">Quick Add</span>
+                            <span className="tooltip">{t("productCard.lowerAddCart")}</span>
                           </a>
                           <a
                             href="javascript:void(0);"
@@ -138,13 +140,13 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             }`}
                             title={
                               isInFavorites(product.id)
-                                ? "Remove from Wishlist"
-                                : "Add to Wishlist"
+                                ? t("productCard.removeFromFavorites")
+                                : t("productCard.addToFavorites")
                             }
                             onClick={() => handleToggleFavorite(product.id)}
                           >
                             <span className="icon icon-heart"></span>
-                            <span className="tooltip">Add to Wishlist</span>
+                            <span className="tooltip">{t("productCard.addToFavorites")}</span>
                             <span className="icon icon-delete"></span>
                           </a>
                           <a
@@ -153,7 +155,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             title="Add to Compare"
                           >
                             <span className="icon icon-compare"></span>
-                            <span className="tooltip">Add to Compare</span>
+                            <span className="tooltip">{t("productCard.compare")}</span>
                             <span className="icon icon-check"></span>
                           </a>
                           <a
@@ -163,7 +165,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             onClick={() => handleQuickView(product)}
                           >
                             <span className="icon icon-view"></span>
-                            <span className="tooltip">Quick View</span>
+                            <span className="tooltip">{t("productCard.quickView")}</span>
                           </a>
                         </div>
                         {isPercentageDiscount && (
@@ -191,7 +193,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                         </span>
                         <ul className="list-color-product">
                           <li className="list-color-item color-swatch active">
-                            <span className="tooltip">Default</span>
+                            <span className="tooltip">{t("productCard.default")}</span>
                             <span className="swatch-value bg_orange-3"></span>
                             <img
                               className="lazyload"

@@ -10,6 +10,7 @@ import Swiper from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Dummy data: Görseller ve başlıklar, mevcut markup ile eşleştirildi
 const recentProducts = [
@@ -106,6 +107,7 @@ const recentProducts = [
 ];
 
 const RecentlyViewed: React.FC = () => {
+  const { t } = useLanguage();
   const { addToCart } = useCart();
   const {
     addToFavorites,
@@ -174,7 +176,7 @@ const RecentlyViewed: React.FC = () => {
         // hot-reload/çıkışta tekrar init olmasını önlemek için
         // @ts-ignore
         instance?.destroy?.(true, true);
-      } catch {}
+      } catch { }
     };
   }, []);
 
@@ -182,7 +184,7 @@ const RecentlyViewed: React.FC = () => {
     <section className="flat-spacing-4 pt_0">
       <div className="container">
         <div className="flat-title">
-          <span className="title">Son Baktıklarınız</span>
+          <span className="title">{t("recentlyViewed.title")}</span>
         </div>
 
         <div className="hover-sw-nav hover-sw-2">
@@ -218,30 +220,29 @@ const RecentlyViewed: React.FC = () => {
                           }}
                         >
                           <span className="icon icon-bag"></span>
-                          <span className="tooltip">Quick Add</span>
+                          <span className="tooltip">{t("recentlyViewed.buttons.quickAdd")}</span>
                         </a>
 
                         {/* Wishlist -> useFavorites toggle */}
                         <a
                           href="#"
-                          className={`box-icon bg_white wishlist btn-icon-action ${
-                            isInFavorites(product.id) ? "added" : ""
-                          }`}
+                          className={`box-icon bg_white wishlist btn-icon-action ${isInFavorites(product.id) ? "added" : ""
+                            }`}
                           onClick={(e) => {
                             e.preventDefault();
                             handleToggleFavorite(product.id);
                           }}
                           title={
                             isInFavorites(product.id)
-                              ? "Remove from Wishlist"
-                              : "Add to Wishlist"
+                              ? t("recentlyViewed.buttons.removeFromWishlist")
+                              : t("recentlyViewed.buttons.addToWishlist")
                           }
                         >
                           <span className="icon icon-heart"></span>
                           <span className="tooltip">
                             {isInFavorites(product.id)
-                              ? "Remove from Wishlist"
-                              : "Add to Wishlist"}
+                              ? t("recentlyViewed.buttons.removeFromWishlist")
+                              : t("recentlyViewed.buttons.addToWishlist")}
                           </span>
                           <span className="icon icon-delete"></span>
                         </a>
@@ -257,7 +258,7 @@ const RecentlyViewed: React.FC = () => {
                           title="Add to Compare"
                         >
                           <span className="icon icon-compare"></span>
-                          <span className="tooltip">Add to Compare</span>
+                          <span className="tooltip">{t("recentlyViewed.buttons.addToCompare")}</span>
                           <span className="icon icon-check"></span>
                         </a>
 
@@ -272,7 +273,7 @@ const RecentlyViewed: React.FC = () => {
                           title="Quick View"
                         >
                           <span className="icon icon-view"></span>
-                          <span className="tooltip">Quick View</span>
+                          <span className="tooltip">{t("recentlyViewed.buttons.quickView")}</span>
                         </a>
                       </div>
                     </div>
@@ -289,9 +290,8 @@ const RecentlyViewed: React.FC = () => {
                         {product.colorSwatches.map((sw, i) => (
                           <li
                             key={`${product.id}-${sw.name}`}
-                            className={`list-color-item color-swatch${
-                              i === 0 ? " active" : ""
-                            }`}
+                            className={`list-color-item color-swatch${i === 0 ? " active" : ""
+                              }`}
                           >
                             <span className="tooltip">{sw.name}</span>
                             <span className={`swatch-value ${sw.colorClass}`}></span>

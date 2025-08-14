@@ -9,6 +9,7 @@ import CollectionDetailModal from "@/components/affiliate/CollectionDetailModal"
 import GeneralModal from "@/components/shared/GeneralModal";
 import AffiliateGuard from "@/guards/AffiliateGuard";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AffiliateCollectionsPageProps {
   affiliateUserId: string;
@@ -17,6 +18,7 @@ interface AffiliateCollectionsPageProps {
 export default function AffiliateCollectionsPage({
   affiliateUserId,
 }: AffiliateCollectionsPageProps) {
+  const { t } = useLanguage();
   const [isCreateCollectionModalOpen, setIsCreateCollectionModalOpen] =
     useState(false);
   const [isUpdateCollectionModalOpen, setIsUpdateCollectionModalOpen] =
@@ -59,12 +61,12 @@ export default function AffiliateCollectionsPage({
   // Utility Functions
   const getCollectionTypeText = (type: AffiliateCollectionType): string => {
     const typeTexts = {
-      [AffiliateCollectionType.Product]: "Ürün Bazlı",
-      [AffiliateCollectionType.Collection]: "Koleksiyon Bazlı",
-      [AffiliateCollectionType.Combination]: "Kombinasyon Bazlı",
-      [AffiliateCollectionType.Category]: "Kategori Bazlı",
+      [AffiliateCollectionType.Product]: t("affiliateCollections.productBased"),
+      [AffiliateCollectionType.Collection]: t("affiliateCollections.collectionBased"),
+      [AffiliateCollectionType.Combination]: t("affiliateCollections.combinationBased"),
+      [AffiliateCollectionType.Category]: t("affiliateCollections.categoryBased"),
     };
-    return typeTexts[type] || "Bilinmeyen";
+    return typeTexts[type] || t("affiliateCollections.unknown");
   };
 
   const getCollectionType = (
@@ -137,15 +139,15 @@ export default function AffiliateCollectionsPage({
     const collectionType = getCollectionType(collection);
     switch (collectionType) {
       case AffiliateCollectionType.Product:
-        return `${collection.productBasedAffiliateItems?.length || 0} Öğe`;
+        return `${collection.productBasedAffiliateItems?.length || 0} ${t("item")}`;
       case AffiliateCollectionType.Category:
-        return `${collection.categoryBasedAffiliateItems?.length || 0} Öğe`;
+        return `${collection.categoryBasedAffiliateItems?.length || 0} ${t("item")}`;
       case AffiliateCollectionType.Combination:
-        return `${collection.combinationBasedAffiliateItems?.length || 0} Öğe`;
+        return `${collection.combinationBasedAffiliateItems?.length || 0} ${t("item")}`;
       case AffiliateCollectionType.Collection:
-        return `${collection.collectionBasedAffiliateItems?.length || 0} Öğe`;
+        return `${collection.collectionBasedAffiliateItems?.length || 0} ${t("item")}`;
       default:
-        return "0 Öğe";
+        return `${0} ${t("item")}`;
     }
   };
 
@@ -161,7 +163,7 @@ export default function AffiliateCollectionsPage({
                   onClick={() => setIsCreateCollectionModalOpen(true)}
                 >
                   <i className="bx bx-plus me-2"></i>
-                  Yeni Koleksiyon
+                  {t("affiliateCollections.newCollection")}
                 </button>
               </div>
 
@@ -182,23 +184,23 @@ export default function AffiliateCollectionsPage({
                     style={{ minWidth: "180px" }}
                   >
                     <option value="">
-                      <i className="bx bx-filter-alt me-1"></i>Tüm Koleksiyonlar
+                      <i className="bx bx-filter-alt me-1"></i> {t("affiliateCollections.allCollections")}
                     </option>
                     <option value={AffiliateCollectionType.Product}>
-                      Ürün Bazlı
+                      {t("affiliateCollections.productBased")}
                     </option>
                     <option value={AffiliateCollectionType.Category}>
-                      Kategori Bazlı
+                      {t("affiliateCollections.categoryBased")}
                     </option>
                     <option value={AffiliateCollectionType.Combination}>
-                      Kombinasyon Bazlı
+                      {t("affiliateCollections.combinationBased")}
                     </option>
                     <option value={AffiliateCollectionType.Collection}>
-                      Koleksiyon Bazlı
+                      {t("affiliateCollections.collectionBased")}
                     </option>
                   </select>
                 </div>
-                
+
                 {/* Collection Count Badge */}
                 <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
                   <i className="bx bx-list-ul me-1"></i>
@@ -212,8 +214,9 @@ export default function AffiliateCollectionsPage({
             {collectionsLoading ? (
               <div className="text-center py-5">
                 <div className="spinner-border" role="status">
-                  <span className="sr-only">Yükleniyor...</span>
+
                 </div>
+                <span className="sr-only"> {t("loading")}</span>
               </div>
             ) : collections && collections.length > 0 ? (
               <div className="row">
@@ -261,7 +264,7 @@ export default function AffiliateCollectionsPage({
                                 e.stopPropagation();
                                 setOpenDropdownId(openDropdownId === collection.id ? null : collection.id);
                               }}
-                              style={{ 
+                              style={{
                                 fontSize: "1rem",
                                 padding: "2px 6px",
                                 color: "#666",
@@ -271,9 +274,9 @@ export default function AffiliateCollectionsPage({
                               ⋮
                             </button>
                             {openDropdownId === collection.id && (
-                              <div 
+                              <div
                                 className="position-absolute bg-white border rounded shadow-sm"
-                                style={{ 
+                                style={{
                                   top: "100%",
                                   right: "0",
                                   zIndex: 1000,
@@ -297,7 +300,7 @@ export default function AffiliateCollectionsPage({
                                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
                                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
                                 >
-                                  Düzenle
+                                  {t("edit")}
                                 </div>
                                 <div
                                   className="py-1 px-2 text-danger"
@@ -313,7 +316,7 @@ export default function AffiliateCollectionsPage({
                                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
                                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
                                 >
-                                  Sil
+                                  {t("delete")}
                                 </div>
                               </div>
                             )}
@@ -322,7 +325,7 @@ export default function AffiliateCollectionsPage({
 
                         <p
                           className="text-muted mb-2"
-                          style={{ 
+                          style={{
                             fontSize: "0.8rem",
                             lineHeight: "1.3",
                             color: "#6c757d",
@@ -362,16 +365,16 @@ export default function AffiliateCollectionsPage({
                             <i className="bx bx-calendar me-1"></i>
                             {new Date(collection.startDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })} - {new Date(collection.expirationDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })}
                           </small>
-                          <span 
-                            className="badge" 
-                            style={{ 
+                          <span
+                            className="badge"
+                            style={{
                               fontSize: "0.65rem",
-                              backgroundColor: getCollectionType(collection) === 1 ? "#e8f0fe" : 
-                                             getCollectionType(collection) === 2 ? "#f0f4ff" : 
-                                             getCollectionType(collection) === 3 ? "#f5f5f5" : "#faf7ff",
-                              color: getCollectionType(collection) === 1 ? "#1565c0" : 
-                                     getCollectionType(collection) === 2 ? "#3949ab" : 
-                                     getCollectionType(collection) === 3 ? "#5f6368" : "#7c4dff",
+                              backgroundColor: getCollectionType(collection) === 1 ? "#e8f0fe" :
+                                getCollectionType(collection) === 2 ? "#f0f4ff" :
+                                  getCollectionType(collection) === 3 ? "#f5f5f5" : "#faf7ff",
+                              color: getCollectionType(collection) === 1 ? "#1565c0" :
+                                getCollectionType(collection) === 2 ? "#3949ab" :
+                                  getCollectionType(collection) === 3 ? "#5f6368" : "#7c4dff",
                               border: "1px solid #e9ecef"
                             }}
                           >
@@ -394,27 +397,25 @@ export default function AffiliateCollectionsPage({
                     <>
                       <h5 className="mt-3 text-muted">
                         {getCollectionTypeText(selectedCollectionType)}{" "}
-                        koleksiyon bulunamadı
+                        {t("affiliateCollections.noCollectionsFound")}
                       </h5>
                       <p className="text-muted">
-                        Bu türde koleksiyon bulunmuyor. Farklı bir tür seçin
-                        veya yeni koleksiyon oluşturun.
+                        {t("affiliateCollections.noCollectionsMessage")}
                       </p>
                       <button
                         className="btn btn-outline-dark me-2"
                         onClick={() => setSelectedCollectionType(null)}
                       >
-                        Tüm Koleksiyonları Göster
+                        {t("affiliateCollections.showAllCollections")}
                       </button>
                     </>
                   ) : (
                     <>
                       <h5 className="mt-3 text-muted">
-                        Henüz koleksiyon oluşturmadınız
+                        {t("affiliateCollections.noCollections")}
                       </h5>
                       <p className="text-muted">
-                        İlk koleksiyonunuzu oluşturmak için Yeni Koleksiyon
-                        butonuna tıklayın.
+                        {t("affiliateCollections.createFirstCollection")}
                       </p>
                     </>
                   )}
@@ -458,11 +459,11 @@ export default function AffiliateCollectionsPage({
         {/* Delete Confirmation Modal */}
         <GeneralModal
           id="deleteCollectionModal"
-          title="Koleksiyon Sil"
+          title={t("affiliateCollections.deleteCollectionTitle")}
           size="sm"
           onClose={() => setDeletingCollectionId(null)}
           onApprove={handleConfirmDelete}
-          approveButtonText="Evet, Sil"
+          approveButtonText={t("affiliateCollections.deleteCollectionApproveButton")}
           approveButtonClassName="btn-danger"
           isLoading={deleteCollectionPending}
           showFooter={true}
@@ -472,10 +473,9 @@ export default function AffiliateCollectionsPage({
               className="bx bx-error-circle mb-2"
               style={{ fontSize: "3rem", color: "#dc3545" }}
             ></i>
-            <h4 className="mt-3">Emin misiniz?</h4>
+            <h4 className="mt-3">{t("affiliateCollections.deleteCollectionConfirmTitle")}</h4>
             <p className="text-muted">
-              Bu koleksiyonu silmek istediğinizden emin misiniz? Bu işlem geri
-              alınamaz.
+              {t("affiliateCollections.deleteCollectionConfirmMessage")}
             </p>
           </div>
         </GeneralModal>

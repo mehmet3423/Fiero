@@ -20,6 +20,7 @@ import { useSubCategorySpecifications } from "@/hooks/services/sub-category-spec
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ProductFilterSidebar from "@/components/product/ProductFilterSidebar";
+import { useLanguage } from "@/context/LanguageContext";
 
 declare global {
   interface Window {
@@ -83,6 +84,8 @@ interface ProductsProps {
 }
 
 const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
+  const { t } = useLanguage();
+  const sortOptionLabels = SORT_OPTION_LABELS(t);
   const [selectedMainCategoryId, setSelectedMainCategoryId] =
     useState<string>("");
   const [selectedSubCategoryId, setSelectedSubCategoryId] =
@@ -106,33 +109,33 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const collections = [
     {
       key: "Accessories",
-      title: "Accessories",
+      title: t("productCategories.accessories"),
       image: "/assets/site/images/collections/collection-14.jpg", // kendi yolunuza göre güncelleyin
     },
     {
       key: "men",
-      title: "Men",
+      title: t("productCategories.men"),
       image: "/assets/site/images/collections/collection-1.jpg",
     },
     {
       key: "shoes",
-      title: "Shoes",
+      title: t("productCategories.shoes"),
       image: "/assets/site/images/collections/collection-16.jpg",
     },
     {
       key: "new-arrivals",
-      title: "New Arrival",
+      title: t("productCategories.newArrivals"),
       image: "/assets/site/images/collections/collection-17.jpg",
     },
     {
       key: "handbag",
-      title: "Handbag",
+      title: t("productCategories.handbag"),
       image: "/assets/site/images/collections/collection-18.jpg",
     },
 
     {
       key: "women",
-      title: "Women",
+      title: t("productCategories.women"),
       image: "/assets/site/images/collections/collection-2.jpg",
     },
   ];
@@ -542,9 +545,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       {/* Page Title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">New Arrival</div>
+          <div className="heading text-center">{t("productsPage.pageTitle")}</div>
           <p className="text-center text-2 text_black-2 mt_5">
-            Shop through our latest selection of Fashion
+            {t("productsPage.pageSubtitle")}
           </p>
         </div>
       </div>
@@ -621,7 +624,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 onClick={toggleFilters}
               >
                 <span className="icon icon-filter"></span>
-                <span className="text">Filter</span>
+                <span className="text">{t("productsPage.filterButton")}</span>
               </a>
             </div>
             <div className="col-12 col-md-5 d-flex justify-content-center mb-2 mb-md-0">
@@ -629,9 +632,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 {[2, 3, 4].map((g) => (
                   <li
                     key={g}
-                    className={`tf-view-layout-switch sw-layout-${g}${
-                      grid === g ? " active" : ""
-                    }`}
+                    className={`tf-view-layout-switch sw-layout-${g}${grid === g ? " active" : ""
+                      }`}
                     data-value-grid={`grid-${g}`}
                     onClick={() => setGrid(g)}
                   >
@@ -655,23 +657,17 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     style={{ cursor: "pointer" }}
                   >
                     <span className="text-sort-value">
-                      {SORT_OPTION_LABELS[
-                        sortBy as keyof typeof SORT_OPTION_LABELS
-                      ] || "Featured"}
+                      {sortOptionLabels[sortBy as keyof typeof sortOptionLabels] || t("productsPage.featured")}
                     </span>
                     <span className="icon icon-arrow-down"></span>
                   </div>
-                  <div
-                    className={`dropdown-menu${dropdownOpen ? " show" : ""}`}
-                  >
-                    {Object.entries(SORT_OPTION_LABELS).map(([key, label]) => (
+                  <div className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
+                    {Object.entries(sortOptionLabels).map(([key, label]) => (
                       <div
-                        className={`select-item${
-                          sortBy === key ? " active" : ""
-                        }`}
+                        className={`select-item${sortBy === key ? " active" : ""}`}
                         key={key}
                         onClick={() => {
-                          setSortBy(key); // mevcut projedeki filtreleme fonksiyonunu tetikler
+                          setSortBy(key);
                           setDropdownOpen(false);
                         }}
                       >
@@ -698,8 +694,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     grid === 2
                       ? "col-12 col-md-6 d-flex"
                       : grid === 3
-                      ? "col-12 col-md-4 d-flex"
-                      : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
+                        ? "col-12 col-md-4 d-flex"
+                        : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
                   }
                 >
                   <ProductCard product={product} />
@@ -707,9 +703,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
               ))
             ) : (
               <div className="col-12 text-center py-5">
-                <h4>Ürün bulunamadı</h4>
+                <h4>{t("productsPage.noProductsFoundTitle")}</h4>
                 <p className="text-muted">
-                  Arama kriterlerinize uygun ürün bulunmamaktadır.
+                  {t("productsPage.noProductsFoundMessage")}
                 </p>
               </div>
             )}

@@ -8,12 +8,14 @@ import { useGetProvinces } from "@/hooks/services/address/useGetProvinces";
 import { useGetDistricts } from "@/hooks/services/address/useGetDistricts";
 import { useGetAddresses } from "@/hooks/services/address/useGetAddresses";
 import { useCreateAddress } from "@/hooks/services/address/useCreateAddress";
+import { useLanguage } from "@/context/LanguageContext";
 
 import Select from "react-select";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function CheckoutPage() {
+  const { t } = useLanguage();
   const { userProfile } = useAuth();
   const [formData, setFormData] = useState<{
     recipientName: string;
@@ -150,9 +152,9 @@ function CheckoutPage() {
       });
       setSelectedProvinceId("");
       setSelectedDistrictId("");
-      toast.success("Adres başarıyla eklendi");
+      toast.success(t("checkoutPage.errors.addAddressSuccess"));
     } catch {
-      toast.error("Adres eklenirken bir hata oluştu");
+      toast.error(t("checkoutPage.errors.addAddressError"));
     }
   };
 
@@ -167,22 +169,22 @@ function CheckoutPage() {
       !formData.tcId ||
       !formData.email
     ) {
-      toast.error("Lütfen tüm zorunlu alanları doldurun");
+      toast.error(t("checkoutPage.errors.requiredFields"));
       return;
     }
 
     if (formData.tcId.length !== 11) {
-      toast.error("TC Kimlik Numarası 11 haneli olmalıdır");
+      toast.error(t("checkoutPage.errors.tcIdLength"));
       return;
     }
 
     if (!selectedAddressId) {
-      toast.error("Lütfen teslimat adresi seçin");
+      toast.error(t("checkoutPage.errors.selectDeliveryAddress"));
       return;
     }
 
     if (!billingSameAsDelivery && !selectedBillingAddressId) {
-      toast.error("Lütfen fatura adresi seçin");
+      toast.error(t("checkoutPage.errors.selectBillingAddress"));
       return;
     }
 
@@ -190,7 +192,7 @@ function CheckoutPage() {
       isCorporateInvoice &&
       (!formData.companyName || !formData.taxNumber || !formData.taxOffice)
     ) {
-      toast.error("Lütfen kurumsal fatura bilgilerini doldurun");
+      toast.error(t("checkoutPage.errors.corporateInvoiceFields"));
       return;
     }
 
@@ -236,7 +238,7 @@ function CheckoutPage() {
       {/* Page Title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">Ödeme</div>
+          <div className="heading text-center">{t("checkoutPage.pageTitle")}</div>
         </div>
       </div>
 
@@ -246,7 +248,7 @@ function CheckoutPage() {
           <div className="tf-page-cart-wrap layout-2">
             <div className="tf-page-cart-item">
               {/* Sipariş Bilgileri Section */}
-              <h5 className="fw-5 mb_20">Sipariş Bilgileri</h5>
+              <h5 className="fw-5 mb_20">{t("checkoutPage.orderInfoTitle")}</h5>
 
               <div className="mb-4">
                 <button
@@ -254,14 +256,14 @@ function CheckoutPage() {
                   className="btn btn-outline-primary mb-3"
                   onClick={handleUseProfileInfo}
                 >
-                  Profil Bilgilerimi Kullan
+                  {t("checkoutPage.useProfileInfoButton")}
                 </button>
               </div>
 
               <form className="form-checkout" onSubmit={handleSubmit}>
                 <div className="box grid-2">
                   <fieldset className="fieldset">
-                    <label htmlFor="first-name">Adınız *</label>
+                    <label htmlFor="first-name">{t("checkoutPage.recipientName")} </label>
                     <input
                       type="text"
                       id="first-name"
@@ -272,7 +274,7 @@ function CheckoutPage() {
                     />
                   </fieldset>
                   <fieldset className="fieldset">
-                    <label htmlFor="last-name">Soyadınız *</label>
+                    <label htmlFor="last-name">{t("checkoutPage.recipientSurname")} </label>
                     <input
                       type="text"
                       id="last-name"
@@ -285,7 +287,7 @@ function CheckoutPage() {
                 </div>
 
                 <fieldset className="box fieldset">
-                  <label htmlFor="phone">Telefon Numaranız *</label>
+                  <label htmlFor="phone">{t("checkoutPage.phoneNumber")} </label>
                   <div className="input-group">
                     <input
                       type="tel"
@@ -304,7 +306,7 @@ function CheckoutPage() {
                 </fieldset>
 
                 <fieldset className="box fieldset">
-                  <label htmlFor="tcId">TC Kimlik Numaranız *</label>
+                  <label htmlFor="tcId">{t("checkoutPage.tcId")} </label>
                   <div className="input-group">
                     <input
                       type="text"
@@ -312,7 +314,7 @@ function CheckoutPage() {
                       name="tcId"
                       value={formData.tcId}
                       onChange={handleInputChange}
-                      placeholder="11 haneli TC Kimlik Numarası"
+                      placeholder={t("checkoutPage.tcIdPlaceholder")}
                       maxLength={11}
                       required
                       className="form-control"
@@ -323,13 +325,13 @@ function CheckoutPage() {
                   </div>
                   {formData.tcId.length > 0 && formData.tcId.length !== 11 && (
                     <small className="text-danger">
-                      TC Kimlik Numarası 11 haneli olmalıdır.
+                      {t("checkoutPage.errors.tcIdLength")}
                     </small>
                   )}
                 </fieldset>
 
                 <fieldset className="box fieldset">
-                  <label htmlFor="email">Email adresi *</label>
+                  <label htmlFor="email">{t("checkoutPage.email")} </label>
                   <input
                     type="email"
                     id="email"
@@ -342,7 +344,7 @@ function CheckoutPage() {
               </form>
 
               {/* Teslimat Adresi Section */}
-              <h5 className="fw-5 mb_20 mt-4">Teslimat Adresi</h5>
+              <h5 className="fw-5 mb_20 mt-4">{t("checkoutPage.deliveryAddressTitle")}</h5>
 
               {/* Address Selection */}
               {addresses.length > 0 && (
@@ -350,11 +352,10 @@ function CheckoutPage() {
                   {addresses.map((address) => (
                     <div className="col-md-6 mb-2" key={address.id}>
                       <div
-                        className={`border rounded p-3 cursor-pointer ${
-                          selectedAddressId === address.id
-                            ? "border-primary bg-light"
-                            : "border-light"
-                        }`}
+                        className={`border rounded p-3 cursor-pointer ${selectedAddressId === address.id
+                          ? "border-primary bg-light"
+                          : "border-light"
+                          }`}
                         onClick={() => handleAddressSelection(address.id)}
                         style={{ cursor: "pointer" }}
                       >
@@ -381,7 +382,7 @@ function CheckoutPage() {
                   className="btn btn-outline-primary"
                   onClick={() => $("#addAddressModal").modal("show")}
                 >
-                  Adres Ekle →
+                  {t("checkoutPage.addAddressButton")}
                 </button>
               </div>
 
@@ -399,7 +400,7 @@ function CheckoutPage() {
                     className="form-check-label"
                     htmlFor="billingSameAsDelivery"
                   >
-                    Fatura adresim teslimat adresimle aynı
+                    {t("checkoutPage.billingSameAsDelivery")}
                   </label>
                 </div>
 
@@ -415,7 +416,7 @@ function CheckoutPage() {
                     className="form-check-label"
                     htmlFor="isCorporateInvoice"
                   >
-                    Kurumsal Fatura
+                    {t("checkoutPage.isCorporateInvoice")}
                   </label>
                 </div>
               </div>
@@ -423,10 +424,10 @@ function CheckoutPage() {
               {/* Kurumsal Fatura Bilgileri */}
               {isCorporateInvoice && (
                 <div className="mt-4">
-                  <h6 className="fw-5 mb-3">Kurumsal Fatura Bilgileri</h6>
+                  <h6 className="fw-5 mb-3">{t("checkoutPage.corporateInvoiceTitle")}</h6>
                   <div className="box grid-2">
                     <fieldset className="fieldset mb-3">
-                      <label htmlFor="companyName">Firma Adı *</label>
+                      <label htmlFor="companyName">{t("checkoutPage.companyName")} </label>
                       <input
                         type="text"
                         id="companyName"
@@ -437,20 +438,20 @@ function CheckoutPage() {
                       />
                     </fieldset>
                     <fieldset className="fieldset ">
-                      <label htmlFor="taxNumber">Vergi Numarası *</label>
+                      <label htmlFor="taxNumber">{t("checkoutPage.taxNumber")}*</label>
                       <input
                         type="text"
                         id="taxNumber"
                         name="taxNumber"
                         value={formData.taxNumber}
                         onChange={handleInputChange}
-                        placeholder="Vergi numarası"
+                        placeholder={t("checkoutPage.taxNumber")}
                         required
                       />
                     </fieldset>
                   </div>
                   <fieldset className="box fieldset">
-                    <label htmlFor="taxOffice">Vergi Dairesi *</label>
+                    <label htmlFor="taxOffice">{t("checkoutPage.taxOffice")}*</label>
                     <input
                       type="text"
                       id="taxOffice"
@@ -466,17 +467,16 @@ function CheckoutPage() {
               {/* Fatura Adresi Section - Sadece farklıysa göster */}
               {!billingSameAsDelivery && (
                 <div className="mt-4">
-                  <h6 className="fw-5 mb-3">Fatura Adresi</h6>
+                  <h6 className="fw-5 mb-3">{t("checkoutPage.billingAddressTitle")}</h6>
                   {addresses.length > 0 && (
                     <div className="row mb-3">
                       {addresses.map((address) => (
                         <div className="col-md-6 mb-2" key={address.id}>
                           <div
-                            className={`border rounded p-3 cursor-pointer ${
-                              selectedBillingAddressId === address.id
-                                ? "border-primary bg-light"
-                                : "border-light"
-                            }`}
+                            className={`border rounded p-3 cursor-pointer ${selectedBillingAddressId === address.id
+                              ? "border-primary bg-light"
+                              : "border-light"
+                              }`}
                             onClick={() =>
                               handleBillingAddressSelection(address.id)
                             }
@@ -506,7 +506,7 @@ function CheckoutPage() {
                       className="btn btn-outline-primary"
                       onClick={() => $("#addAddressModal").modal("show")}
                     >
-                      Adres Ekle →
+                      {t("checkoutPage.addAddressButton")}
                     </button>
                   </div>
                 </div>
@@ -515,7 +515,7 @@ function CheckoutPage() {
 
             <div className="tf-page-cart-footer">
               <div className="tf-cart-footer-inner">
-                <h5 className="fw-5 mb_20">Siparişiniz</h5>
+                <h5 className="fw-5 mb_20">{t("checkoutPage.orderSummaryTitle")}</h5>
                 <form className="tf-page-cart-checkout widget-wrap-checkout">
                   <ul className="wrap-checkout-product">
                     {cartProducts.length === 0 ? (
@@ -523,7 +523,7 @@ function CheckoutPage() {
                         <div className="content">
                           <div className="info">
                             <p className="name text-center">
-                              Sepetinizde ürün yok.
+                              {t("checkoutPage.noProductsInCart")}
                             </p>
                           </div>
                         </div>
@@ -563,11 +563,11 @@ function CheckoutPage() {
                       href="#"
                       className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
                     >
-                      Uygula
+                      {t("checkoutPage.applyButton")}
                     </a>
                   </div>
                   <div className="d-flex justify-content-between line pb_20">
-                    <h6 className="fw-5">Toplam</h6>
+                    <h6 className="fw-5">{t("checkoutPage.total")}</h6>
                     <h6 className="total fw-5">{total.toFixed(2)}₺</h6>
                   </div>
                   <div className="wd-check-payment">
@@ -579,7 +579,7 @@ function CheckoutPage() {
                         className="tf-check"
                         defaultChecked
                       />
-                      <label htmlFor="bank">Online Ödeme</label>
+                      <label htmlFor="bank">{t("checkoutPage.onlinePayment")}</label>
                     </div>
                     <div className="fieldset-radio mb_20">
                       <input
@@ -588,17 +588,17 @@ function CheckoutPage() {
                         id="delivery"
                         className="tf-check"
                       />
-                      <label htmlFor="delivery">Kapıda Ödeme</label>
+                      <label htmlFor="delivery">{t("checkoutPage.cashOnDelivery")}</label>
                     </div>
                     <p className="text_black-2 mb_20">
-                      Kişisel bilgileriniz, hizmet kalitemizi iyileştirmek ve{" "}
+                      {t("checkoutPage.privacyPolicyMessage1")}
                       <a
                         href="/privacy-policy"
                         className="text-decoration-underline"
                       >
-                        gizlilik politikamız
+                        {t("checkoutPage.privacyPolicyMessage2")}
                       </a>
-                      da belirtilen amaçlar için kullanılacaktır.
+                      {t("checkoutPage.privacyPolicyMessage3")}
                     </p>
                   </div>
                   <button
@@ -606,7 +606,7 @@ function CheckoutPage() {
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
                     onClick={handleSubmit}
                   >
-                    Sipariş Ver
+                    {t("checkoutPage.placeOrderButton")}
                   </button>
                 </form>
               </div>
@@ -618,9 +618,9 @@ function CheckoutPage() {
       {/* Address Modal */}
       <GeneralModal
         id="addAddressModal"
-        title="Adres Ekle"
+        title={t("checkoutPage.addAddressModalTitle")}
         showFooter
-        approveButtonText="Kaydet"
+        approveButtonText={t("checkoutPage.saveButton")}
         approveButtonStyle={{
           backgroundColor: "#000",
           color: "#fff",
@@ -633,7 +633,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adınız"
+            placeholder={t("checkoutPage.firstNamePlaceholder")}
             value={newAddress.firstName}
             onChange={(e) =>
               setNewAddress({ ...newAddress, firstName: e.target.value })
@@ -642,7 +642,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Soyadınız"
+            placeholder={t("checkoutPage.lastNamePlaceholder")}
             value={newAddress.lastName}
             onChange={(e) =>
               setNewAddress({ ...newAddress, lastName: e.target.value })
@@ -651,7 +651,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adres Başlığı"
+            placeholder={t("checkoutPage.addressTitlePlaceholder")}
             value={newAddress.title}
             onChange={(e) =>
               setNewAddress({ ...newAddress, title: e.target.value })
@@ -660,7 +660,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Ülke"
+            placeholder={t("checkoutPage.countryPlaceholder")}
             value="Türkiye"
             readOnly
           />
@@ -686,7 +686,7 @@ function CheckoutPage() {
               setSelectedProvinceId(selectedOption?.value || "");
               setSelectedDistrictId("");
             }}
-            placeholder={isProvincesLoading ? "Yükleniyor..." : "İl Seçiniz"}
+            placeholder={isProvincesLoading ? t("checkoutPage.loading") : t("checkoutPage.provincePlaceholder")}
             isClearable
             isDisabled={isProvincesLoading}
             styles={{
@@ -735,7 +735,7 @@ function CheckoutPage() {
             onChange={(selectedOption) =>
               setSelectedDistrictId(selectedOption?.value || "")
             }
-            placeholder={isDistrictsLoading ? "Yükleniyor..." : "İlçe Seçiniz"}
+            placeholder={isDistrictsLoading ? t("checkoutPage.loading") : t("checkoutPage.districtPlaceholder")}
             isClearable
             isDisabled={!selectedProvinceId || isDistrictsLoading}
             styles={{
@@ -767,7 +767,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Mahalle"
+            placeholder={t("checkoutPage.neighbourhoodPlaceholder")}
             value={newAddress.neighbourhood}
             onChange={(e) =>
               setNewAddress({ ...newAddress, neighbourhood: e.target.value })
@@ -776,7 +776,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Cadde"
+            placeholder={t("checkoutPage.streetPlaceholder")}
             value={newAddress.street}
             onChange={(e) =>
               setNewAddress({ ...newAddress, street: e.target.value })
@@ -786,7 +786,7 @@ function CheckoutPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Açık Adres"
+            placeholder={t("checkoutPage.fullAddressPlaceholder")}
             value={newAddress.fullAddress}
             onChange={(e) =>
               setNewAddress({ ...newAddress, fullAddress: e.target.value })

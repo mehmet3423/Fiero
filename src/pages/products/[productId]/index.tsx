@@ -29,6 +29,7 @@ import ProductDetails from "@/components/product-detail/ProductDetails";
 import AccordionSection from "@/components/product-detail/AccordionSection"; // Import AccordionSection
 import PeopleAlsoBought from "@/components/product-detail/PeopleAlsoBought";
 import RecentlyViewed from "@/components/product-detail/RecentlyViewed";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Removed utility imports - using simplified discount structure
 
@@ -59,6 +60,7 @@ interface ProductDetailProps {
 }
 
 const ProductDetailPage = ({ seoId }: { seoId: string }) => {
+  const { t } = useLanguage();
   const router = useRouter();
   const { productId } = router.query;
   const { addToCart, addLoading: isAddingToCart } = useCart();
@@ -272,10 +274,10 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
 
       await updateReview(fullReview);
       setEditingReviewId(null);
-      toast.success("Review updated successfully!");
+      toast.success(t("productDetail.errors.reviewUpdatedSuccess"));
     } catch (error) {
       console.error("Error updating review:", error);
-      toast.error("Failed to update review.");
+      toast.error(t("productDetail.errors.reviewUpdateError"));
     }
   };
 
@@ -289,7 +291,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
     try {
       await addToCart(product.id, quantity);
     } catch (error) {
-      toast.error("Ürün sepete eklenirken bir hata oluştu");
+      toast.error(t("productDetail.errors.addToCartError"));
     }
   };
 
@@ -307,7 +309,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
         await addToFavorites(product.id);
       }
     } catch (error) {
-      toast.error("İşlem sırasında bir hata oluştu");
+      toast.error(t("productDetail.errors.favoriteError"));
     }
   };
 
@@ -318,16 +320,16 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
   if (error) {
     return (
       <div className="text-center py-5 mt-15 mb-15">
-        <h4>Ürün bulunamadı</h4>
+        <h4>{t("productDetail.errors.productNotFound")}</h4>
         <p className="text-muted">
-          Arama kriterlerinize uygun ürün bulunmamaktadır.
+          {t("productDetail.errors.noProductsFound")}
         </p>
       </div>
     );
   }
 
   if (!product) {
-    return <div>Ürün bulunamadı.</div>;
+    return <div>{t("productDetail.errors.productNotFound")}</div>;
   }
 
   // Yıldız derecelendirmesi için yardımcı fonksiyon
@@ -350,11 +352,11 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
             <div className="tf-breadcrumb-wrap d-flex justify-content-between flex-wrap align-items-center">
               <div className="tf-breadcrumb-list">
                 <Link href="/" className="text">
-                  Home
+                  {t("productDetail.breadcrumb.home")}
                 </Link>
                 <i className="icon icon-arrow-right"></i>
                 <Link href="/products" className="text">
-                  Products
+                  {t("productDetail.breadcrumb.products")}
                 </Link>
                 <i className="icon icon-arrow-right"></i>
                 <span className="text">{product.title}</span>

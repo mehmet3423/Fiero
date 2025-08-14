@@ -1,6 +1,8 @@
 import { withProfileLayout } from "../_layout";
+import { useLanguage } from "@/context/LanguageContext";
 
 function ReturnsPage() {
+  const { t } = useLanguage();
   return (
     <div className="construction-page" style={{ marginTop: "-100px" }}>
       <div className="card">
@@ -16,7 +18,7 @@ function ReturnsPage() {
               fontWeight: "600",
             }}
           >
-            Çok Yakında Burada!
+            {t("returnsPage.comingSoonTitle")}
           </h3>
           <p
             className="text-muted"
@@ -27,8 +29,7 @@ function ReturnsPage() {
               lineHeight: "1.6",
             }}
           >
-            İade taleplerimiz üzerinde çalışıyoruz. Daha iyi bir deneyim için
-            kısa süre içinde hizmetinizde olacak.
+            {t("returnsPage.comingSoonMessage")}
           </p>
         </div>
       </div>

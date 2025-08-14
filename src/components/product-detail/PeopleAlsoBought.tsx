@@ -9,6 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import QuickView from "../product/QuickView"; // Quick View modal
+import { useLanguage } from "@/context/LanguageContext";
 
 // Dummy product data (replace with real data as needed)
 const products = [
@@ -68,6 +69,7 @@ const products = [
 ];
 
 const PeopleAlsoBought: React.FC = () => {
+  const { t } = useLanguage();
   const { addToCart } = useCart();
 
   const {
@@ -119,7 +121,7 @@ const PeopleAlsoBought: React.FC = () => {
     <section className="flat-spacing-1 pt_0">
       <div className="container">
         <div className="flat-title">
-          <span className="title">Benzer ürünler</span>
+          <span className="title">{t("peopleAlsoBought.title")}</span>
         </div>
         <div className="hover-sw-nav hover-sw-2">
           <div className="swiper tf-sw-product-sell wrap-sw-over">
@@ -182,18 +184,17 @@ const PeopleAlsoBought: React.FC = () => {
                           }}
                         >
                           <span className="icon icon-bag"></span>
-                          <span className="tooltip">Quick Add</span>
+                          <span className="tooltip">{t("recentlyViewed.tooltips.quickView")}</span>
                         </a>
 
                         <a
                           href="#"
-                          className={`box-icon bg_white wishlist btn-icon-action ${
-                            isInFavorites(product.id) ? "added" : ""
-                          }`}
+                          className={`box-icon bg_white wishlist btn-icon-action ${isInFavorites(product.id) ? "added" : ""
+                            }`}
                           title={
                             isInFavorites(product.id)
-                              ? "Remove from Wishlist"
-                              : "Add to Wishlist"
+                              ? t("recentlyViewed.tooltips.removeFromWishlists")
+                              : t("recentlyViewed.tooltips.addToWishlist")
                           }
                           onClick={(e) => {
                             e.preventDefault();
@@ -203,8 +204,8 @@ const PeopleAlsoBought: React.FC = () => {
                           <span className="icon icon-heart"></span>
                           <span className="tooltip">
                             {isInFavorites(product.id)
-                              ? "Remove from Wishlist"
-                              : "Add to Wishlist"}
+                              ? t("recentlyViewed.tooltips.removeFromWishlists")
+                              : t("recentlyViewed.tooltips.addToWishlist")}
                           </span>
                           <span className="icon icon-delete"></span>
                         </a>
@@ -213,14 +214,14 @@ const PeopleAlsoBought: React.FC = () => {
                         <a
                           href="#"
                           className="box-icon bg_white compare btn-icon-action"
-                          title="Add to Compare"
+                          title={t("recentlyViewed.tooltips.addToCompare")}
                           onClick={(e) => {
                             e.preventDefault();
                             handleCompare(product.id);
                           }}
                         >
                           <span className="icon icon-compare"></span>
-                          <span className="tooltip">Add to Compare</span>
+                          <span className="tooltip">{t("recentlyViewed.tooltips.addToCompare")}</span>
                           <span className="icon icon-check"></span>
                         </a>
 
@@ -228,14 +229,14 @@ const PeopleAlsoBought: React.FC = () => {
                         <a
                           href="#"
                           className="box-icon bg_white quickview tf-btn-loading"
-                          title="Quick View"
+                          title={t("recentlyViewed.tooltips.quickView")}
                           onClick={(e) => {
                             e.preventDefault();
                             handleQuickView(product);
                           }}
                         >
                           <span className="icon icon-view"></span>
-                          <span className="tooltip">Quick View</span>
+                          <span className="tooltip">{t("recentlyViewed.tooltips.quickView")}</span>
                         </a>
                       </div>
 
@@ -270,9 +271,8 @@ const PeopleAlsoBought: React.FC = () => {
                         {product.colorSwatches.map((swatch, idx) => (
                           <li
                             key={swatch.name}
-                            className={`list-color-item color-swatch${
-                              idx === 0 ? " active" : ""
-                            }`}
+                            className={`list-color-item color-swatch${idx === 0 ? " active" : ""
+                              }`}
                           >
                             <span className="tooltip">{swatch.name}</span>
                             <span

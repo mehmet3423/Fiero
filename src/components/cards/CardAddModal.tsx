@@ -3,6 +3,7 @@ import { UserPaymentCard } from "@/constants/models/PaymentCard";
 import useCheckBin from "@/hooks/services/payment/useCheckBin";
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CardAddModalProps {
   id: string;
@@ -22,12 +23,15 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
   isAddingCard,
   handleAddCard,
   onClose,
-  title = "Kredi Kartı Ekle",
-  approveButtonText = "Kaydet",
+  title,
+  approveButtonText,
 }) => {
   const { checkBin, isPending: isBinChecking } = useCheckBin();
   const [cardInfo, setCardInfo] = useState<any>(null);
   const lastCheckedBinRef = useRef<string>("");
+  const { t } = useLanguage();
+  const defaultTitle = title || t("myCards.addCardButton");
+  const defaultApproveButtonText = approveButtonText || t("modalProps.approveButtonText");
 
   // BIN kontrolü için effect
   useEffect(() => {
@@ -56,7 +60,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           // Başarısız durumda toast göster
           if (!binInfo.data?.success) {
             toast.error(
-              "Kart bilgisi doğrulanamadı. Lütfen kart numarasını kontrol edin."
+              (t("myCards.binCheckFailed"))
             );
           } else {
             console.log("BIN kontrolü başarılı:", binInfo.data); // Debug için
@@ -65,7 +69,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           console.error("BIN kontrolü başarısız:", error);
           setCardInfo(null);
           lastCheckedBinRef.current = binNumber;
-          toast.error("Kart doğrulama sırasında bir hata oluştu.");
+          toast.error(t("myCards.binCheckError"));
         }
       } else {
         // 6 haneden az ise bilgileri temizle
@@ -124,9 +128,9 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
   return (
     <GeneralModal
       id={id}
-      title={title}
+      title={defaultTitle}
       showFooter={true}
-      approveButtonText={approveButtonText}
+      approveButtonText={defaultApproveButtonText}
       isLoading={isAddingCard}
       formId="addCardForm"
       onClose={onClose}
@@ -138,7 +142,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
     >
       <form id="addCardForm" onSubmit={handleAddCard}>
         <div className="mb-3">
-          <label className="form-label">Kart Üzerindeki İsim</label>
+          <label className="form-label">{t("myCards.cardHolderNameLabel")}</label>
           <input
             type="text"
             className="form-control mb-3 shadow-none"
@@ -150,7 +154,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Kart Numarası</label>
+          <label className="form-label">{t("myCards.cardNumberLabel")}</label>
           <input
             type="text"
             className="form-control mb-3 shadow-none"
@@ -166,8 +170,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           {isBinChecking && (
             <div className="mt-2">
               <small className="text-info">
-                <i className="fas fa-spinner fa-spin"></i> Kart bilgisi kontrol
-                ediliyor...
+                <i className="fas fa-spinner fa-spin"></i>{t("myCards.cardControl")}
               </small>
             </div>
           )}
@@ -183,7 +186,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
         </div>
         <div className="row mb-3">
           <div className="col-md-8">
-            <label className="form-label">Son Kullanma Tarihi</label>
+            <label className="form-label">{t("myCards.expireDateLabel")}</label>
             <div className="row">
               <div className="col-6">
                 <select
@@ -193,7 +196,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
                     setNewCard({ ...newCard, expireMonth: e.target.value })
                   }
                 >
-                  <option value="">Ay</option>
+                  <option value="">{t("myCards.expireMonthPlaceholder")}</option>
                   {Array.from({ length: 12 }, (_, i) => {
                     const month = (i + 1).toString().padStart(2, "0");
                     return (
@@ -212,7 +215,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
                     setNewCard({ ...newCard, expireYear: e.target.value })
                   }
                 >
-                  <option value="">Yıl</option>
+                  <option value="">{t("myCards.expireYearPlaceholder")}</option>
                   {Array.from({ length: 10 }, (_, i) => {
                     const year = (new Date().getFullYear() + i).toString();
                     return (
@@ -239,11 +242,11 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Kart Takma Adı</label>
+            <label className="form-label">{t("myCards.cardAliasLabel")}</label>
             <input
               type="text"
               className="form-control mb-3 shadow-none"
-              placeholder="Kart takma adı"
+              placeholder={t("myCards.cardAliasPlaceholder")}
               value={newCard.cardAlias}
               onChange={(e) =>
                 setNewCard({ ...newCard, cardAlias: e.target.value })

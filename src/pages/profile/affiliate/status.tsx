@@ -7,6 +7,7 @@ import { useUpdateAffiliateStatusByUser } from "@/hooks/services/affiliate/useUp
 import GeneralModal from "@/components/shared/GeneralModal";
 import ConfirmModal from "@/components/shared/ConfirmModal";
 import toast from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AffiliateStatusPageProps {
   affiliateUser: any;
@@ -17,6 +18,7 @@ export default function AffiliateStatusPage({
   affiliateUser,
   refetchAffiliateUser,
 }: AffiliateStatusPageProps) {
+  const { t } = useLanguage();
   // Edit User Status State
   const [isEditingUserStatus, setIsEditingUserStatus] = useState(false);
   const [editUserForm, setEditUserForm] = useState({
@@ -93,17 +95,17 @@ export default function AffiliateStatusPage({
   const getStatusText = (status: AffiliateStatus) => {
     switch (status) {
       case AffiliateStatus.InProgress:
-        return "Devam Ediyor";
+        return t("affiliateStatus.statusInProgress");
       case AffiliateStatus.Approved:
-        return "Onaylandı";
+        return t("affiliateStatus.statusApproved");
       case AffiliateStatus.Rejected:
-        return "Reddedildi";
+        return t("affiliateStatus.statusRejected");
       case AffiliateStatus.Cancelled:
-        return "İptal Edildi";
+        return t("affiliateStatus.statusCancelled");
       case AffiliateStatus.Suspended:
-        return "Askıya Alındı";
+        return t("affiliateStatus.statusSuspended");
       default:
-        return "Bilinmiyor";
+        return t("unknown");
     }
   };
 
@@ -148,24 +150,24 @@ export default function AffiliateStatusPage({
 
     // IBAN validation
     if (!editUserForm.iban.trim()) {
-      toast.error("IBAN alanı boş bırakılamaz");
+      toast.error(t("affiliateStatus.ibanEmptyError"));
       return;
     }
 
     if (!editUserForm.iban.startsWith("TR")) {
-      toast.error("IBAN TR ile başlamalıdır");
+      toast.error(t("affiliateStatus.ibanStartError"));
       return;
     }
 
     if (editUserForm.iban.length !== 26) {
-      toast.error("IBAN 26 karakter olmalıdır");
+      toast.error(t("affiliateStatus.ibanLengthError"));
       return;
     }
 
     // 24 haneli rakam kontrolü için yeni validation
     const ibanNumbers = editUserForm.iban.slice(2);
     if (!validateIban(ibanNumbers)) {
-      toast.error("Lütfen 24 haneli geçerli bir IBAN numarası girin");
+      toast.error(t("affiliateStatus.ibanValidationError"));
       return;
     }
 
@@ -184,7 +186,7 @@ export default function AffiliateStatusPage({
       setIsEditingUserStatus(false);
     } catch (error) {
       console.error("Error updating user status:", error);
-      toast.error("IBAN güncellenirken bir hata oluştu!");
+      toast.error(t("affiliateStatus.ibanUpdateError"));
     }
   };
 
@@ -204,10 +206,10 @@ export default function AffiliateStatusPage({
       // Başarılı iptal sonrası affiliate verilerini yeniden yükle
       await refetchAffiliateUser();
 
-      toast.success("Affiliate hesabınız başarıyla iptal edildi!");
+      toast.success(t("affiliateStatus.accountCancelSuccess"));
     } catch (error) {
       console.error("Error cancelling affiliate account:", error);
-      toast.error("Hesap iptal edilirken bir hata oluştu!");
+      toast.error(t("affiliateStatus.accountCancelError"));
     }
   };
 
@@ -224,7 +226,7 @@ export default function AffiliateStatusPage({
                     <i className="bx bx-money text-success" style={{ fontSize: "2.5rem" }}></i>
                   </div>
                   <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                    TOPLAM KAZANÇ
+                    {t("affiliateStatus.totalEarnings")}
                   </h6>
                   <h4 className="text-success mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                     {affiliateUser.totalEarnings?.toFixed(2) || "0.00"} ₺
@@ -240,7 +242,7 @@ export default function AffiliateStatusPage({
                     <i className="bx bx-transfer text-info" style={{ fontSize: "2.5rem" }}></i>
                   </div>
                   <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                    AKTARILABİLİR
+                    {t("affiliateStatus.transferable")}
                   </h6>
                   <h4 className="text-info mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                     {affiliateUser.transferableEarnings?.toFixed(2) || "0.00"} ₺
@@ -256,7 +258,7 @@ export default function AffiliateStatusPage({
                     <i className="bx bx-time-five text-warning" style={{ fontSize: "2.5rem" }}></i>
                   </div>
                   <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                    ONAY BEKLEYEN
+                    {t("affiliateStatus.pendingApproval")}
                   </h6>
                   <h4 className="text-warning mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                     {affiliateUser.pendingApprovalEarnings?.toFixed(2) || "0.00"} ₺
@@ -272,7 +274,7 @@ export default function AffiliateStatusPage({
                     <i className="bx bx-check-circle text-primary" style={{ fontSize: "2.5rem" }}></i>
                   </div>
                   <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
-                    TRANSFER EDİLEN
+                    {t("affiliateStatus.transferred")}
                   </h6>
                   <h4 className="text-primary mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
                     {affiliateUser.transferredEarnings?.toFixed(2) || "0.00"} ₺
@@ -291,7 +293,7 @@ export default function AffiliateStatusPage({
                   <div className="d-flex align-items-center">
                     <i className="bx bx-calendar text-muted me-2"></i>
                     <div>
-                      <small className="text-muted d-block">Başvuru Tarihi</small>
+                      <small className="text-muted d-block">{t("affiliateStatus.applicationDate")}</small>
                       <span className="fw-semibold">
                         {new Date(affiliateUser.appliedAt).toLocaleDateString(
                           "tr-TR",
@@ -312,7 +314,7 @@ export default function AffiliateStatusPage({
                         <i className="bx bx-check-circle text-success me-2"></i>
                         <div>
                           <small className="text-muted d-block">
-                            Affiliate Olma Tarihi
+                            {t("affiliateStatus.affiliateSince")}
                           </small>
                           <span className="fw-semibold">
                             {new Date(
@@ -338,44 +340,40 @@ export default function AffiliateStatusPage({
           }}>
             <div className="d-flex justify-content-between align-items-start">
               <div className="flex-grow-1">
-                <h5 className="card-title mb-2">Başvuru Durumu</h5>
+                <h5 className="card-title mb-2">{t("affiliateStatus.applicationStatus")}</h5>
                 <div className="text-muted">
                   {affiliateUser.status === AffiliateStatus.InProgress && (
                     <div>
                       <i className="bx bx-info-circle me-2 text-warning"></i>
-                      <span>Affiliate başvurunuz inceleniyor.</span>
+                      <span>{t("affiliateStatus.applicationInProgress")}</span>
                       <br />
                       <small className="text-muted mt-2 d-block">
-                        <strong>Not:</strong> Başvurunuz değerlendirilene
-                        kadar yeni başvuru yapamazsınız.
+                        <strong>Not:</strong> {t("affiliateStatus.applicationNote")}
                       </small>
                     </div>
                   )}
                   {affiliateUser.status === AffiliateStatus.Approved && (
                     <div>
                       <i className="bx bx-check-circle me-2 text-success"></i>
-                      <span>Affiliate hesabınız onaylandı.</span>
+                      <span>{t("affiliateStatus.applicationApproved")}</span>
                     </div>
                   )}
                   {affiliateUser.status === AffiliateStatus.Rejected && (
                     <div>
                       <i className="bx bx-x-circle me-2 text-danger"></i>
-                      <span>Affiliate başvurunuz reddedildi. Daha fazla bilgi için
-                      destek ekibimizle iletişime geçebilirsiniz.</span>
+                      <span>{t("affiliateStatus.applicationRejected")}</span>
                     </div>
                   )}
                   {affiliateUser.status === AffiliateStatus.Cancelled && (
                     <div>
                       <i className="bx bx-pause-circle me-2 text-danger"></i>
-                      <span>Affiliate hesabınız iptal edildi. Destek ekibimizle
-                      iletişime geçin.</span>
+                      <span>{t("affiliateStatus.applicationCancelled")}</span>
                     </div>
                   )}
                   {affiliateUser.status === AffiliateStatus.Suspended && (
                     <div>
                       <i className="bx bx-lock-alt me-2 text-warning"></i>
-                      <span>Affiliate hesabınız askıya alındı. Destek ekibimizle
-                      iletişime geçin.</span>
+                      <span>{t("affiliateStatus.applicationSuspended")}</span>
                     </div>
                   )}
                 </div>
@@ -395,39 +393,39 @@ export default function AffiliateStatusPage({
 
         {(affiliateUser.status === AffiliateStatus.Approved ||
           affiliateUser.status === AffiliateStatus.InProgress) && (
-          <div className="row g-3 justify-content-center">
-            <div className="col-sm-6 col-md-4">
-              <button
-                className="btn btn-dark rounded-pill w-100 py-2"
-                onClick={handleEditUserStatus}
-                title="IBAN Bilgilerini Güncelle"
-              >
-                <i className="bx bx-edit me-2"></i>
-                IBAN Güncelle
-              </button>
+            <div className="row g-3 justify-content-center">
+              <div className="col-sm-6 col-md-4">
+                <button
+                  className="btn btn-dark rounded-pill w-100 py-2"
+                  onClick={handleEditUserStatus}
+                  title={t("affiliateStatus.updateIbanModalTitle")}
+                >
+                  <i className="bx bx-edit me-2"></i>
+                  {t("affiliateStatus.updateIban")}
+                </button>
+              </div>
+              <div className="col-sm-6 col-md-4">
+                <button
+                  className="btn btn-outline-danger rounded-pill w-100 py-2"
+                  onClick={handleCancelAccount}
+                  title={t("affiliateStatus.closeAccount")}
+                >
+                  <i className="bx bx-trash me-2"></i>
+                  {t("affiliateStatus.cancelAccount")}
+                </button>
+              </div>
             </div>
-            <div className="col-sm-6 col-md-4">
-              <button
-                className="btn btn-outline-danger rounded-pill w-100 py-2"
-                onClick={handleCancelAccount}
-                title="Affiliate Hesabını Kapat"
-              >
-                <i className="bx bx-trash me-2"></i>
-                Hesabı Kapat
-              </button>
-            </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* IBAN Güncelleme Modal */}
       <GeneralModal
         id="editUserStatusModal"
-        title="IBAN Bilgilerini Güncelle"
+        title={t("affiliateStatus.updateIbanModalTitle")}
         size="md"
         onClose={() => setIsEditingUserStatus(false)}
         onApprove={handleSaveUserStatus}
-        approveButtonText="IBAN Güncelle"
+        approveButtonText={t("affiliateStatus.updateIban")}
         approveButtonClassName="btn-dark"
         isLoading={isUpdatingStatus}
         showFooter={true}
@@ -454,14 +452,14 @@ export default function AffiliateStatusPage({
             />
           </div>
           <small className="form-text text-muted mt-1">
-            24 haneli IBAN numaranızı giriniz (TR otomatik eklenir)
+            {t("affiliateStatus.ibanHelpText")}
           </small>
           {editUserForm.iban &&
             editUserForm.iban.startsWith("TR") &&
             !validateIban(editUserForm.iban.slice(2)) &&
             editUserForm.iban.length > 6 && (
               <small className="form-text text-danger mt-1">
-                Geçersiz IBAN formatı (24 haneli rakam gerekli)
+                {t("affiliateStatus.invalidIbanFormat")}
               </small>
             )}
         </div>
@@ -470,18 +468,18 @@ export default function AffiliateStatusPage({
       {/* İptal Onay Modal */}
       <GeneralModal
         id="cancelConfirmModal"
-        title="Affiliate Hesabı İptali"
+        title={t("affiliateStatus.accountCancelModalTitle")}
         showFooter={false}
       >
         <ConfirmModal
           onConfirm={handleConfirmCancel}
           isLoading={isUpdatingStatus}
-          title="Affiliate Hesabınızı İptal Etmek İstediğinizden Emin misiniz?"
-          message="Bu işlem GERİ ALINAMAZ! Tüm kazançlarınız, bağlantılarınız ve verileriniz kalıcı olarak silinecektir. Yeniden affiliate olmak için baştan başvuru yapmanız gerekecektir."
+          title={t("affiliateStatus.accountCancelConfirmTitle")}
+          message={t("affiliateStatus.accountCancelConfirmMessage")}
           confirmButtonText={
-            isUpdatingStatus ? "İptal Ediliyor..." : "Evet, Hesabımı İptal Et"
+            isUpdatingStatus ? t("affiliateStatus.cancelling") : t("affiliateStatus.accountCancelConfirmButton")
           }
-          cancelButtonText="Hayır, Vazgeç"
+          cancelButtonText={t("affiliateStatus.accountCancelCancelButton")}
         />
       </GeneralModal>
 

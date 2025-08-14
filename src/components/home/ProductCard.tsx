@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import QuickView from "../product/QuickView";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { t } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const {
@@ -30,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     try {
       await addToCart(product.id);
     } catch (error) {
-      toast.error("Ürün sepete eklenirken bir hata oluştu");
+      toast.error(t("productCard.addToCartError"));
     }
   };
 
@@ -102,17 +104,17 @@ export default function ProductCard({ product }: ProductCardProps) {
                 e.preventDefault();
                 handleToggleFavorite();
               }}
-              
+
             >
               <span className="icon icon-heart"></span>
               <span className="tooltip">
-                {isInFavorites(product.id) ? "Favorilerden Çıkar" : "Favorilere Ekle"}
+                {isInFavorites(product.id) ? t("productCard.removeFromFavorites") : t("productCard.addToFavorites")}
               </span>
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
-                fill="#000000ff"              
+                fill="#000000ff"
               >
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
@@ -127,7 +129,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               }}
             >
               <span className="icon icon-compare"></span>
-              <span className="tooltip">Karşılaştır</span>
+              <span className="tooltip">{t("productCard.compare")}</span>
               <span className="icon icon-check"></span>
             </a>
 
@@ -140,7 +142,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               }}
             >
               <span className="icon icon-view"></span>
-              <span className="tooltip">Quick View</span>
+              <span className="tooltip">{t("productCard.quickView")}</span>
             </a>
           </div>
 
@@ -162,7 +164,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               if (!isAddingToCart) handleAddToCart();
             }}
           >
-            {isAddingToCart ? "EKLENİYOR..." : "SEPETE EKLE"}
+            {isAddingToCart ? t("productCard.addingToCart") : t("productCard.addToCart")}
           </a>
 
           <Link href={`/products/${product.id}`} className="title link">
@@ -196,7 +198,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Color swatch sistemi - isteğe bağlı */}
           <ul className="list-color-product">
             <li className="list-color-item color-swatch active">
-              <span className="tooltip">Default</span>
+              <span className="tooltip">{t("productCard.default")}</span>
               <span className="swatch-value bg_orange-3"></span>
               <img className="lazyload" data-src={imageSrc} src={imageSrc} alt="image-product" />
             </li>

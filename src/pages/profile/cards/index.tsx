@@ -8,8 +8,10 @@ import { withProfileLayout } from "../_layout";
 import { useDeleteUserPaymentCards } from "@/hooks/services/cards/useDeleteUserPaymentCards";
 import { useUpdateUserPaymentCards } from "@/hooks/services/cards/useUpdateUserPaymentCards";
 import CardAddModal from "@/components/cards/CardAddModal";
+import { useLanguage } from "@/context/LanguageContext";
 
 function Cards() {
+  const { t } = useLanguage()
   const { userPaymentCards, isLoading, error } = useGetUserPaymentCards();
   const { createUserPaymentCard, isPending: isAddingCard } =
     useCreateUserPaymentCard();
@@ -84,7 +86,7 @@ function Cards() {
       !updateCard.expireYear ||
       !updateCard.cvc
     ) {
-      toast.error("Lütfen tüm alanları doldurun");
+      toast.error(t("myCards.fillAllFieldsError"));
       return;
     }
 
@@ -119,12 +121,12 @@ function Cards() {
       !newCard.expireYear ||
       !newCard.cvc
     ) {
-      toast.error("Lütfen tüm alanları doldurun");
+      toast.error(t("myCards.fillAllFieldsError"));
       return;
     }
 
     if (userPaymentCards.length === 5) {
-      toast.error("En fazla 5 kredi kartı ekleyebilirsiniz");
+      toast.error(t("myCards.maxCardsError"));
       return;
     }
 
@@ -175,7 +177,7 @@ function Cards() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t("myCards.loading")}</div>;
   }
 
   return (
@@ -201,12 +203,12 @@ function Cards() {
               paddingBottom: "12px",
             }}
           >
-            Kayıtlı Kartlarım
+            {t("myCards.myCardsTitle")}
           </h3>
 
           <div className="d-flex justify-content-between align-items-center mb-4">
             <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
-              Kayıtlı kredi kartlarınız aşağıda listelenmiştir.
+              {t("myCards.myCardsDescription")}
             </p>
             <button
               className="btn"
@@ -229,14 +231,14 @@ function Cards() {
                 e.currentTarget.style.backgroundColor = "#000";
               }}
             >
-              Kart Ekle
+              {t("myCards.addCardButton")}
             </button>
           </div>
 
           <div className="row">
             {userPaymentCards &&
-            Array.isArray(userPaymentCards) &&
-            userPaymentCards.length > 0 ? (
+              Array.isArray(userPaymentCards) &&
+              userPaymentCards.length > 0 ? (
               userPaymentCards.map((card: UserPaymentCardType) => (
                 <div className="col-md-6 mb-4" key={card.id}>
                   <div
@@ -275,7 +277,7 @@ function Cards() {
                             cursor: "pointer",
                             fontSize: "18px",
                           }}
-                          title="Sil"
+                          title={t("myCards.delete")}
                         ></i>
                         <i
                           onClick={() => {
@@ -302,14 +304,14 @@ function Cards() {
                             cursor: "pointer",
                             fontSize: "18px",
                           }}
-                          title="Güncelle"
+                          title={t("myCards.update")}
                         ></i>
                       </div>
                     </div>
                     <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
-                      <strong>Kart Numarası:</strong> {card.maskedCardNumber}
+                      <strong>{t("myCards.cardNumberLabel")}</strong> {card.maskedCardNumber}
                       <br />
-                      <strong>Son Kullanma Tarihi:</strong>{" "}
+                      <strong>{t("myCards.expireDateLabel")}:</strong>{" "}
                       {card.expireMonth}/{card.expireYear}
                     </p>
                   </div>
@@ -327,7 +329,7 @@ function Cards() {
                   }}
                 >
                   <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
-                    Henüz kayıtlı bir kredi kartınız bulunmamaktadır.
+                    {t("myCards.noCardsMessage")}
                   </p>
                 </div>
               </div>
@@ -343,16 +345,16 @@ function Cards() {
         setNewCard={setNewCard}
         isAddingCard={isAddingCard}
         handleAddCard={handleAddCard}
-        onClose={() => {}}
+        onClose={() => { }}
       />
       <GeneralModal
         id="updateCardModal"
-        title="Kredi Kartı Güncelle"
+        title={t("myCards.updateCardTitle")}
         showFooter={true}
-        approveButtonText="Kaydet"
+        approveButtonText={t("modalProps.save")}
         isLoading={isUpdatingCard}
         formId="updateCardForm"
-        onClose={() => {}}
+        onClose={() => { }}
         approveButtonStyle={{
           backgroundColor: '#000000',
           borderColor: '#000000',
@@ -364,11 +366,11 @@ function Cards() {
           onSubmit={(e) => handleUpdateCard(e, updateCard.id || "")}
         >
           <div className="mb-3">
-            <label className="form-label">Kart Üzerindeki İsim</label>
+            <label className="form-label">{t("myCards.cardHolderNameLabel")}</label>
             <input
               type="text"
               className="form-control mb-3 shadow-none"
-              placeholder="Kart üzerindeki isim"
+              placeholder={t("myCards.cardHolderNameLabel")}
               value={updateCard.cardHolderName}
               onChange={(e) =>
                 setUpdateCard({ ...updateCard, cardHolderName: e.target.value })
@@ -376,7 +378,7 @@ function Cards() {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Kart Numarası</label>
+            <label className="form-label">{t("myCards.cardNumberLabel")}</label>
             <input
               type="text"
               className="form-control mb-3 shadow-none"
@@ -390,7 +392,7 @@ function Cards() {
           </div>
           <div className="row mb-3">
             <div className="col-md-8">
-              <label className="form-label">Son Kullanma Tarihi</label>
+              <label className="form-label">{t("myCards.expireDateLabel")}</label>
               <div className="row">
                 <div className="col-6">
                   <select
@@ -403,7 +405,7 @@ function Cards() {
                       })
                     }
                   >
-                    <option value="">Ay</option>
+                    <option value="">{t("myCards.expireMonthPlaceholder")}</option>
                     {Array.from({ length: 12 }, (_, i) => {
                       const month = (i + 1).toString().padStart(2, "0");
                       return (
@@ -425,7 +427,7 @@ function Cards() {
                       })
                     }
                   >
-                    <option value="">Yıl</option>
+                    <option value="">{t("myCards.expireYearPlaceholder")}</option>
                     {Array.from({ length: 10 }, (_, i) => {
                       const year = (new Date().getFullYear() + i).toString();
                       return (
@@ -452,11 +454,11 @@ function Cards() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Kart Takma Adı</label>
+              <label className="form-label">{t("myCards.cardAliasLabel")}</label>
               <input
                 type="text"
                 className="form-control mb-3 shadow-none"
-                placeholder="Kart takma adı"
+                placeholder={t("myCards.cardAliasLabel")}
                 value={updateCard.cardAlias}
                 onChange={(e) =>
                   setUpdateCard({ ...updateCard, cardAlias: e.target.value })
@@ -468,11 +470,11 @@ function Cards() {
       </GeneralModal>
       <GeneralModal
         id="deleteCardModal"
-        title="Kartı Sil"
+        title={t("myCards.deleteCardTitle")}
         size="sm"
         onClose={() => setDeletingCardId(null)}
         onApprove={handleConfirmDeleteCard}
-        approveButtonText="Evet, Sil"
+        approveButtonText={t("myCards.deleteCardConfirmButton")}
         isLoading={isDeletingCard}
         showFooter={true}
       >
@@ -481,9 +483,9 @@ function Cards() {
             className="icon-exclamation"
             style={{ fontSize: "3rem", color: "#dc3545" }}
           ></i>
-          <h4 className="mt-3">Emin misiniz?</h4>
+          <h4 className="mt-3">{t("myCards.deleteCardConfirmTitle")}</h4>
           <p className="text-muted">
-            Bu kartı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            {t("myCards.deleteCardConfirmMessage")}
           </p>
         </div>
       </GeneralModal>

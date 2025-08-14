@@ -14,8 +14,10 @@ import { withProfileLayout } from "../_layout";
 import Select from "react-select";
 import { Province } from "@/constants/models/Province";
 import { District } from "@/constants/models/Province";
+import { useLanguage } from "@/context/LanguageContext";
 
 function AddressesPage() {
+  const { t } = useLanguage();
   const { addresses, isLoading } = useGetAddresses();
   const { createAddress, isPending: isAddingAddress } = useCreateAddress();
   const { updateAddress, isPending: isUpdatingAddress } = useUpdateAddress();
@@ -84,9 +86,9 @@ function AddressesPage() {
       setSelectedCountryId("");
       setSelectedProvinceId("");
       setSelectedDistrictId("");
-      toast.success("Adres başarıyla eklendi");
+      toast.success(t("myAddresses.addSuccess"));
     } catch {
-      toast.error("Adres eklenirken bir hata oluştu");
+      toast.error(t("myAddresses.addError"));
     }
   };
 
@@ -103,7 +105,7 @@ function AddressesPage() {
       !editAddress.street ||
       !editAddress.postalCode
     ) {
-      toast.error("Lütfen tüm alanları doldurun");
+      toast.error(t("myAddresses.fillAllFields"));
       return;
     }
 
@@ -126,10 +128,10 @@ function AddressesPage() {
       setEditAddress(null);
       setSelectedProvinceId("");
       setSelectedDistrictId("");
-      toast.success("Adres başarıyla güncellendi");
+      toast.success(t("myAddresses.updateSuccess"));
     } catch (error) {
       console.error("Error updating address:", error);
-      toast.error("Adres güncellenirken bir hata oluştu");
+      toast.error(t("myAddresses.updateError"));
     }
   };
 
@@ -139,9 +141,9 @@ function AddressesPage() {
       await deleteAddress(addressToDelete.id);
       $("#deleteAddressModal").modal("hide");
       setAddressToDelete(null);
-      toast.success("Adres başarıyla silindi");
+      toast.success(t("myAddresses.deleteSuccess"));
     } catch {
-      toast.error("Adres silinirken bir hata oluştu");
+      toast.error(t("myAddresses.deleteError"));
     }
   };
 
@@ -157,7 +159,7 @@ function AddressesPage() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>{t("myAddresses.loading")}</div>;
 
   return (
     <div>
@@ -184,14 +186,13 @@ function AddressesPage() {
       
       <div className="d-flex justify-content-between align-items-center mb-4 p-3 border rounded bg-white shadow-sm">
         <p className="mb-0 text-muted small">
-          Aşağıdaki adresler, ödeme sayfasında varsayılan olarak
-          kullanılacaktır.
+          {t("myAddresses.defaultInfo")}
         </p>
         <button
           className="btn btn-dark btn-sm text-nowrap"
           onClick={() => openModal("add")}
         >
-          Adres Ekle
+          {t("myAddresses.addAddress")}
         </button>
       </div>
 
@@ -225,7 +226,7 @@ function AddressesPage() {
                   <div className="mb-1">
                     {address.city} / {address.district}
                   </div>
-                  <div className="mb-2">Türkiye</div>
+                  <div className="mb-2">{t("myAddresses.country")}</div>
                   <div>{address.fullAddress}</div>
                 </div>
               </div>
@@ -235,16 +236,16 @@ function AddressesPage() {
           <div className="col-lg-6">
             <div className="border rounded p-4 bg-white shadow-sm text-center">
               <h3 className="mb-3 h5 fw-semibold text-dark">
-                Adresim
+                {t("myAddresses.noAddressTitle")}
               </h3>
               <p className="mb-3 text-muted small lh-base">
-                Henüz bir fatura adresi eklemediniz.
+                {t("myAddresses.noAddressDescription")}
               </p>
               <button
                 className="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-1"
                 onClick={() => openModal("add")}
               >
-                Ekle <i className="icon-edit"></i>
+                {t("myAddresses.add")} <i className="icon-edit"></i>
               </button>
             </div>
           </div>
@@ -253,9 +254,9 @@ function AddressesPage() {
 
       <GeneralModal
         id="addAddressModal"
-        title="Adres Ekle"
+        title={t("myAddresses.addAddress")}
         showFooter
-        approveButtonText="Kaydet"
+        approveButtonText={t("myAddresses.save")}
         approveButtonStyle={{
           backgroundColor: "#000",
           color: "#fff",
@@ -268,7 +269,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adınız"
+            placeholder={t("myAddresses.firstNamePlaceholder")}
             value={newAddress.firstName}
             onChange={(e) =>
               setNewAddress({ ...newAddress, firstName: e.target.value })
@@ -277,7 +278,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Soyadınız"
+            placeholder={t("myAddresses.lastNamePlaceholder")}
             value={newAddress.lastName}
             onChange={(e) =>
               setNewAddress({ ...newAddress, lastName: e.target.value })
@@ -286,7 +287,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adres Başlığı"
+            placeholder={t("myAddresses.addressTitlePlaceholder")}
             value={newAddress.title}
             onChange={(e) =>
               setNewAddress({ ...newAddress, title: e.target.value })
@@ -316,8 +317,8 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Ülke"
-            value="Türkiye"
+            placeholder={t("myAddresses.countryPlaceholder")}
+            value={t("myAddresses.country")}
             readOnly
           />
 
@@ -342,7 +343,7 @@ function AddressesPage() {
               setSelectedProvinceId(selectedOption?.value || "");
               setSelectedDistrictId("");
             }}
-            placeholder={isProvincesLoading ? "Yükleniyor..." : "İl Seçiniz"}
+            placeholder={isProvincesLoading ? t("myAddresses.loading") : t("myAddresses.provincePlaceholder")}
             isClearable
             isDisabled={isProvincesLoading}
             styles={{
@@ -391,7 +392,7 @@ function AddressesPage() {
             onChange={(selectedOption) =>
               setSelectedDistrictId(selectedOption?.value || "")
             }
-            placeholder={isDistrictsLoading ? "Yükleniyor..." : "İlçe Seçiniz"}
+            placeholder={isDistrictsLoading ? t("myAddresses.loading") : t("myAddresses.districtPlaceholder")}
             isClearable
             isDisabled={!selectedProvinceId || isDistrictsLoading}
             styles={{
@@ -423,7 +424,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Mahalle"
+            placeholder={t("myAddresses.neighbourhoodPlaceholder")}
             value={newAddress.neighbourhood}
             onChange={(e) =>
               setNewAddress({ ...newAddress, neighbourhood: e.target.value })
@@ -432,7 +433,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Cadde"
+            placeholder={t("myAddresses.streetPlaceholder")}
             value={newAddress.street}
             onChange={(e) =>
               setNewAddress({ ...newAddress, street: e.target.value })
@@ -441,7 +442,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Posta Kodu"
+            placeholder={t("myAddresses.postalCodePlaceholder")}
             value={newAddress.postalCode}
             onChange={(e) =>
               setNewAddress({ ...newAddress, postalCode: e.target.value })
@@ -450,12 +451,12 @@ function AddressesPage() {
             maxLength={5}
             inputMode="numeric"
             required
-            title="Lütfen 5 haneli posta kodunu giriniz"
+            title={t("myAddresses.postalCodeTitle")}
           />
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Açık Adres"
+            placeholder={t("myAddresses.fullAddressPlaceholder")}
             value={newAddress.fullAddress}
             onChange={(e) =>
               setNewAddress({ ...newAddress, fullAddress: e.target.value })
@@ -466,9 +467,9 @@ function AddressesPage() {
 
       <GeneralModal
         id="editAddressModal"
-        title="Adres Düzenle"
+        title={t("myAddresses.editAddressTitle")}
         showFooter
-        approveButtonText="Güncelle"
+        approveButtonText={t("myAddresses.updateButton")}
         approveButtonStyle={{
           backgroundColor: "#000",
           color: "#fff",
@@ -481,7 +482,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adınız"
+            placeholder={t("myAddresses.firstNamePlaceholder")}
             value={editAddress?.firstName || ""}
             onChange={(e) =>
               setEditAddress(
@@ -494,7 +495,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Soyadınız"
+            placeholder={t("myAddresses.lastNamePlaceholder")}
             value={editAddress?.lastName || ""}
             onChange={(e) =>
               setEditAddress(
@@ -508,7 +509,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Adres Başlığı"
+            placeholder={t("myAddresses.addressTitlePlaceholder")}
             value={editAddress?.title || ""}
             onChange={(e) =>
               setEditAddress(
@@ -519,8 +520,8 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Ülke"
-            value="Türkiye"
+            placeholder={t("myAddresses.countryPlaceholder")}
+            value={t("myAddresses.country")}
             readOnly
           />
           <Select
@@ -544,7 +545,7 @@ function AddressesPage() {
               setSelectedProvinceId(selectedOption?.value || "");
               setSelectedDistrictId("");
             }}
-            placeholder={isProvincesLoading ? "Yükleniyor..." : "İl Seçiniz"}
+            placeholder={isProvincesLoading ? t("myAddresses.loading") : t("myAddresses.provincePlaceholder")}
             isClearable
             isDisabled={isProvincesLoading}
             styles={{
@@ -593,7 +594,7 @@ function AddressesPage() {
             onChange={(selectedOption) =>
               setSelectedDistrictId(selectedOption?.value || "")
             }
-            placeholder={isDistrictsLoading ? "Yükleniyor..." : "İlçe Seçiniz"}
+            placeholder={isDistrictsLoading ? t("myAddresses.loading") : t("myAddresses.districtPlaceholder")}
             isClearable
             isDisabled={!selectedProvinceId || isDistrictsLoading}
             styles={{
@@ -625,7 +626,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Mahalle"
+            placeholder={t("myAddresses.neighbourhoodPlaceholder")}
             value={editAddress?.neighbourhood || ""}
             onChange={(e) =>
               setEditAddress(
@@ -638,7 +639,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Cadde"
+            placeholder={t("myAddresses.streetPlaceholder")}
             value={editAddress?.street || ""}
             onChange={(e) =>
               setEditAddress(
@@ -649,7 +650,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Posta Kodu"
+            placeholder={t("myAddresses.postalCodePlaceholder")}
             value={editAddress?.postalCode || ""}
             onChange={(e) =>
               setEditAddress(
@@ -662,7 +663,7 @@ function AddressesPage() {
           <input
             type="text"
             className="form-control mb-3 shadow-none"
-            placeholder="Açık Adres"
+            placeholder={t("myAddresses.fullAddressPlaceholder")}
             value={editAddress?.fullAddress || ""}
             onChange={(e) =>
               setEditAddress(
@@ -677,15 +678,15 @@ function AddressesPage() {
 
       <GeneralModal
         id="deleteAddressModal"
-        title="Adres Sil"
+        title={t("myAddresses.deleteAddressTitle")}
         showFooter={false}
       >
         <ConfirmModal
           onConfirm={handleDeleteAddress}
           isLoading={isDeletingAddress}
-          title="Adresi Silmek İstediğinize Emin misiniz?"
-          message="Bu adresi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-          confirmButtonText="Evet, Adresi Sil"
+          title={t("myAddresses.deleteConfirmTitle")}
+          message={t("myAddresses.deleteConfirmMessage")}
+          confirmButtonText={t("myAddresses.deleteConfirmButton")}
         />
       </GeneralModal>
     </div>
