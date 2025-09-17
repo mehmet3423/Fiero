@@ -3,7 +3,7 @@ import GeneralModal from "@/components/shared/GeneralModal";
 import CirclePagination from "@/components/shared/CirclePagination";
 import { Order, OrderItem } from "@/constants/models/Order";
 import { useDeleteOrder } from "@/hooks/services/order/useDeleteOrder";
-import { useGetUserOrders } from "@/hooks/services/order/useGetUserOrders";
+import { useGetOrdersFromToken } from "@/hooks/services/order/useGetUserOrders";
 import Link from "next/link";
 import { useState } from "react";
 import { withProfileLayout } from "../_layout";
@@ -21,7 +21,7 @@ function OrdersPage() {
     totalCount,
     hasNext,
     hasPrevious,
-  } = useGetUserOrders(currentPage, pageSize);
+  } = useGetOrdersFromToken(currentPage, pageSize);
   const { deleteOrder, isPending: isDeleting } = useDeleteOrder();
 
   // Silme işlemi için onay modalı state'i
@@ -93,8 +93,10 @@ function OrdersPage() {
               {orders.map((order: Order) => {
                 const totalAmount = order.orderItems?.reduce(
                   (sum: number, item: OrderItem) => {
-                    const price = typeof item.price === "number" ? item.price : 0;
-                    const quantity = typeof item.quantity === "number" ? item.quantity : 0;
+                    const price =
+                      typeof item.price === "number" ? item.price : 0;
+                    const quantity =
+                      typeof item.quantity === "number" ? item.quantity : 0;
                     return sum + price * quantity;
                   },
                   0
@@ -102,17 +104,24 @@ function OrdersPage() {
                 return (
                   <tr className="tf-order-item" key={order.id}>
                     <td>#{order.orderNumber}</td>
-                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      {new Date(order.createdOnValue).toLocaleDateString()}
+                    </td>
                     <td>{order.cargoStatus}</td>
                     <td>
                       {!isNaN(totalAmount)
                         ? totalAmount.toLocaleString("tr-TR", {
-                          style: "currency",
-                          currency: "TRY",
-                        })
+                            style: "currency",
+                            currency: "TRY",
+                          })
                         : t("orders.zeroAmount")}
                     </td>
-                    <td style={{ display: "flex", justifyContent: "space-between" }}>
+                    <td
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Link
                         href={`/profile/orders/${order.id}`}
                         className="btn btn-info btn-sm"

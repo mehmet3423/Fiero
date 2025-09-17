@@ -38,7 +38,7 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
     likeCountSort:
       options.likeCountSort !== undefined ? options.likeCountSort : 0,
     page: options.page !== undefined ? options.page : 0,
-    pageSize: options.pageSize !== undefined ? options.pageSize : 1000,
+    pageSize: options.pageSize !== undefined ? options.pageSize : 30,
     from: 0,
     ...(options.mainCategoryId && { mainCategoryId: options.mainCategoryId }),
     ...(options.subCategoryId && { subCategoryId: options.subCategoryId }),
@@ -65,13 +65,12 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
   });
 
   return {
- 
     data: data?.data, // Wrapper'dan data field'ını çıkar
     items: data?.data?.items || [],
     count: data?.data?.count || 0,
     hasNext: data?.data?.hasNext || false,
     hasPrevious: data?.data?.hasPrevious || false,
- 
+
     isLoading,
     error,
     isSuccess: data?.isSucceed,

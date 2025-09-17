@@ -1,15 +1,17 @@
 import PageLoadingAnimation from "@/components/shared/PageLoadingAnimation";
+import GeneralModal from "@/components/shared/GeneralModal";
 import { useCart } from "@/hooks/context/useCart";
-
 import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import { useGetCouponDiscount } from "@/hooks/services/discounts/useGetCouponDiscount";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import BundleProducts from "@/components/product/BundleProducts";
 import BundleSlider from "@/components/product/BundleSlider";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-hot-toast";
 
 function ShoppingCartPage() {
   const {
@@ -23,20 +25,171 @@ function ShoppingCartPage() {
     clearLoading,
     cargoPrice,
     cargoDiscountedPrice,
+    minimumCargoAmount,
+    giftWrapPrice,
+    totalPrice,
+    totalProductPhaseDiscountedPrice,
+    isGiftWrap,
+    giftWrapMessage,
+    updateGiftWrap,
+    applyCoupon,
+    removeCoupon,
+    appliedCoupon,
+    cartDiscount,
   } = useCart();
   const { t } = useLanguage();
 
-  // Bundle discount'ları getir
+  // Tüm indirim tiplerini getir
   const { discounts: bundleDiscounts } = useGetDiscountList({
     discountType: DiscountType.Bundle,
     isActive: true,
-    pageSize: 50, // Cart'taki tüm ürünler için yeterli bundle sayısı
+    pageSize: 50,
   });
+  const { discounts: productDiscounts } = useGetDiscountList({
+    discountType: DiscountType.Product,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: subCatDiscounts } = useGetDiscountList({
+    discountType: DiscountType.SubCategory,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: weekdayDiscounts } = useGetDiscountList({
+    discountType: DiscountType.WeekdayDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: specialDayDiscounts } = useGetDiscountList({
+    discountType: DiscountType.SpecialDayDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: birthdayDiscounts } = useGetDiscountList({
+    discountType: DiscountType.BirthdayDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: timeOfDayDiscounts } = useGetDiscountList({
+    discountType: DiscountType.TimeOfDayDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: shippingDiscounts } = useGetDiscountList({
+    discountType: DiscountType.ShippingDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: couponDiscounts } = useGetDiscountList({
+    discountType: DiscountType.Coupon,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: buyXPayYDiscounts } = useGetDiscountList({
+    discountType: DiscountType.BuyXPayY,
+    isActive: true,
+    pageSize: 50,
+  });
+  const { discounts: giftProductDiscounts } = useGetDiscountList({
+    discountType: DiscountType.GiftProductDiscount,
+    isActive: true,
+    pageSize: 50,
+  });
+
+  // Kupon sistemi için state'ler ve hook'lar
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const { getCouponDiscount, isPending: isCouponLoading } =
+    useGetCouponDiscount();
+
+  // Hediye paketi mesajı için state
+  const [giftWrapModalMessage, setGiftWrapModalMessage] = useState("");
+
+  // Clean up modal backdrops on component unmount
+  useEffect(() => {
+    return () => {
+      // Clean up any remaining modal backdrops when component unmounts
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open").css("padding-right", "");
+    };
+  }, []);
+
+  // Helper function to clean up modal backdrop
+  const cleanupModalBackdrop = () => {
+    setTimeout(() => {
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open").css("padding-right", "");
+    }, 200);
+  };
 
   const handleUpdateQuantity = (productId: string, quantity: number) => {
     if (quantity < 1 || quantity > 10) return;
     updateQuantity(productId, quantity);
   };
+
+  // Kupon uygulama fonksiyonu
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      return;
+    }
+
+    const backendSubtotal = totalPrice - (cargoDiscountedPrice || cargoPrice);
+
+    await getCouponDiscount(
+      couponCode,
+      async (data) => {
+        // Minimum sepet tutarını kontrol et
+        const minimumCartAmount = data.minimumCartAmount || 0;
+        if (backendSubtotal < minimumCartAmount) {
+          setCouponError(
+            `Bu kupon için minimum sepet tutarı ${minimumCartAmount}₺ olmalıdır. Mevcut sepet tutarınız: ${backendSubtotal.toFixed(
+              2
+            )}₺`
+          );
+          return;
+        }
+
+        // Cart context'ine kupon verilerini uygula (bu cart API'sini yenileyecek)
+        await applyCoupon(couponCode, data);
+        setCouponCode(""); // Başarılı uygulamadan sonra input'u temizle
+        setCouponError(""); // Hata mesajını temizle
+      },
+      (error) => {
+        setCouponError("Geçersiz kupon kodu!");
+      }
+    );
+  };
+
+  // Kupon indirimi hesaplama
+  let couponDiscountAmount = 0;
+  if (
+    appliedCoupon &&
+    (appliedCoupon.isActive || appliedCoupon.data?.isActive)
+  ) {
+    const couponData = appliedCoupon.data || appliedCoupon;
+    const minimumCartAmount = couponData.minimumCartAmount || 0;
+    const backendSubtotal = totalPrice - (cargoDiscountedPrice || cargoPrice);
+
+    if (backendSubtotal >= minimumCartAmount) {
+      if (couponData.discountValueType === 1) {
+        couponDiscountAmount = couponData.discountValue;
+      } else if (couponData.discountValueType === 0) {
+        couponDiscountAmount =
+          (backendSubtotal * couponData.discountValue) / 100;
+      }
+
+      if (
+        couponData.maximumDiscountAmount &&
+        couponDiscountAmount > couponData.maximumDiscountAmount
+      ) {
+        couponDiscountAmount = couponData.maximumDiscountAmount;
+      }
+
+      if (couponDiscountAmount > backendSubtotal) {
+        couponDiscountAmount = backendSubtotal;
+      }
+    }
+  }
 
   if (initialLoading) {
     return <PageLoadingAnimation />;
@@ -47,7 +200,9 @@ function ShoppingCartPage() {
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">{t("shoppingCart.pageTitle")}</div>
+          <div className="heading text-center">
+            {t("shoppingCart.pageTitle")}
+          </div>
         </div>
       </div>
       {/* /page-title */}
@@ -78,9 +233,7 @@ function ShoppingCartPage() {
             }}
           ></i>
           <h3 className="mb-3">{t("shoppingCart.emptyCartTitle")}</h3>
-          <p className="mb-4">
-            S{t("shoppingCart.emptyCartMessage")}
-          </p>
+          <p className="mb-4">S{t("shoppingCart.emptyCartMessage")}</p>
           <Link href="/" className="btn btn-dark">
             <span>{t("shoppingCart.startShoppingButton")}</span>
             <i className="icon-long-arrow-right ml-2"></i>
@@ -92,29 +245,66 @@ function ShoppingCartPage() {
 
   if (!cartProducts || cartProducts.length === 0) return <EmptyCart />;
 
-  // Frontend'de toplam hesaplama (backend'de henüz doğru hesaplanmıyor)
-  const normalTotal = cartProducts.reduce(
+  const frontendSubtotal = cartProducts.reduce(
     (total, item) => total + Number(item.price || 0) * Number(item.quantity),
     0
   );
 
-  const cartTotal = cartProducts.reduce((total, item) => {
+  const frontendDiscountedSubtotal = cartProducts.reduce((total, item) => {
     const priceToUse = item.discountedPrice || item.price || 0;
     return total + Number(priceToUse) * Number(item.quantity);
   }, 0);
 
-  const cartDiscountAmount = normalTotal - cartTotal; // İndirim miktarı
+  const frontendDiscountAmount = frontendSubtotal - frontendDiscountedSubtotal;
 
-  // Final toplam hesaplama
-  const finalTotal = cartTotal + (cargoDiscountedPrice || cargoPrice);
-  const normalTotalWithCargo = normalTotal + cargoPrice;
+  // Sepetteki ürünlerin ilk aktif indirim kaynağını bul
+  const getDiscountSourceName = (item: any) => {
+    const discount = item.discountResponse;
+    if (!discount) return "";
+
+    if (discount.subCategoryDiscount) {
+      return (
+        subCatDiscounts.find((d) => d.id === discount.id)?.name ||
+        "Alt Kategori İndirimi"
+      );
+    }
+    if (discount.specialDayDiscount) {
+      return (
+        specialDayDiscounts.find((d) => d.id === discount.id)?.name ||
+        "Özel Gün İndirimi"
+      );
+    }
+    if (discount.birthdayDiscount) {
+      return (
+        birthdayDiscounts.find((d) => d.id === discount.id)?.name ||
+        "Doğum Günü İndirimi"
+      );
+    }
+    if (discount.weekdayDiscount) {
+      return (
+        weekdayDiscounts.find((d) => d.id === discount.id)?.name ||
+        "Haftanın Günü İndirimi"
+      );
+    }
+    if (discount.timeOfDayDiscount) {
+      return (
+        timeOfDayDiscounts.find((d) => d.id === discount.id)?.name ||
+        "Günün Saati İndirimi"
+      );
+    }
+
+    // Eğer hiçbir tip eşleşmezse discount'un adını döndür
+    return discount.name || "Ürün İndirimleri";
+  };
 
   return (
     <main className="main" style={{ backgroundColor: "#fff" }}>
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">{t("shoppingCart.pageTitle")}</div>
+          <div className="heading text-center">
+            {t("shoppingCart.pageTitle")}
+          </div>
         </div>
       </div>
       {/* /page-title */}
@@ -175,255 +365,554 @@ function ShoppingCartPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {cartProducts.map((item) => {
-                      const discountedTotal =
-                        (item.price || 0) === (item.discountedPrice || 0)
-                          ? Number(item.price || 0) * Number(item.quantity)
-                          : Number(item.discountedPrice || 0) *
-                          Number(item.quantity);
+                    {(() => {
+                      const freeDiscountGroups = new Map<string, any[]>();
+                      const normalProducts: any[] = [];
+                      const freeProducts: any[] = [];
 
-                      return (
-                        <tr key={item.id} className="tf-cart-item file-delete">
-                          <td className="tf-cart-item_product">
-                            <Link
-                              href={`/products/${item.id}`}
-                              className="img-box"
-                            >
-                              <Image
-                                src={
-                                  item.baseImageUrl ||
-                                  "/assets/images/no-image.jpg"
-                                }
-                                alt={item.title}
-                                width={80}
-                                height={80}
-                                style={{
-                                  width: "80px",
-                                  height: "80px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </Link>
-                            <div className="cart-info">
+                      cartProducts.forEach((item) => {
+                        if (item.isFreeProduct) {
+                          freeProducts.push(item);
+                        } else if ((item as any).freeQuantity > 0) {
+                          const groupKey =
+                            (item as any).freeGroupKey || "default";
+                          if (!freeDiscountGroups.has(groupKey)) {
+                            freeDiscountGroups.set(groupKey, []);
+                          }
+                          freeDiscountGroups.get(groupKey)!.push(item);
+                        } else {
+                          const isPartOfFreeDiscount = cartProducts.some(
+                            (otherItem) => {
+                              return (
+                                (otherItem as any).freeQuantity > 0 &&
+                                (otherItem as any).freeGroupKey ===
+                                  (item as any).freeGroupKey &&
+                                otherItem.id !== item.id
+                              );
+                            }
+                          );
+
+                          if (isPartOfFreeDiscount) {
+                            const groupKey =
+                              (item as any).freeGroupKey || "default";
+                            if (!freeDiscountGroups.has(groupKey)) {
+                              freeDiscountGroups.set(groupKey, []);
+                            }
+                            freeDiscountGroups.get(groupKey)!.push(item);
+                          } else {
+                            normalProducts.push(item);
+                          }
+                        }
+                      });
+                      const sortedProducts: any[] = [];
+
+                      freeDiscountGroups.forEach((group) => {
+                        sortedProducts.push(...group);
+                      });
+
+                      sortedProducts.push(...normalProducts);
+                      sortedProducts.push(...freeProducts);
+
+                      return sortedProducts.map((item): React.ReactElement => {
+                        // API response'u data property'si içinde geliyor, onu çıkar
+                        const productData = item.data || item;
+
+                        const freeQty = Number(
+                          (productData as any).freeQuantity || 0
+                        );
+                        const paidQty = Math.max(
+                          0,
+                          Number(productData.quantity) - freeQty
+                        );
+
+                        const buyXCount = Number((item as any).buyXCount || 0);
+                        const payYCount = Number((item as any).payYCount || 0);
+                        const isBuyXPayY = Boolean((item as any).isBuyXPayY);
+                        const isrepeatable = Boolean(
+                          (item as any).isrepeatable
+                        );
+                        const hasExplicitDiscount =
+                          (item.price || 0) !== (item.discountedPrice || 0);
+
+                        const unitPrice = Number(item.price || 0);
+                        const unitDiscounted = Number(
+                          item.discountedPrice || 0
+                        );
+
+                        let discountedTotal;
+                        if (isBuyXPayY && buyXCount > 0 && payYCount > 0) {
+                          const totalQuantity = Number(item.quantity);
+                          if (isrepeatable === false) {
+                            if (totalQuantity >= buyXCount) {
+                              const discountedPart = payYCount * unitPrice;
+                              const remainingPart =
+                                (totalQuantity - buyXCount) * unitPrice;
+                              discountedTotal = discountedPart + remainingPart;
+                            } else {
+                              discountedTotal = totalQuantity * unitPrice;
+                            }
+                          } else {
+                            const fullSets = Math.floor(
+                              totalQuantity / buyXCount
+                            );
+                            const remainingItems = totalQuantity % buyXCount;
+                            const paidInSets = fullSets * payYCount;
+                            const totalPaidItems =
+                              paidInSets + Math.min(remainingItems, payYCount);
+                            discountedTotal = totalPaidItems * unitPrice;
+                          }
+                        } else if (hasExplicitDiscount) {
+                          discountedTotal =
+                            unitDiscounted * Number(item.quantity);
+                        } else {
+                          discountedTotal = unitPrice * paidQty;
+                        }
+
+                        const getRowStyle = () => {
+                          const hasGiftAmount =
+                            (item as any).giftAmount !== undefined;
+
+                          if (item.isFreeProduct) {
+                            return {
+                              borderLeft: "6px solid #28a745",
+                              position: "relative" as const,
+                            };
+                          } else if (
+                            isBuyXPayY &&
+                            buyXCount > 0 &&
+                            payYCount > 0
+                          ) {
+                            return {
+                              borderLeft: "6px solid #17a2b8",
+                              position: "relative" as const,
+                            };
+                          } else if (hasGiftAmount && !item.isFreeProduct) {
+                            return {
+                              borderLeft: "6px solid #28a745",
+                              position: "relative" as const,
+                            };
+                          }
+                          return {};
+                        };
+
+                        const getIconStyle = () => {
+                          const hasGiftAmount =
+                            (item as any).giftAmount !== undefined;
+                          const hasFreeQuantity =
+                            Number((item as any).freeQuantity || 0) > 0;
+
+                          if (item.isFreeProduct) {
+                            return {
+                              position: "absolute" as const,
+                              left: "-12px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "#28a745",
+                              color: "white",
+                              borderRadius: "50%",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "12px",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                              zIndex: 1,
+                            };
+                          } else if (
+                            isBuyXPayY &&
+                            buyXCount > 0 &&
+                            payYCount > 0
+                          ) {
+                            return {
+                              position: "absolute" as const,
+                              left: "-12px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "#17a2b8",
+                              color: "white",
+                              borderRadius: "50%",
+                              width: "24px",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "10px",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                              zIndex: 1,
+                            };
+                          } else if (
+                            hasGiftAmount &&
+                            !item.isFreeProduct &&
+                            hasFreeQuantity
+                          ) {
+                            return {
+                              position: "absolute" as const,
+                              left: "-10px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "#ffc107",
+                              color: "white",
+                              borderRadius: "50%",
+                              width: "20px",
+                              height: "20px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "10px",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                              zIndex: 1,
+                            };
+                          }
+                          return {};
+                        };
+
+                        return (
+                          <tr
+                            key={item.id}
+                            className="tf-cart-item file-delete"
+                            style={getRowStyle()}
+                          >
+                            <td className="tf-cart-item_product">
+                              {getIconStyle() &&
+                                Object.keys(getIconStyle()).length > 0 && (
+                                  <div style={getIconStyle()}>
+                                    {item.isFreeProduct
+                                      ? "🎁"
+                                      : isBuyXPayY &&
+                                        buyXCount > 0 &&
+                                        payYCount > 0
+                                      ? "💎"
+                                      : "💰"}
+                                  </div>
+                                )}
                               <Link
                                 href={`/products/${item.id}`}
-                                className="cart-title link"
+                                className="img-box"
                               >
-                                {item.title}
+                                <Image
+                                  src={
+                                    item.baseImageUrl ||
+                                    "/assets/images/no-image.jpg"
+                                  }
+                                  alt={item.title}
+                                  width={80}
+                                  height={80}
+                                  style={{
+                                    width: "80px",
+                                    height: "80px",
+                                    objectFit: "cover",
+                                  }}
+                                />
                               </Link>
-                              <div className="cart-meta-variant">
-                                {t("quantity")}: {item.quantity}
+                              <div className="cart-info">
+                                <Link
+                                  href={`/products/${item.id}`}
+                                  className="cart-title link"
+                                >
+                                  {item.title}
+                                </Link>
+                                <div className="cart-meta-variant">
+                                  {t("quantity")}: {item.quantity}
+                                </div>
+                                <button
+                                  onClick={() => removeFromCart(item.id)}
+                                  disabled={removeLoading}
+                                  className="remove-cart link remove"
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#999",
+                                    textDecoration: "underline",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {t("remove")}
+                                </button>
                               </div>
-                              <button
-                                onClick={() => removeFromCart(item.id)}
-                                disabled={removeLoading}
-                                className="remove-cart link remove"
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  color: "#999",
-                                  textDecoration: "underline",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                {t("remove")}
-                              </button>
-                            </div>
-                          </td>
-                          <td
-                            className="tf-cart-item_price"
-                            data-cart-title={t("price")}
-                          >
-                            <div className="cart-price">
-                              {(() => {
-                                // Check if there's an active discount
-                                const hasDiscount =
-                                  (item as any).discountDTO !== null;
+                            </td>
+                            <td
+                              className="tf-cart-item_price"
+                              data-cart-title={t("price")}
+                            >
+                              <div className="cart-price">
+                                {(() => {
+                                  if (
+                                    isBuyXPayY &&
+                                    buyXCount > 0 &&
+                                    payYCount > 0
+                                  ) {
+                                    const savings = buyXCount - payYCount;
+                                    const savingsPercent = Math.round(
+                                      (savings / buyXCount) * 100
+                                    );
 
-                                if (
-                                  hasDiscount ||
-                                  (item.price || 0) !==
-                                  (item.discountedPrice || 0)
-                                ) {
-                                  return (
-                                    <div style={{ position: "relative" }}>
+                                    return (
+                                      <div className="position-relative">
+                                        <div className="d-flex flex-column">
+                                          <span className="fs-4 fw-medium">
+                                            {(item.price || 0).toFixed(2)} ₺
+                                          </span>
+                                          <div>
+                                            <span className="badge bg-success text-white fs-6">
+                                              {buyXCount} Al {payYCount} Öde
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (item.isFreeProduct) {
+                                    return (
+                                      <div style={{ position: "relative" }}>
+                                        <span>
+                                          {(item.price || 0).toFixed(2)} ₺
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+
+                                  // Check if there's an active discount and prices are different
+                                  const hasDiscount =
+                                    (item as any).discountDTO !== null;
+                                  const pricesAreDifferent =
+                                    (item.price || 0) !==
+                                    (item.discountedPrice || 0);
+
+                                  // Sadece gerçekten indirimli olan ürünlerde üstü çizili fiyat göster
+                                  if (
+                                    hasDiscount &&
+                                    pricesAreDifferent &&
+                                    (item.price || 0) >
+                                      (item.discountedPrice || 0)
+                                  ) {
+                                    return (
+                                      <div className="position-relative">
+                                        <span
+                                          className="text-decoration-line-through position-absolute text-muted fs-6"
+                                          style={{ top: "-20px" }}
+                                        >
+                                          {(item.price || 0).toFixed(2)} ₺
+                                        </span>
+                                        <span className="fs-4 text-success fw-medium d-block">
+                                          {Number(
+                                            item.discountedPrice || 0
+                                          ).toFixed(2)}{" "}
+                                          ₺
+                                        </span>
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
                                       <span
                                         style={{
-                                          textDecoration: "line-through",
-                                          color: "#999",
-                                          fontSize: "1.3rem",
-                                          display: "block",
+                                          fontSize: "1.5rem",
+                                          fontWeight: 500,
+                                          lineHeight: "1.2",
                                         }}
                                       >
                                         {(item.price || 0).toFixed(2)} ₺
                                       </span>
-                                      <span
-                                        style={{
-                                          fontSize: "1.5rem",
-                                          color: "#e65540",
-                                          fontWeight: "600",
-                                        }}
-                                      >
-                                        {Number(
-                                          item.discountedPrice || 0
-                                        ).toFixed(2)}{" "}
-                                        ₺
-                                      </span>
-                                    </div>
-                                  );
-                                } else {
-                                  return (
-                                    <span
-                                      style={{
-                                        fontSize: "1.5rem",
-                                        fontWeight: "600",
-                                      }}
-                                    >
-                                      {(item.price || 0).toFixed(2)} ₺
-                                    </span>
-                                  );
-                                }
-                              })()}
-                            </div>
-                          </td>
-                          <td
-                            className="tf-cart-item_quantity"
-                            data-cart-title={t("quantity")}
-                          >
-                            <div className="cart-quantity">
-                              <div className="wg-quantity">
-                                <button
-                                  disabled={
-                                    updateLoading || item.quantity === 1
+                                    );
                                   }
-                                  onClick={() =>
-                                    handleUpdateQuantity(
-                                      item.id,
-                                      Math.max(1, item.quantity - 1)
-                                    )
-                                  }
-                                  className="btn-quantity minus-btn"
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: "4px",
-                                  }}
-                                >
-                                  <svg
-                                    className="d-inline-block"
-                                    width="9"
-                                    height="1"
-                                    viewBox="0 0 9 1"
-                                    fill="currentColor"
-                                  >
-                                    <path d="M9 1H5.14286H3.85714H0V1.50201e-05H3.85714L5.14286 0L9 1.50201e-05V1Z"></path>
-                                  </svg>
-                                </button>
-                                <input
-                                  type="text"
-                                  name="number"
-                                  value={item.quantity}
-                                  readOnly
-                                  style={{
-                                    width: "40px",
-                                    textAlign: "center",
-                                    border: "1px solid #ddd",
-                                    borderRadius: "4px",
-                                    padding: "4px",
-                                  }}
-                                />
-                                <button
-                                  disabled={updateLoading}
-                                  onClick={() =>
-                                    handleUpdateQuantity(
-                                      item.id,
-                                      Math.min(10, item.quantity + 1)
-                                    )
-                                  }
-                                  className="btn-quantity plus-btn"
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    padding: "4px",
-                                  }}
-                                >
-                                  <svg
-                                    className="d-inline-block"
-                                    width="9"
-                                    height="9"
-                                    viewBox="0 0 9 9"
-                                    fill="currentColor"
-                                  >
-                                    <path d="M9 5.14286H5.14286V9H3.85714V5.14286H0V3.85714H3.85714V0H5.14286V3.85714H9V5.14286Z"></path>
-                                  </svg>
-                                </button>
+                                })()}
                               </div>
-                            </div>
-                          </td>
-                          <td
-                            className="tf-cart-item_total"
-                            data-cart-title={t("total")}
-                          >
-                            <div className="cart-total">
-                              {(() => {
-                                // Check if there's an active discount
-                                const hasDiscount =
-                                  (item as any).discountDTO !== null;
+                            </td>
+                            <td
+                              className="tf-cart-item_quantity"
+                              data-cart-title={t("quantity")}
+                            >
+                              <div className="cart-quantity">
+                                <div className="wg-quantity">
+                                  <button
+                                    disabled={
+                                      updateLoading || item.quantity === 1
+                                    }
+                                    onClick={() =>
+                                      handleUpdateQuantity(
+                                        item.id,
+                                        Math.max(1, item.quantity - 1)
+                                      )
+                                    }
+                                    className="btn-quantity minus-btn"
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      padding: "4px",
+                                    }}
+                                  >
+                                    <svg
+                                      className="d-inline-block"
+                                      width="9"
+                                      height="1"
+                                      viewBox="0 0 9 1"
+                                      fill="currentColor"
+                                    >
+                                      <path d="M9 1H5.14286H3.85714H0V1.50201e-05H3.85714L5.14286 0L9 1.50201e-05V1Z"></path>
+                                    </svg>
+                                  </button>
+                                  <input
+                                    type="text"
+                                    name="number"
+                                    value={item.quantity}
+                                    readOnly
+                                    style={{
+                                      width: "40px",
+                                      textAlign: "center",
+                                      border: "1px solid #ddd",
+                                      borderRadius: "4px",
+                                      padding: "4px",
+                                    }}
+                                  />
+                                  <button
+                                    disabled={updateLoading}
+                                    onClick={() =>
+                                      handleUpdateQuantity(
+                                        item.id,
+                                        Math.min(10, item.quantity + 1)
+                                      )
+                                    }
+                                    className="btn-quantity plus-btn"
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      padding: "4px",
+                                    }}
+                                  >
+                                    <svg
+                                      className="d-inline-block"
+                                      width="9"
+                                      height="9"
+                                      viewBox="0 0 9 9"
+                                      fill="currentColor"
+                                    >
+                                      <path d="M9 5.14286H5.14286V9H3.85714V5.14286H0V3.85714H3.85714V0H5.14286V3.85714H9V5.14286Z"></path>
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              className="tf-cart-item_total"
+                              data-cart-title={t("total")}
+                            >
+                              <div className="cart-total">
+                                {(() => {
+                                  if (
+                                    isBuyXPayY &&
+                                    buyXCount > 0 &&
+                                    payYCount > 0
+                                  ) {
+                                    const originalTotal =
+                                      (item.price || 0) * item.quantity;
+                                    const savings =
+                                      originalTotal - discountedTotal;
 
-                                if (
-                                  hasDiscount ||
-                                  (item.price || 0) !==
-                                  (item.discountedPrice || 0)
-                                ) {
-                                  return (
-                                    <div style={{ position: "relative" }}>
-                                      <span
-                                        style={{
-                                          textDecoration: "line-through",
-                                          color: "#999",
-                                          fontSize: "1.3rem",
-                                          display: "block",
-                                        }}
-                                      >
+                                    return (
+                                      <div className="position-relative">
+                                        <div className="d-flex flex-column">
+                                          <span
+                                            className="  text-muted small"
+                                            style={{
+                                              textDecoration: "line-through",
+                                            }}
+                                          >
+                                            {originalTotal.toFixed(2)} ₺
+                                          </span>
+                                          <span className="fs-4 fw-bold text-success">
+                                            {discountedTotal.toFixed(2)} ₺
+                                          </span>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  if (item.isFreeProduct) {
+                                    const paidQuantity = Math.max(
+                                      0,
+                                      item.quantity - freeQty
+                                    );
+                                    const unitPrice = item.price || 0;
+
+                                    // Ücretsiz kampanya kapsamındaki miktar için ödenecek fiyat
+                                    const discountedPrice =
+                                      paidQuantity * unitPrice;
+
+                                    return (
+                                      <div className="position-relative">
+                                        <span
+                                          className="position-absolute  text-muted"
+                                          style={{
+                                            fontSize: "1.4rem",
+                                            top: "-20px",
+                                            textDecoration: "line-through",
+                                          }}
+                                        >
+                                          {(
+                                            (item.price || 0) * item.quantity
+                                          ).toFixed(2)}{" "}
+                                          ₺
+                                        </span>
+                                        <span className="text-success fw-bold fs-4">
+                                          {discountedPrice.toFixed(2)} ₺
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+
+                                  // Check if there's an active discount and prices are different
+                                  const hasDiscount =
+                                    (item as any).discountDTO !== null;
+                                  const pricesAreDifferent =
+                                    (item.price || 0) !==
+                                    (item.discountedPrice || 0);
+
+                                  // Sadece gerçekten indirimli olan ürünlerde üstü çizili fiyat göster
+                                  if (
+                                    hasDiscount &&
+                                    pricesAreDifferent &&
+                                    (item.price || 0) >
+                                      (item.discountedPrice || 0)
+                                  ) {
+                                    return (
+                                      <div className="position-relative">
+                                        <span
+                                          className="  position-absolute fs-6 text-muted"
+                                          style={{
+                                            top: "-20px",
+                                            textDecoration: "line-through",
+                                          }}
+                                        >
+                                          {(
+                                            (item.price || 0) * item.quantity
+                                          ).toFixed(2)}{" "}
+                                          ₺
+                                        </span>
+                                        <span className="fs-4 text-success fw-medium d-block">
+                                          {discountedTotal.toFixed(2)} ₺
+                                        </span>
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <span style={{ fontSize: "1.5rem" }}>
                                         {(
                                           (item.price || 0) * item.quantity
                                         ).toFixed(2)}{" "}
                                         ₺
                                       </span>
-                                      <span
-                                        style={{
-                                          fontSize: "1.5rem",
-                                          color: "#e65540",
-                                          fontWeight: "600",
-                                        }}
-                                      >
-                                        {discountedTotal.toFixed(2)} ₺
-                                      </span>
-                                    </div>
-                                  );
-                                } else {
-                                  return (
-                                    <span
-                                      style={{
-                                        fontSize: "1.5rem",
-                                        fontWeight: "600",
-                                      }}
-                                    >
-                                      {(
-                                        (item.price || 0) * item.quantity
-                                      ).toFixed(2)}{" "}
-                                      ₺
-                                    </span>
-                                  );
-                                }
-                              })()}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                    );
+                                  }
+                                })()}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      });
+                    })()}
                   </tbody>
                 </table>
                 {/*<div className="tf-page-cart-note">
@@ -460,8 +949,10 @@ function ShoppingCartPage() {
                   </div>
                   <div className="tf-progress-msg">
                     <span className="price fw-6">75.00 ₺</span>
-                    {t("shoppingCart.freeShippingMessage1")}<span className="fw-6">
-                      {t("shoppingCart.freeShippingMessage2")}</span>
+                    {t("shoppingCart.freeShippingMessage1")}
+                    <span className="fw-6">
+                      {t("shoppingCart.freeShippingMessage2")}
+                    </span>
                     {t("shoppingCart.freeShippingMessage3")}
                   </div>
                 </div>
@@ -518,83 +1009,528 @@ function ShoppingCartPage() {
                       </div>
                     </div>
                   </div>*/}
+                  {/* Kupon Kodu Uygulama */}
+                  <div className="mb-4">
+                    {appliedCoupon ? (
+                      <div
+                        className="checkout-coupon-success "
+                        style={{
+                          background: "#d6f5df",
+                          borderRadius: "12px",
+                          padding: "18px 20px 14px 20px",
+                          minHeight: "90px",
+                          position: "relative",
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <button
+                          className="coupon-close-btn"
+                          onClick={async () => {
+                            await removeCoupon();
+                            setCouponCode("");
+                          }}
+                          title="Kuponu Kaldır"
+                          style={{
+                            position: "absolute",
+                            top: "8px",
+                            right: "8px",
+                            background: "none",
+                            border: "none",
+                            color: "#249c5a",
+                            fontSize: "14px",
+                            cursor: "pointer",
+                            padding: "4px",
+                            lineHeight: 1,
+                            width: "24px",
+                            height: "24px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "50%",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                              "rgba(36, 156, 90, 0.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
+                          }}
+                        >
+                          <i className="bx bx-x"></i>
+                        </button>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <i
+                            className="bx bxs-check-circle"
+                            style={{
+                              color: "#249c5a",
+                              fontSize: 22,
+                              marginRight: 10,
+                              marginTop: 2,
+                              flexShrink: 0,
+                            }}
+                          ></i>
+                          <div style={{ width: "100%" }}>
+                            <div
+                              style={{
+                                fontWeight: 700,
+                                color: "#249c5a",
+                                fontSize: 15,
+                                marginBottom: 2,
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {appliedCoupon?.data?.name ||
+                                appliedCoupon?.name ||
+                                "Kupon"}{" "}
+                              kuponu uygulandı!
+                            </div>
+                            <div
+                              style={{
+                                color: "#249c5a",
+                                fontSize: 14,
+                                fontWeight: 500,
+                                marginBottom: 0,
+                                lineHeight: 1.5,
+                              }}
+                            >
+                              {(appliedCoupon?.data?.discountValueType ||
+                                appliedCoupon?.discountValueType) === 1
+                                ? `%${
+                                    appliedCoupon?.data?.discountValue ||
+                                    appliedCoupon?.discountValue
+                                  } indirim`
+                                : `${
+                                    appliedCoupon?.data?.discountValue ||
+                                    appliedCoupon?.discountValue
+                                  }₺ indirim`}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="input-group" style={{ height: "48px" }}>
+                          <input
+                            type="text"
+                            className={`form-control ${
+                              couponError ? "is-invalid" : ""
+                            }`}
+                            placeholder="Kupon kodu giriniz"
+                            value={couponCode}
+                            onChange={(e) => {
+                              setCouponCode(e.target.value);
+                              if (couponError) setCouponError(""); // Kullanıcı yazmaya başladığında hatayı temizle
+                            }}
+                            disabled={isCouponLoading}
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplyCoupon();
+                              }
+                            }}
+                            style={{
+                              height: "48px",
+                              fontSize: "16px",
+                              padding: "12px 16px",
+                              borderTopRightRadius: "0",
+                              borderBottomRightRadius: "0",
+                            }}
+                          />
+                          <div className="input-group-append">
+                            <button
+                              className="btn btn-outline-primary-2"
+                              type="button"
+                              disabled={isCouponLoading || !couponCode.trim()}
+                              onClick={handleApplyCoupon}
+                              style={{
+                                height: "48px",
+                                width: "40px",
+                                minWidth: "40px",
+                                borderTopLeftRadius: "0",
+                                borderBottomLeftRadius: "0",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                padding: "0",
+                              }}
+                            >
+                              {isCouponLoading ? (
+                                <i className="icon-spinner icon-spin"></i>
+                              ) : (
+                                <i className="icon-long-arrow-right"></i>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        {couponError && (
+                          <div className="mt-2">
+                            <small className="text-danger d-flex align-items-center">
+                              <i className="bx bx-error-circle me-1"></i>
+                              {couponError}
+                            </small>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {cartProducts.some((item) => item.isFreeProduct) && (
+                    <div className="free-product-notification mb-1">
+                      <div
+                        className="d-flex align-items-center justify-content-between"
+                        style={{
+                          backgroundColor: "#f8f9fa",
+                          padding: "8px 12px",
+                          borderRadius: "4px",
+                          border: "1px solid #e9ecef",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <i
+                            className="bx bx-gift"
+                            style={{
+                              fontSize: "1.5rem",
+                              marginRight: "6px",
+                              color: "#28a745",
+                            }}
+                          ></i>
+                          <span
+                            style={{ fontSize: "1.5rem", color: "#495057" }}
+                          >
+                            Ücretsiz Ürün Kampanyası
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: "1.5rem",
+                            color: "#28a745",
+                            fontWeight: "500",
+                          }}
+                        >
+                          Aktif
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {(() => {
+                    const buyXPayYProduct = cartProducts.find(
+                      (item) => (item as any).isBuyXPayY
+                    );
+                    if (buyXPayYProduct) {
+                      const buyXCount = Number(
+                        (buyXPayYProduct as any).buyXCount || 0
+                      );
+                      const payYCount = Number(
+                        (buyXPayYProduct as any).payYCount || 0
+                      );
+
+                      return (
+                        <div className="buyxpayy-notification mb-1">
+                          <div
+                            className="d-flex align-items-center justify-content-between"
+                            style={{
+                              backgroundColor: "#e3f2fd",
+                              padding: "8px 12px",
+                              borderRadius: "4px",
+                              border: "1px solid #17a2b8",
+                            }}
+                          >
+                            <div className="d-flex align-items-center">
+                              <i
+                                className="bx bx-package"
+                                style={{
+                                  fontSize: "1.5rem",
+                                  marginRight: "6px",
+                                  color: "#17a2b8",
+                                }}
+                              ></i>
+                              <span
+                                style={{ fontSize: "1.5rem", color: "#495057" }}
+                              >
+                                {buyXCount} Al {payYCount} Öde Kampanyası
+                              </span>
+                            </div>
+                            <span
+                              style={{
+                                fontSize: "1.5rem",
+                                color: "#17a2b8",
+                                fontWeight: "500",
+                              }}
+                            >
+                              Aktif
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+
                   <div className="cart-checkbox">
                     <input
                       type="checkbox"
                       className="tf-check"
                       id="cart-gift-checkbox"
+                      checked={isGiftWrap}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          // Hediye paketi seçildiğinde modal aç
+                          $("#giftWrapModal").modal("show");
+                        } else {
+                          // Hediye paketi kaldırıldığında direkt güncelle
+                          updateGiftWrap(false);
+                        }
+                      }}
                     />
                     <label htmlFor="cart-gift-checkbox" className="fw-4">
                       <span>{t("giftWrap")}</span> {t("giftWrapPrice")}
-                      <span className="fw-5">5.00 ₺</span>
+                      <span className="fw-5">{giftWrapPrice.toFixed(2)} ₺</span>
                     </label>
                   </div>
-                  <div className="tf-cart-totals-discounts">
-                    <h3>{t("shoppingCart.subtotalLabel")}</h3>
-                    <span className="total-value">
-                      {normalTotal.toFixed(2)} ₺
-                    </span>
-                  </div>
-                  {cartTotal !== normalTotal && (
-                    <div className="tf-cart-totals-discounts">
-                      <h3>{t("shoppingCart.discountLabel")}</h3>
-                      <span className="total-value" style={{ color: "green" }}>
-                        -{cartDiscountAmount.toFixed(2)} ₺
-                      </span>
-                    </div>
-                  )}
-                  <div className="tf-cart-totals-discounts">
-                    <h3>{t("shoppingCart.shippingLabel")}</h3>
-                    <span className="total-value">
-                      {cargoDiscountedPrice &&
-                        cargoPrice !== cargoDiscountedPrice ? (
-                        <>
+                  <table className="table table-summary">
+                    <tbody>
+                      <tr className="summary-original-total text-dark">
+                        <td style={{ fontSize: "1.7rem" }}>Sepet Tutarı:</td>
+                        <td>
+                          <span className="text-decoration-line-through text-dark">
+                            {frontendSubtotal.toFixed(2)} ₺
+                          </span>
+                        </td>
+                      </tr>
+                      {frontendDiscountAmount > 0 && (
+                        <tr className="summary-discount">
+                          <td>
+                            {(() => {
+                              // Sepetteki ilk indirimli ürünü bul
+                              const discountedProduct = cartProducts.find(
+                                (item) => item.discountResponse
+                              );
+                              return discountedProduct
+                                ? getDiscountSourceName(discountedProduct)
+                                : "Ürün İndirimleri";
+                            })()}
+                            :
+                          </td>
+                          <td>
+                            <small
+                              style={{ color: "green", fontSize: "1.4rem" }}
+                            >
+                              -{frontendDiscountAmount.toFixed(2)} ₺
+                            </small>
+                          </td>
+                        </tr>
+                      )}
+                      {cartDiscount && (
+                        <tr className="summary-discount">
+                          <td>Sepet İndirimi:</td>
+                          <td>
+                            <small
+                              style={{ color: "green", fontSize: "1.4rem" }}
+                            >
+                              {cartDiscount?.discountValueType === 1
+                                ? `-%${cartDiscount?.discountValue} indirim`
+                                : cartDiscount?.discountValueType === 2
+                                ? `-${cartDiscount?.discountValue.toFixed(2)}₺`
+                                : ""}
+                            </small>
+                          </td>
+                        </tr>
+                      )}
+
+                      {couponDiscountAmount > 0 && (
+                        <tr className="summary-discount">
+                          <td>
+                            <strong>
+                              {appliedCoupon?.data?.name || appliedCoupon?.name}
+                            </strong>{" "}
+                            Kuponu İndirimi:
+                            <div
+                              style={{
+                                fontSize: "1.3rem",
+                                color: "#666",
+                                marginTop: "4px",
+                              }}
+                            >
+                              (
+                              {appliedCoupon?.data?.discountValueType === 1 ||
+                              appliedCoupon?.discountValueType === 1
+                                ? `%${
+                                    appliedCoupon?.data?.discountValue ||
+                                    appliedCoupon?.discountValue
+                                  } indirim`
+                                : `${
+                                    appliedCoupon?.data?.discountValue ||
+                                    appliedCoupon?.discountValue
+                                  }₺ indirim`}
+                              )
+                              {(appliedCoupon?.data?.minimumCartAmount ||
+                                appliedCoupon?.minimumCartAmount) > 0 && (
+                                <div
+                                  style={{
+                                    fontSize: "0.7rem",
+                                    color: "#999",
+                                    marginTop: "2px",
+                                  }}
+                                >
+                                  Min. sepet:{" "}
+                                  {appliedCoupon?.data?.minimumCartAmount ||
+                                    appliedCoupon?.minimumCartAmount}
+                                  ₺
+                                </div>
+                              )}
+                              {(appliedCoupon?.data?.maximumDiscountAmount ||
+                                appliedCoupon?.maximumDiscountAmount) && (
+                                <div
+                                  style={{
+                                    fontSize: "0.7rem",
+                                    color: "#999",
+                                    marginTop: "2px",
+                                  }}
+                                >
+                                  Max. indirim:{" "}
+                                  {appliedCoupon?.data?.maximumDiscountAmount ||
+                                    appliedCoupon?.maximumDiscountAmount}
+                                  ₺
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <small
+                              style={{
+                                color: "green",
+                                fontSize: "1.4rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              {appliedCoupon?.data?.discountValueType === 1 ||
+                              appliedCoupon?.discountValueType === 1
+                                ? `-%${
+                                    appliedCoupon?.data?.discountValue ||
+                                    appliedCoupon?.discountValue
+                                  }`
+                                : `-${couponDiscountAmount.toFixed(2)} ₺`}
+                            </small>
+                          </td>
+                        </tr>
+                      )}
+                      <tr className="summary-subtotal">
+                        <td>Ara Toplam:</td>
+                        <td>{totalProductPhaseDiscountedPrice.toFixed(2)} ₺</td>
+                      </tr>
+
+                      <tr className="summary-shipping">
+                        <td>Kargo:</td>
+                        <td>
+                          {cargoDiscountedPrice !== null &&
+                          cargoDiscountedPrice !== undefined &&
+                          cargoPrice !== cargoDiscountedPrice ? (
+                            <div>
+                              <del
+                                style={{
+                                  color: "#999",
+                                  fontSize: "1.3rem",
+                                  display: "block",
+                                  lineHeight: "1",
+                                }}
+                              >
+                                {cargoPrice.toFixed(2)} ₺
+                              </del>
+                              <span
+                                style={{
+                                  fontSize: "1.5rem",
+                                  display: "block",
+                                  lineHeight: "1.2",
+                                }}
+                              >
+                                {cargoDiscountedPrice.toFixed(2)} ₺
+                              </span>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: "1.5rem" }}>
+                              {cargoPrice.toFixed(2)} ₺
+                            </span>
+                          )}
+                          {(() => {
+                            const shippingDiscount =
+                              shippingDiscounts?.[0] as any;
+                            return (
+                              shippingDiscount?.cargoDiscount
+                                ?.minimumCargoAmount && (
+                                <div
+                                  style={{
+                                    fontSize: "1.05rem",
+                                    color: "gray",
+                                    fontWeight: "500",
+                                    marginTop: "4px",
+                                  }}
+                                >
+                                  {shippingDiscount.cargoDiscount.minimumCargoAmount.toFixed(
+                                    2
+                                  )}{" "}
+                                  ₺ üzerine{" "}
+                                  <strong
+                                    style={{
+                                      color: "green",
+                                      fontSize: "1.15rem",
+                                    }}
+                                  >
+                                    ücretsiz kargo
+                                  </strong>
+                                </div>
+                              )
+                            );
+                          })()}
+                        </td>
+                      </tr>
+
+                      {isGiftWrap && (
+                        <tr className="summary-gift-wrap">
+                          <td>Hediye Paketi:</td>
+                          <td>
+                            <span style={{ fontSize: "1.5rem" }}>
+                              {giftWrapPrice.toFixed(2)} ₺
+                            </span>
+                          </td>
+                        </tr>
+                      )}
+
+                      <tr className="summary-total">
+                        <td style={{ fontWeight: "bold" }}>Toplam:</td>
+                        <td>
                           <span
                             style={{
-                              textDecoration: "line-through",
-                              color: "#999",
-                              marginRight: "0.5rem",
+                              color: "#040404",
+                              fontSize: "1.8rem",
+                              display: "block",
+                              lineHeight: "1.2",
                             }}
                           >
-                            {cargoPrice.toFixed(2)} ₺
+                            {totalPrice.toFixed(2)} ₺
                           </span>
-                          <span style={{ color: "#e65540" }}>
-                            {cargoDiscountedPrice.toFixed(2)} ₺
-                          </span>
-                        </>
-                      ) : (
-                        `${cargoPrice.toFixed(2)} ₺`
-                      )}
-                    </span>
-                  </div>
-                  <div className="tf-cart-totals-discounts">
-                    <h3>{t("total")}</h3>
-                    <span className="total-value">
-                      {normalTotalWithCargo !== finalTotal ? (
-                        <>
-                          <span
-                            style={{
-                              textDecoration: "line-through",
-                              color: "#999",
-                              marginRight: "0.5rem",
-                            }}
-                          >
-                            {normalTotalWithCargo.toFixed(2)} ₺
-                          </span>
-                          <span
-                            style={{ color: "#040404", fontSize: "1.8rem" }}
-                          >
-                            {finalTotal.toFixed(2)} ₺
-                          </span>
-                        </>
-                      ) : (
-                        `${normalTotalWithCargo.toFixed(2)} ₺`
-                      )}
-                    </span>
-                  </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                   <p className="tf-cart-tax">
-                    {t("taxAndShippingNote1")} <Link href="/shipping-delivery">
-                      {t("taxAndShippingNote2")}</Link>{" "}
+                    {t("taxAndShippingNote1")}{" "}
+                    <Link href="/shipping-delivery">
+                      {t("taxAndShippingNote2")}
+                    </Link>{" "}
                     {t("taxAndShippingNote3")}
                   </p>
                   <div className="cart-checkbox">
@@ -604,7 +1540,8 @@ function ShoppingCartPage() {
                       id="check-agree"
                     />
                     <label htmlFor="check-agree" className="fw-4">
-                      <Link href="/terms">{t("agreeTerms1")}</Link> {t("agreeTerms2")}
+                      <Link href="/terms">{t("agreeTerms1")}</Link>{" "}
+                      {t("agreeTerms2")}
                     </label>
                   </div>
                   <div className="cart-checkout-btn">
@@ -719,6 +1656,53 @@ function ShoppingCartPage() {
           />
         </div>
       )}
+
+      {/* Hediye Paketi Modal */}
+      <GeneralModal
+        id="giftWrapModal"
+        title="Hediye Paketi Mesajı"
+        showFooter
+        approveButtonText="Ekle"
+        formId="giftWrapForm"
+        onClose={() => {
+          // Clean up modal backdrop and body classes
+          cleanupModalBackdrop();
+          setGiftWrapModalMessage("");
+        }}
+      >
+        <form
+          id="giftWrapForm"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await updateGiftWrap(true, giftWrapModalMessage);
+
+            // Close modal using jQuery
+            $("#giftWrapModal").modal("hide");
+
+            // Clean up modal backdrop
+            cleanupModalBackdrop();
+
+            setGiftWrapModalMessage("");
+          }}
+        >
+          <div className="form-group">
+            <label htmlFor="giftWrapMessage">
+              Hediye Mesajı (İsteğe bağlı)
+            </label>
+            <textarea
+              id="giftWrapMessage"
+              className="form-control"
+              rows={4}
+              placeholder="Hediye paketinize eklenecek mesajı buraya yazabilirsiniz..."
+              value={giftWrapModalMessage}
+              onChange={(e) => setGiftWrapModalMessage(e.target.value)}
+            />
+            <small className="form-text text-muted">
+              Mesaj yazmadan da hediye paketi ekleyebilirsiniz.
+            </small>
+          </div>
+        </form>
+      </GeneralModal>
     </main>
   );
 }

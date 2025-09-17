@@ -64,10 +64,19 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
       <div className="container">
         <div className="flat-title wow fadeInUp" data-wow-delay="0s">
           <span className="title">{productHeader}</span>
-          <p className="sub-title">{t("productCard.subHeader")}</p>
         </div>
         <div className="hover-sw-nav hover-sw-3">
-          <div className="swiper tf-sw-product-sell wrap-sw-over" data-preview="4" data-tablet="3" data-mobile="2" data-space-lg="30" data-space-md="15" data-pagination="2" data-pagination-md="3" data-pagination-lg="3">
+          <div
+            className="swiper tf-sw-product-sell wrap-sw-over"
+            data-preview="4"
+            data-tablet="3"
+            data-mobile="2"
+            data-space-lg="30"
+            data-space-md="15"
+            data-pagination="2"
+            data-pagination-md="3"
+            data-pagination-lg="3"
+          >
             <Swiper
               modules={[Navigation]}
               loop={true}
@@ -82,26 +91,36 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                 1024: { slidesPerView: 4, spaceBetween: 30 },
               }}
               className="swiper-wrapper"
-              style={{ 
-                display: 'flex',
-                alignItems: 'stretch'
+              style={{
+                display: "flex",
+                alignItems: "stretch",
               }}
               wrapperClass="d-flex align-items-stretch"
             >
               {products.map((product: Product) => {
-                const hasDiscount = product.discountDTO !== null;
+                const hasDiscount = product.discountResponse !== null;
                 const isPercentageDiscount =
                   hasDiscount &&
-                  (product.discountDTO as any)?.discountValueType === 1;
+                  (product.discountResponse as any)?.discountValueType === 1;
                 const discountPercentage = isPercentageDiscount
-                  ? product.discountDTO.discountValue
+                  ? product.discountResponse?.discountValue
                   : null;
 
                 return (
-                  <SwiperSlide key={product.id} className="swiper-slide d-flex" style={{ height: 'auto' }}>
-                    <div className="card-product d-flex flex-column w-100" style={{ height: '100%' }}>
+                  <SwiperSlide
+                    key={product.id}
+                    className="swiper-slide d-flex"
+                    style={{ height: "auto" }}
+                  >
+                    <div
+                      className="card-product d-flex flex-column w-100"
+                      style={{ height: "100%" }}
+                    >
                       <div className="card-product-wrapper flex-fill d-flex flex-column">
-                        <Link href={`/products/${product.id}`} className="product-img">
+                        <Link
+                          href={`/products/${product.id}`}
+                          className="product-img"
+                        >
                           <img
                             className="lazyload img-product"
                             data-src={
@@ -114,16 +133,17 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             }
                             alt="image-product"
                           />
-                          {product.contentImageUrls && product.contentImageUrls[0] && (
-                            <img
-                              className="lazyload img-hover"
-                              data-src={product.contentImageUrls[0]}
-                              src={product.contentImageUrls[0]}
-                              alt="image-product"
-                            />
-                          )}
+                          {product.contentImageUrls &&
+                            product.contentImageUrls[0] && (
+                              <img
+                                className="lazyload img-hover"
+                                data-src={product.contentImageUrls[0]}
+                                src={product.contentImageUrls[0]}
+                                alt="image-product"
+                              />
+                            )}
                         </Link>
-                        <div className="list-product-btn pt-6" >
+                        <div className="list-product-btn pt-6">
                           <a
                             href="javascript:void(0);"
                             className="box-icon bg_white quick-add tf-btn-loading"
@@ -131,7 +151,9 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             onClick={() => addToCart(product.id)}
                           >
                             <span className="icon icon-bag"></span>
-                            <span className="tooltip">{t("productCard.lowerAddCart")}</span>
+                            <span className="tooltip">
+                              {t("productCard.lowerAddCart")}
+                            </span>
                           </a>
                           <a
                             href="javascript:void(0);"
@@ -146,7 +168,9 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             onClick={() => handleToggleFavorite(product.id)}
                           >
                             <span className="icon icon-heart"></span>
-                            <span className="tooltip">{t("productCard.addToFavorites")}</span>
+                            <span className="tooltip">
+                              {t("productCard.addToFavorites")}
+                            </span>
                             <span className="icon icon-delete"></span>
                           </a>
                           <a
@@ -155,7 +179,9 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             title="Add to Compare"
                           >
                             <span className="icon icon-compare"></span>
-                            <span className="tooltip">{t("productCard.compare")}</span>
+                            <span className="tooltip">
+                              {t("productCard.compare")}
+                            </span>
                             <span className="icon icon-check"></span>
                           </a>
                           <a
@@ -165,35 +191,43 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             onClick={() => handleQuickView(product)}
                           >
                             <span className="icon icon-view"></span>
-                            <span className="tooltip">{t("productCard.quickView")}</span>
+                            <span className="tooltip">
+                              {t("productCard.quickView")}
+                            </span>
                           </a>
                         </div>
                         {isPercentageDiscount && (
                           <div className="on-sale-wrap">
-                            <div className="on-sale-item">-{discountPercentage}%</div>
+                            <div className="on-sale-item">
+                              -{discountPercentage}%
+                            </div>
                           </div>
                         )}
                       </div>
                       <div className="card-product-info mt-auto">
-                        <Link href={`/products/${product.id}`} className="title link d-block text-truncate" style={{ 
-                          height: '2.4em',
-                          overflow: 'hidden',
-                          lineHeight: '1.2em',
-                          marginBottom: '8px'
-                        }}>
+                        <Link
+                          href={`/products/${product.id}`}
+                          className="title link d-block text-truncate"
+                          style={{
+                            height: "2.4em",
+                            overflow: "hidden",
+                            lineHeight: "1.2em",
+                            marginBottom: "8px",
+                          }}
+                        >
                           {product.title}
                         </Link>
                         <span className="price">
                           {hasDiscount &&
-                          product.price !== product.discountedPrice ? (
-                            `From ${product.discountedPrice.toFixed(2)}₺`
-                          ) : (
-                            `${product.price.toFixed(2)}₺`
-                          )}
+                          product.price !== product.discountedPrice
+                            ? `From ${product.discountedPrice.toFixed(2)}₺`
+                            : `${product.price.toFixed(2)}₺`}
                         </span>
                         <ul className="list-color-product">
                           <li className="list-color-item color-swatch active">
-                            <span className="tooltip">{t("productCard.default")}</span>
+                            <span className="tooltip">
+                              {t("productCard.default")}
+                            </span>
                             <span className="swatch-value bg_orange-3"></span>
                             <img
                               className="lazyload"

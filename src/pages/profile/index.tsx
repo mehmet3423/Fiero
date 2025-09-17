@@ -45,8 +45,14 @@ function ProfilePage() {
         phoneNumber: userProfile.applicationUser?.phoneNumber || "",
         gender: isCustomer ? userProfile.gender?.toString() || "" : "",
         birthDate: birthDateValue,
-        smsNotification: "smsNotification" in userProfile ? (userProfile as any).smsNotification || false : false,
-        emailNotification: "emailNotification" in userProfile ? (userProfile as any).emailNotification || false : false,
+        smsNotification:
+          "smsNotification" in userProfile
+            ? (userProfile as any).smsNotification || false
+            : false,
+        emailNotification:
+          "emailNotification" in userProfile
+            ? (userProfile as any).emailNotification || false
+            : false,
       });
     }
   }, [userProfile]);
@@ -83,8 +89,14 @@ function ProfilePage() {
             ? (userProfile.applicationUser as any).birthDate || ""
             : ""
         ),
-        smsNotification: "smsNotification" in userProfile ? (userProfile as any).smsNotification || false : false,
-        emailNotification: "emailNotification" in userProfile ? (userProfile as any).emailNotification || false : false,
+        smsNotification:
+          "smsNotification" in userProfile
+            ? (userProfile as any).smsNotification || false
+            : false,
+        emailNotification:
+          "emailNotification" in userProfile
+            ? (userProfile as any).emailNotification || false
+            : false,
       });
     }
     setIsEditing(false);
@@ -110,7 +122,9 @@ function ProfilePage() {
       <div className="col-lg-8">
         <div className="card shadow-sm mb-4">
           <div className="card-body">
-            <h5 className="card-title border-bottom pb-3">{t("profile.myProfileInfo")}</h5>
+            <h5 className="card-title border-bottom pb-3">
+              {t("profile.myProfileInfo")}
+            </h5>
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label">{t("profile.firstName")}</label>
@@ -152,8 +166,21 @@ function ProfilePage() {
                   className="form-control shadow-none"
                   name="phoneNumber"
                   value={formData.phoneNumber}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    // Sadece rakamları al ve maksimum 10 karaktere sınırla
+                    const onlyNumbers = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 10);
+                    setFormData((prev) => ({
+                      ...prev,
+                      phoneNumber: onlyNumbers,
+                    }));
+                  }}
                   disabled={!isEditing}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  autoComplete="off"
                 />
               </div>
               <div className="col-md-6 mb-3">
@@ -223,7 +250,9 @@ function ProfilePage() {
       <div className="col-lg-4">
         <div className="card shadow-sm">
           <div className="card-body">
-            <h5 className="card-title border-bottom pb-3">{t("profile.notificationPreferences")}</h5>
+            <h5 className="card-title border-bottom pb-3">
+              {t("profile.notificationPreferences")}
+            </h5>
             <div className="d-flex flex-column gap-3">
               <div className="d-flex justify-content-between align-items-start p-3 border rounded bg-light">
                 <label htmlFor="smsNotification" className="form-check-label">
@@ -235,6 +264,7 @@ function ProfilePage() {
                 <input
                   id="smsNotification"
                   type="checkbox"
+                  style={{ cursor: "pointer" }}
                   className="form-check-input"
                   name="smsNotification"
                   checked={formData.smsNotification}
@@ -251,6 +281,7 @@ function ProfilePage() {
                 <input
                   id="emailNotification"
                   type="checkbox"
+                  style={{ cursor: "pointer" }}
                   className="form-check-input"
                   name="emailNotification"
                   checked={formData.emailNotification}
