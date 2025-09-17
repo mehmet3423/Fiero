@@ -10,6 +10,7 @@ export const useApplyForAffiliate = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<string>();
 
+
   const applyForAffiliate = async (
     applicationData: AffiliateApplicationRequest
   ) => {
@@ -33,15 +34,10 @@ export const useApplyForAffiliate = () => {
             });
           },
           onError: (error: any) => {
-            console.error("Affiliate application error:", error);
-            toast.error(
-              "Affiliate başvurusu gönderilirken bir hata oluştu. Lütfen tekrar deneyin."
-            );
           },
         }
       );
     } catch (error) {
-      console.error("Error applying for affiliate:", error);
       throw error;
     }
   };

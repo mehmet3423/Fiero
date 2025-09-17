@@ -12,7 +12,7 @@ interface SearchContextType {
 
 const SearchContext = createContext<SearchContextType>({
   searchTerm: "",
-  setSearchTerm: () => {},
+  setSearchTerm: () => { },
   searchResults: [],
   isSearching: false,
 });

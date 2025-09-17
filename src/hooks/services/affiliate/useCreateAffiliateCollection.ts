@@ -53,7 +53,6 @@ export const useCreateAffiliateCollection = () => {
             });
           },
           onError: (error: any) => {
-            console.error("Collection creation error:", error);
             toast.error(
               "Koleksiyon oluşturulurken bir hata oluştu. Lütfen tekrar deneyin."
             );
@@ -61,7 +60,6 @@ export const useCreateAffiliateCollection = () => {
         }
       );
     } catch (error) {
-      console.error("Error creating collection:", error);
       throw error;
     }
   };

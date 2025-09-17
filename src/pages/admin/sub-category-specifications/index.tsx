@@ -111,8 +111,7 @@ function SubCategorySpecifications() {
       setNewSpecOptions([""]);
       toast.success("Özellik başarıyla eklendi");
     } catch (error) {
-      console.error("Error adding specification:", error);
-      toast.error("Özellik eklenirken bir hata oluştu");
+      toast.error("Farklı isimde bir özellik eklemeyi deneyin");
     }
   };
 
@@ -195,7 +194,6 @@ function SubCategorySpecifications() {
       setEditSpecOptions([""]);
       toast.success("Özellik başarıyla güncellendi");
     } catch (error) {
-      console.error("Error updating specification:", error);
       toast.error("Özellik güncellenirken bir hata oluştu");
     }
   };
@@ -221,7 +219,6 @@ function SubCategorySpecifications() {
         // Gecikme ile refetch dene, hata olursa yerel state zaten boş dizi olarak ayarlandı
         setTimeout(() => {
           refetchSubCategorySpecifications().catch(() => {
-            console.log("Refetch failed, but UI is already updated");
           });
         }, 300);
       }
@@ -230,7 +227,6 @@ function SubCategorySpecifications() {
       $("#deleteSpecificationModal").modal("hide");
       toast.success("Özellik başarıyla silindi");
     } catch (error) {
-      console.error("Error deleting specification:", error);
       toast.error("Özellik silinirken bir hata oluştu");
       setDeletingSpecificationId(null);
       $("#deleteSpecificationModal").modal("hide");
@@ -279,25 +275,24 @@ function SubCategorySpecifications() {
                   </div>
 
                   {selectedMainCategory && (
-                    <div className="subcategory-list mb-4 overflow-container">
+                    <div className="subcategory-list mb-4">
                       {selectedMainCategory.subCategories.map((subCategory) => (
                         <div
                           key={subCategory.id}
-                          className={`category-item ${selectedSubCategoryId === subCategory.id
-                            ? "active"
-                            : ""
-                            }`}
+                          className={`category-item ${
+                            selectedSubCategoryId === subCategory.id
+                              ? "active"
+                              : ""
+                          }`}
                           onClick={() =>
                             handleSubCategorySelect(subCategory.id)
                           }
                           style={{ cursor: "pointer" }}
                         >
-                          <div className="d-flex justify-content-between ">
-                            <span className="category-name">
-                              {subCategory.name}
-                            </span>
-                            <i className="icon-arrow-right"></i>
-                          </div>
+                          <span className="category-name">
+                            {subCategory.name}
+                          </span>
+                          <i className="icon-arrow-right"></i>
                         </div>
                       ))}
                     </div>
@@ -554,11 +549,6 @@ function SubCategorySpecifications() {
       </GeneralModal>
 
       <style jsx>{`
-      .overflow-container {
-        max-height: 300px; 
-        overflow-y: auto; 
-        overflow-x: hidden; 
-}
         .container {
           padding-left: 0.5rem;
           padding-right: 0.5rem;

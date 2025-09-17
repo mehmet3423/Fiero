@@ -31,7 +31,6 @@ export const useGetAffiliatePayouts = (
       queryKey: [QueryKeys.AFFILIATE_PAYOUTS],
       method: HttpMethod.GET,
       onError: (err: any) => {
-        console.error("Affiliate payouts error:", err);
       },
     });
 

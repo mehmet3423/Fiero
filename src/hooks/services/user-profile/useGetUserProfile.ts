@@ -15,15 +15,21 @@ export const useGetUserProfile = () => {
     isFetchingData: userProfileLoading,
     error,
     refetch,
-  } = useGetData<UserProfile>({
+  } = useGetData<any>({
     url: token ? `${GET_USER_PROFILE}` : undefined,
     method: HttpMethod.GET,
     queryKey: QueryKeys.GET_USER_PROFILE,
     onSuccess: (data) => {
-      setUserProfile(data);
+      // Handle different response formats
+      if (data?.data) {
+        setUserProfile(data.data);
+      } else if (data?.user) {
+        setUserProfile(data.user);
+      } else if (data) {
+        setUserProfile(data);
+      }
     },
     onError: (err) => {
-      console.error("Error fetching user profile:", err);
     },
   });
 

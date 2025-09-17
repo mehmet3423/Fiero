@@ -1,5 +1,6 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { UPDATE_SEO } from "@/constants/links";
+import { CommandResult } from "@/constants/models/CommandResult";
 import useMyMutation from "@/hooks/useMyMutation";
 import toast from "react-hot-toast";
 
@@ -27,11 +28,11 @@ interface UpdateSeoParams {
 }
 
 export const useUpdateSeo = () => {
-  const { mutateAsync, isPending } = useMyMutation<string>();
+  const { mutateAsync, isPending } = useMyMutation<CommandResult>();
 
   const updateSeo = async (params: UpdateSeoParams) => {
     try {
-      await mutateAsync(
+      const response = await mutateAsync(
         {
           url: UPDATE_SEO,
           method: HttpMethod.PUT,
@@ -39,13 +40,15 @@ export const useUpdateSeo = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
-        {
-          onSuccess: () => {
-            toast.success("SEO başarıyla güncellendi");
-          },
         }
       );
+
+      // Check if the response is successful according to CommandResult structure
+      if (response.data.isSucceed) {
+        toast.success(response.data.message || "SEO başarıyla güncellendi");
+      } else {
+        toast.error(response.data.message || "SEO güncellenirken bir hata oluştu");
+      }
     } catch (error) {
       toast.error("SEO güncellenirken bir hata oluştu");
     }

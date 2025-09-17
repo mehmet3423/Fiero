@@ -1,23 +1,16 @@
 "use client";
 import CirclePagination from "@/components/shared/CirclePagination";
-import ConfirmModal from "@/components/shared/ConfirmModal";
 import GeneralModal from "@/components/shared/GeneralModal";
 import { SubCategory } from "@/constants/models/Category";
 import { Product } from "@/constants/models/Product";
-import { ProductSpecification } from "@/constants/models/ProductSpecification";
 import { useCategories } from "@/hooks/services/categories/useCategories";
 import { useDeleteProduct } from "@/hooks/services/products/useDeleteProduct";
 import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
 import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
-import { useAddProductSpecification } from "@/hooks/services/product-specifications/useAddProductSpecification";
-import { useDeleteProductSpecification } from "@/hooks/services/product-specifications/useDeleteProductSpecification";
-import { useGetProductSpecifications } from "@/hooks/services/product-specifications/useGetProductSpecifications";
-import { useUpdateProductSpecification } from "@/hooks/services/product-specifications/useUpdateProductSpecification";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
 
 function ProductsAdminPage() {
   const router = useRouter();
@@ -31,36 +24,16 @@ function ProductsAdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20); // Sayfa başına gösterilen ürün sayısını 20'ye çıkardık
 
-  // Ürün özellikleri için state'ler
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    null
-  );
-  const [localSpecifications, setLocalSpecifications] = useState<any[] | null>(
-    null
-  );
-
-  // Add Specification Modal state
-  const [newSpecName, setNewSpecName] = useState("");
-  const [newSpecValue, setNewSpecValue] = useState("");
-
-  // Edit Specification Modal state
-  const [editingSpec, setEditingSpec] = useState<ProductSpecification | null>(
-    null
-  );
-  const [editSpecName, setEditSpecName] = useState("");
-  const [editSpecValue, setEditSpecValue] = useState("");
-
-  // Delete Specification Modal state
-  const [deletingSpecificationId, setDeletingSpecificationId] = useState<
-    string | null
-  >(null);
-
   // Tüm ürünleri getiren hook'u çağırıyoruz
   const { data: allProducts, isLoading: allProductsLoading } =
     useGetAllProducts({
       page: currentPage - 1, // API 0 tabanlı, UI 1 tabanlı
       pageSize: itemsPerPage,
       searchTerm: searchTerm, // Arama terimini API'ye gönder
+      mainCategoryId:
+        selectedMainCategoryId && !selectedSubCategoryId
+          ? selectedMainCategoryId
+          : undefined, // Ana kategori seçiliyse ve alt kategori seçili değilse filtrele
     });
 
   const { categories, isLoading: categoriesLoading } = useCategories();
@@ -72,24 +45,6 @@ function ProductsAdminPage() {
       searchTerm: searchTerm, // Arama terimini API'ye gönder
     }
   );
-
-  // Ürün özellikleri hook'ları
-  const {
-    productSpecifications,
-    isLoading: specificationsLoading,
-    refetchProductSpecifications,
-  } = useGetProductSpecifications(selectedProductId);
-
-  const { addProductSpecification, isPending: addProductSpecificationLoading } =
-    useAddProductSpecification();
-  const {
-    updateProductSpecification,
-    isPending: updateProductSpecificationLoading,
-  } = useUpdateProductSpecification();
-  const {
-    deleteProductSpecification,
-    isPending: deleteProductSpecificationLoading,
-  } = useDeleteProductSpecification();
 
   const { deleteProduct, isPending: isDeleting } = useDeleteProduct();
   const [deletingProductId, setDeletingProductId] = useState<string | null>(
@@ -117,15 +72,6 @@ function ProductsAdminPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedMainCategoryId, selectedSubCategoryId, searchTerm]);
-
-  // Ürün özellikleri değiştiğinde local state'i güncelle
-  useEffect(() => {
-    if (productSpecifications) {
-      setLocalSpecifications(productSpecifications);
-    }
-  }, [productSpecifications]);
-
-  const displaySpecifications = localSpecifications || productSpecifications;
 
   // Pagination için toplam sayfa sayısını hesaplama
   const totalPages = selectedSubCategoryId
@@ -161,105 +107,7 @@ function ProductsAdminPage() {
     }
   };
 
-  // Ürün özellikleri fonksiyonları
-  const handleProductSpecificationsClick = (productId: string) => {
-    setSelectedProductId(productId);
-    setLocalSpecifications(null);
-    $("#productSpecificationsModal").modal("show");
-  };
-
-  const handleAddSpecification = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProductId || !newSpecName || !newSpecValue) return;
-
-    try {
-      await addProductSpecification(
-        selectedProductId,
-        newSpecName,
-        newSpecValue
-      );
-      $("#addSpecificationModal").modal("hide");
-      setNewSpecName("");
-      setNewSpecValue("");
-      toast.success("Özellik başarıyla eklendi");
-    } catch (error) {
-      console.error("Error adding specification:", error);
-      toast.error("Özellik eklenirken bir hata oluştu");
-    }
-  };
-
-  const handleEditClick = (spec: ProductSpecification) => {
-    setEditingSpec(spec);
-    setEditSpecName(spec.name);
-    setEditSpecValue(spec.value);
-    $("#editSpecificationModal").modal("show");
-  };
-
-  const handleEditSpecification = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingSpec || !editSpecName || !editSpecValue || !selectedProductId)
-      return;
-
-    try {
-      await updateProductSpecification(
-        editingSpec.id,
-        editSpecName,
-        editSpecValue,
-        selectedProductId
-      );
-      $("#editSpecificationModal").modal("hide");
-      setEditingSpec(null);
-      setEditSpecName("");
-      setEditSpecValue("");
-      toast.success("Özellik başarıyla güncellendi");
-    } catch (error) {
-      console.error("Error updating specification:", error);
-      toast.error("Özellik güncellenirken bir hata oluştu");
-    }
-  };
-
-  const handleDeleteClick = (specId: string) => {
-    setDeletingSpecificationId(specId);
-    $("#deleteSpecificationModal").modal("show");
-  };
-
-  const handleDeleteSpecification = async () => {
-    if (!deletingSpecificationId || !selectedProductId) return;
-
-    try {
-      // Check if this is the last specification for this product
-      const isLastSpecification =
-        displaySpecifications && displaySpecifications.length === 1;
-
-      await deleteProductSpecification(
-        deletingSpecificationId,
-        selectedProductId
-      );
-      $("#deleteSpecificationModal").modal("hide");
-      setDeletingSpecificationId(null);
-
-      // If it was the last specification and the backend might return 400,
-      // manually update the local state to show an empty list
-      if (isLastSpecification) {
-        setLocalSpecifications([]);
-
-        // Try to refetch after a delay, but if it fails, we'll still have an empty array in the UI
-        setTimeout(() => {
-          refetchProductSpecifications().catch(() => {
-            // If refetch fails, we already have an empty array in the UI
-            console.log("Refetch failed, but UI is already updated");
-          });
-        }, 300);
-      }
-
-      toast.success("Özellik başarıyla silindi");
-    } catch (error) {
-      console.error("Error deleting specification:", error);
-      toast.error("Özellik silinirken bir hata oluştu");
-    }
-  };
-
-  // Yükleniyor durumu
+  // Yükleniyor durumu - alt kategori seçiliyse productsLoading, değilse allProductsLoading
   const isLoading = selectedSubCategoryId
     ? productsLoading
     : allProductsLoading;
@@ -291,7 +139,6 @@ function ProductsAdminPage() {
                   fontWeight: "bold",
                   color: "#566a7f",
                   marginLeft: "-10px",
-                  backgroundColor: "transparent",
                 }}
               >
                 Ürün Yönetimi
@@ -413,10 +260,7 @@ function ProductsAdminPage() {
                 className="col-12 col-sm-6 col-md-4 col-xl-3"
               >
                 <div className="card h-100">
-                  <div
-                    className="position-relative d-flex justify-content-center align-items-center"
-                    style={{ height: "200px", padding: "10px" }}
-                  >
+                  <div className="position-relative">
                     {product.isOutlet && (
                       <div
                         className="position-absolute top-0 start-0 m-2"
@@ -427,51 +271,35 @@ function ProductsAdminPage() {
                     )}
                     <Link href={`/products/${product.id}`}>
                       <Image
-                        width={180}
-                        height={180}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
                         src={
                           product.baseImageUrl || "/assets/images/no-image.jpg"
                         }
                         alt={product.title}
-                        style={{
-                          maxHeight: "180px",
-                          maxWidth: "100%",
-                          objectFit: "contain",
-                          borderRadius: "4px",
-                        }}
+                        className="card-img-top"
+                        style={{ height: "200px", objectFit: "contain" }}
                       />
                     </Link>
                     <div
                       className="position-absolute top-0 end-0 m-2"
                       style={{ zIndex: 1 }}
                     >
-                      <div className="d-flex flex-column gap-1">
-                        <button
-                          className="btn btn-sm btn-light"
-                          onClick={() =>
-                            handleProductSpecificationsClick(product.id)
-                          }
-                          disabled={isDeleting}
-                          style={{ fontSize: "0.75rem" }}
-                          title="Ürün Özellikleri"
-                        >
-                          <i className="bx bx-list-ul text-info"></i>
-                        </button>
+                      <div className="btn-group">
                         <button
                           className="btn btn-sm btn-light"
                           onClick={() => handleEdit(product)}
                           disabled={isDeleting}
                           style={{ fontSize: "0.75rem" }}
-                          title="Düzenle"
                         >
-                          <i className="bx bx-edit text-primary"></i>
+                          <i className="bx bx-edit"></i>
                         </button>
                         <button
                           className="btn btn-sm btn-light"
                           onClick={() => handleDelete(product.id)}
                           disabled={isDeleting}
                           style={{ fontSize: "0.75rem" }}
-                          title="Sil"
                         >
                           <i className="bx bx-trash text-danger"></i>
                         </button>
@@ -585,239 +413,6 @@ function ProductsAdminPage() {
         </div>
       </GeneralModal>
 
-      {/* Product Specifications Modal */}
-      <GeneralModal
-        id="productSpecificationsModal"
-        title="Ürün Özellikleri"
-        size="lg"
-        onClose={() => setSelectedProductId(null)}
-        showFooter={false}
-      >
-        <div className="d-flex justify-content-end mb-3">
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => $("#addSpecificationModal").modal("show")}
-          >
-            <i className="icon-plus me-1"></i>
-            Yeni Özellik Ekle
-          </button>
-        </div>
-
-        {specificationsLoading ? (
-          <div className="text-center py-4">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Yükleniyor...</span>
-            </div>
-          </div>
-        ) : (
-          <div className="specifications-container">
-            {displaySpecifications && displaySpecifications.length === 0 ? (
-              <div className="text-center py-4 text-muted">
-                <i
-                  className="icon-info-circle mb-2"
-                  style={{ fontSize: "2rem" }}
-                ></i>
-                <p>Bu ürün için henüz özellik eklenmemiş</p>
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-hover align-middle">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "45%" }}>Özellik</th>
-                      <th style={{ width: "45%" }}>Değer</th>
-                      <th style={{ width: "10%" }} className="text-end">
-                        İşlemler
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displaySpecifications &&
-                      displaySpecifications.map(
-                        (spec: ProductSpecification) => (
-                          <tr key={spec.$id}>
-                            <td className="spec-name">
-                              <div className="fw-medium text-dark">
-                                {spec.name}
-                              </div>
-                            </td>
-                            <td className="spec-value">
-                              <div className="text-secondary">{spec.value}</div>
-                            </td>
-                            <td className="text-end" style={{ width: "10%" }}>
-                              <div className="d-flex justify-content-end gap-1">
-                                <button
-                                  className="btn btn-sm btn-outline-primary p-0"
-                                  title="Düzenle"
-                                  onClick={() => handleEditClick(spec)}
-                                  style={{
-                                    width: "24px",
-                                    height: "24px",
-                                    minWidth: "unset",
-                                  }}
-                                >
-                                  <i
-                                    className="icon-edit"
-                                    style={{ fontSize: "12px" }}
-                                  ></i>
-                                </button>
-                                <button
-                                  className="btn btn-sm p-0"
-                                  title="Sil"
-                                  onClick={() => handleDeleteClick(spec.id)}
-                                  style={{
-                                    width: "24px",
-                                    height: "24px",
-                                    minWidth: "unset",
-                                  }}
-                                >
-                                  <i
-                                    className="bx bxs-trash"
-                                    style={{ fontSize: "12px" }}
-                                  ></i>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                      )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-      </GeneralModal>
-
-      {/* Add Specification Modal */}
-      <GeneralModal
-        id="addSpecificationModal"
-        title="Yeni Özellik Ekle"
-        size="sm"
-        onClose={() => {
-          setNewSpecName("");
-          setNewSpecValue("");
-        }}
-        approveButtonText="Ekle"
-        isLoading={addProductSpecificationLoading}
-        showFooter={true}
-        formId="addSpecificationForm"
-      >
-        <form id="addSpecificationForm" onSubmit={handleAddSpecification}>
-          <div className="mb-3">
-            <label className="form-label" style={{ fontSize: "0.75rem" }}>
-              Özellik Adı
-            </label>
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              value={newSpecName}
-              onChange={(e) => setNewSpecName(e.target.value)}
-              placeholder="Örneğin: Renk, Boyut, Ağırlık"
-              style={{ fontSize: "0.75rem" }}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" style={{ fontSize: "0.75rem" }}>
-              Özellik Değeri
-            </label>
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              value={newSpecValue}
-              onChange={(e) => setNewSpecValue(e.target.value)}
-              placeholder="Örneğin: Kırmızı, L, 1kg"
-              style={{ fontSize: "0.75rem" }}
-              required
-            />
-          </div>
-        </form>
-      </GeneralModal>
-
-      {/* Edit Specification Modal */}
-      <GeneralModal
-        id="editSpecificationModal"
-        title="Özellik Düzenle"
-        size="sm"
-        onClose={() => {
-          setEditingSpec(null);
-          setEditSpecName("");
-          setEditSpecValue("");
-        }}
-        approveButtonText="Güncelle"
-        isLoading={updateProductSpecificationLoading}
-        showFooter={true}
-        formId="editSpecificationForm"
-      >
-        <form id="editSpecificationForm" onSubmit={handleEditSpecification}>
-          <div className="mb-3">
-            <label className="form-label" style={{ fontSize: "0.75rem" }}>
-              Özellik Adı
-            </label>
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              value={editSpecName}
-              onChange={(e) => setEditSpecName(e.target.value)}
-              placeholder="Örneğin: Renk, Boyut, Ağırlık"
-              style={{ fontSize: "0.75rem" }}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" style={{ fontSize: "0.75rem" }}>
-              Özellik Değeri
-            </label>
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              value={editSpecValue}
-              onChange={(e) => setEditSpecValue(e.target.value)}
-              placeholder="Örneğin: Kırmızı, L, 1kg"
-              style={{ fontSize: "0.75rem" }}
-              required
-            />
-          </div>
-        </form>
-      </GeneralModal>
-
-      {/* Delete Specification Modal */}
-      <div
-        className="modal fade"
-        id="deleteSpecificationModal"
-        tabIndex={-1}
-        aria-hidden="true"
-      >
-        <div
-          className="modal-dialog modal-sm modal-dialog-centered"
-          role="document"
-        >
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Özellik Sil</h5>
-              <i
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                className="icon-close"
-                onClick={() => setDeletingSpecificationId(null)}
-                style={{ cursor: "pointer", color: "red" }}
-              ></i>
-            </div>
-            <div className="modal-body p-5">
-              <ConfirmModal
-                onConfirm={handleDeleteSpecification}
-                isLoading={deleteProductSpecificationLoading}
-                title="Emin misiniz?"
-                message="Bu özellik silinecektir. Bu işlem geri alınamaz."
-                confirmButtonText="Evet, Sil"
-                cancelButtonText="İptal"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
       <style jsx>{`
         .card {
           border-radius: 0.5rem;
@@ -864,80 +459,6 @@ function ProductsAdminPage() {
         }
         .page-link i {
           font-size: 1rem;
-        }
-
-        .specifications-container {
-          max-height: 60vh;
-          overflow-y: auto;
-          border-radius: 8px;
-        }
-
-        .table {
-          margin-bottom: 0;
-          border-collapse: separate;
-          border-spacing: 0;
-        }
-
-        .table th {
-          background: #f8f9fa;
-          font-weight: 600;
-          padding: 1rem;
-          border-bottom: 2px solid #e9ecef;
-          white-space: nowrap;
-        }
-
-        .table td {
-          padding: 1rem;
-          vertical-align: middle;
-          border-bottom: 1px solid #e9ecef;
-        }
-
-        .table tbody tr:hover {
-          background-color: #f8f9fa;
-        }
-
-        .spec-name,
-        .spec-value {
-          max-width: 250px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .btn-group {
-          gap: 0.5rem;
-        }
-
-        .btn-group .btn {
-          padding: 0.4rem 0.6rem;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-
-        .btn-group .btn i {
-          font-size: 1rem;
-        }
-
-        .btn-group .btn:hover {
-          transform: translateY(-1px);
-        }
-
-        @media (max-width: 768px) {
-          .spec-name,
-          .spec-value {
-            max-width: 150px;
-          }
-
-          .table td,
-          .table th {
-            padding: 0.75rem;
-          }
-
-          .btn-group .btn {
-            padding: 0.3rem 0.5rem;
-          }
         }
       `}</style>
     </div>

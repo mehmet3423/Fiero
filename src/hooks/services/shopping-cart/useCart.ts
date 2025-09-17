@@ -13,15 +13,37 @@ import useGetData from "../../useGetData";
 import useMyMutation from "../../useMyMutation";
 
 // Sepet verilerini çekmek için hook
-export const useGetCart = () => {
+export const useGetCart = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
+  const params = new URLSearchParams();
+  if (isGiftWrap === true) {
+    params.append("isGiftWrap", "true");
+  }
+  if (giftWrapMessage) {
+    params.append("giftWrapMessage", giftWrapMessage);
+  }
+  if (couponCode) {
+    params.append("couponCode", couponCode);
+  }
+
+  const url = params.toString() ? `${CART}?${params.toString()}` : CART;
+
   const { data, isLoading, error, refetch } = useGetData<CartResponseModel>({
-    url: CART,
-    queryKey: QueryKeys.CART,
+    url,
+    queryKey: [
+      QueryKeys.CART,
+      isGiftWrap === true ? "true" : "false",
+      giftWrapMessage || "",
+      couponCode || "",
+    ],
     method: HttpMethod.GET,
   });
 
   return {
-    cart: data,
+    cart: data?.data,
     isLoading,
     error,
     refetchCart: refetch,
@@ -29,35 +51,35 @@ export const useGetCart = () => {
 };
 
 // Sepete ürün eklemek için hook
-export const useAddToCart = () => {
+export const useAddToCart = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
   const { mutateAsync, isPending } = useMyMutation<string>();
-  const { refetchCart } = useGetCart();
+  const { refetchCart } = useGetCart(isGiftWrap, giftWrapMessage, couponCode);
 
-  const addItem = async (
-    ItemId: string,
-    quantity: number,
-    specifiedProductId?: string
-  ) => {
+  const addItem = async (itemId: string, quantity: number) => {
     try {
-      // productId kontrolü
-      if (!ItemId) {
-        throw new Error("ItemId gerekli");
+      // itemId kontrolü
+      if (!itemId) {
+        throw new Error("itemId gerekli");
       }
 
-      const params = new URLSearchParams({
-        ItemId: ItemId.toString(),
-        Quantity: quantity.toString(),
-      });
-
-      // Bundle discount ID varsa ekle
-      if (specifiedProductId) {
-        params.append("SpecifiedProductId", specifiedProductId);
-      }
+      // Request body oluştur
+      const requestBody: {
+        itemId: string;
+        quantity: number;
+      } = {
+        itemId: itemId,
+        quantity: quantity,
+      };
 
       await mutateAsync(
         {
-          url: `${CART_ADD_ITEM}?${params.toString()}`,
+          url: CART_ADD_ITEM,
           method: HttpMethod.POST,
+          data: requestBody,
         },
         {
           onSuccess: () => {
@@ -67,7 +89,6 @@ export const useAddToCart = () => {
         }
       );
     } catch (error) {
-      console.error("Add item error:", error);
     }
   };
 
@@ -75,21 +96,30 @@ export const useAddToCart = () => {
 };
 
 // Ürün miktarını güncellemek için hook
-export const useUpdateCartQuantity = () => {
+export const useUpdateCartQuantity = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
   const { mutateAsync, isPending } = useMyMutation<string>();
-  const { refetchCart } = useGetCart();
+  const { refetchCart } = useGetCart(isGiftWrap, giftWrapMessage, couponCode);
 
   const updateQuantity = async (itemId: string, quantity: number) => {
     try {
-      const params = new URLSearchParams({
-        itemId: itemId.toString(),
-        Quantity: quantity.toString(),
-      }).toString();
+      // Request body oluştur
+      const requestBody: {
+        itemId: string;
+        quantity: number;
+      } = {
+        itemId: itemId,
+        quantity: quantity,
+      };
 
       await mutateAsync(
         {
-          url: `${CART_UPDATE_QUANTITY}?${params}`,
+          url: CART_UPDATE_QUANTITY,
           method: HttpMethod.PUT,
+          data: requestBody,
         },
         {
           onSuccess: () => {
@@ -99,7 +129,6 @@ export const useUpdateCartQuantity = () => {
         }
       );
     } catch (error) {
-      console.error("Update quantity error:", error);
     }
   };
 
@@ -107,9 +136,13 @@ export const useUpdateCartQuantity = () => {
 };
 
 // Sepetten ürün silmek için hook
-export const useRemoveFromCart = () => {
+export const useRemoveFromCart = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
   const { mutateAsync, isPending } = useMyMutation<string>();
-  const { refetchCart } = useGetCart();
+  const { refetchCart } = useGetCart(isGiftWrap, giftWrapMessage, couponCode);
 
   const removeItem = async (productId: string) => {
     try {
@@ -130,7 +163,6 @@ export const useRemoveFromCart = () => {
         }
       );
     } catch (error) {
-      console.error("Remove item error:", error);
     }
   };
 
@@ -138,9 +170,13 @@ export const useRemoveFromCart = () => {
 };
 
 // Sepeti temizlemek için hook
-export const useClearCart = () => {
+export const useClearCart = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
   const { mutateAsync, isPending } = useMyMutation<string>();
-  const { refetchCart } = useGetCart();
+  const { refetchCart } = useGetCart(isGiftWrap, giftWrapMessage, couponCode);
 
   const clearCart = async () => {
     try {
@@ -157,7 +193,6 @@ export const useClearCart = () => {
         }
       );
     } catch (error) {
-      console.error("Clear cart error:", error);
     }
   };
 

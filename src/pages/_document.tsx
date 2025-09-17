@@ -171,10 +171,7 @@ export default function Document() {
           type="text/javascript"
           src="/assets/site/js/wow.min.js"
         ></script>
-        <script
-          type="text/javascript"
-          src="/assets/site/js/rangle-slider.js"
-        ></script>
+        {/* rangle-slider.js sadece ürün filtreleme sayfalarında yüklenir */}
         <script
           type="text/javascript"
           src="/assets/site/js/wow.min.js"

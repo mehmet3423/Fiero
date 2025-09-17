@@ -4,6 +4,8 @@ import { useCreateWeekdayDiscount } from "@/hooks/services/discounts/weekday-dic
 import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { WeekdayDiscount } from "@/constants/models/Discount";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateWeekdayDiscountForm {
   name: string;
@@ -17,6 +19,7 @@ interface CreateWeekdayDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateWeekdayDiscountPage = () => {
@@ -27,7 +30,7 @@ const CreateWeekdayDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -35,6 +38,16 @@ const CreateWeekdayDiscountPage = () => {
     isActive: true,
     type: DiscountType.WeekdayDiscount,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,7 +56,6 @@ const CreateWeekdayDiscountPage = () => {
       await createWeekdayDiscount(formData);
       router.push("/admin/campaigns/weekday-discount");
     } catch (error) {
-      console.error("Error creating weekday discount:", error);
     }
   };
 
@@ -57,8 +69,17 @@ const CreateWeekdayDiscountPage = () => {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? parseFloat(value)
+            : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -151,7 +172,7 @@ const CreateWeekdayDiscountPage = () => {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="İndirim değeri"
                     />
@@ -180,7 +201,7 @@ const CreateWeekdayDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                     />
                   </div>
@@ -254,6 +275,12 @@ const CreateWeekdayDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

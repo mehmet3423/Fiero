@@ -34,50 +34,70 @@ const menuItems: MenuItem[] = [
   {
     path: "/admin/categories",
     icon: "bx bx-layout",
-    label: "Kategoriler",
+    label: "Kategori Yönetimi",
   },
   {
     path: "/admin/sub-category-specifications",
     icon: "bx bx-list-ul",
     label: "Alt Kategori Özellikleri",
   },
+
+  {
+    path: "/admin/products",
+    icon: "bx bx-closet",
+    label: "Ürün Yönetimi",
+  },
+  {
+    path: "/admin/customers",
+    icon: "bx bx-user",
+    label: "Müşteri Yönetimi",
+  },
+
+  {
+    path: "/admin/orders",
+    icon: "bx bx-shopping-bag",
+    label: "Sipariş Yönetimi",
+  },
+  {
+    path: "/admin/campaigns",
+    icon: "bx bx-gift",
+    label: "Kampanya Yönetimi",
+  },
   {
     path: "/admin/general-content",
     icon: "bx bx-edit",
     label: "İçerik Yönetimi",
   },
-
+  // {
+  //   path: "/admin/blogs",
+  //   icon: "bx bx-book",
+  //   label: "Blog Yönetimi",
+  // },
   {
-    path: "/admin/products",
-    icon: "bx bx-closet",
-    label: "Ürünler",
-  },
-  {
-    path: "/admin/support-tickets",
-    icon: "bx bx-support",
-    label: "Destek Talepleri",
-  },
-  {
-    path: "/admin/orders",
-    icon: "bx bx-shopping-bag",
-    label: "Siparişler",
-  },
-  {
-    path: "/admin/campaigns",
-    icon: "bx bx-gift",
-    label: "Kampanyalar",
+    path: "/admin/comments",
+    icon: "bx bx-comment",
+    label: "Yorum Yönetimi",
   },
   {
     path: "/admin/affiliates",
     icon: "bx bx-link",
     label: "Affiliate Yönetimi",
   },
-  // {
-  //   path: "/admin/customers",
-  //   icon: "bx bx-universal-access",
-  //   label: "Kullanıcılar",
-  // },
-
+  {
+    path: "/admin/trendyol-marketplace/products",
+    icon: "bx bx-store",
+    label: "Trendyol Marketplace",
+    subItems: [
+      {
+        path: "/admin/trendyol-marketplace/products",
+        label: "Ürünler",
+      },
+      {
+        path: "/admin/trendyol-marketplace/cargo-stage",
+        label: "Sipariş & Kargo Aşaması",
+      },
+    ],
+  },
   {
     path: "/admin/reports",
     icon: "bx bx-bar-chart",
@@ -94,9 +114,14 @@ const menuItems: MenuItem[] = [
     label: "Sitemap Item Yonetimi",
   },
   {
-    path: "/admin/blogs",
-    icon: "bx bx-book",
-    label: "Blog Yönetimi",
+    path: "/admin/support-tickets",
+    icon: "bx bx-support",
+    label: "Destek Talepleri",
+  },
+  {
+    path: "/admin/cargo",
+    icon: "bx bx-package",
+    label: "Kargo Yönetimi",
   },
   {
     path: "/admin/settings",
@@ -111,10 +136,38 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Initialize open menus based on current route
+  useEffect(() => {
+    const currentPath = router.pathname;
+    const menusToOpen: string[] = [];
+
+    menuItems.forEach((item) => {
+      if (item.subItems) {
+        const hasActiveSubItem = item.subItems.some(
+          (subItem) => currentPath === subItem.path
+        );
+        if (hasActiveSubItem) {
+          menusToOpen.push(item.path);
+        }
+      }
+    });
+
+    setOpenMenus(menusToOpen);
+  }, [router.pathname]);
+
+  const toggleMenu = (itemPath: string) => {
+    setOpenMenus((prev) =>
+      prev.includes(itemPath)
+        ? prev.filter((path) => path !== itemPath)
+        : [...prev, itemPath]
+    );
+  };
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -151,13 +204,54 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {menuItems.map((item) => (
               <li
                 key={item.path}
-                className={`menu-item ${router.pathname === item.path ? "active open" : ""
-                  }`}
+                className={`menu-item ${
+                  item.subItems
+                    ? item.subItems.some(
+                        (subItem) => router.pathname === subItem.path
+                      )
+                      ? "active open"
+                      : openMenus.includes(item.path)
+                      ? "open"
+                      : ""
+                    : router.pathname === item.path
+                    ? "active open"
+                    : ""
+                }`}
               >
-                <Link href={item.path} className="menu-link">
-                  <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                  <div data-i18n={item.label}>{item.label}</div>
-                </Link>
+                {item.subItems ? (
+                  <>
+                    <a
+                      href="#"
+                      className="menu-link menu-toggle"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleMenu(item.path);
+                      }}
+                    >
+                      <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                      <div data-i18n={item.label}>{item.label}</div>
+                    </a>
+                    <ul className="menu-sub">
+                      {item.subItems.map((subItem) => (
+                        <li
+                          key={subItem.path}
+                          className={`menu-item ${
+                            router.pathname === subItem.path ? "active" : ""
+                          }`}
+                        >
+                          <Link href={subItem.path} className="menu-link">
+                            <div data-i18n={subItem.label}>{subItem.label}</div>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <Link href={item.path} className="menu-link">
+                    <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                    <div data-i18n={item.label}>{item.label}</div>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -166,7 +260,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Content */}
         <div
           className="layout-page"
-          style={{ flex: "1 1 auto", width: "calc(100% - 260px)", backgroundColor: "#e9ecef" }}
+          style={{ flex: "1 1 auto", width: "calc(100% - 260px)" }}
         >
           <nav
             className="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
@@ -181,144 +275,147 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </button>
             </div>
 
-            {/* Search Section - Sol taraf */}
-            <div className="navbar-nav align-items-center flex-grow-1 d-none d-md-flex">
-              <div className="nav-item d-flex align-items-center">
+            <div className="navbar-nav align-items-center flex-grow-1">
+              <div className="nav-item d-flex align-items-center w-px-400">
                 <i className="bx bx-search fs-4 lh-0 me-2"></i>
                 <input
                   type="text"
                   className="form-control border-0 shadow-none"
                   placeholder="Ara..."
                   aria-label="Ara..."
-                  style={{ maxWidth: "300px" }}
                 />
               </div>
             </div>
 
-            {/* Right Side - Notifications & User */}
-            <ul className="navbar-nav flex-row align-items-center ms-auto">
-              {/* Notifications */}
-              <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
-                <a
-                  className="nav-link dropdown-toggle hide-arrow"
-                  href="javascript:void(0);"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i className="bx bx-bell bx-sm"></i>
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end py-0">
-                  <li className="dropdown-menu-header border-bottom">
-                    <div className="dropdown-header d-flex align-items-center py-3">
-                      <h5 className="text-body mb-0 me-auto">Bildirimler</h5>
-                      <a
-                        href="#"
-                        className="dropdown-notifications-all text-body"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="Tümünü okundu olarak işaretle"
-                      >
-                        <i className="bx fs-4 bx-envelope-open"></i>
-                      </a>
-                    </div>
-                  </li>
-                  <li className="dropdown-notifications-list scrollable-container">
-                    <ul className="list-group list-group-flush">
-                      <li className="list-group-item list-group-item-action dropdown-notifications-item">
-                        <div className="d-flex">
-                          <div className="flex-shrink-0 me-3">
-                            <div className="avatar">
-                              <span className="avatar-initial rounded-circle bg-label-danger">
-                                <i className="bx bx-cart"></i>
-                              </span>
+            <div
+              className="navbar-nav-right d-flex align-items-center"
+              id="navbar-collapse"
+            >
+              <ul className="navbar-nav flex-row align-items-center ms-auto">
+                {/* Notifications */}
+                <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
+                  <a
+                    className="nav-link dropdown-toggle hide-arrow"
+                    href="javascript:void(0);"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="bx bx-bell bx-sm"></i>
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end py-0">
+                    <li className="dropdown-menu-header border-bottom">
+                      <div className="dropdown-header d-flex align-items-center py-3">
+                        <h5 className="text-body mb-0 me-auto">Bildirimler</h5>
+                        <a
+                          href="#"
+                          className="dropdown-notifications-all text-body"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title="Tümünü okundu olarak işaretle"
+                        >
+                          <i className="bx fs-4 bx-envelope-open"></i>
+                        </a>
+                      </div>
+                    </li>
+                    <li className="dropdown-notifications-list scrollable-container">
+                      <ul className="list-group list-group-flush">
+                        <li className="list-group-item list-group-item-action dropdown-notifications-item">
+                          <div className="d-flex">
+                            <div className="flex-shrink-0 me-3">
+                              <div className="avatar">
+                                <span className="avatar-initial rounded-circle bg-label-danger">
+                                  <i className="bx bx-cart"></i>
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex-grow-1">
+                              <h6 className="mb-1">Yeni sipariş alındı</h6>
+                              <p className="mb-0">
+                                Yeni bir sipariş oluşturuldu
+                              </p>
+                              <small className="text-muted">1 saat önce</small>
                             </div>
                           </div>
+                        </li>
+                      </ul>
+                    </li>
+                    <li className="dropdown-menu-footer border-top">
+                      <a
+                        href="#"
+                        className="dropdown-item d-flex justify-content-center p-3"
+                      >
+                        Tüm bildirimleri görüntüle
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                {/* User */}
+                <li className="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a
+                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
+                    href="javascript:void(0);"
+                    data-bs-toggle="dropdown"
+                  >
+                    <div className="avatar avatar-online me-2">
+                      <Image
+                        src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                        alt="User Avatar"
+                        className="rounded-circle"
+                        width={40}
+                        height={40}
+                      />
+                    </div>
+                    <div className="flex-grow-1">
+                      <span className="fw-semibold d-block">
+                        {userProfile?.applicationUser?.firstName ||
+                          "Admin Kullanıcı"}
+                      </span>
+                      <small className="text-muted">Admin</small>
+                    </div>
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        <div className="d-flex">
+                          <div className="avatar avatar-online me-2">
+                            <Image
+                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                              alt="User Avatar"
+                              className="rounded-circle"
+                              width={40}
+                              height={40}
+                            />
+                          </div>
                           <div className="flex-grow-1">
-                            <h6 className="mb-1">Yeni sipariş alındı</h6>
-                            <p className="mb-0">
-                              Yeni bir sipariş oluşturuldu
-                            </p>
-                            <small className="text-muted">1 saat önce</small>
+                            <span className="fw-semibold d-block">
+                              {userProfile?.applicationUser?.firstName ||
+                                "Admin Kullanıcı"}
+                            </span>
+                            <small className="text-muted">Admin</small>
                           </div>
                         </div>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="dropdown-menu-footer border-top">
-                    <a
-                      href="#"
-                      className="dropdown-item d-flex justify-content-center p-3"
-                    >
-                      Tüm bildirimleri görüntüle
-                    </a>
-                  </li>
-                </ul>
-              </li>
-
-              {/* User */}
-              <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                <a
-                  className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                  href="javascript:void(0);"
-                  data-bs-toggle="dropdown"
-                >
-                  <div className="avatar avatar-online me-2">
-                    <Image
-                      src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                      alt="User Avatar"
-                      className="rounded-circle"
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                  <div className="flex-grow-1">
-                    <span className="fw-semibold d-block">
-                      {userProfile?.applicationUser?.firstName ||
-                        "Admin Kullanıcı"}
-                    </span>
-                    <small className="text-muted">Admin</small>
-                  </div>
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      <div className="d-flex">
-                        <div className="avatar avatar-online me-2">
-                          <Image
-                            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                            alt="User Avatar"
-                            className="rounded-circle"
-                            width={40}
-                            height={40}
-                          />
-                        </div>
-                        <div className="flex-grow-1">
-                          <span className="fw-semibold d-block">
-                            {userProfile?.applicationUser?.firstName ||
-                              "Admin Kullanıcı"}
-                          </span>
-                          <small className="text-muted">Admin</small>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <div className="dropdown-divider"></div>
-                  </li>
-                  <li>
-                    <a
-                      className="dropdown-item text-danger"
-                      href="#"
-                      onClick={handleLogout}
-                    >
-                      <i className="bx bx-power-off me-2"></i>
-                      <span className="align-middle">Çıkış Yap</span>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
+                      </a>
+                    </li>
+                    <li>
+                      <div className="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a
+                        className="dropdown-item text-danger"
+                        href="#"
+                        onClick={handleLogout}
+                      >
+                        <i className="bx bx-power-off me-2"></i>
+                        <span className="align-middle">Çıkış Yap</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                {/* /User */}
+              </ul>
+            </div>
           </nav>
+
           <div className="content-wrapper">
             <div className="container-fluid flex-grow-1 container-p-y">
               <main>{children}</main>

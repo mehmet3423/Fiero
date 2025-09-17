@@ -14,6 +14,8 @@ interface UserBase {
   createdOnValue?: string;
   modifiedOnValue?: string | null;
   isDeleted?: boolean;
+  isSMSNotificationEnabled?: boolean;
+  isEmailNotificationEnabled?: boolean;
   claims?: {
     id: string;
     values: any[];
@@ -50,6 +52,8 @@ export interface ApplicationUser {
   roles: any | null;
   addresses: Address[];
   userPaymentCard: any[];
+  isSMSNotificationEnabled?: boolean;
+  isEmailNotificationEnabled?: boolean;
   claims?: {
     id: string;
     values: any[];

@@ -13,6 +13,8 @@ export interface Register {
   phoneNumber: string;
   gender: number;
   birthDate: string;
+  IsSMSNotificationEnabled?: boolean;
+  IsEmailNotificationEnabled?: boolean;
   isSeller?: boolean;
   companyName?: string;
   companyAddress?: CompanyAddress;

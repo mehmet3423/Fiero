@@ -5,10 +5,8 @@ import { UpdateAffiliateStatusByUserRequest } from "@/constants/models/Affiliate
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useLanguage } from "@/context/LanguageContext";
 
 export const useUpdateAffiliateStatusByUser = () => {
-  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<string>();
 
@@ -24,21 +22,19 @@ export const useUpdateAffiliateStatusByUser = () => {
         },
         {
           onSuccess: () => {
-            toast.success(t("updateSuccess"));
+            toast.success("Koleksiyon başarıyla güncellendi!");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.AFFILIATE_COLLECTIONS],
             });
           },
           onError: (error: any) => {
-            console.error("Collection update error:", error);
             toast.error(
-              t("updateError")
+              "Koleksiyon güncellenirken bir hata oluştu. Lütfen tekrar deneyin."
             );
           },
         }
       );
     } catch (error) {
-      console.error("Error updating collection:", error);
       throw error;
     }
   };

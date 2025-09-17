@@ -31,32 +31,38 @@ import { Product } from "./Product";
 // }
 
 export interface CartResponseModel {
-  $id?: string; // JSON.NET referans ID'si
-  customerId: string;
-  customer: any | null; // Müşteri objesi null dönüyor; isterseniz kendi interface'inizi yazabilirsiniz.
-  cartProducts: CartProduct[];
-  cartBundles: CartBundle[];
-  cartBuyXPayYs: any[];
-  cargoPrice: number;
-  cargoDiscountedPrice: number | null;
-  couponCode: string | null;
-  // Backend'den gerçekten dönen fiyat bilgileri
-  totalPrice: number; // Toplam fiyat
-  totalDiscountedPrice: number; // İndirimli toplam fiyat
-  couponDiscountId: string | null;
-  cartDiscountId: string | null;
-  cargoDiscountId: string | null;
-  cartDiscount: any | null;
-  cargoDiscount: any | null;
-  couponDiscount: any | null;
-  id: string;
-  createdOn: number; // Unix benzeri timestamp
-  createdOnValue: string; // Tarih stringi
-  modifiedOn: number | null;
-  modifiedOnValue: string | null;
-  createdBy: string;
-  modifiedBy: string | null;
-  isDeleted: boolean;
+  data: {
+    $id?: string; // JSON.NET referans ID'si
+    customerId: string;
+    customer: any | null; // Müşteri objesi null dönüyor; isterseniz kendi interface'inizi yazabilirsiniz.
+    cartProducts: CartProduct[];
+    cartBundles: CartBundle[];
+    cartBuyXPayYs: any[];
+    cartFreeProducts: CartFreeProduct[]; // Ücretsiz ürünler
+    cargoPrice: number;
+    cargoDiscountedPrice: number | null;
+    giftWrapPrice: number; // Hediye paketi fiyatı
+    couponCode: string | null;
+    // Backend'den gerçekten dönen fiyat bilgileri
+    totalPrice: number; // Toplam fiyat (kargo dahil)
+    totalDiscountedPrice?: number; // İndirimli toplam fiyat (optional - gelmiyor)
+    totalProductPhaseDiscountedPrice?: number; // Ürünlerin indirimli fiyat toplamı (kargo hariç)
+    totalDiscountlessPrice?: number; // Ürünlerin indirimli fiyat toplamı (kargo hariç)
+    couponDiscountId: string | null;
+    cartDiscountId: string | null;
+    cargoDiscountId: string | null;
+    cartDiscount: any | null;
+    cargoDiscount: any | null;
+    couponDiscount: any | null;
+    id: string;
+    createdOn: number; // Unix benzeri timestamp
+    createdOnValue: string; // Tarih stringi
+    modifiedOn: number | null;
+    modifiedOnValue: string | null;
+    createdBy: string;
+    modifiedBy: string | null;
+    isDeleted: boolean;
+  };
 }
 
 export interface CartProduct {
@@ -99,4 +105,45 @@ export interface BundleDiscountProduct {
   productId: string;
   product: Product | null;
   bundleDiscountId: string;
+}
+
+// Ücretsiz ürün modeli
+export interface CartFreeProduct {
+  // Ortak alanlar
+  $id?: string;
+  id?: string;
+  cartId?: string;
+  cart?: { $ref: string };
+  isDeleted?: boolean;
+  createdOnValue?: string | null;
+  modifiedOnValue?: string | null;
+
+  // Kampanya/indirim bağlantısı
+  freeProductDiscountId?: string;
+
+  // Eski model: indirim objesi ve içindeki id listesi
+  freeProductDiscount?: {
+    minimumQuantity?: number;
+    maxFreeProductsPerOrder?: number;
+    maxFreeProductPrice?: number;
+    isRepeatable?: boolean;
+    freeProductIds?: string[];
+  } | null;
+
+  // Yeni model: freeProductDiscountProducts array'i içindeki her ürün için giftAmount
+  freeProductDiscountProducts?: FreeProductDiscountProduct[];
+
+  // Eski model: üst seviyede freeProductIds (her biri 1 adet ücretsiz)
+  freeProductIds?: string[];
+}
+
+export interface FreeProductDiscountProduct {
+  id: string;
+  createdOnValue: string;
+  modifiedOnValue: string | null;
+  productId: string;
+  product: Product | null;
+  freeProductDiscountId: string;
+  giftAmount: number; // Ücretsiz adet sayısı
+  quantity: number; // Toplam adet sayısı
 }

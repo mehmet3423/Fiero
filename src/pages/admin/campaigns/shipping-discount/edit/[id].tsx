@@ -22,7 +22,7 @@ function EditShippingDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -77,11 +77,9 @@ function EditShippingDiscount() {
         minimumCargoAmount: formData.minimumCargoAmount,
       };
 
-      console.log("Shipping discount data:", shippingDiscountData);
       await updateDiscount(shippingDiscountData);
       router.push("/admin/campaigns/shipping-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -95,10 +93,10 @@ function EditShippingDiscount() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "discountValueType"
-          ? Number(value)
-          : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? Number(value)
+            : type === "number"
+              ? parseFloat(value)
+              : value,
     }));
   };
 
@@ -192,7 +190,7 @@ function EditShippingDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -219,13 +217,13 @@ function EditShippingDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="Maksimum indirim değeri"
                 />
               </div>
               <div className="col-md-3 mb-3">
-                <label className="form-label">Minimum Kargo Tutarı *</label>
+                <label className="form-label">Minimum Sepet Tutarı *</label>
                 <input
                   type="number"
                   className="form-control"
@@ -233,9 +231,9 @@ function EditShippingDiscount() {
                   value={formData.minimumCargoAmount}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
-                  placeholder="Minimum kargo tutarı"
+                  placeholder="Minimum sepet tutarı"
                 />
               </div>
             </div>

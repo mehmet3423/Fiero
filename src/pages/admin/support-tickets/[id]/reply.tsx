@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { SupportTicket } from "@/constants/models/SupportTicket";
-import { GeneralSupportRequestType } from "@/constants/enums/GeneralRequestType";
+import { GeneralSupportRequestType } from "@/constants/enums/support-ticket/GeneralSupportTicket/GeneralSupportRequestType";
 import Link from "next/link";
 import { GET_SUPPORT_TICKET_BY_ID, BASE_URL } from "@/constants/links";
 import useMyMutation from "@/hooks/useMyMutation";
@@ -42,7 +42,6 @@ export default function SupportTicketReplyPage() {
           setLoading(false);
         },
         onError: (err) => {
-          console.error("Destek talebi detayı alınırken hata oluştu:", err);
           setError(
             err instanceof Error ? err : new Error("Bilinmeyen bir hata oluştu")
           );
@@ -79,7 +78,6 @@ export default function SupportTicketReplyPage() {
     // data: { ticketId: ticketId, content: replyContent },
 
     // Geçici simülasyon - gerçek yanıt gönderme işlemi yerine sadece detay sayfasına yönlendiriyoruz
-    console.log("Yanıt içeriği (gönderilmedi):", replyContent);
     alert(
       "Yanıt gönderme özelliği henüz API'de mevcut değil. Backend ekibi ile iletişime geçiniz."
     );
@@ -96,7 +94,6 @@ export default function SupportTicketReplyPage() {
       },
       {
         onSuccess: () => {
-          console.log("Yanıt içeriği:", replyContent);
           alert("Yanıtınız başarıyla gönderildi (Simülasyon)");
           
           queryClient.invalidateQueries({ queryKey: ["supportTickets"] });
@@ -104,7 +101,6 @@ export default function SupportTicketReplyPage() {
           router.push(`/admin/support-tickets/${ticketId}`);
         },
         onError: (err) => {
-          console.error("Yanıt gönderilirken hata oluştu:", err);
           setError(
             err instanceof Error
               ? err
@@ -173,7 +169,9 @@ export default function SupportTicketReplyPage() {
                       <div className="col-md-6">
                         <p>
                           <strong>Oluşturulma Tarihi:</strong>{" "}
-                          {new Date(ticket.createdOn).toLocaleString("tr-TR")}
+                          {new Date(ticket.createdOnValue).toLocaleString(
+                            "tr-TR"
+                          )}
                         </p>
                       </div>
                     </div>

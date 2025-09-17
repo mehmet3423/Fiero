@@ -19,7 +19,7 @@ interface CreateOrderWithItemsRequest extends CreateOrderRequest {
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
-  const { mutateAsync, isPending } = useMyMutation<Order>();
+  const { mutateAsync, isPending } = useMyMutation<{ data: Order }>();
 
   const createOrder = async (orderRequest: CreateOrderWithItemsRequest) => {
     const params = new URLSearchParams({
@@ -49,11 +49,12 @@ export const useCreateOrder = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Siparişiniz başarıyla oluşturuldu");
+          // toast.success("Siparişiniz başarıyla oluşturuldu");
         },
       }
     );
-    return response.data;
+    // API'den dönen response: { data: { ...order }, ... }
+    return response.data?.data;
   };
 
   return { createOrder, isPending };

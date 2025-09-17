@@ -28,6 +28,25 @@ export const useCreateCouponDiscount = () => {
           CouponCode: data.couponCode,
           MaxUsageCount: data.maxUsageCount?.toString() || "0",
           Type: DiscountType.Coupon.toString(),
+          // Notification Settings
+          IsEmailNotificationEnabled:
+            data.notificationSettings?.isEmailNotificationEnabled?.toString() ||
+            "false",
+          EmailNotificationSubject:
+            data.notificationSettings?.emailNotificationSubject || "",
+          EmailNotificationTextBody:
+            data.notificationSettings?.emailNotificationTextBody || "",
+          EmailNotificationHtmlBody:
+            data.notificationSettings?.emailNotificationHtmlBody || "",
+          IsSMSNotificationEnabled:
+            data.notificationSettings?.isSMSNotificationEnabled?.toString() ||
+            "false",
+          SMSNotificationSubject:
+            data.notificationSettings?.smsNotificationSubject || "",
+          SMSNotificationTextBody:
+            data.notificationSettings?.smsNotificationTextBody || "",
+          SMSNotificationHtmlBody:
+            data.notificationSettings?.smsNotificationHtmlBody || "",
         } as Record<string, string>)
       ).toString();
 

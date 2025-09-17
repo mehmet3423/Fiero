@@ -50,25 +50,33 @@ function SeoManagementPage() {
   // Local state for form input
   const [localFilterType, setLocalFilterType] = useState<
     "all" | "general" | "category"
-  >(filters.filterType === "product" ? "all" : (filters.filterType || "all"));
+  >(filters.filterType === "product" ? "all" : filters.filterType || "all");
 
-  const { data: mainCategories, isLoading: mainCategoriesLoading } = useMainCategoriesWithSubCategories();
+  const { data: mainCategories, isLoading: mainCategoriesLoading } =
+    useMainCategoriesWithSubCategories();
   const [selectedMainCategory, setSelectedMainCategory] = useState<string>("");
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>("");
-  const selectedMainCatObj = mainCategories.find(cat => cat.id === selectedMainCategory);
-  const subCategories = selectedMainCatObj ? selectedMainCatObj.subCategories : [];
+  const selectedMainCatObj = mainCategories.find(
+    (cat) => cat.id === selectedMainCategory
+  );
+
+  const subCategories = selectedMainCatObj
+    ? selectedMainCatObj.subCategories
+    : [];
   const subCategoriesLoading = mainCategoriesLoading && !!selectedMainCategory;
 
   // Product filter state and hook
-  const { products: productList, loading: productsLoading } = useBasicProductList();
+  const { products: productList, loading: productsLoading } =
+    useBasicProductList();
   const [selectedProduct, setSelectedProduct] = useState<string>("");
-
   // Search state and hook
   const [searchValue, setSearchValue] = useState<string>("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Ana kategori değiştiğinde filtreye ekle
-  const handleMainCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleMainCategoryChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const value = e.target.value;
     setSelectedMainCategory(value);
     setSelectedSubCategory("");
@@ -114,7 +122,8 @@ function SeoManagementPage() {
     Search: filters.search || undefined,
   };
 
-  const { seoList, totalCount, pageCount, isLoading, refetch } = useGetSeoList(apiParams);
+  const { seoList, totalCount, pageCount, isLoading, refetch } =
+    useGetSeoList(apiParams);
   const { deleteSeo, isPending: isDeleting } = useDeleteSeo();
   const [deletingSeoId, setDeletingSeoId] = useState<string | null>(null);
 
@@ -189,7 +198,7 @@ function SeoManagementPage() {
                       className="form-control"
                       placeholder="Başlık, meta başlık veya slug ile ara..."
                       value={searchValue}
-                      onChange={e => setSearchValue(e.target.value)}
+                      onChange={(e) => setSearchValue(e.target.value)}
                       onKeyDown={handleSearchKeyDown}
                     />
                     <button
@@ -210,9 +219,12 @@ function SeoManagementPage() {
                     disabled={mainCategoriesLoading}
                   >
                     <option value="">Tümü</option>
-                    {mainCategories && mainCategories.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
+                    {mainCategories &&
+                      mainCategories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div className="col-md-3">
@@ -220,16 +232,19 @@ function SeoManagementPage() {
                   <select
                     className="form-select"
                     value={selectedSubCategory}
-                    onChange={e => {
+                    onChange={(e) => {
                       setSelectedSubCategory(e.target.value);
                       updateFilters({ subCategoryId: e.target.value });
                     }}
                     disabled={subCategoriesLoading}
                   >
                     <option value="">Tümü</option>
-                    {Array.isArray(subCategories) && subCategories.map(sub => (
-                      <option key={sub.id} value={sub.id}>{sub.name}</option>
-                    ))}
+                    {Array.isArray(subCategories) &&
+                      subCategories.map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div className="col-md-3">
@@ -241,9 +256,12 @@ function SeoManagementPage() {
                     disabled={productsLoading}
                   >
                     <option value="">Tümü</option>
-                    {productList && productList.map(product => (
-                      <option key={product.id} value={product.id}>{product.title}</option>
-                    ))}
+                    {productList &&
+                      productList?.map((product) => (
+                        <option key={product.id} value={product.id}>
+                          {product.title}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -316,18 +334,20 @@ function SeoManagementPage() {
                             <td>
                               <div className="d-flex flex-column gap-1">
                                 <span
-                                  className={`badge ${item.isIndexed
-                                    ? "bg-success"
-                                    : "bg-secondary"
-                                    }`}
+                                  className={`badge ${
+                                    item.isIndexed
+                                      ? "bg-success"
+                                      : "bg-secondary"
+                                  }`}
                                 >
                                   {item.isIndexed ? "İndeksli" : "İndekssiz"}
                                 </span>
                                 <span
-                                  className={`badge ${item.isFollowed
-                                    ? "bg-success"
-                                    : "bg-secondary"
-                                    }`}
+                                  className={`badge ${
+                                    item.isFollowed
+                                      ? "bg-success"
+                                      : "bg-secondary"
+                                  }`}
                                 >
                                   {item.isFollowed ? "Takipli" : "Takipsiz"}
                                 </span>

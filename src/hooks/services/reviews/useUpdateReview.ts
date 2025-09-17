@@ -43,7 +43,6 @@ export const useUpdateReview = () => {
         }
       );
     } catch (error) {
-      console.error("Update review error:", error);
       toast.error("Yorum güncellenirken bir hata oluştu");
     }
   };

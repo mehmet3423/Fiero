@@ -35,13 +35,11 @@ export const useCreatePayoutRequest = () => {
             });
           },
           onError: (error: any) => {
-            console.error("Create payout request error:", error);
             toast.error("Ödeme talebi oluşturulurken bir hata oluştu");
           },
         }
       );
     } catch (error) {
-      console.error("Error creating payout request:", error);
       throw error;
     }
   };

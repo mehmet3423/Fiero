@@ -5,19 +5,22 @@ import { SubCategoriesLookUp } from "@/constants/models/SubCategoryLookUp";
 import useGetData from "@/hooks/useGetData";
 
 export const useSubCategoriesLookUp = (mainCategoryId: string) => {
-  const { data, isLoading, error } = useGetData<SubCategoriesLookUp[]>({
+  const { data, isLoading, error } = useGetData<{
+    data: SubCategoriesLookUp[];
+  }>({
     url: mainCategoryId
       ? `${GET_SUB_CATEGORY_LOOKUP_LIST}?MainCategoryId=${mainCategoryId}`
       : undefined,
     queryKey: [QueryKeys.SUB_CATEGORY_LIST, mainCategoryId],
     method: HttpMethod.GET,
     enabled: !!mainCategoryId,
-    onError(err) {
-      console.log(err);
-    },
+    onError(err) {},
   });
+  const categories = {
+    data: data?.data || [],
+  };
   return {
-    categories: data,
+    categories,
     isLoading,
     error,
   };

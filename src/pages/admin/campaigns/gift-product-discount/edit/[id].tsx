@@ -20,7 +20,7 @@ const EditGiftProductDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -51,10 +51,12 @@ const EditGiftProductDiscountPage = () => {
         endDate: discount.endDate || "",
         isActive: discount.isActive !== undefined ? discount.isActive : true,
         maxFreeProductPrice: freeProductDiscount.maxFreeProductPrice || 0,
-        isRepeatable: freeProductDiscount.isRepeatable || false,
+        isRepeatable:
+          freeProductDiscount.isRepeatable ||
+          false,
         minimumQuantity: freeProductDiscount.minimumQuantity || 0,
         maxFreeProductsPerOrder:
-          freeProductDiscount.maxFreeProductsPerOrder || 0,
+          Number(freeProductDiscount.maxFreeProductsPerOrder || 0),
         type: DiscountType.GiftProductDiscount,
       });
     }
@@ -63,13 +65,21 @@ const EditGiftProductDiscountPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Format dates to remove seconds (keep only YYYY-MM-DDTHH:MM format)
+      const formattedData = {
+        ...formData,
+        maxFreeProductsPerOrder: Number(formData.maxFreeProductsPerOrder),
+        startDate: formData.startDate ? formData.startDate.slice(0, 16) : "",
+        endDate: formData.endDate ? formData.endDate.slice(0, 16) : "",
+      };
+
       await updateDiscount({
         id: id as string,
-        ...formData,
-      } as FreeProductDiscount);
+        ...formattedData,
+        freeProductIds: formattedData.productIds,
+      } as unknown as FreeProductDiscount);
       router.push("/admin/campaigns/gift-product-discount");
     } catch (error) {
-      console.error("Error updating Gift Product discount:", error);
     }
   };
 
@@ -83,8 +93,8 @@ const EditGiftProductDiscountPage = () => {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value) || 0
-          : value,
+            ? parseFloat(value) || 0
+            : value,
     }));
   };
 
@@ -188,7 +198,8 @@ const EditGiftProductDiscountPage = () => {
                   name="minimumQuantity"
                   value={formData.minimumQuantity}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -200,9 +211,10 @@ const EditGiftProductDiscountPage = () => {
                   type="number"
                   className="form-control"
                   name="maxFreeProductsPerOrder"
-                  value={formData.maxFreeProductsPerOrder}
+                  value={Number(formData.maxFreeProductsPerOrder)}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -216,7 +228,8 @@ const EditGiftProductDiscountPage = () => {
                   name="maxFreeProductPrice"
                   value={formData.maxFreeProductPrice}
                   onChange={handleChange}
-                  min="0"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -241,9 +254,12 @@ const EditGiftProductDiscountPage = () => {
                   type="datetime-local"
                   className="form-control"
                   name="startDate"
-                  value={formData.startDate}
+                  value={
+                    formData.startDate ? formData.startDate.slice(0, 16) : ""
+                  }
                   onChange={handleChange}
                   min={new Date().toISOString().slice(0, 16)}
+                  step="60"
                   required
                 />
               </div>
@@ -260,6 +276,7 @@ const EditGiftProductDiscountPage = () => {
                       ? formData.startDate.slice(0, 16)
                       : new Date().toISOString().slice(0, 16)
                   }
+                  step="60"
                   required
                 />
               </div>

@@ -1,6 +1,7 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_SEO_BY_ID } from "@/constants/links";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
 import useGetData from "@/hooks/useGetData";
 
 interface SeoData {
@@ -31,15 +32,27 @@ export const useGetSeoById = (id: string, enabled = true) => {
     Id: id,
   }).toString();
 
-  const { data, isLoading, error, refetch } = useGetData<SeoData>({
+  const { data, isLoading, error, refetch } = useGetData<
+    CommandResultWithData<SeoData>
+  >({
     url: `${GET_SEO_BY_ID}?${params}`,
     queryKey: [QueryKeys.SEO, id],
     method: HttpMethod.GET,
     enabled: enabled && !!id,
+    onError: (err) => {
+    },
   });
 
+  // Check if the response is successful according to CommandResult structure
+  const seoData = data?.isSucceed && data?.data ? data.data : null;
+
+  // SEO verisi olmayan sayfalarda hata toast mesajı gösterilmez
+  // if (data && !data.isSucceed && data.message) {
+  //   toast.error(data.message);
+  // }
+
   return {
-    seoData: data,
+    seoData,
     isLoading,
     error,
     refetch,

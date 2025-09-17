@@ -1,13 +1,15 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { GET_PAYMENT_DETAIL } from "@/constants/links";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
 import {
   GetPaymentDetailRequest,
-  PaymentResponse,
+  PaymentDetailResponseData,
 } from "@/constants/models/Payment";
 import useMyMutation from "@/hooks/useMyMutation";
+import toast from "react-hot-toast";
 
 export const useGetPaymentDetail = () => {
-  const { mutateAsync, isPending } = useMyMutation<any>();
+  const { mutateAsync, isPending } = useMyMutation<CommandResultWithData<PaymentDetailResponseData>>();
 
   const getPaymentDetail = async (
     paymentDetailData: Omit<GetPaymentDetailRequest, "locale">
@@ -21,9 +23,16 @@ export const useGetPaymentDetail = () => {
           locale: 0,
         },
       });
-      return response;
+
+      // Check if the response is successful according to CommandResult structure
+      if (!response.data.isSucceed || !response.data.data) {
+        toast.error(response.data.message || "Failed to get payment detail");
+        throw new Error(response.data.message || "Failed to get payment detail");
+      }
+
+      toast.success("Payment detail retrieved successfully");
+      return response.data;
     } catch (error) {
-      console.error("Error during get payment detail:", error);
       throw error;
     }
   };

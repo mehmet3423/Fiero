@@ -52,7 +52,6 @@ export const useAddProduct = () => {
         }
       );
     } catch (error) {
-      console.error("Add product error:", error);
       toast.error("Ürün eklenirken bir hata oluştu");
     }
   };

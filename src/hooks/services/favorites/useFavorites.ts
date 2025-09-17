@@ -51,7 +51,6 @@ export const useAddToFavorites = () => {
                 }
             });
         } catch (error) {
-            console.error('Add to favorites error:', error);
         }
     };
 
@@ -79,7 +78,6 @@ export const useRemoveFromFavorites = () => {
                 }
             });
         } catch (error) {
-            console.error('Remove from favorites error:', error);
         }
     };
 
@@ -103,7 +101,6 @@ export const useClearFavorites = () => {
                 }
             });
         } catch (error) {
-            console.error('Clear favorites error:', error);
         }
     };
 

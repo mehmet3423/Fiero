@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
+import BackButton from "@/components/shared/BackButton";
+
 const AddProductPage: React.FC = () => {
   const { addProduct, isPending } = useAddProduct();
   const { categories, isLoading: categoriesLoading } = useCategories();
@@ -202,9 +204,7 @@ const AddProductPage: React.FC = () => {
         setSelectedImage(file);
         const imageUrl = URL.createObjectURL(file);
         setProduct((prev) => ({ ...prev, baseImageUrl: imageUrl }));
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 
@@ -335,11 +335,17 @@ const AddProductPage: React.FC = () => {
     setSelectedSpecificationOptionIds([...updatedOptionIds, optionId]);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (isSubmitting) return; // Çift tıklamayı engelle
+    setIsSubmitting(true);
+
     if (!selectedImage) {
       toast.error("Lütfen bir ana resim seçin");
+      setIsSubmitting(false);
       return;
     }
 
@@ -504,13 +510,16 @@ const AddProductPage: React.FC = () => {
       });
       router.push("/admin/products");
     } catch (error) {
-      console.error("Upload error:", error);
       toast.error("Resimler yüklenirken bir hata oluştu");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="">
+      <BackButton className="mb-3 mt-3 col-1" href="/admin/products" />
+
       <div className="row">
         <div className="col-12">
           <div className="card shadow-sm p-3">
@@ -670,320 +679,6 @@ const AddProductPage: React.FC = () => {
                       />
                     </div>
                   </div>
-
-                  {/* SEO Bilgileri */}
-                  {/* <div className="col-12 mb-3">
-                    <div className="card border p-4">
-                      <div className="card-header bg-light">
-                        <h6 className="mb-0">SEO Bilgileri</h6>
-                        <small className="text-muted">
-                          Ürün için arama motoru optimizasyonu ayarları
-                        </small>
-                      </div>
-                      <div className="card-body">
-                        <div className="row g-2">
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">SEO Slug</label>
-                            <input
-                              type="text"
-                              className="form-control form-control-sm"
-                              value={product.createSEORequest?.Slug || ""}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    Slug: e.target.value,
-                                    MetaTitle:
-                                      product.createSEORequest?.MetaTitle || "",
-                                    MetaDescription:
-                                      product.createSEORequest
-                                        ?.MetaDescription || "",
-                                    RobotsMetaTag:
-                                      product.createSEORequest?.RobotsMetaTag ||
-                                      "index,follow",
-                                  },
-                                })
-                              }
-                              placeholder="/products/urun-adi"
-                            />
-                            <small className="text-muted">
-                              Ürün başlığından otomatik oluşturulur
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              Meta Başlık
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control form-control-sm"
-                              value={product.createSEORequest?.MetaTitle || ""}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    Slug: product.createSEORequest?.Slug || "",
-                                    MetaTitle: e.target.value,
-                                    MetaDescription:
-                                      product.createSEORequest
-                                        ?.MetaDescription || "",
-                                    RobotsMetaTag:
-                                      product.createSEORequest?.RobotsMetaTag ||
-                                      "index,follow",
-                                  },
-                                })
-                              }
-                              placeholder="Ürün Adı - Nors"
-                              maxLength={60}
-                            />
-                            <small className="text-muted">
-                              Max 60 karakter (Google için optimal)
-                            </small>
-                          </div>
-
-                          <div className="col-12 mb-2">
-                            <label className="form-label small">
-                              Meta Açıklama
-                            </label>
-                            <textarea
-                              className="form-control form-control-sm"
-                              rows={2}
-                              value={
-                                product.createSEORequest?.MetaDescription || ""
-                              }
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    Slug: product.createSEORequest?.Slug || "",
-                                    MetaTitle:
-                                      product.createSEORequest?.MetaTitle || "",
-                                    MetaDescription: e.target.value,
-                                    RobotsMetaTag:
-                                      product.createSEORequest?.RobotsMetaTag ||
-                                      "index,follow",
-                                  },
-                                })
-                              }
-                              placeholder="Ürün açıklaması - kaliteli, uygun fiyat ve hızlı teslimat"
-                              maxLength={160}
-                            />
-                            <small className="text-muted">
-                              Max 160 karakter (Google için optimal)
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              Anahtar Kelimeler
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control form-control-sm"
-                              value={product.createSEORequest?.Keywords || ""}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    ...product.createSEORequest,
-                                    Keywords: e.target.value,
-                                  },
-                                })
-                              }
-                              placeholder="kelime1, kelime2, kelime3"
-                            />
-                            <small className="text-muted">
-                              Virgülle ayırın (SEO için)
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              Canonical URL
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control form-control-sm"
-                              value={product.createSEORequest?.Canonical || ""}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    ...product.createSEORequest,
-                                    Canonical: e.target.value,
-                                  },
-                                })
-                              }
-                              placeholder="https://nors.com/products/urun-adi"
-                            />
-                            <small className="text-muted">
-                              Sayfa için canonical URL
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              OG Başlık (Facebook/Twitter)
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control form-control-sm"
-                              value={product.createSEORequest?.OgTitle || ""}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    ...product.createSEORequest,
-                                    OgTitle: e.target.value,
-                                  },
-                                })
-                              }
-                              placeholder="Sosyal medya başlığı"
-                            />
-                            <small className="text-muted">
-                              Open Graph başlığı
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              OG Açıklama (Facebook/Twitter)
-                            </label>
-                            <textarea
-                              className="form-control form-control-sm"
-                              rows={2}
-                              value={
-                                product.createSEORequest?.OgDescription || ""
-                              }
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    ...product.createSEORequest,
-                                    OgDescription: e.target.value,
-                                  },
-                                })
-                              }
-                              placeholder="Sosyal medya açıklaması"
-                              maxLength={160}
-                            />
-                            <small className="text-muted">
-                              Open Graph açıklaması
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <label className="form-label small">
-                              Robots Meta Tag
-                            </label>
-                            <select
-                              className="form-select form-select-sm"
-                              value={
-                                product.createSEORequest?.RobotsMetaTag ||
-                                "index,follow"
-                              }
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  createSEORequest: {
-                                    ...product.createSEORequest,
-                                    RobotsMetaTag: e.target.value,
-                                  },
-                                })
-                              }
-                            >
-                              <option value="index,follow">
-                                Index, Follow
-                              </option>
-                              <option value="noindex,follow">
-                                No Index, Follow
-                              </option>
-                              <option value="index,nofollow">
-                                Index, No Follow
-                              </option>
-                              <option value="noindex,nofollow">
-                                No Index, No Follow
-                              </option>
-                            </select>
-                            <small className="text-muted">
-                              Arama motorları için tarama ayarları
-                            </small>
-                          </div>
-
-                          <div className="col-md-6 mb-2">
-                            <div className="row g-2">
-                              <div className="col-6">
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="isIndexed"
-                                    checked={
-                                      product.createSEORequest?.IsIndexed ??
-                                      true
-                                    }
-                                    onChange={(e) =>
-                                      setProduct({
-                                        ...product,
-                                        createSEORequest: {
-                                          ...product.createSEORequest,
-                                          IsIndexed: e.target.checked,
-                                        },
-                                      })
-                                    }
-                                  />
-                                  <label
-                                    className="form-check-label small"
-                                    htmlFor="isIndexed"
-                                  >
-                                    İndekslenebilir
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="col-6">
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id="isFollowed"
-                                    checked={
-                                      product.createSEORequest?.IsFollowed ??
-                                      true
-                                    }
-                                    onChange={(e) =>
-                                      setProduct({
-                                        ...product,
-                                        createSEORequest: {
-                                          ...product.createSEORequest,
-                                          IsFollowed: e.target.checked,
-                                        },
-                                      })
-                                    }
-                                  />
-                                  <label
-                                    className="form-check-label small"
-                                    htmlFor="isFollowed"
-                                  >
-                                    Takip Edilebilir
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-12">
-                            <div className="alert alert-info fs-6 py-2 d-flex align-items-center">
-                              <i className="bx bx-info-circle me-1"></i>
-                              SEO bilgileri ürün başlığından otomatik
-                              oluşturulur, istediğiniz zaman
-                              düzenleyebilirsiniz.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
 
                   {/* Alt Kategori Özellikleri */}
                   {selectedSubCategoryId &&
@@ -1201,7 +896,7 @@ const AddProductPage: React.FC = () => {
                       <div className="col-4 mb-2 ">
                         <div className="form-group">
                           <label className="form-label small">
-                            Video Yükle
+                            Ürün Videosu
                           </label>
                           <input
                             type="file"
@@ -1359,9 +1054,9 @@ const AddProductPage: React.FC = () => {
                   <button
                     type="submit"
                     className="btn btn-primary btn-sm"
-                    disabled={isPending}
+                    disabled={isPending || isSubmitting}
                   >
-                    {isPending ? "Ekleniyor..." : "Ürün Ekle"}
+                    {isPending || isSubmitting ? "Ekleniyor..." : "Ürün Ekle"}
                   </button>
                 </div>
               </form>

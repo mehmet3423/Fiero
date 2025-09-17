@@ -1,14 +1,16 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { GET_INSTALLMENT_INFO } from "@/constants/links";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
 import {
   GetInstallmentInfoRequest,
-  GetInstallmentInfoResponse,
+  InstallmentInfoResponseData,
 } from "@/constants/models/Payment";
 import useMyMutation from "@/hooks/useMyMutation";
+import toast from "react-hot-toast";
 
 export const useGetInstallmentInfo = () => {
   const { mutateAsync, isPending } =
-    useMyMutation<GetInstallmentInfoResponse>();
+    useMyMutation<CommandResultWithData<InstallmentInfoResponseData>>();
 
   const getInstallmentInfo = async (
     installmentData: Omit<GetInstallmentInfoRequest, "locale">
@@ -25,9 +27,16 @@ export const useGetInstallmentInfo = () => {
         url: `${GET_INSTALLMENT_INFO}?${params}`,
         method: HttpMethod.POST,
       });
-      return response;
+
+      // Check if the response is successful according to CommandResult structure
+      if (!response.data.isSucceed || !response.data.data) {
+        toast.error(response.data.message || "Failed to get installment info");
+        throw new Error(response.data.message || "Failed to get installment info");
+      }
+
+      toast.success("Installment info retrieved successfully");
+      return response.data;
     } catch (error) {
-      console.error("Error during get installment info:", error);
       throw error;
     }
   };

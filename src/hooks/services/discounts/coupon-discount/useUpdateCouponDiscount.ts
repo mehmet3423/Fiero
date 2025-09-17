@@ -38,6 +38,9 @@ export const useUpdateCouponDiscount = () => {
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.DISCOUNT_DETAIL],
           });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNTS],
+          });
         },
       }
     );

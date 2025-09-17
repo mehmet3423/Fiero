@@ -1,6 +1,6 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
-import { CREATE_BUY_X_PAY_Y_DISCOUNT } from "@/constants/links";
+import { CREATE_FREE_PRODUCT_DISCOUNT } from "@/constants/links";
 import { GiftProductDiscount } from "@/constants/models/Discount";
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -26,8 +26,27 @@ export const useCreateFreeProductDiscount = () => {
           IsActive: data.isActive.toString(),
           MinimumQuantity: data.minimumQuantity.toString(),
           MaxFreeProductPrice: data.maxFreeProductPrice?.toString(),
-          IsRepetable: data.isRepetable?.toString(),
+          IsRepetable: data.isRepeatable?.toString() || "false",
           MaxFreeProductsPerOrder: data.maxFreeProductsPerOrder?.toString(),
+          // Notification Settings
+          IsEmailNotificationEnabled:
+            data.notificationSettings?.isEmailNotificationEnabled?.toString() ||
+            "false",
+          EmailNotificationSubject:
+            data.notificationSettings?.emailNotificationSubject || "",
+          EmailNotificationTextBody:
+            data.notificationSettings?.emailNotificationTextBody || "",
+          EmailNotificationHtmlBody:
+            data.notificationSettings?.emailNotificationHtmlBody || "",
+          IsSMSNotificationEnabled:
+            data.notificationSettings?.isSMSNotificationEnabled?.toString() ||
+            "false",
+          SMSNotificationSubject:
+            data.notificationSettings?.smsNotificationSubject || "",
+          SMSNotificationTextBody:
+            data.notificationSettings?.smsNotificationTextBody || "",
+          SMSNotificationHtmlBody:
+            data.notificationSettings?.smsNotificationHtmlBody || "",
         } as Record<string, string>)
       ).toString();
 
@@ -36,7 +55,7 @@ export const useCreateFreeProductDiscount = () => {
 
       await mutateAsync(
         {
-          url: `${CREATE_BUY_X_PAY_Y_DISCOUNT}?${params}&${productIdsParam}`,
+          url: `${CREATE_FREE_PRODUCT_DISCOUNT}?${params}&${productIdsParam}`,
           method: HttpMethod.POST,
         },
         {

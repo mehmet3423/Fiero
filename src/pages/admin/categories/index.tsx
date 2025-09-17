@@ -8,7 +8,7 @@ import { useDeleteMainCategory } from "@/hooks/services/categories/useDeleteMain
 import { useDeleteSubCategory } from "@/hooks/services/categories/useDeleteSubCategory";
 import { useUpdateMainCategory } from "@/hooks/services/categories/useUpdateMainCategory";
 import { useUpdateSubCategory } from "@/hooks/services/categories/useUpdateSubCategory";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -17,12 +17,11 @@ import {
 } from "@hello-pangea/dnd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faFolder } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-hot-toast";
+import { useRef } from "react";
 import { useCloudinaryImageUpload } from "@/hooks/useCloudinaryImageUpload";
 
 function CategoryManagementPage() {
   const { categories, isLoading: categoriesLoading } = useCategories();
-  console.log(categories);
   const { createMainCategory, isPending: isCreatingMain } =
     useCreateMainCategory();
   const { createSubCategory, isPending: isCreatingSub } =
@@ -35,20 +34,18 @@ function CategoryManagementPage() {
     useDeleteMainCategory();
   const { deleteSubCategory, isPending: isDeletingSub } =
     useDeleteSubCategory();
+
+  const [newMainCategoryImageUrl, setNewMainCategoryImageUrl] = useState("");
+  const [newSubCategoryImageUrl, setNewSubCategoryImageUrl] = useState("");
+  const mainImageUpload = useCloudinaryImageUpload();
+  const subImageUpload = useCloudinaryImageUpload();
+  const mainImageInputRef = useRef<HTMLInputElement>(null);
+  const subImageInputRef = useRef<HTMLInputElement>(null);
+
   const [mainCategories, setMainCategories] = useState<Category[]>([]);
 
   const [newMainCategoryName, setNewMainCategoryName] = useState("");
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
-  const [newMainCategoryImageUrl, setNewMainCategoryImageUrl] = useState("");
-  const [newSubCategoryImageUrl, setNewSubCategoryImageUrl] = useState("");
-
-  // File upload hooks
-  const mainImageUpload = useCloudinaryImageUpload();
-  const subImageUpload = useCloudinaryImageUpload();
-
-  // File input refs
-  const mainImageInputRef = useRef<HTMLInputElement>(null);
-  const subImageInputRef = useRef<HTMLInputElement>(null);
   const [mainCategoryError, setMainCategoryError] = useState<string | null>(
     null
   );
@@ -176,40 +173,6 @@ function CategoryManagementPage() {
     }
   };
 
-  const handleMainImageSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      mainImageUpload.setSelectedFile(file);
-      mainImageUpload.setImageUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      subImageUpload.setSelectedFile(file);
-      subImageUpload.setImageUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const uploadMainImage = async (): Promise<string | null> => {
-    const result = await mainImageUpload.uploadImage();
-    if (result) {
-      setNewMainCategoryImageUrl(result);
-    }
-    return result;
-  };
-
-  const uploadSubImage = async (): Promise<string | null> => {
-    const result = await subImageUpload.uploadImage();
-    if (result) {
-      setNewSubCategoryImageUrl(result);
-    }
-    return result;
-  };
-
   const handleCreateMainCategory = async () => {
     if (!newMainCategoryName.trim() || mainCategoryError) return;
 
@@ -330,6 +293,41 @@ function CategoryManagementPage() {
     setSelectedMainCategory(updatedCategory || null);
   };
 
+  const handleMainImageSelect = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      mainImageUpload.setSelectedFile(file);
+      mainImageUpload.setImageUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      subImageUpload.setSelectedFile(file);
+      subImageUpload.setImageUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // Görsel yükleme fonksiyonları
+  const uploadMainImage = async (): Promise<string | null> => {
+    const result = await mainImageUpload.uploadImage();
+    if (result) {
+      setNewMainCategoryImageUrl(result);
+    }
+    return result;
+  };
+
+  const uploadSubImage = async (): Promise<string | null> => {
+    const result = await subImageUpload.uploadImage();
+    if (result) {
+      setNewSubCategoryImageUrl(result);
+    }
+    return result;
+  };
+
   if (categoriesLoading) {
     return (
       <div className="card">
@@ -369,47 +367,37 @@ function CategoryManagementPage() {
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
             >
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() => $("#newMainCategoryModal").modal("show")}
-              >
-                <i className="bx bx-plus me-1"></i>
-                Yeni Ekle
-              </button>
               <span className="text-muted" style={{ fontSize: "0.813rem" }}>
                 Bir kategori seçiniz.
               </span>
+              <button
+                className="btn btn-sm btn-primary ms-auto"
+                onClick={() => $("#newMainCategoryModal").modal("show")}
+              >
+                <i className="bx bx-plus me-1"></i>
+                Ana Kategori Ekle
+              </button>
             </div>
-            <div
-              className="card-body p-0"
-              style={{
-                height: "auto",
-                minHeight: "200px",
-                maxHeight: "444px",
-              }}
-            >
+            <div className="card-body p-0">
               {categories?.items?.length === 0 ? (
                 <div className="text-center p-4">
                   <i className="bx bx-category fs-1 text-muted mb-3"></i>
                   <p className="text-muted">Henüz kategori bulunmuyor</p>
                 </div>
               ) : (
-                <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="mainCategories">
-                    {(provided) => (
-                      <div
-                        className="table-responsive"
-                        style={{
-                          maxHeight: "444px",
-                          overflowY: "auto",
-                          overflowX: "hidden",
-                        }}
-                      >
-                        <table
-                          className="table table-bordered"
-                          style={{ marginBottom: "0" }}
-                        >
+                <div
+                  className="table-responsive"
+                  style={{
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <table className="table">
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId="mainCategories">
+                        {(provided) => (
                           <tbody
+                            className="table-border-bottom-0"
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
@@ -421,7 +409,7 @@ function CategoryManagementPage() {
                                   draggableId={category.id}
                                   index={index}
                                 >
-                                  {(provided, snapshot) => (
+                                  {(provided) => (
                                     <tr
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
@@ -436,67 +424,39 @@ function CategoryManagementPage() {
                                           category.id
                                             ? "#f5f7fb"
                                             : "transparent",
-                                        transform: snapshot.isDragging
-                                          ? "rotate(5deg)"
-                                          : "none",
-                                        boxShadow: snapshot.isDragging
-                                          ? "0 8px 16px rgba(0,0,0,0.15)"
-                                          : "none",
-                                        zIndex: snapshot.isDragging ? 1000 : 1,
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td
-                                        style={{
-                                          fontSize: "0.813rem",
-                                          width: "70%",
-                                        }}
-                                      >
+                                      <td style={{ fontSize: "0.813rem" }}>
                                         <div
                                           style={{
                                             display: "flex",
                                             alignItems: "center",
                                             gap: "0.5rem",
+                                            minWidth: "330px", // zorunlu genişlik
                                           }}
                                         >
-                                          <FontAwesomeIcon
-                                            icon={faBars}
-                                            style={{
-                                              paddingRight: "1rem",
-                                              paddingLeft: "0.5rem",
-                                              color: snapshot.isDragging
-                                                ? "#007bff"
-                                                : "#6c757d",
-                                            }}
-                                          />
+                                          <FontAwesomeIcon icon={faBars} />
                                           <span>{category.name}</span>
                                         </div>
                                       </td>
 
-                                      <td
-                                        className="text-end"
-                                        style={{ width: "30%" }}
-                                      >
+                                      <td className="text-end">
                                         <button
                                           className="btn btn-link btn-sm text-muted"
                                           style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setEditingMainCategory(category);
-                                            setNewMainCategoryImageUrl(
-                                              category.imageUrl || ""
-                                            );
                                             $("#editMainCategoryModal").modal(
                                               "show"
                                             );
                                           }}
                                         >
-                                          <i className="bx bx-edit-alt me-1"></i>
                                           Düzenle
                                         </button>
                                         <button
                                           className="btn btn-link btn-sm text-danger"
-                                          style={{ fontSize: "0.75rem" }}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setDeletingMainCategory(
@@ -507,7 +467,6 @@ function CategoryManagementPage() {
                                             );
                                           }}
                                         >
-                                          <i className="bx bx-trash me-1"></i>
                                           Sil
                                         </button>
                                       </td>
@@ -517,21 +476,19 @@ function CategoryManagementPage() {
                               ))}
                             {provided.placeholder}
                           </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  </table>
+                </div>
               )}
             </div>
           </div>
         </div>
 
+        {/* Alt Kategoriler - Mevcut yapıyı koruyarak sadece görsel güncelleme */}
         <div className="col-lg-6">
-          <div
-            className="card"
-            style={{ marginTop: "70px", marginLeft: "auto" }}
-          >
+          <div className="card" style={{ marginTop: "62px" }}>
             <div
               className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
               style={{ padding: "20px" }}
@@ -554,31 +511,21 @@ function CategoryManagementPage() {
                 </button>
               )}
             </div>
-            <div
-              className="card-body p-0"
-              style={{
-                height: "auto",
-                minHeight: "200px",
-                maxHeight: "444px",
-              }}
-            >
+            <div className="card-body p-0">
               {selectedMainCategory ? (
-                <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="subCategories">
-                    {(provided) => (
-                      <div
-                        className="table-responsive"
-                        style={{
-                          maxHeight: "444px",
-                          overflowY: "auto",
-                          overflowX: "hidden",
-                        }}
-                      >
-                        <table
-                          className="table table-bordered"
-                          style={{ marginBottom: "0" }}
-                        >
+                <div
+                  className="table-responsive"
+                  style={{
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                  }}
+                >
+                  <table className="table">
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId="subCategories">
+                        {(provided) => (
                           <tbody
+                            className="table-border-bottom-0"
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                           >
@@ -590,20 +537,13 @@ function CategoryManagementPage() {
                                   draggableId={subCategory.id}
                                   index={index}
                                 >
-                                  {(provided, snapshot) => (
+                                  {(provided) => (
                                     <tr
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
                                       style={{
                                         cursor: "grab",
-                                        transform: snapshot.isDragging
-                                          ? "rotate(5deg)"
-                                          : "none",
-                                        boxShadow: snapshot.isDragging
-                                          ? "0 8px 16px rgba(0,0,0,0.15)"
-                                          : "none",
-                                        zIndex: snapshot.isDragging ? 1000 : 1,
                                         ...provided.draggableProps.style,
                                       }}
                                     >
@@ -620,16 +560,7 @@ function CategoryManagementPage() {
                                             gap: "0.5rem",
                                           }}
                                         >
-                                          <FontAwesomeIcon
-                                            icon={faBars}
-                                            style={{
-                                              paddingRight: "1rem",
-                                              paddingLeft: "0.5rem",
-                                              color: snapshot.isDragging
-                                                ? "#007bff"
-                                                : "#6c757d",
-                                            }}
-                                          />
+                                          <FontAwesomeIcon icon={faBars} />
                                           <span>{subCategory.name}</span>
                                         </div>
                                       </td>
@@ -637,48 +568,55 @@ function CategoryManagementPage() {
                                         className="text-end"
                                         style={{ width: "30%" }}
                                       >
-                                        <button
-                                          className="btn btn-link btn-sm text-muted"
-                                          style={{ fontSize: "0.75rem" }}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditingSubCategory({
-                                              id: subCategory.id,
-                                              name: subCategory.name,
-                                              mainCategoryId:
-                                                selectedMainCategory.id,
-                                              displayIndex:
-                                                subCategory.displayIndex,
-                                              imageUrl: subCategory.imageUrl,
-                                            });
-                                            setNewSubCategoryImageUrl(
-                                              subCategory.imageUrl || ""
-                                            );
-                                            $("#editSubCategoryModal").modal(
-                                              "show"
-                                            );
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            gap: "0.25rem",
+                                            justifyContent: "flex-end",
                                           }}
                                         >
-                                          <i className="bx bx-edit-alt me-1"></i>
-                                          Düzenle
-                                        </button>
-
-                                        <button
-                                          className="btn btn-link btn-sm text-danger"
-                                          style={{ fontSize: "0.75rem" }}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeletingSubCategory(
-                                              subCategory.id
-                                            );
-                                            $("#deleteSubCategoryModal").modal(
-                                              "show"
-                                            );
-                                          }}
-                                        >
-                                          <i className="bx bx-trash me-1"></i>
-                                          Sil
-                                        </button>
+                                          <button
+                                            className="btn btn-link btn-sm text-muted"
+                                            style={{
+                                              fontSize: "0.75rem",
+                                              padding: "0.25rem 0.5rem",
+                                            }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setEditingSubCategory({
+                                                id: subCategory.id,
+                                                name: subCategory.name,
+                                                mainCategoryId:
+                                                  selectedMainCategory.id,
+                                                displayIndex:
+                                                  subCategory.displayIndex,
+                                              });
+                                              $("#editSubCategoryModal").modal(
+                                                "show"
+                                              );
+                                            }}
+                                          >
+                                            Düzenle
+                                          </button>
+                                          <button
+                                            className="btn btn-link btn-sm text-danger"
+                                            style={{
+                                              fontSize: "0.75rem",
+                                              padding: "0.25rem 0.5rem",
+                                            }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setDeletingSubCategory(
+                                                subCategory.id
+                                              );
+                                              $(
+                                                "#deleteSubCategoryModal"
+                                              ).modal("show");
+                                            }}
+                                          >
+                                            Sil
+                                          </button>
+                                        </div>
                                       </td>
                                     </tr>
                                   )}
@@ -686,11 +624,11 @@ function CategoryManagementPage() {
                               ))}
                             {provided.placeholder}
                           </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  </table>
+                </div>
               ) : (
                 <div className="text-center p-4 text-muted">
                   <i className="bx bx-list fs-1 mb-3"></i>
@@ -753,7 +691,7 @@ function CategoryManagementPage() {
                 Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
               </small>
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <button
                 type="button"
                 className="btn btn-outline-primary btn-sm w-100"
@@ -777,7 +715,7 @@ function CategoryManagementPage() {
                   </>
                 )}
               </button>
-            </div>
+            </div> */}
           </div>
           {mainImageUpload.imageUrl && (
             <div className="mt-2">
@@ -854,7 +792,7 @@ function CategoryManagementPage() {
                 Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
               </small>
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <button
                 type="button"
                 className="btn btn-outline-primary btn-sm w-100"
@@ -878,7 +816,7 @@ function CategoryManagementPage() {
                   </>
                 )}
               </button>
-            </div>
+            </div> */}
           </div>
           {mainImageUpload.imageUrl && (
             <div className="mt-2">
@@ -959,7 +897,7 @@ function CategoryManagementPage() {
                 Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
               </small>
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <button
                 type="button"
                 className="btn btn-outline-primary btn-sm w-100"
@@ -983,7 +921,7 @@ function CategoryManagementPage() {
                   </>
                 )}
               </button>
-            </div>
+            </div> */}
           </div>
           {subImageUpload.imageUrl && (
             <div className="mt-2">
@@ -1060,7 +998,7 @@ function CategoryManagementPage() {
                 Maksimum 10MB, JPG, JPEG, PNG veya WebP formatında
               </small>
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <button
                 type="button"
                 className="btn btn-outline-primary btn-sm w-100"
@@ -1084,7 +1022,7 @@ function CategoryManagementPage() {
                   </>
                 )}
               </button>
-            </div>
+            </div> */}
           </div>
           {subImageUpload.imageUrl && (
             <div className="mt-2">
@@ -1187,32 +1125,6 @@ function CategoryManagementPage() {
           border-bottom: 1px solid #e0e0e0;
         }
 
-        .table-bordered {
-          border: 1px solid #dee2e6 !important;
-        }
-
-        .table-bordered td,
-        .table-bordered th {
-          border-left: none !important;
-          border-right: none !important;
-          border-top: none !important;
-          border-bottom: 1px solid #dee2e6 !important;
-        }
-
-        .table tbody tr {
-          border-bottom: 1px solid #dee2e6 !important;
-        }
-
-        .table tbody tr td {
-          border-right: none !important;
-          border-left: none !important;
-          padding: 12px 8px;
-        }
-
-        .table tbody tr:last-child {
-          border-bottom: 1px solid #dee2e6 !important;
-        }
-
         .btn {
           font-size: 0.75rem;
         }
@@ -1285,8 +1197,8 @@ function CategoryManagementPage() {
           }
 
           .col-lg-6 {
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
           }
         }
       `}</style>

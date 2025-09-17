@@ -84,13 +84,13 @@ function UnsoldProductsReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y px-4">
-      <h5 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y">
+      <h4 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Satılmayan Ürünler
-      </h5>
+      </h4>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -130,7 +130,7 @@ function UnsoldProductsReportPage() {
             </div>
             <div className="col-md-3 d-flex align-items-end">
               <button
-                className="btn btn-dark btn-sm me-2"
+                className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
                 style={{ fontSize: "0.8rem" }}
@@ -253,7 +253,7 @@ function UnsoldProductsReportPage() {
                           <tr key={item.id}>
                             <td className="small">
                               <span
-                                className="text-dark badge-sm me-2"
+                                className="text-primary badge-sm me-2"
                                 style={{ fontSize: "0.7rem" }}
                               >
                                 {getGlobalRowNumber(

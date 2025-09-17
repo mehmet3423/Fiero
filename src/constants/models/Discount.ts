@@ -1,6 +1,8 @@
 import { DiscountType } from "../enums/DiscountType";
 import { DiscountValueType } from "../enums/DiscountValueType";
 import { SubCategory } from "./Category";
+import { NotificationSettings } from "./Notification";
+import { BaseEntity } from "./Product";
 
 // Temel indirim modeli
 export interface Discount {
@@ -17,6 +19,7 @@ export interface Discount {
   createdOn: number;
   createdOnValue: string;
   type: DiscountType;
+  notificationSettings?: NotificationSettings;
   bundleDiscount?: BundleDiscount;
   cartDiscount?: CartDiscount;
   productDiscount?: ProductDiscount;
@@ -59,10 +62,46 @@ export interface ProductDiscount extends Discount {
 
 export interface FreeProductDiscount extends Discount {
   minimumQuantity: number;
-  maxFreeProductsPerOrder: number;
-  maxFreeProductPrice: number;
+  freeProductIds: string[];
+  freeProductDiscountProducts: FreeProductDiscountProduct[];
+  maxFreeProductPrice?: number;
   isRepeatable: boolean;
+
+  buyXPayYProducts: string[];
   productIds: string[];
+
+  maxFreeProductsPerOrder?: number;
+}
+
+export interface FreeProductDiscountProduct extends BaseEntity {
+  productId: string;
+  product: ProductResponse;
+  freeProductDiscountId: string;
+}
+
+export interface ProductResponse {
+  id: string;
+  externalId: number;
+  title: string;
+  description: string;
+  price: number;
+  currencyType: string;
+  isAvailable: boolean;
+  isOutlet: boolean;
+  barcodeNumber: string;
+  sellableQuantity: number;
+  baseImageUrl: string;
+  contentImageUrls: string[];
+  banner: string[];
+  videoUrl?: string;
+  refundable: boolean;
+  subCategoryId: string;
+  subCategoryName?: string;
+  sellerId?: string;
+  sellerName?: string;
+  createdOnValue: string;
+  updatedOnValue?: string;
+
 }
 
 export interface DiscountListParams {
@@ -77,10 +116,12 @@ export interface DiscountListParams {
 
 // API'den gelen liste yanıtı
 export interface DiscountListResponse {
-  items: Discount[];
-  count: number;
-  pages: number;
-  size: number;
+  data: {
+    items: Discount[];
+    count: number;
+    pages: number;
+    size: number;
+  }
 }
 
 export interface CartDiscountListResponse {
@@ -111,8 +152,8 @@ export interface WeekdayDiscount extends Discount {
 
 // Belirli saat aralığındaki indirimler
 export interface TimeOfDayDiscount extends Discount {
-  startTime: { ticks: number };
-  endTime: { ticks: number };
+  startTime: string;
+  endTime: string;
 }
 
 export interface BirthdayDiscountListResponse {
@@ -139,7 +180,9 @@ export interface BuyYPayXDiscount extends Discount {
   buyXCount: number;
   payYCount: number;
   maxDiscountValue: number;
-  productIds?: string[];
+  buyXPayYProducts?: string[];
+  isRepeatable: boolean;
+  maxFreeProductPerOrder: number;
 }
 
 // Kargo indirimi - API'den dönen format
@@ -153,6 +196,6 @@ export interface GiftProductDiscount extends Discount {
   minimumQuantity: number;
   productIds?: string[];
   maxFreeProductPrice?: number;
-  isRepetable?: boolean;
+  isRepeatable?: boolean;
   maxFreeProductsPerOrder?: number;
 }

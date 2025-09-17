@@ -1,4 +1,4 @@
-import { GeneralSupportRequestType } from "@/constants/enums/GeneralRequestType";
+import { GeneralSupportRequestType } from "@/constants/enums/support-ticket/GeneralSupportTicket/GeneralSupportRequestType";
 import { getAllGeneralRequestTypes } from "@/helpers/enum/generalRequestType";
 import { useGeneralSupport } from "@/hooks/services/support/useGeneralSupport";
 import { useState } from "react";
@@ -10,6 +10,7 @@ function GeneralSupportTicket() {
     title: "",
     requestType: GeneralSupportRequestType.Other,
     description: "",
+    imageUrl: "",
     attachments: [] as File[],
   });
 
@@ -30,10 +31,13 @@ function GeneralSupportTicket() {
       title: "",
       requestType: GeneralSupportRequestType.Other,
       description: "",
+      imageUrl: "",
       attachments: [],
     });
     // Dosya inputunu da sıfırla
-    const fileInput = document.getElementById("attachments") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "attachments"
+    ) as HTMLInputElement;
     if (fileInput) fileInput.value = "";
   };
 
@@ -107,7 +111,11 @@ function GeneralSupportTicket() {
       </div>
 
       <button type="submit" className="btn btn-dark" disabled={isPending}>
-        <span>{isPending ? t("generalSupportTicket.submitting"): t("generalSupportTicket.submitButton")}</span>
+        <span>
+          {isPending
+            ? t("generalSupportTicket.submitting")
+            : t("generalSupportTicket.submitButton")}
+        </span>
         <i className="icon-long-arrow-right"></i>
       </button>
 

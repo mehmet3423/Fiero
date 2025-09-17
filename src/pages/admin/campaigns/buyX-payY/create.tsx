@@ -4,6 +4,8 @@ import { useCreateBuyXPayYDiscount } from "@/hooks/services/discounts/buyX-payY/
 import { DiscountType } from "@/constants/enums/DiscountType";
 import Link from "next/link";
 import ProductSelector from "@/components/ProductSelector";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 const CreateBuyXPayYDiscountPage = () => {
   const router = useRouter();
@@ -14,7 +16,7 @@ const CreateBuyXPayYDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -22,15 +24,30 @@ const CreateBuyXPayYDiscountPage = () => {
     buyXCount: 0,
     payYCount: 0,
     type: DiscountType.BuyXPayY,
+    isRepeatable: false,
+    maxFreeProductPerOrder: 0,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createBuyXPayYDiscount(formData);
+      // Form submit fonksiyonunda:
+      await createBuyXPayYDiscount({
+        ...formData,
+        buyXPayYProducts: formData.productIds, // <-- Bunu ekle!
+      });
       router.push("/admin/campaigns/buyX-payY");
     } catch (error) {
-      console.error("Error creating BuyXPayY discount:", error);
     }
   };
 
@@ -44,8 +61,8 @@ const CreateBuyXPayYDiscountPage = () => {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value) || 0
-          : value,
+            ? parseFloat(value) || 0
+            : value,
     }));
   };
 
@@ -55,6 +72,15 @@ const CreateBuyXPayYDiscountPage = () => {
       productIds: prev.productIds.includes(productId)
         ? prev.productIds.filter((id) => id !== productId)
         : [...prev.productIds, productId],
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -128,31 +154,35 @@ const CreateBuyXPayYDiscountPage = () => {
 
             {/* X Al Y Öde ayarları */}
             <div className="row mb-3">
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <label className="form-label">Kaç Adet Al (X)</label>
                 <input
                   type="number"
                   className="form-control"
                   name="buyXCount"
-                  value={formData.buyXCount}
+                  value={formData.buyXCount || ""}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
+                  placeholder="Örn: 3"
                   required
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <label className="form-label">Kaç Adet Öde (Y)</label>
                 <input
                   type="number"
                   className="form-control"
                   name="payYCount"
-                  value={formData.payYCount}
+                  value={formData.payYCount || ""}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
+                  placeholder="Örn: 2"
                   required
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <label className="form-label">Maksimum İndirim Değeri</label>
                 <input
                   type="number"
@@ -160,11 +190,27 @@ const CreateBuyXPayYDiscountPage = () => {
                   name="maxDiscountValue"
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
-                  min="0"
-                  required
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">
+                  Maksimum Ücretsiz Ürün Sipariş Başına
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="maxFreeProductPerOrder"
+                  value={formData.maxFreeProductPerOrder}
+                  onChange={handleChange}
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
+
+            <div className="row mb-3"></div>
 
             {/* Ürün seçimi */}
             <div className="mb-3">
@@ -208,16 +254,38 @@ const CreateBuyXPayYDiscountPage = () => {
             </div>
 
             {/* Durum */}
-            <div className="form-check mb-4">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                name="isActive"
-                checked={formData.isActive}
-                onChange={handleChange}
-              />
-              <label className="form-check-label">İndirim aktif</label>
+            <div className="row mb-4">
+              <div className="col-md-6">
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    name="isActive"
+                    checked={formData.isActive}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label">İndirim aktif</label>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    name="isRepeatable"
+                    checked={formData.isRepeatable}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label">Tekrarlanabilir</label>
+                </div>
+              </div>
             </div>
+
+            {/* Notification Settings */}
+            <NotificationSettings
+              value={formData.notificationSettings}
+              onChange={handleNotificationSettingsChange}
+            />
 
             {/* Submit buttons */}
             <div className="d-flex gap-2">

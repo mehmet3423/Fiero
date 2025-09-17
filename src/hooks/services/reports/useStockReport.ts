@@ -27,6 +27,10 @@ const fetchStockReport = async (
     url.searchParams.append("categoryKeyword", params.categoryKeyword);
   }
 
+  if (params?.ascending !== undefined) {
+    url.searchParams.append("ascending", params.ascending.toString());
+  }
+
   const token = getToken();
   const response = await fetch(url.toString(), {
     method: "GET",
@@ -50,6 +54,7 @@ export const useStockReport = (params?: StockReportParams) => {
       params?.categoryKeyword,
       params?.page,
       params?.pageSize,
+      params?.ascending,
     ],
     queryFn: () => fetchStockReport(params),
     staleTime: 5 * 60 * 1000, // 5 minutes

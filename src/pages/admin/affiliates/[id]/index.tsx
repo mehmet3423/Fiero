@@ -1,4 +1,5 @@
 import GeneralModal from "@/components/shared/GeneralModal";
+import BackButton from "@/components/shared/BackButton";
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateCollectionType";
 import { AffiliateStatus } from "@/constants/enums/AffiliateStatus";
 import { AffiliateCollection } from "@/constants/models/affiliate/Collection";
@@ -11,11 +12,14 @@ import {
   useUpdateProductBasedCollection,
 } from "@/hooks/services/admin-affiliate/useUpdateAffiliateCollection";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "@/constants/enums/QueryKeys";
 
 function AffiliateUserDetailPage() {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"collections" | "commissions">(
     "collections"
   );
@@ -38,13 +42,11 @@ function AffiliateUserDetailPage() {
     isLoading: isUserLoading,
     error: userError,
   } = useGetAffiliateUserByAffiliateUserId(id as string);
-
   const {
     affiliateCollections,
     isLoading: isCollectionsLoading,
     error: collectionsError,
   } = useGetCollectionsByAffiliateUserId(id as string, selectedCollectionType);
-
   // Update hooks
   const { updateProductBasedCollection, isPending: isProductPending } =
     useUpdateProductBasedCollection();
@@ -54,6 +56,31 @@ function AffiliateUserDetailPage() {
     useUpdateCombinationBasedCollection();
   const { updateCategoryBasedCollection, isPending: isCategoryPending } =
     useUpdateCategoryBasedCollection();
+
+  // ID değiştiğinde state'leri sıfırla ve cache'i temizle
+  useEffect(() => {
+    // Cache'i temizle - yeni kullanıcı verileri yüklensin
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.AFFILIATE_USER_BY_ID],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [QueryKeys.AFFILIATE_COLLECTION_BY_AFFILIATE_USER_ID],
+    });
+
+    // State'leri sıfırla
+    setActiveTab("collections");
+    setSelectedCollectionType(null);
+    setEditModalOpen(false);
+    setEditCollection(null);
+    setEditForm({
+      isActive: true,
+      collectionCommissionRate: 0,
+      startDate: null,
+      expirationDate: null,
+      salesCountLimit: 0,
+      totalSalesAmountLimit: 0,
+    });
+  }, [id, queryClient]);
 
   const handleEditClick = (collection: AffiliateCollection) => {
     setEditCollection(collection);
@@ -70,8 +97,6 @@ function AffiliateUserDetailPage() {
       commissionRate =
         collection.categoryBasedAffiliateItems[0]?.commissionRate ?? 0;
     }
-
-    console.log(collection);
 
     setEditForm({
       isActive: collection.isActive,
@@ -172,7 +197,6 @@ function AffiliateUserDetailPage() {
         totalSalesAmountLimit: 0,
       });
     } catch (e) {
-      console.error(e);
     }
   };
 
@@ -218,12 +242,17 @@ function AffiliateUserDetailPage() {
 
   return (
     <div className="page-content py-4">
+      {/* Geri Tuşu */}
+      <div className="mb-3">
+        <BackButton href="/admin/affiliates" />
+      </div>
+
       {/* User Info Card */}
       <div className="card border-0 shadow-sm mb-4">
         <div className="p-4">
           <div className="row">
             <div className="col-md-8">
-              <h4 className="mb-3">{affiliateUser.applicationUser.name}</h4>
+              <h4 className="mb-3">{affiliateUser?.applicationUser?.name}</h4>
               <div className="d-flex align-items-center mb-2">
                 <i className="fas fa-envelope me-2 text-muted"></i>
                 <span className="text-muted">
@@ -233,11 +262,10 @@ function AffiliateUserDetailPage() {
             </div>
             <div className="col-md-4 text-end">
               <span
-                className={`badge ${
-                  affiliateUser.status === AffiliateStatus.Approved
+                className={`badge ${affiliateUser.status === AffiliateStatus.Approved
                     ? "bg-success"
                     : "bg-warning"
-                }`}
+                  }`}
               >
                 {affiliateUser.status === AffiliateStatus.Approved
                   ? "Onaylandı"
@@ -252,9 +280,8 @@ function AffiliateUserDetailPage() {
       <ul className="nav nav-tabs">
         <li className="nav-item">
           <button
-            className={`nav-link ${
-              activeTab === "collections" ? "active" : ""
-            }`}
+            className={`nav-link ${activeTab === "collections" ? "active" : ""
+              }`}
             onClick={() => setActiveTab("collections")}
           >
             <i className="fas fa-box"></i>
@@ -263,9 +290,8 @@ function AffiliateUserDetailPage() {
         </li>
         <li className="nav-item">
           <button
-            className={`nav-link ${
-              activeTab === "commissions" ? "active" : ""
-            }`}
+            className={`nav-link ${activeTab === "commissions" ? "active" : ""
+              }`}
             onClick={() => setActiveTab("commissions")}
           >
             <i className="fas fa-money-bill me-2"></i>
@@ -374,11 +400,10 @@ function AffiliateUserDetailPage() {
                         </td>
                         <td>
                           <span
-                            className={`badge ${
-                              commission.status === "PAID"
+                            className={`badge ${commission.status === "PAID"
                                 ? "bg-success"
                                 : "bg-warning"
-                            }`}
+                              }`}
                           >
                             {commission.status === "PAID"
                               ? "Ödendi"
@@ -454,7 +479,7 @@ function AffiliateUserDetailPage() {
                 {editCollection.earningType !==
                   AffiliateCollectionType.ProductBased &&
                   editCollection.earningType !==
-                    AffiliateCollectionType.CategoryBased && (
+                  AffiliateCollectionType.CategoryBased && (
                     <div className="col-md-6">
                       <div className="form-group mb-3">
                         <label className="form-label">Komisyon Oranı</label>
@@ -480,14 +505,13 @@ function AffiliateUserDetailPage() {
                   )}
 
                 <div
-                  className={`${
-                    editCollection.earningType ===
+                  className={`${editCollection.earningType ===
                       AffiliateCollectionType.ProductBased ||
-                    editCollection.earningType ===
+                      editCollection.earningType ===
                       AffiliateCollectionType.CategoryBased
                       ? "col-md-12"
                       : "col-md-6 "
-                  }`}
+                    }`}
                 >
                   <div className="form-group mb-3">
                     <label className="form-label">Satış Adedi Limiti</label>
@@ -608,7 +632,7 @@ function AffiliateUserDetailPage() {
                         <thead className="sticky-top bg-white">
                           <tr>
                             {editCollection.productBasedAffiliateItems?.length >
-                            0 ? (
+                              0 ? (
                               <>
                                 <th style={{ width: "80px" }}>Resim</th>
                                 <th>Ürün Adı</th>
@@ -677,7 +701,7 @@ function AffiliateUserDetailPage() {
                                   {item.mainCategory
                                     ? item.mainCategory.name
                                     : item.subCategory?.name ||
-                                      "Kategori bulunamadı"}
+                                    "Kategori bulunamadı"}
                                 </td>
                                 <td>
                                   <div

@@ -12,7 +12,6 @@ export const useGetMyAffiliateUser = () => {
     onError: (err: any) => {
       // 400 veya 404 hatası normal durumlar (kullanıcının affiliate kaydı yok veya var)
       if (err?.response?.status !== 400 && err?.response?.status !== 404) {
-        console.log("Affiliate user error:", err);
       }
     },
   });

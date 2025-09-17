@@ -72,7 +72,13 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       setFavorites(localFavoriteProducts || []);
       setIsLoading(localProductsLoading);
     }
-  }, [userRole, apiFavorites, localFavoriteProducts]);
+  }, [
+    userRole,
+    apiFavorites,
+    localFavoriteProducts,
+    apiLoading,
+    localProductsLoading,
+  ]);
 
   const handleAddToFavorites = async (productId: string) => {
     try {

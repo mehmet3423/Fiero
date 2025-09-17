@@ -40,5 +40,5 @@ export const useGetDiscountList = (params?: DiscountListParams) => {
     method: HttpMethod.GET,
   });
 
-  return { discounts: data?.items || [], totalCount: data?.count || 0, totalPages: data?.pages || 0, isLoading, error };
+  return { discounts: data?.data?.items || [], totalCount: data?.data?.count || 0, totalPages: data?.data?.pages || 0, isLoading, error };
 };

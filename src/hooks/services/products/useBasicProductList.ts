@@ -1,7 +1,7 @@
-import { HttpMethod } from '@/constants/enums/HttpMethods';
-import { QueryKeys } from '@/constants/enums/QueryKeys';
-import { GET_BASIC_PRODUCT_LIST } from '@/constants/links';
-import useGetData from '@/hooks/useGetData';
+import { HttpMethod } from "@/constants/enums/HttpMethods";
+import { QueryKeys } from "@/constants/enums/QueryKeys";
+import { GET_BASIC_PRODUCT_LIST } from "@/constants/links";
+import useGetData from "@/hooks/useGetData";
 
 export interface ProductResponse {
   id: string;
@@ -28,17 +28,18 @@ export interface ProductResponse {
 }
 
 export const useBasicProductList = () => {
-  const { data, isLoading, error, isFetchingData } = useGetData<ProductResponse[]>({
+  const { data, isLoading, error, isFetchingData } = useGetData<{
+    data: ProductResponse[];
+  }>({
     url: GET_BASIC_PRODUCT_LIST,
     method: HttpMethod.GET,
     queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
     onError: () => {
-      console.error('Ürün listesi çekilirken hata oluştu');
     },
   });
 
   return {
-    products: data || [],
+    products: data?.data || [],
     loading: isLoading || isFetchingData,
     error,
   };

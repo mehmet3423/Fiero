@@ -16,6 +16,7 @@ export enum GeneralContentType {
   // Contact = 10,
   // PrivacyPolicy = 11,
   // TermsOfUse = 12
+  Explore = 13,
   AccordionCargoInfos = 13,
   AccordionOrderAndReturns = 14,
   AccordionPayment = 15,
@@ -26,8 +27,8 @@ export enum GeneralContentType {
   SecondSlider = 21,
   MainBanner = 22,
   MainProductList = 23,
-  Explore = 25,
-  HomeCategories = 26,
+  CookiePolicies = 24,
+  DistanceSalesAgreement = 25,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -67,8 +68,8 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.SecondSlider]: IsCustomizable.No,
   [GeneralContentType.MainBanner]: IsCustomizable.No,
   [GeneralContentType.MainProductList]: IsCustomizable.No,
-  [GeneralContentType.Explore]: IsCustomizable.No,
-  [GeneralContentType.HomeCategories]: IsCustomizable.No,
+  [GeneralContentType.DistanceSalesAgreement]: IsCustomizable.No,
+  [GeneralContentType.CookiePolicies]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -93,6 +94,12 @@ export interface GeneralContentModel {
 export interface GeneralContentListResponse extends PaginationModel {
   $id: string;
   items: GeneralContentModel[];
+}
+
+export interface GeneralContentApiResponse {
+  data: GeneralContentModel[];
+  isSucceed: boolean;
+  message: string;
 }
 
 export interface LayoutItem {
@@ -145,6 +152,8 @@ export const getGeneralContentTypeName = (
     //     return "Gizlilik Politikası";
     // case GeneralContentType.TermsOfUse:
     //     return "Kullanım Koşulları";
+    case GeneralContentType.Explore:
+      return "Explore";
     case GeneralContentType.AccordionCargoInfos:
       return "S.S.S. Kargo Bilgileri";
     case GeneralContentType.AccordionOrderAndReturns:
@@ -165,10 +174,10 @@ export const getGeneralContentTypeName = (
       return "Ana Sayfa Banner";
     case GeneralContentType.MainProductList:
       return "Ana Sayfa Ürün Listesi";
-    case GeneralContentType.Explore:
-      return "Anasayfa Keşfet";
-    case GeneralContentType.HomeCategories:
-      return "Ana Sayfa Kategorileri";
+    case GeneralContentType.DistanceSalesAgreement:
+      return "Satış Sözleşmesi";
+    case GeneralContentType.CookiePolicies:
+      return "Çerez Politikaları";
     default:
       return "Bilinmeyen İçerik Türü";
   }

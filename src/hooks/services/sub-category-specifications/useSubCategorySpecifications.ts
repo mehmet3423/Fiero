@@ -5,27 +5,28 @@ import { SubCategorySpecificationListResponse } from "@/constants/models/SubCate
 import useGetData from "@/hooks/useGetData";
 
 export const useSubCategorySpecifications = (subCategoryId: string | null) => {
-  const { data, isLoading, error, refetch } =
-    useGetData<SubCategorySpecificationListResponse>({
-      url:
-        subCategoryId !== null
-          ? `${GET_SUB_CATEGORY_SPECIFICATION_LIST}?SubCategoryId=${subCategoryId}&_=${Date.now()}`
-          : undefined,
-      queryKey: [
-        QueryKeys.SUB_CATEGORY_SPECIFICATIONS_LIST,
-        subCategoryId?.toString(),
-      ],
-      method: HttpMethod.GET,
-      onError: () => {
-        return {
-          $id: "0",
-          items: [],
-        };
-      },
-    });
+  const { data, isLoading, error, refetch } = useGetData<{
+    data: SubCategorySpecificationListResponse;
+  }>({
+    url:
+      subCategoryId !== null
+        ? `${GET_SUB_CATEGORY_SPECIFICATION_LIST}?SubCategoryId=${subCategoryId}&_=${Date.now()}`
+        : undefined,
+    queryKey: [
+      QueryKeys.SUB_CATEGORY_SPECIFICATIONS_LIST,
+      subCategoryId?.toString(),
+    ],
+    method: HttpMethod.GET,
+    onError: () => {
+      return {
+        $id: "0",
+        items: [],
+      };
+    },
+  });
 
   return {
-    subCategorySpecifications: data?.items,
+    subCategorySpecifications: data?.data?.items,
     isLoading,
     error,
     refetchSubCategorySpecifications: refetch,

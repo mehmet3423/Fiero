@@ -37,6 +37,42 @@ export const useCreateTimeOfDayDiscount = () => {
       params.append("EndDate", data.endDate);
       params.append("IsActive", data.isActive.toString());
 
+      // Notification Settings
+      params.append(
+        "IsEmailNotificationEnabled",
+        data.notificationSettings?.isEmailNotificationEnabled?.toString() ||
+          "false"
+      );
+      params.append(
+        "EmailNotificationSubject",
+        data.notificationSettings?.emailNotificationSubject || ""
+      );
+      params.append(
+        "EmailNotificationTextBody",
+        data.notificationSettings?.emailNotificationTextBody || ""
+      );
+      params.append(
+        "EmailNotificationHtmlBody",
+        data.notificationSettings?.emailNotificationHtmlBody || ""
+      );
+      params.append(
+        "IsSMSNotificationEnabled",
+        data.notificationSettings?.isSMSNotificationEnabled?.toString() ||
+          "false"
+      );
+      params.append(
+        "SMSNotificationSubject",
+        data.notificationSettings?.smsNotificationSubject || ""
+      );
+      params.append(
+        "SMSNotificationTextBody",
+        data.notificationSettings?.smsNotificationTextBody || ""
+      );
+      params.append(
+        "SMSNotificationHtmlBody",
+        data.notificationSettings?.smsNotificationHtmlBody || ""
+      );
+
       await mutateAsync(
         {
           url: `${CREATE_TIME_OF_DAY_DISCOUNT}?${params.toString()}`,

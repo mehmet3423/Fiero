@@ -100,10 +100,6 @@ function parseContentToLayout(contentArray: GeneralContentModel[]) {
           }
         });
       } catch (error) {
-        console.error(
-          `Error parsing layout for content ${content.$id}:`,
-          error
-        );
       }
     }
   });

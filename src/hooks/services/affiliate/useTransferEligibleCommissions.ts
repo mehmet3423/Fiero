@@ -27,13 +27,11 @@ export const useTransferEligibleCommissions = () => {
             queryClient.invalidateQueries({ queryKey: ["affiliateUser"] });
           },
           onError: (error: any) => {
-            console.error("Transfer eligible commissions error:", error);
             toast.error("Kazanç hesaplama sırasında bir hata oluştu");
           },
         }
       );
     } catch (error) {
-      console.error("Error transferring eligible commissions:", error);
       throw error;
     }
   };

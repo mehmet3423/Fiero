@@ -12,17 +12,17 @@ export const useGetOrderById = ({ orderId }: UseGetOrderByIdProps) => {
   const queryParams = new URLSearchParams();
   queryParams.append("id", orderId);
 
-  const { data, isLoading, error, refetch } = useGetData<Order>({
+  const { data, isLoading, error, refetch } = useGetData<{ data: Order }>({
     url: `${GET_ORDER_BY_ID}?${queryParams}`,
     queryKey: [QueryKeys.ORDER_DETAIL, orderId],
     method: HttpMethod.GET,
-    enabled: !!orderId // orderId varsa çalışsın
+    enabled: !!orderId, // orderId varsa çalışsın
   });
 
   return {
-    order: data,
+    order: data?.data,
     isLoading,
     error,
-    refetchOrder: refetch
+    refetchOrder: refetch,
   };
 };

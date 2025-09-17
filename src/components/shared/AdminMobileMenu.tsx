@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface MenuItem {
     path: string;
@@ -32,6 +32,7 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
     userProfile,
 }) => {
     const router = useRouter();
+    const [openMenus, setOpenMenus] = useState<string[]>([]);
 
     // Menü açıkken body scrollunu engelleme
     useEffect(() => {
@@ -45,6 +46,31 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
             document.body.style.overflow = '';
         };
     }, [isOpen]);
+
+    // Initialize open menus based on current route
+    useEffect(() => {
+        const currentPath = router.pathname;
+        const menusToOpen: string[] = [];
+        
+        menuItems.forEach((item) => {
+            if (item.subItems) {
+                const hasActiveSubItem = item.subItems.some(subItem => currentPath === subItem.path);
+                if (hasActiveSubItem) {
+                    menusToOpen.push(item.path);
+                }
+            }
+        });
+        
+        setOpenMenus(menusToOpen);
+    }, [router.pathname, menuItems]);
+
+    const toggleMenu = (itemPath: string) => {
+        setOpenMenus(prev => 
+            prev.includes(itemPath)
+                ? prev.filter(path => path !== itemPath)
+                : [...prev, itemPath]
+        );
+    };
 
     return (
         <div className={`admin-mobile-menu-container ${isOpen ? 'active' : ''}`}>
@@ -65,7 +91,7 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
                         >
                             <Image
                                 src={"/assets/admin/img/logo/happncodelogo.png"}
-                                alt="Desa Deri Admin"
+                                alt="Nors Admin"
                                 width={0}
                                 height={0}
                                 style={{ width: "100%", height: "100%" }}
@@ -80,18 +106,64 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
                     {menuItems.map((item) => (
                         <li
                             key={item.path}
-                            className={`menu-item ${router.pathname === item.path ? "active open" : ""}`}
+                            className={`menu-item ${
+                                item.subItems
+                                    ? item.subItems.some(subItem => router.pathname === subItem.path)
+                                        ? "active open"
+                                        : openMenus.includes(item.path)
+                                        ? "open"
+                                        : ""
+                                    : router.pathname === item.path
+                                        ? "active open"
+                                        : ""
+                            }`}
                         >
-                            <Link
-                                href={item.path}
-                                className="menu-link"
-                                onClick={() => {
-                                    onClose();
-                                }}
-                            >
-                                <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                                <div>{item.label}</div>
-                            </Link>
+                            {item.subItems ? (
+                                <>
+                                    <a 
+                                        href="#" 
+                                        className="menu-link menu-toggle"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            toggleMenu(item.path);
+                                        }}
+                                    >
+                                        <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                                        <div>{item.label}</div>
+                                    </a>
+                                    <ul className="menu-sub">
+                                        {item.subItems.map((subItem) => (
+                                            <li
+                                                key={subItem.path}
+                                                className={`menu-item ${
+                                                    router.pathname === subItem.path ? "active" : ""
+                                                }`}
+                                            >
+                                                <Link
+                                                    href={subItem.path}
+                                                    className="menu-link"
+                                                    onClick={() => {
+                                                        onClose();
+                                                    }}
+                                                >
+                                                    <div>{subItem.label}</div>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            ) : (
+                                <Link
+                                    href={item.path}
+                                    className="menu-link"
+                                    onClick={() => {
+                                        onClose();
+                                    }}
+                                >
+                                    <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                                    <div>{item.label}</div>
+                                </Link>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -194,6 +266,19 @@ const AdminMobileMenu: React.FC<AdminMobileMenuProps> = ({
 
         .admin-mobile-menu-wrapper .menu-item.active .menu-icon {
           color: #696cff;
+        }
+
+        .admin-mobile-menu-wrapper .menu-sub {
+          display: block;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          padding-left: 2rem;
+        }
+
+        .admin-mobile-menu-wrapper .menu-sub .menu-link {
+          padding: 0.5rem 1.25rem;
+          font-size: 0.9rem;
         }
       `}</style>
         </div>

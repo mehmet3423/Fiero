@@ -33,7 +33,6 @@ export const useDeleteProduct = () => {
                 }
             });
         } catch (error) {
-            console.error('Delete product error:', error);
             toast.error('Ürün silinirken bir hata oluştu');
         }
     };

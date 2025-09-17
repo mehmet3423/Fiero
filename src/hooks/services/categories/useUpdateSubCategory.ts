@@ -16,19 +16,27 @@ export const useUpdateSubCategory = () => {
     imageUrl?: string
   ) => {
     try {
-      const params = new URLSearchParams();
-      params.append("Id", id);
-      params.append("Name", name);
-      params.append("DisplayIndex", displayIndex.toString());
+      // Request body oluştur
+      const requestBody: {
+        id: string;
+        name: string;
+        displayIndex: number;
+        imageUrl?: string;
+      } = {
+        id: id,
+        name: name,
+        displayIndex: displayIndex,
+      };
 
       if (imageUrl) {
-        params.append("ImageUrl", imageUrl);
+        requestBody.imageUrl = imageUrl;
       }
 
       await mutateAsync(
         {
-          url: `${UPDATE_SUB_CATEGORY}?${params.toString()}`,
+          url: UPDATE_SUB_CATEGORY,
           method: HttpMethod.PUT,
+          data: requestBody,
         },
         {
           onSuccess: () => {

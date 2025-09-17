@@ -13,22 +13,27 @@ export const useAddReview = () => {
   const addReview = async (review: DtoReview) => {
     try {
       // URLSearchParams kullanılarak parametreler oluşturuluyor
-      const params = new URLSearchParams({
-        Id: review.id,
-        Title: review.title,
-        Content: review.content,
-        Rating: review.rating.toString(),
-        ImageUrl: review.imageUrl || "", // Eğer resim yoksa boş bırakılabilir
-        ProductId: review.productId,
-        CustomerId: review.customerId,
-        CustomerName: review.customerName,
-        ModifiedValue: review.modifiedValue,
-      }).toString(); // Parametreleri URL'ye uygun hale getiriyor
+      const params = new URLSearchParams();
+
+      // Required parameters
+      params.append("Title", review.title);
+      params.append("Content", review.content);
+
+      // Optional parameters
+      if (review.rating !== undefined) {
+        params.append("Rating", review.rating.toString());
+      }
+      if (review.imageUrl) {
+        params.append("ImageUrl", review.imageUrl);
+      }
+      if (review.productId) {
+        params.append("ProductId", review.productId);
+      }
 
       // Mutasyon işlemi
       await mutateAsync(
         {
-          url: `${ADD_REVIEW}?${params}`, // Parametrelerin URL'ye eklenmesi.
+          url: `${ADD_REVIEW}?${params.toString()}`, // Parametrelerin URL'ye eklenmesi.
           method: HttpMethod.POST, // HTTP POST yöntemi
         },
         {
@@ -46,7 +51,6 @@ export const useAddReview = () => {
         }
       );
     } catch (error) {
-      console.error("Add review error:", error); // Hata loglama
       toast.error("Yorum eklenirken bir hata oluştu"); // Hata toast'ı
     }
   };

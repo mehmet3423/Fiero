@@ -37,7 +37,7 @@ function EditTimeOfDayDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -57,13 +57,6 @@ function EditTimeOfDayDiscount() {
         (d) => d.id === String(id)
       ) as TimeOfDayDiscount;
       if (discount) {
-        console.log("Found discount for edit:", discount);
-        console.log("startTime:", discount.startTime);
-        console.log("endTime:", discount.endTime);
-
-        // API'den gelen veride time-specific alanlar olmayabilir
-        // Bu durumda default değerleri kullanıyoruz
-
         setFormData({
           name: discount.name,
           description: discount.description || "",
@@ -76,28 +69,21 @@ function EditTimeOfDayDiscount() {
           endDate: discount.endDate.includes("T")
             ? discount.endDate.slice(0, 16)
             : new Date(discount.endDate).toISOString().slice(0, 16),
-          startTime: discount.startTime?.ticks
-            ? Math.floor(discount.startTime.ticks / 36000000000)
+          startTime: discount.startTime
+            ? parseInt(discount.startTime.split(":")[0], 10)
             : 9,
-          endTime: discount.endTime?.ticks
-            ? Math.floor(discount.endTime.ticks / 36000000000)
+          endTime: discount.endTime
+            ? parseInt(discount.endTime.split(":")[0], 10)
             : 17,
           isActive: discount.isActive,
           type: DiscountType.TimeOfDayDiscount,
-          isWithinActiveDateRange: discount.isWithinActiveDateRange || false,
+          isWithinActiveDateRange:
+            (discount as any).productDiscount?.isWithinActiveDateRange ??
+            discount.isWithinActiveDateRange ??
+            false,
         });
         setIsDataLoaded(true);
-
-        console.log("Form data set with times:", {
-          startTime: discount.startTime,
-          endTime: discount.endTime,
-        });
       } else {
-        console.log("Discount not found with id:", id, "Type:", typeof id);
-        console.log(
-          "Available discounts IDs:",
-          allDiscounts.map((d) => ({ id: d.id, type: typeof d.id }))
-        );
       }
     }
   }, [id, allDiscounts, isDataLoaded]);
@@ -116,15 +102,17 @@ function EditTimeOfDayDiscount() {
       const apiData: TimeOfDayDiscount = {
         id: String(id),
         ...formData,
-        startTime: { ticks: formData.startTime * 36000000000 }, // Convert hours to .NET ticks
-        endTime: { ticks: formData.endTime * 36000000000 }, // Convert hours to .NET ticks
+        startTime: `${formData.startTime.toString().padStart(2, "0")}:00:00`,
+        endTime: `${formData.endTime.toString().padStart(2, "0")}:00:00`,
         createdOn: 0, // Will be handled by API
         createdOnValue: "", // Will be handled by API
       };
+      if (typeof apiData.discountValueType === "string") {
+        apiData.discountValueType = parseInt(apiData.discountValueType, 10);
+      }
       await updateDiscount(apiData);
       router.push("/admin/campaigns/time-of-day-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -138,8 +126,8 @@ function EditTimeOfDayDiscount() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? parseFloat(value)
+            : value,
     }));
   };
 
@@ -261,7 +249,7 @@ function EditTimeOfDayDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -275,8 +263,8 @@ function EditTimeOfDayDiscount() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -288,7 +276,7 @@ function EditTimeOfDayDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="Maksimum indirim değeri"
                 />

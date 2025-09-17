@@ -8,7 +8,7 @@ interface GeneralSupportFormData {
   title: string;
   requestType: number;
   description: string;
-  attachments: File[];
+  imageUrl: string;
 }
 
 export const useGeneralSupport = () => {
@@ -17,42 +17,36 @@ export const useGeneralSupport = () => {
 
   const handleSubmitTicket = async (formData: GeneralSupportFormData) => {
     setIsPending(true);
-    
+
     try {
-      const formDataToSend = new URLSearchParams();
-      formDataToSend.append("Title", formData.title);
-      formDataToSend.append("RequestType", formData.requestType.toString());
-      formDataToSend.append("Description", formData.description);
-      
-      // Dosyaları ekle
-      if (formData.attachments.length > 0) {
-        formData.attachments.forEach((file) => {
-          formDataToSend.append("Attachments", file.name);
-        });
+      // Query parametreleri olarak URL'e ekle
+      const queryParams = new URLSearchParams({
+        RequestType: formData.requestType.toString(),
+        Title: formData.title,
+        Description: formData.description,
+      });
+
+      // ImageUrl sadece varsa ekle
+      if (formData.imageUrl) {
+        queryParams.append("ImageUrl", formData.imageUrl);
       }
 
       const response = await mutation.mutateAsync({
-        url: CREATE_SUPPORT_TICKET+"?"+formDataToSend,
+        url: `${CREATE_SUPPORT_TICKET}?${queryParams.toString()}`,
         method: HttpMethod.POST,
-        data: formDataToSend,
-        headers: {  
-        }
+        // Body boş bırakıyoruz çünkü tüm veriler query string'de
       });
 
       toast.success("Destek talebiniz başarıyla oluşturuldu.");
-      
     } catch (error: any) {
-      console.error('API Error:', {
-        message: error.message,
-        response: error.response?.data
-      });
-      
       if (error.response?.data?.errors) {
-        Object.entries(error.response.data.errors).forEach(([field, messages]) => {
-          if (Array.isArray(messages)) {
-            messages.forEach(msg => toast.error(`${field}: ${msg}`));
+        Object.entries(error.response.data.errors).forEach(
+          ([field, messages]) => {
+            if (Array.isArray(messages)) {
+              messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+            }
           }
-        });
+        );
       } else {
         toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
       }
@@ -61,8 +55,8 @@ export const useGeneralSupport = () => {
     }
   };
 
-  return { 
-    handleSubmitTicket, 
-    isPending: isPending || mutation.isPending 
+  return {
+    handleSubmitTicket,
+    isPending: isPending || mutation.isPending,
   };
 };

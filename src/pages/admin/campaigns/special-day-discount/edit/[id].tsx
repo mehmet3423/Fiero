@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useCreateSpecialDayDiscount } from "@/hooks/services/discounts/specialDay-discount/useCreateSpecialDayDiscount";
+import { useUpdateSpecialDayDiscount } from "@/hooks/services/discounts/specialDay-discount/useUpdateSpecialDayDiscount";
 import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { SpecialDayDiscount } from "@/constants/models/Discount";
 import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import SpecialDayDiscountPage from "..";
 
 interface SpecialDayDiscountForm {
   name: string;
@@ -25,7 +26,7 @@ function EditSpecialDayDiscount() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { isPending: isCreating } = useCreateSpecialDayDiscount();
+  const { updateDiscount, isPending } = useUpdateSpecialDayDiscount();
 
   // Fetch discount data for edit mode
   const { discounts: allDiscounts, isLoading: isLoadingDiscounts } =
@@ -37,7 +38,7 @@ function EditSpecialDayDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -57,12 +58,6 @@ function EditSpecialDayDiscount() {
         (d) => d.id === String(id)
       ) as SpecialDayDiscount;
       if (discount) {
-        console.log("Found discount for edit:", discount);
-        console.log("day:", discount.day);
-        console.log("month:", discount.month);
-
-        // API'den gelen veride special-day-specific alanlar olmayabilir
-        // Bu durumda default değerleri kullanıyoruz
         const day = discount.day ?? 1;
         const month = discount.month ?? 1;
 
@@ -70,7 +65,10 @@ function EditSpecialDayDiscount() {
           name: discount.name,
           description: discount.description || "",
           discountValue: discount.discountValue,
-          discountValueType: discount.discountValueType,
+          discountValueType:
+            typeof discount.discountValueType === "string"
+              ? parseInt(discount.discountValueType, 10)
+              : discount.discountValueType,
           maxDiscountValue: discount.maxDiscountValue || 0,
           startDate: discount.startDate.includes("T")
             ? discount.startDate.slice(0, 16)
@@ -78,24 +76,14 @@ function EditSpecialDayDiscount() {
           endDate: discount.endDate.includes("T")
             ? discount.endDate.slice(0, 16)
             : new Date(discount.endDate).toISOString().slice(0, 16),
-          day: day,
-          month: month,
+          day: discount.specialDayDiscount?.day ?? 1,
+          month: discount.specialDayDiscount?.month ?? 1,
           isActive: discount.isActive,
           type: DiscountType.SpecialDayDiscount,
-          isWithinActiveDateRange: discount.isWithinActiveDateRange || false,
+          isWithinActiveDateRange: discount.isWithinActiveDateRange ?? false,
         });
         setIsDataLoaded(true);
-
-        console.log("Form data set with:", {
-          day: day,
-          month: month,
-        });
       } else {
-        console.log("Discount not found with id:", id, "Type:", typeof id);
-        console.log(
-          "Available discounts IDs:",
-          allDiscounts.map((d) => ({ id: d.id, type: typeof d.id }))
-        );
       }
     }
   }, [id, allDiscounts, isDataLoaded]);
@@ -103,12 +91,21 @@ function EditSpecialDayDiscount() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // TODO: Implement update functionality when needed
-      // For now, we only support create
-      console.warn("Edit functionality not yet implemented");
+      const apiData: SpecialDayDiscount = {
+        id: String(id),
+        ...formData,
+        createdOn: 0, // API dolduracaksa 0 bırak
+        createdOnValue: "", // API dolduracaksa boş bırak
+      };
+
+      // Son kontrol: discountValueType'ı number'a çevir
+      if (typeof apiData.discountValueType === "string") {
+        apiData.discountValueType = parseInt(apiData.discountValueType, 10);
+      }
+
+      await updateDiscount(apiData);
       router.push("/admin/campaigns/special-day-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -116,14 +113,26 @@ function EditSpecialDayDiscount() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+
+    // Number olması gereken alanları belirle
+    const numberFields = [
+      "discountValueType",
+      "day",
+      "month",
+      "discountValue",
+      "maxDiscountValue",
+    ];
+
     setFormData((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : type === "number"
-          ? parseFloat(value)
-          : value,
+          : type === "number" || numberFields.includes(name)
+            ? name === "discountValueType" || name === "day" || name === "month"
+              ? parseInt(value, 10) // Integer alanlar için
+              : parseFloat(value) // Float alanlar için
+            : value,
     }));
   };
 
@@ -242,7 +251,7 @@ function EditSpecialDayDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -253,11 +262,11 @@ function EditSpecialDayDiscount() {
                   className="form-select"
                   name="discountValueType"
                   value={formData.discountValueType}
-                  onChange={handleChange}
+                  onChange={(e) => { handleChange(e); }}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -269,7 +278,7 @@ function EditSpecialDayDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="Maksimum indirim değeri"
                 />
@@ -310,6 +319,7 @@ function EditSpecialDayDiscount() {
                   value={formData.month}
                   onChange={handleChange}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 >
                   {months.map((month) => (
                     <option key={month.value} value={month.value}>
@@ -326,6 +336,7 @@ function EditSpecialDayDiscount() {
                   value={formData.day}
                   onChange={handleChange}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 >
                   {dayOptions.map((day) => (
                     <option key={day} value={day}>
@@ -362,9 +373,9 @@ function EditSpecialDayDiscount() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={isCreating}
+                disabled={isPending}
               >
-                {isCreating ? (
+                {isPending ? (
                   <>
                     <span
                       className="spinner-border spinner-border-sm me-2"

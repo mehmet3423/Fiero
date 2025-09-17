@@ -20,19 +20,15 @@ export const useCreateSystemSetting = () => {
         },
         {
           onSuccess: () => {
-            toast.success("Yeni sistem ayarı başarıyla oluşturuldu");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.SYSTEM_SETTINGS],
             });
           },
-          onError: () => {
-            toast.error("Sistem ayarı oluşturulurken bir hata oluştu");
-          },
         }
       );
     } catch (error) {
-      console.error("Error creating system setting:", error);
-      toast.error("Sistem ayarı oluşturulurken bir hata oluştu");
+      // Error'ı yeniden throw et ki page component yakalayabilsin
+      throw error;
     }
   };
 

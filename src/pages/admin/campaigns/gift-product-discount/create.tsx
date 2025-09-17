@@ -5,6 +5,8 @@ import { DiscountType } from "@/constants/enums/DiscountType";
 import { DiscountValueType } from "@/constants/enums/DiscountValueType";
 import Link from "next/link";
 import ProductSelector from "@/components/ProductSelector";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 const CreateGiftProductDiscountPage = () => {
   const router = useRouter();
@@ -25,6 +27,16 @@ const CreateGiftProductDiscountPage = () => {
     minimumQuantity: 0,
     maxFreeProductsPerOrder: 0,
     type: DiscountType.GiftProductDiscount,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,7 +45,6 @@ const CreateGiftProductDiscountPage = () => {
       await createFreeProductDiscount(formData);
       router.push("/admin/campaigns/gift-product-discount");
     } catch (error) {
-      console.error("Error creating Gift Product discount:", error);
     }
   };
 
@@ -58,6 +69,15 @@ const CreateGiftProductDiscountPage = () => {
       productIds: prev.productIds.includes(productId)
         ? prev.productIds.filter((id) => id !== productId)
         : [...prev.productIds, productId],
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -139,7 +159,8 @@ const CreateGiftProductDiscountPage = () => {
                   name="minimumQuantity"
                   value={formData.minimumQuantity}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -153,7 +174,8 @@ const CreateGiftProductDiscountPage = () => {
                   name="maxFreeProductsPerOrder"
                   value={formData.maxFreeProductsPerOrder}
                   onChange={handleChange}
-                  min="1"
+                  min={1}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -167,7 +189,8 @@ const CreateGiftProductDiscountPage = () => {
                   name="maxFreeProductPrice"
                   value={formData.maxFreeProductPrice}
                   onChange={handleChange}
-                  min="0"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -241,6 +264,13 @@ const CreateGiftProductDiscountPage = () => {
                 </div>
               </div>
             </div>
+
+            {/* Notification Settings */}
+            <NotificationSettings
+              value={formData.notificationSettings}
+              onChange={handleNotificationSettingsChange}
+            />
+
             {/* Submit buttons */}
             <div className="d-flex gap-2">
               <button
@@ -251,7 +281,7 @@ const CreateGiftProductDiscountPage = () => {
                 {isPending ? "Oluşturuluyor..." : "İndirim Oluştur"}
               </button>
               <Link
-                href="/admin/campaigns/buyX-payY"
+                href="/admin/campaigns/gift-product-discount"
                 className="btn btn-secondary"
               >
                 İptal

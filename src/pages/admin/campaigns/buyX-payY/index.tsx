@@ -46,7 +46,6 @@ const BuyXPayYDiscountPage = () => {
       toast.success("İndirim başarıyla silindi");
     } catch (error) {
       toast.error("İndirim silinirken bir hata oluştu");
-      console.error("Error deleting discount:", error);
     }
   };
 
@@ -57,13 +56,13 @@ const BuyXPayYDiscountPage = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchName(e.target.value);
-    setPage(1);
+    setPage(0);
   };
 
   const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setIsActive(value === "" ? undefined : value === "true");
-    setPage(1);
+    setPage(0);
   };
 
   const formatDate = (dateString: string) => {
@@ -72,12 +71,12 @@ const BuyXPayYDiscountPage = () => {
   };
 
   const buyXPayYDiscounts = (discounts as unknown as BuyYPayXDiscount[]) || [];
-
   const getProductIds = (discount: BuyYPayXDiscount): string[] => {
-    if (!discount.productIds) return [];
-    if (Array.isArray(discount.productIds)) return discount.productIds;
-    if (typeof discount.productIds === "string") {
-      return (discount.productIds as string)
+    if (!discount.buyXPayYProducts) return [];
+    if (Array.isArray(discount.buyXPayYProducts))
+      return discount.buyXPayYProducts;
+    if (typeof discount.buyXPayYProducts === "string") {
+      return (discount.buyXPayYProducts as string)
         .split(",")
         .filter((id: string) => id.trim() !== "");
     }
@@ -185,8 +184,8 @@ const BuyXPayYDiscountPage = () => {
                       <span className="badge bg-info">
                         {discount.buyXCount} Al {discount.payYCount} Öde
                       </span>
-                      {discount.productIds &&
-                        discount.productIds.length > 0 && (
+                      {discount.buyXPayYProducts &&
+                        discount.buyXPayYProducts.length > 0 && (
                           <div className="mt-1">
                             <small className="text-muted">
                               {getProductIds(discount).length} ürün seçili
@@ -197,27 +196,37 @@ const BuyXPayYDiscountPage = () => {
                     <td>{formatDate(discount.startDate)}</td>
                     <td>{formatDate(discount.endDate)}</td>
                     <td>
-                      {discount.isActive && discount.isWithinActiveDateRange
-                        ? "Aktif"
-                        : "Pasif"}
+                      <span
+                        className={`badge bg-${
+                          discount.isActive &&
+                          (discount.isWithinActiveDateRange === undefined ||
+                            discount.isWithinActiveDateRange)
+                            ? "success"
+                            : "danger"
+                        }`}
+                      >
+                        {discount.isActive
+                          ? discount.isWithinActiveDateRange === undefined
+                            ? "Aktif (Deaktif Tarih)"
+                            : discount.isWithinActiveDateRange
+                            ? "Aktif"
+                            : "Aktif (Deaktif Tarih)"
+                          : "Pasif"}
+                      </span>
                     </td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-primary d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-primary"
                           onClick={() => handleEdit(discount.id)}
-                          title="Düzenle"
-                          disabled={isDeleting}
                         >
                           <FontAwesomeIcon icon={faEdit} />
                         </button>
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-danger d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-danger"
                           onClick={() => confirmDelete(discount.id)}
-                          title="Sil"
-                          disabled={isDeleting}
                         >
                           <FontAwesomeIcon icon={faTrash} />
                         </button>
@@ -243,47 +252,28 @@ const BuyXPayYDiscountPage = () => {
       </div>
 
       {/* Delete Modal */}
-      <div
-        className="modal fade"
+      <GeneralModal
         id="deleteDiscountModal"
-        tabIndex={-1}
-        aria-hidden="true"
+        title="X Al Y Öde İndirimi Sil"
+        size="sm"
+        onClose={() => setDeletingId(null)}
+        onApprove={handleDelete}
+        approveButtonText="Evet, Sil"
+        isLoading={isDeleting}
+        showFooter={true}
       >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">İndirimi Sil</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              Bu indirimi silmek istediğinizden emin misiniz? Bu işlem geri
-              alınamaz.
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                İptal
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                {isDeleting ? "Siliniyor..." : "Sil"}
-              </button>
-            </div>
-          </div>
+        <div className="text-center">
+          <i
+            className="icon-exclamation"
+            style={{ fontSize: "3rem", color: "#dc3545" }}
+          ></i>
+          <h4 className="mt-3">Emin misiniz?</h4>
+          <p className="text-muted">
+            Bu indirimi silmek istediğinizden emin misiniz? Bu işlem geri
+            alınamaz.
+          </p>
         </div>
-      </div>
+      </GeneralModal>
     </div>
   );
 };

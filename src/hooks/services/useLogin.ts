@@ -54,11 +54,11 @@ export const useLogin = () => {
       {
         onSuccess: (res) => {
           setToken(res.data.data.accessToken);
-          toast.success("Giriş başarılı!");
+          /* toast.success("Giriş başarılı!"); */
           onSuccess?.();
         },
         onError: (error) => {
-          toast.error(error.response?.data.detail);
+          /* toast.error(error.response?.data.detail); */
         },
       }
     );

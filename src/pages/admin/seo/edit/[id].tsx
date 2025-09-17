@@ -36,7 +36,7 @@ function OnicalCanAutocomplete({
   baseUrl,
   allowedRegex,
   invalidCharsFn,
-  required
+  required,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -50,19 +50,32 @@ function OnicalCanAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!value) setSuggestions(staticPages);
-    else setSuggestions(staticPages.filter(page => page.value && page.value.toLowerCase().includes(value.toLowerCase())));
+    else
+      setSuggestions(
+        staticPages.filter(
+          (page) =>
+            page.value && page.value.toLowerCase().includes(value.toLowerCase())
+        )
+      );
   }, [value]);
   return (
-    <div className="mb-3" style={{ position: 'relative' }}>
+    <div className="mb-3" style={{ position: "relative" }}>
       <label className="form-label">Canonical URL</label>
       <div className="input-group">
-        <span className="input-group-text" style={{ background: '#f8f9fa', fontSize: '0.9em' }}>{baseUrl}/</span>
+        <span
+          className="input-group-text"
+          style={{ background: "#f8f9fa", fontSize: "0.9em" }}
+        >
+          {baseUrl}/
+        </span>
         <input
           ref={inputRef}
           type="text"
-          className={`form-control ${!value || !allowedRegex.test(value) ? 'is-invalid' : ''}`}
+          className={`form-control ${
+            !value || !allowedRegex.test(value) ? "is-invalid" : ""
+          }`}
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           placeholder="örnek: about-us veya kendi yolunuzu yazın"
@@ -71,52 +84,56 @@ function OnicalCanAutocomplete({
         />
       </div>
       {focused && suggestions.length > 0 && (
-        <ul style={{
-          position: 'absolute',
-          zIndex: 10,
-          left: 0,
-          right: 0,
-          marginTop: 2,
-          background: '#fff',
-          border: '1px solid #ddd',
-          borderRadius: 4,
-          maxHeight: 180,
-          overflowY: 'auto',
-          listStyle: 'none',
-          padding: 0
-        }}>
-          {suggestions.map(page => (
+        <ul
+          style={{
+            position: "absolute",
+            zIndex: 10,
+            left: 0,
+            right: 0,
+            marginTop: 2,
+            background: "#fff",
+            border: "1px solid #ddd",
+            borderRadius: 4,
+            maxHeight: 180,
+            overflowY: "auto",
+            listStyle: "none",
+            padding: 0,
+          }}
+        >
+          {suggestions.map((page) => (
             <li
               key={page.value}
-              style={{ padding: '8px 12px', cursor: 'pointer' }}
+              style={{ padding: "8px 12px", cursor: "pointer" }}
               onMouseDown={() => {
                 onChange(page.value);
                 setFocused(false);
                 if (inputRef.current) inputRef.current.blur();
               }}
             >
-              <span style={{ color: '#555' }}>{page.label}</span>
-              <span style={{ float: 'right', color: '#888', fontSize: 12 }}>{page.value}</span>
+              <span style={{ color: "#555" }}>{page.label}</span>
+              <span style={{ float: "right", color: "#888", fontSize: 12 }}>
+                {page.value}
+              </span>
             </li>
           ))}
         </ul>
       )}
-      <small className={
-        value && !allowedRegex.test(value)
-          ? 'text-danger'
-          : ''
-      } style={{
-        display: 'block',
-        fontSize: value && !allowedRegex.test(value) ? undefined : '0.85em',
-        fontStyle: value && !allowedRegex.test(value) ? undefined : 'italic',
-        color: value && !allowedRegex.test(value) ? undefined : '#6c757d',
-        marginTop: 4,
-        marginLeft: 2,
-        minHeight: 20
-      }}>
-        {(value && !allowedRegex.test(value)) ? (
+      <small
+        className={value && !allowedRegex.test(value) ? "text-danger" : ""}
+        style={{
+          display: "block",
+          fontSize: value && !allowedRegex.test(value) ? undefined : "0.85em",
+          fontStyle: value && !allowedRegex.test(value) ? undefined : "italic",
+          color: value && !allowedRegex.test(value) ? undefined : "#6c757d",
+          marginTop: 4,
+          marginLeft: 2,
+          minHeight: 20,
+        }}
+      >
+        {value && !allowedRegex.test(value) ? (
           <>
-            Sadece harf, rakam, tire, alt tire, slash ve nokta kullanabilirsiniz. Örnek: <b>about-us</b>
+            Sadece harf, rakam, tire, alt tire, slash ve nokta
+            kullanabilirsiniz. Örnek: <b>about-us</b>
             {value && invalidCharsFn(value) && (
               <>
                 <br />
@@ -126,9 +143,24 @@ function OnicalCanAutocomplete({
           </>
         ) : (
           <>
-            <span style={{ fontSize: '0.75em', marginRight: 4, verticalAlign: 'middle' }}>ℹ️</span>
-            <span style={{ fontSize: '0.75em', fontStyle: 'italic', color: '#6c757d' }}>
-              Sadece harf, rakam, tire, alt tire, slash ve nokta kullanabilirsiniz. Örnek: <b>about-us</b>
+            <span
+              style={{
+                fontSize: "0.75em",
+                marginRight: 4,
+                verticalAlign: "middle",
+              }}
+            >
+              ℹ️
+            </span>
+            <span
+              style={{
+                fontSize: "0.75em",
+                fontStyle: "italic",
+                color: "#6c757d",
+              }}
+            >
+              Sadece harf, rakam, tire, alt tire, slash ve nokta
+              kullanabilirsiniz. Örnek: <b>about-us</b>
             </span>
           </>
         )}
@@ -165,13 +197,22 @@ function EditSeoPage() {
     subCategoryId: "",
   });
 
-  const [seoType, setSeoType] = useState<"homepage" | "general" | "product" | "category">(
-    "general"
+  const [seoType, setSeoType] = useState<
+    "homepage" | "general" | "product" | "category"
+  >("general");
+  const {
+    data: mainCategoriesWithSubs,
+    isLoading: mainCategoriesLoading,
+    error: mainCategoriesError,
+  } = useMainCategoriesWithSubCategories();
+  const selectedMainCategory = mainCategoriesWithSubs.find(
+    (cat) => cat.id === formData.mainCategoryId
   );
-  const { data: mainCategoriesWithSubs, isLoading: mainCategoriesLoading, error: mainCategoriesError } = useMainCategoriesWithSubCategories();
-  const selectedMainCategory = mainCategoriesWithSubs.find(cat => cat.id === formData.mainCategoryId);
-  const subCategories = selectedMainCategory ? selectedMainCategory.subCategories : [];
-  const { products: productList, loading: productsLoading } = useBasicProductList();
+  const subCategories = selectedMainCategory
+    ? selectedMainCategory.subCategories
+    : [];
+  const { products: productList, loading: productsLoading } =
+    useBasicProductList();
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   const canonicalAllowedRegex = /^[a-zA-Z0-9\-_/\.]+$/;
@@ -183,7 +224,9 @@ function EditSeoPage() {
   const [canonicalSuggestions, setCanonicalSuggestions] = useState(staticPages);
   const canonicalInputRef = useRef<HTMLInputElement>(null);
   const [ogImageUploading, setOgImageUploading] = useState(false);
-  const [ogImageUploadError, setOgImageUploadError] = useState<string | null>(null);
+  const [ogImageUploadError, setOgImageUploadError] = useState<string | null>(
+    null
+  );
   const ogImageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -191,8 +234,10 @@ function EditSeoPage() {
       setCanonicalSuggestions(staticPages);
     } else {
       setCanonicalSuggestions(
-        staticPages.filter(page =>
-          page.value && page.value.toLowerCase().includes(formData.canonical.toLowerCase())
+        staticPages.filter(
+          (page) =>
+            page.value &&
+            page.value.toLowerCase().includes(formData.canonical.toLowerCase())
         )
       );
     }
@@ -202,7 +247,8 @@ function EditSeoPage() {
     if (seoData) {
       setFormData({
         id: seoData.id || "",
-        isHomePage: ('isHomePage' in seoData) ? Boolean(seoData.isHomePage) : false,
+        isHomePage:
+          "isHomePage" in seoData ? Boolean(seoData.isHomePage) : false,
         title: seoData.title || "",
         description: seoData.description || "",
         metaTitle: seoData.metaTitle || "",
@@ -221,11 +267,18 @@ function EditSeoPage() {
         mainCategoryId: seoData.mainCategoryId || "",
         subCategoryId: seoData.subCategoryId || "",
       });
-      if ((seoData.mainCategoryId && seoData.mainCategoryId !== "") || (seoData.subCategoryId && seoData.subCategoryId !== "")) {
+      if (
+        (seoData.mainCategoryId && seoData.mainCategoryId !== "") ||
+        (seoData.subCategoryId && seoData.subCategoryId !== "")
+      ) {
         setSeoType("category");
       } else if (seoData.productId) {
         setSeoType("product");
-      } else if (("isHomePage" in seoData && Boolean(seoData.isHomePage)) || (!seoData.canonical || seoData.canonical === "")) {
+      } else if (
+        ("isHomePage" in seoData && Boolean(seoData.isHomePage)) ||
+        !seoData.canonical ||
+        seoData.canonical === ""
+      ) {
         setSeoType("homepage");
       } else {
         setSeoType("general");
@@ -250,10 +303,13 @@ function EditSeoPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSeoTypeChange = (type: "homepage" | "general" | "product" | "category") => {
+  const handleSeoTypeChange = (
+    type: "homepage" | "general" | "product" | "category"
+  ) => {
     setSeoType(type);
     if (type === "homepage") {
-      const baseUrl = typeof window !== "undefined" ? window.location.origin + "/" : "";
+      const baseUrl =
+        typeof window !== "undefined" ? window.location.origin + "/" : "";
       setFormData((prev) => ({
         ...prev,
         isHomePage: true,
@@ -282,13 +338,21 @@ function EditSeoPage() {
       seoType === "general" &&
       (!formData.canonical || !canonicalAllowedRegex.test(formData.canonical))
     ) {
-      alert("Canonical yolu geçersiz. Sadece harf, rakam, tire, alt tire, slash ve nokta karakterleri kullanılabilir.");
+      alert(
+        "Canonical yolu geçersiz. Sadece harf, rakam, tire, alt tire, slash ve nokta karakterleri kullanılabilir."
+      );
       return;
     }
 
     // Kategori SEO'su için ana veya alt kategori zorunlu
-    if (seoType === "category" && !formData.mainCategoryId && !formData.subCategoryId) {
-      setCategoryError("Lütfen en az bir ana kategori veya alt kategori seçiniz.");
+    if (
+      seoType === "category" &&
+      !formData.mainCategoryId &&
+      !formData.subCategoryId
+    ) {
+      setCategoryError(
+        "Lütfen en az bir ana kategori veya alt kategori seçiniz."
+      );
       return;
     } else {
       setCategoryError(null);
@@ -321,14 +385,23 @@ function EditSeoPage() {
       if (type === "homepage") {
         mapped.Canonical = null;
       } else if (type === "general") {
-        mapped.Canonical = data.canonical ? data.canonical.replace(/^\//, "") : null;
+        mapped.Canonical = data.canonical
+          ? data.canonical.replace(/^\//, "")
+          : null;
       }
       if (type === "product") {
-        mapped.ProductId = data.productId && data.productId !== "" ? data.productId : null;
+        mapped.ProductId =
+          data.productId && data.productId !== "" ? data.productId : null;
       }
       if (type === "category") {
-        mapped.MainCategoryId = data.mainCategoryId && data.mainCategoryId !== "" ? data.mainCategoryId : null;
-        mapped.SubCategoryId = data.subCategoryId && data.subCategoryId !== "" ? data.subCategoryId : null;
+        mapped.MainCategoryId =
+          data.mainCategoryId && data.mainCategoryId !== ""
+            ? data.mainCategoryId
+            : null;
+        mapped.SubCategoryId =
+          data.subCategoryId && data.subCategoryId !== ""
+            ? data.subCategoryId
+            : null;
       }
       return mapped;
     };
@@ -353,7 +426,9 @@ function EditSeoPage() {
   };
 
   // Dosya seçme event handler
-  const handleOgImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOgImageFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setOgImageUploadError(null);
     const file = e.target.files?.[0];
     if (!file) return;
@@ -365,7 +440,9 @@ function EditSeoPage() {
     setOgImageUploading(true);
     setOgImageUploadError(null);
     try {
-      validateImage(file, { allowedTypes: ["image/jpeg", "image/png", "image/jpg"] });
+      validateImage(file, {
+        allowedTypes: ["image/jpeg", "image/png", "image/jpg"],
+      });
       const res = await uploadImageToCloudinary(file);
       handleInputChange("ogImageUrl", res.secure_url);
     } catch (err: any) {
@@ -493,13 +570,18 @@ function EditSeoPage() {
                     <select
                       className="form-select"
                       value={formData.productId}
-                      onChange={e => handleInputChange("productId", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("productId", e.target.value)
+                      }
                       disabled={productsLoading}
                     >
                       <option value="">Ürün seçiniz</option>
-                      {productList && productList.map(product => (
-                        <option key={product.id} value={product.id}>{product.title}</option>
-                      ))}
+                      {productList &&
+                        productList?.map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.title}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 )}
@@ -511,32 +593,48 @@ function EditSeoPage() {
                       <select
                         className="form-select"
                         value={formData.mainCategoryId}
-                        onChange={e => {
+                        onChange={(e) => {
                           handleInputChange("mainCategoryId", e.target.value);
                           handleInputChange("subCategoryId", "");
                         }}
                         disabled={mainCategoriesLoading}
                       >
                         <option value="">Ana kategori seçiniz</option>
-                        {mainCategoriesWithSubs && mainCategoriesWithSubs.map((cat) => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
+                        {mainCategoriesWithSubs &&
+                          mainCategoriesWithSubs.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </option>
+                          ))}
                       </select>
-                      {mainCategoriesLoading && <div className="text-info">Yükleniyor...</div>}
-                      {mainCategoriesError && <div className="text-danger">{mainCategoriesError.toString()}</div>}
+                      {mainCategoriesLoading && (
+                        <div className="text-info">Yükleniyor...</div>
+                      )}
+                      {mainCategoriesError && (
+                        <div className="text-danger">
+                          {mainCategoriesError.toString()}
+                        </div>
+                      )}
                     </div>
                     <div className="mb-3">
-                      <label className="form-label">Alt Kategori Seç (Opsiyonel)</label>
+                      <label className="form-label">
+                        Alt Kategori Seç (Opsiyonel)
+                      </label>
                       <select
                         className="form-select"
                         value={formData.subCategoryId}
-                        onChange={e => handleInputChange("subCategoryId", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("subCategoryId", e.target.value)
+                        }
                         disabled={!formData.mainCategoryId}
                       >
                         <option value="">Alt kategori seçiniz</option>
-                        {subCategories && subCategories.map((sub) => (
-                          <option key={sub.id} value={sub.id}>{sub.name}</option>
-                        ))}
+                        {subCategories &&
+                          subCategories.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </>
@@ -625,7 +723,9 @@ function EditSeoPage() {
                     {seoType === "general" && (
                       <OnicalCanAutocomplete
                         value={formData.canonical}
-                        onChange={(v: string) => handleInputChange("canonical", v)}
+                        onChange={(v: string) =>
+                          handleInputChange("canonical", v)
+                        }
                         baseUrl={baseUrl}
                         allowedRegex={canonicalAllowedRegex}
                         invalidCharsFn={invalidCanonicalChars}
@@ -673,13 +773,18 @@ function EditSeoPage() {
                         onDrop={handleOgImageDrop}
                         onDragOver={handleOgImageDragOver}
                         onClick={() => ogImageInputRef.current?.click()}
-                        style={{ position: 'relative', width: 180, height: 120, marginBottom: 8 }}
+                        style={{
+                          position: "relative",
+                          width: 180,
+                          height: 120,
+                          marginBottom: 8,
+                        }}
                       >
                         <input
                           ref={ogImageInputRef}
                           type="file"
                           accept="image/jpeg,image/png,image/jpg"
-                          style={{ display: 'none' }}
+                          style={{ display: "none" }}
                           onChange={handleOgImageFileChange}
                           disabled={ogImageUploading}
                         />
@@ -689,12 +794,12 @@ function EditSeoPage() {
                               src={formData.ogImageUrl}
                               alt="OG Görsel Önizleme"
                               style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
                                 borderRadius: 12,
-                                border: '1.5px solid #eee',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                                border: "1.5px solid #eee",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                               }}
                             />
                             <div className="og-image-overlay">
@@ -707,15 +812,23 @@ function EditSeoPage() {
                               <span>Yükleniyor...</span>
                             ) : (
                               <>
-                                <span style={{ color: '#888', fontSize: 15 }}>Görseli sürükleyin veya tıklayın</span>
+                                <span style={{ color: "#888", fontSize: 15 }}>
+                                  Görseli sürükleyin veya tıklayın
+                                </span>
                                 <br />
-                                <span style={{ fontSize: 11, color: '#aaa' }}>(JPG, JPEG, PNG. Maks 10MB)</span>
+                                <span style={{ fontSize: 11, color: "#aaa" }}>
+                                  (JPG, JPEG, PNG. Maks 10MB)
+                                </span>
                               </>
                             )}
                           </div>
                         )}
                       </div>
-                      {ogImageUploadError && <div className="text-danger" style={{ fontSize: 13 }}>{ogImageUploadError}</div>}
+                      {ogImageUploadError && (
+                        <div className="text-danger" style={{ fontSize: 13 }}>
+                          {ogImageUploadError}
+                        </div>
+                      )}
                     </div>
 
                     <h6 className="fw-bold mb-3 text-warning">Ek Bilgiler</h6>
@@ -767,11 +880,15 @@ function EditSeoPage() {
                       <select
                         className="form-select"
                         value={formData.robotsMetaTag}
-                        onChange={(e) => handleInputChange("robotsMetaTag", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("robotsMetaTag", e.target.value)
+                        }
                         required
                       >
                         {validRobotsMetaTags.map((tag) => (
-                          <option key={tag} value={tag}>{tag}</option>
+                          <option key={tag} value={tag}>
+                            {tag}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -899,8 +1016,11 @@ function EditSeoPage() {
         }
         .og-image-overlay {
           position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.18);
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.18);
           color: #fff;
           display: flex;
           align-items: center;

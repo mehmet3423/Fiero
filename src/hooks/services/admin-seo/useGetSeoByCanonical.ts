@@ -1,6 +1,7 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_SEO_BY_CANONICAL } from "@/constants/links";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
 import useGetData from "@/hooks/useGetData";
 
 interface SeoData {
@@ -27,21 +28,33 @@ interface SeoData {
 }
 
 export const useGetSeoByCanonical = (canonical: string, enabled = true) => {
-  const params = new URLSearchParams({
-    canonical,
-  }).toString();
+  // Backend logic: canonical her zaman "/" ile başlamalı
+  let canonicalPath = canonical?.trim() || "";
+  if (canonicalPath && !canonicalPath.startsWith("/")) {
+    canonicalPath = "/" + canonicalPath;
+  }
 
-  const { data, isLoading, error, refetch } = useGetData<SeoData>({
-    url: `${GET_SEO_BY_CANONICAL}?${params}`,
-    queryKey: [QueryKeys.SEO, "canonical", canonical],
+  // Use encodeURIComponent to properly encode the canonical path
+  // This prevents URLSearchParams from double-encoding the slash
+  const encodedCanonical = encodeURIComponent(canonicalPath);
+
+  const { data, isLoading, error, refetch } = useGetData<
+    CommandResultWithData<SeoData>
+  >({
+    url: `${GET_SEO_BY_CANONICAL}?canonical=${encodedCanonical}`,
+    queryKey: [QueryKeys.SEO, "canonical", canonicalPath],
     method: HttpMethod.GET,
-    enabled: enabled && !!canonical,
+    enabled: enabled && !!canonicalPath,
+    onError: (err) => {
+    },
   });
 
+  const seoData = data?.data || null;
+
   return {
-    seoData: data,
+    seoData,
     isLoading,
     error,
     refetch,
   };
-}; 
+};

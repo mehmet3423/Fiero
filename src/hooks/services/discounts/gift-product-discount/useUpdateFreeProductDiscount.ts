@@ -25,7 +25,7 @@ export const useUpdateFreeProductDiscount = () => {
       startDate: data.startDate,
       endDate: data.endDate,
       isActive: data.isActive,
-      productIds: data.productIds,
+      productIds: data.freeProductIds,
     };
 
     await mutateAsync(
@@ -39,6 +39,9 @@ export const useUpdateFreeProductDiscount = () => {
           toast.success("İndirim başarıyla güncellendi");
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.DISCOUNT_DETAIL],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNTS],
           });
         },
       }

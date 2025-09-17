@@ -14,6 +14,8 @@ interface UpdateProfileData {
   phoneNumber: string;
   gender: string;
   birthDate: string;
+  isSMSNotificationEnabled?: boolean;
+  isEmailNotificationEnabled?: boolean;
 }
 
 export const useUpdateUserProfile = () => {
@@ -29,6 +31,8 @@ export const useUpdateUserProfile = () => {
       phoneNumber: data.phoneNumber || "",
       gender: parseInt(data.gender) || 0,
       birthDate: data.birthDate || "",
+      isSMSNotificationEnabled: data.isSMSNotificationEnabled ?? false,
+      isEmailNotificationEnabled: data.isEmailNotificationEnabled ?? false,
     };
 
     try {
@@ -51,7 +55,6 @@ export const useUpdateUserProfile = () => {
         }
       );
     } catch (error) {
-      console.error("Error updating profile:", error);
       toast.error("Profil güncellenirken bir hata oluştu");
     }
   };

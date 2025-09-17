@@ -13,7 +13,9 @@ export const useGetAffiliateUserList = (
   pageIndex: number,
   pageSize: number
 ) => {
-  const { data, isLoading, error } = useGetData<AffiliateUserListResponse>({
+  const { data, isLoading, error } = useGetData<{
+    data: AffiliateUserListResponse;
+  }>({
     url: GET_AFFILIATE_USER_LIST,
     queryKey: QueryKeys.AFFILIATE_USER_LIST,
     params: {
@@ -22,13 +24,12 @@ export const useGetAffiliateUserList = (
     },
     method: HttpMethod.GET,
     onError(err) {
-      console.log(err);
     },
   });
 
   return {
-    affiliateUserList: data?.items || [],
-    totalCount: data?.totalCount || 0,
+    affiliateUserList: data?.data?.items || [],
+    totalCount: data?.data?.totalCount || 0,
     isLoading,
     error,
   };

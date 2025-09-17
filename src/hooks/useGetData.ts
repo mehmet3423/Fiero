@@ -29,7 +29,6 @@ export default function useGetData<T>(
   const token = getToken();
 
   const getData = async (): Promise<T> => {
-
     try {
       let headers = {};
       if (token) {
@@ -40,7 +39,7 @@ export default function useGetData<T>(
 
           if (Date.now() >= exp) {
             handleLogout();
-            toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
+            // toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
             return Promise.reject("Token expired");
           }
         }
@@ -57,10 +56,38 @@ export default function useGetData<T>(
         params: options.params,
         headers,
         data: options.data,
+        timeout: 30000,
+        validateStatus: function (status) {
+          return status < 500;
+        },
       });
 
-      options.onSuccess?.(response.data);
-      return response.data;
+      // Response data validation - daha robust handling
+      if (response.status === 204 || response.status === 404) {
+        // No content veya not found durumları için
+        return null as T;
+      }
+
+      if (
+        response.headers["content-type"] &&
+        response.headers["content-type"].includes("application/json")
+      ) {
+        options.onSuccess?.(response.data);
+        return response.data;
+      } else {
+        // Plain text response için daha iyi handling
+        // SEO verisi olmayan durumlarda hata fırlatmak yerine null döndür
+        if (
+          response.status === 200 &&
+          (!response.data || response.data === "")
+        ) {
+          // Boş response - muhtemelen veri bulunamadı
+          return null as T;
+        }
+
+        // Gerçek bir hata durumu
+        throw new Error("API response is not in JSON format");
+      }
     } catch (err) {
       const error = err as AxiosError;
 
@@ -81,7 +108,7 @@ export default function useGetData<T>(
   const queryResult = useQuery({
     queryKey: Array.isArray(options.queryKey)
       ? options.queryKey
-      : [options.queryKey, options.params, options.data],
+      : [options.queryKey],
     queryFn: getData,
     enabled: queryEnabled,
     retry: 0,
@@ -93,4 +120,3 @@ export default function useGetData<T>(
 
   return { ...queryResult, isFetchingData };
 }
-

@@ -85,7 +85,7 @@ interface ProductsProps {
 
 const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const { t } = useLanguage();
-  const sortOptionLabels = SORT_OPTION_LABELS(t);
+  const sortOptionLabels = SORT_OPTION_LABELS;
   const [selectedMainCategoryId, setSelectedMainCategoryId] =
     useState<string>("");
   const [selectedSubCategoryId, setSelectedSubCategoryId] =
@@ -545,7 +545,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       {/* Page Title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">{t("productsPage.pageTitle")}</div>
+          <div className="heading text-center">
+            {t("productsPage.pageTitle")}
+          </div>
           <p className="text-center text-2 text_black-2 mt_5">
             {t("productsPage.pageSubtitle")}
           </p>
@@ -632,8 +634,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 {[2, 3, 4].map((g) => (
                   <li
                     key={g}
-                    className={`tf-view-layout-switch sw-layout-${g}${grid === g ? " active" : ""
-                      }`}
+                    className={`tf-view-layout-switch sw-layout-${g}${
+                      grid === g ? " active" : ""
+                    }`}
                     data-value-grid={`grid-${g}`}
                     onClick={() => setGrid(g)}
                   >
@@ -657,14 +660,20 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     style={{ cursor: "pointer" }}
                   >
                     <span className="text-sort-value">
-                      {sortOptionLabels[sortBy as keyof typeof sortOptionLabels] || t("productsPage.featured")}
+                      {sortOptionLabels[
+                        sortBy as keyof typeof sortOptionLabels
+                      ] || t("productsPage.featured")}
                     </span>
                     <span className="icon icon-arrow-down"></span>
                   </div>
-                  <div className={`dropdown-menu${dropdownOpen ? " show" : ""}`}>
+                  <div
+                    className={`dropdown-menu${dropdownOpen ? " show" : ""}`}
+                  >
                     {Object.entries(sortOptionLabels).map(([key, label]) => (
                       <div
-                        className={`select-item${sortBy === key ? " active" : ""}`}
+                        className={`select-item${
+                          sortBy === key ? " active" : ""
+                        }`}
                         key={key}
                         onClick={() => {
                           setSortBy(key);
@@ -694,8 +703,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                     grid === 2
                       ? "col-12 col-md-6 d-flex"
                       : grid === 3
-                        ? "col-12 col-md-4 d-flex"
-                        : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
+                      ? "col-12 col-md-4 d-flex"
+                      : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
                   }
                 >
                   <ProductCard product={product} />

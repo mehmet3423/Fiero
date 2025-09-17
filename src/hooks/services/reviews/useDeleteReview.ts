@@ -32,7 +32,6 @@ export const useDeleteReview = () => {
         }
       );
     } catch (error) {
-      console.error("Delete review error:", error);
       toast.error("Yorum silinirken bir hata oluştu");
     }
   };

@@ -3,6 +3,10 @@ import { useCreateShippingDiscount } from "@/hooks/services/discounts/shipping-d
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
+import { useGetSystemSettingTypes } from "@/hooks/services/settings/useGetSystemSettingTypes";
+import { useGetSystemSettings } from "@/hooks/services/settings/useGetSystemSettings";
 
 interface CreateShippingDiscountForm {
   name: string;
@@ -15,23 +19,40 @@ interface CreateShippingDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 function CreateShippingDiscountPage() {
   const router = useRouter();
   const { createShippingDiscount, isPending } = useCreateShippingDiscount();
+  const { settingTypes, isLoading: isSettingTypesLoading } = useGetSystemSettingTypes();
+  const { settings, isLoading: isSettingsLoading } = useGetSystemSettings();
+  const shippingCostKey = settingTypes.find(s => s.key === "ShippingCost")?.value;
 
+  const maxShippingPrice = Number(
+    settings.find(s => s.key === shippingCostKey)?.value ?? 0
+  );
   const [formData, setFormData] = useState<CreateShippingDiscountForm>({
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     startDate: "",
     endDate: "",
     minimumCargoAmount: 0,
     isActive: true,
     type: DiscountType.ShippingDiscount,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +61,6 @@ function CreateShippingDiscountPage() {
       await createShippingDiscount(formData);
       router.push("/admin/campaigns/shipping-discount");
     } catch (error) {
-      console.error("Error creating shipping discount:", error);
     }
   };
 
@@ -54,8 +74,17 @@ function CreateShippingDiscountPage() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? parseFloat(value)
+            : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -138,9 +167,11 @@ function CreateShippingDiscountPage() {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      max={maxShippingPrice}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
-                      placeholder="İndirim değeri"
+                      placeholder={`Maksimum ${maxShippingPrice}₺ olabilir`}
+                      disabled={isSettingTypesLoading || isSettingsLoading}
                     />
                   </div>
                   <div className="col-md-6">
@@ -227,6 +258,12 @@ function CreateShippingDiscountPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

@@ -15,7 +15,6 @@ export const useGetCountries = () => {
     queryKey: [QueryKeys.COUNTRIES],
     method: HttpMethod.GET,
     onError: (error) => {
-      console.error("Ülke listesi alınırken hata oluştu:", error);
       return {
         $id: "0",
         $values: [],

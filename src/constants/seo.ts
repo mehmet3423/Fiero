@@ -10,7 +10,7 @@ export const staticPages = [
   { label: "Hakkımızda", value: "about-us" },
   { label: "İletişim", value: "contact-us" },
   { label: "Gizlilik Politikası", value: "privacy-policy" },
-  { label: "Çerez Politikası", value: "cookie-policy" },
+  { label: "Çerez Politikası", value: "cerez-politikalari" },
   { label: "Sıkça Sorulan Sorular", value: "faq" },
   { label: "Mesafeli Satış Sözleşmesi", value: "distance-sales-agreement" },
   { label: "Kullanım Şartları", value: "terms" },

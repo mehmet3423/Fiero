@@ -6,12 +6,13 @@ import { DiscountType } from "@/constants/enums/DiscountType";
 import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
 import ProductSelector from "@/components/ProductSelector";
 import { DiscountValueType } from "@/constants/enums/DiscountValueType";
+import { ProductDiscount } from "@/constants/models/Discount";
 
 interface ProductDiscountForm {
   name: string;
   description: string;
   discountValue: number;
-  discountValueType: DiscountValueType;
+  discountValueType: number;
   maxDiscountValue: number;
   startDate: string;
   endDate: string;
@@ -33,7 +34,7 @@ export default function EditProductDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -49,13 +50,19 @@ export default function EditProductDiscount() {
         name: discount.name || "",
         description: discount.description || "",
         discountValue: discount.discountValue || 0,
-        discountValueType: discount.discountValueType,
+        discountValueType:
+          typeof discount.discountValueType === "string"
+            ? parseInt(discount.discountValueType, 10)
+            : discount.discountValueType,
         maxDiscountValue: discount.maxDiscountValue || 0,
         startDate: discount.startDate || "",
         endDate: discount.endDate || "",
-        isActive: discount.isActive || true,
+        isActive: discount.isActive ?? true,
         type: DiscountType.Product,
-        isWithinActiveDateRange: false,
+        isWithinActiveDateRange:
+          (discount as any).productDiscount?.isWithinActiveDateRange ??
+          discount.isWithinActiveDateRange ??
+          false,
         productId: (discount as any).productDiscount?.productId || "",
       });
     }
@@ -63,16 +70,21 @@ export default function EditProductDiscount() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateDiscount({
-        id: id as string,
+      const apiData: ProductDiscount = {
+        id: String(id),
         ...formData,
         productName: "",
         createdOn: Date.now(),
         createdOnValue: new Date().toISOString(),
-      });
+      };
+      // Son kontrol: discountValueType'ı number'a çevir
+      if (typeof apiData.discountValueType === "string") {
+        apiData.discountValueType = parseInt(apiData.discountValueType, 10);
+      }
+
+      await updateDiscount(apiData);
       router.push("/admin/campaigns/product-discount");
     } catch (error) {
-      console.error("Error updating discount:", error);
     }
   };
 
@@ -80,14 +92,23 @@ export default function EditProductDiscount() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+
+    const numberFields = [
+      "discountValueType",
+      "day",
+      "month",
+      "discountValue",
+    ];
     setFormData((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : name === "discountValueType"
-          ? Number(value)
-          : value,
+          : type === "number" || numberFields.includes(name)
+            ? name === "discountValueType" || name === "day" || name === "month"
+              ? parseInt(value, 10) // Integer alanlar için
+              : parseFloat(value) // Float alanlar için
+            : value,
     }));
   };
 
@@ -170,6 +191,7 @@ export default function EditProductDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -178,12 +200,12 @@ export default function EditProductDiscount() {
                 <select
                   className="form-select"
                   name="discountValueType"
-                  value={formData.discountValueType}
-                  onChange={handleChange}
+                  value={Number(formData.discountValueType)}
+                  onChange={(e) => { handleChange(e); }}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -195,6 +217,7 @@ export default function EditProductDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>

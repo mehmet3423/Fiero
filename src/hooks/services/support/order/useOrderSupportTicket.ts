@@ -19,25 +19,23 @@ export const useOrderSupportTicket = () => {
     setIsPending(true);
 
     try {
+      // Query parametreleri olarak URL'e ekle
+      const queryParams = new URLSearchParams({
+        RequestType: formData.requestType.toString(),
+        Title: formData.title,
+        Description: formData.description,
+        OrderItemId: formData.orderItemId,
+      });
+
       const response = await mutation.mutateAsync({
-        url: CREATE_ORDER_SUPPORT_TICKET,
+        url: `${CREATE_ORDER_SUPPORT_TICKET}?${queryParams.toString()}`,
         method: HttpMethod.POST,
-        data: {
-          requestType: formData.requestType,
-          title: formData.title,
-          description: formData.description,
-          orderItemId: formData.orderItemId,
-        },
+        // Body boş bırakıyoruz çünkü tüm veriler query string'de
       });
 
       toast.success("Sipariş destek talebiniz başarıyla oluşturuldu.");
       return response.data;
     } catch (error: any) {
-      console.error("Order Support Ticket API Error:", {
-        message: error.message,
-        response: error.response?.data,
-      });
-
       if (error.response?.data?.errors) {
         Object.entries(error.response.data.errors).forEach(
           ([field, messages]) => {

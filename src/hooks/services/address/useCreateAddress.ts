@@ -4,7 +4,6 @@ import { CREATE_USER_ADDRESS } from "@/constants/links";
 import { Address } from "@/constants/models/Address";
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
-
 export const useCreateAddress = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<Address>();
@@ -13,9 +12,12 @@ export const useCreateAddress = () => {
     address: Address,
     countryName?: string,
     provinceName?: string,
-    districtName?: string
+    districtName?: string,
+    districtId?: string,
+    cityId?: string,
+    phoneNumber?: string
   ) => {
-    const params = new URLSearchParams({
+    const body = {
       FirstName: address.firstName,
       LastName: address.lastName,
       Title: address.title,
@@ -26,12 +28,20 @@ export const useCreateAddress = () => {
       Street: address.street || "",
       PostalCode: address.postalCode || "",
       FullAddress: address.fullAddress || "",
-    }).toString();
+      DistrictId: districtId ?? null,
+      CityId: cityId ?? null,
+      PhoneNumber: phoneNumber || address.phoneNumber || "",
+    };
 
     await mutateAsync(
       {
-        url: `${CREATE_USER_ADDRESS}?${params}`,
+        url: CREATE_USER_ADDRESS,
         method: HttpMethod.POST,
+
+        data: body,
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
       {
         onSuccess: () => {

@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
       "images.com",
       "static.vecteezy.com",
       "nors.happencode.com",
+      "guardleather.com",
     ],
   },
 

@@ -54,22 +54,24 @@ export const useProductsByCategory = (
       : undefined,
     queryKey: categoryId
       ? [
-          QueryKeys.PRODUCT_LIST,
-          categoryId,
-          JSON.stringify(subSpecificationIds || []),
-          options.page?.toString(),
-          options.pageSize?.toString(),
-          options.discountSort?.toString(),
-          options.ratingSort?.toString(),
-        ]
+        QueryKeys.PRODUCT_LIST,
+        categoryId,
+        JSON.stringify(subSpecificationIds || []),
+        options.page?.toString(),
+        options.pageSize?.toString(),
+        options.discountSort?.toString(),
+        options.ratingSort?.toString(),
+      ]
       : QueryKeys.PRODUCT_LIST,
     method: HttpMethod.GET,
     enabled: options.enabled && !!categoryId,
   });
 
   return {
-    products: data,
+    products: data?.data || { items: [], from: 0, index: 0, size: 0, count: 0, pages: 0, hasPrevious: false, hasNext: false },
     isLoading,
     error,
+    isSuccess: data?.isSucceed,
+    message: data?.message,
   };
 };

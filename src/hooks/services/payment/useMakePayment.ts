@@ -1,43 +1,52 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import {
   MAKE_PAYMENT,
-  PAYMENT_FAILED_ABORT_ORDER,
-  PAYMENT_SUCCESS_COMPLETE_ORDER,
+  PAYMENT_FAILED_ABORT_ORDER
 } from "@/constants/links";
-import { PaymentResponse, PaymentRequest } from "@/constants/models/Payment";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
+import { PaymentRequest, CreateNonThreedsPaymentAuthResponseData } from "@/constants/models/Payment";
 import useMyMutation from "@/hooks/useMyMutation";
+import toast from "react-hot-toast";
 
 export const useMakePayment = () => {
-  const { mutateAsync, isPending } = useMyMutation<PaymentResponse>();
+  const { mutateAsync, isPending } = useMyMutation<CommandResultWithData<CreateNonThreedsPaymentAuthResponseData>>();
   const { mutateAsync: completeOrder, isPending: completeOrderPending } =
     useMyMutation<any>();
 
-  const makePayment = async (paymentData: PaymentRequest) => {
+  const makePayment = async (
+    paymentData: PaymentRequest
+  ): Promise<CommandResultWithData<CreateNonThreedsPaymentAuthResponseData>> => {
     try {
-      await mutateAsync(
-        {
-          url: MAKE_PAYMENT,
-          method: HttpMethod.POST,
-          data: paymentData,
-        },
-        {
-          onSuccess: () => {
-            completeOrder({
-              url: `${PAYMENT_SUCCESS_COMPLETE_ORDER}?orderId=${paymentData.orderId}&affliateCollectionId=${paymentData.affliateCollectionId}`,
-              method: HttpMethod.POST,
-            });
-          },
-          onError: (error) => {
-            completeOrder({
-              url: `${PAYMENT_FAILED_ABORT_ORDER}?orderId=${paymentData.orderId}`,
-              method: HttpMethod.POST,
-            });
-          },
-        }
-      );
-      console.log("Payment request successful");
+      const response = await mutateAsync({
+        url: MAKE_PAYMENT,
+        method: HttpMethod.POST,
+        data: paymentData,
+      });
+
+
+      // Check if the response is successful according to CommandResult structure
+      if (!response.data.isSucceed || !response.data.data) {
+        toast.error(response.data.message || "Payment failed");
+        throw new Error(response.data.message || "Payment failed");
+      }
+
+      toast.success("Payment request successful");
+      return response.data;
     } catch (error) {
-      console.error("Error during payment request:", error);
+
+      // Hata durumunda abort order isteği at
+      try {
+        await completeOrder({
+          url: PAYMENT_FAILED_ABORT_ORDER,
+          method: HttpMethod.POST,
+          data: {
+            orderId: paymentData.orderId,
+          },
+        });
+      } catch (completeOrderError) {
+        // Silent fail for abort order
+      }
+
       throw error;
     }
   };

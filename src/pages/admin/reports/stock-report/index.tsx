@@ -11,10 +11,12 @@ import BackButton from "@/components/shared/BackButton";
 
 interface StockReportFilters {
   categoryKeyword?: string;
+  ascending?: boolean;
 }
 
 function StockReportPage() {
   const [categoryKeyword, setCategoryKeyword] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<boolean | undefined>(undefined);
 
   const {
     displayPage,
@@ -34,17 +36,28 @@ function StockReportPage() {
   // Sync local state with URL filters
   React.useEffect(() => {
     setCategoryKeyword(filters.categoryKeyword ?? "");
+    setSortOrder(filters.ascending);
   }, [filters]);
 
   const handleSearch = () => {
     updateFilters({
       categoryKeyword: categoryKeyword || undefined,
+      ascending: sortOrder,
     });
   };
 
   const handleClearFilter = () => {
     setCategoryKeyword("");
+    setSortOrder(undefined);
     clearFilters();
+  };
+
+  const handleSortChange = (ascending: boolean | undefined) => {
+    setSortOrder(ascending);
+    updateFilters({
+      categoryKeyword: filters.categoryKeyword,
+      ascending: ascending,
+    });
   };
 
   const handleExcelExport = () => {
@@ -53,22 +66,22 @@ function StockReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y px-4">
-      <h5 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y">
+      <h4 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Stok Raporu
-      </h5>
+      </h4>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
-        <div className="card-header bg-white" style={{ borderBottom: "0px", textAlign: "left" }}>
+        <div className="card-header">
           <h5 className="card-title mb-0 p-3">Filtreler</h5>
         </div>
         <div className="card-body">
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label htmlFor="categoryKeyword" className="form-label">
                 Kategori Anahtar Kelimesi
               </label>
@@ -82,9 +95,46 @@ function StockReportPage() {
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <div className="col-md-6 d-flex align-items-end">
+            <div className="col-md-4">
+              <label className="form-label">Sıralama</label>
+              <div className="d-flex gap-2">
+                <button
+                  className={`btn btn-sm ${
+                    sortOrder === true ? "btn-primary" : "btn-outline-primary"
+                  }`}
+                  onClick={() => handleSortChange(true)}
+                  disabled={isLoading}
+                >
+                  <i className="bx bx-sort-up me-1"></i>
+                  Artan
+                </button>
+                <button
+                  className={`btn btn-sm ${
+                    sortOrder === false ? "btn-primary" : "btn-outline-primary"
+                  }`}
+                  onClick={() => handleSortChange(false)}
+                  disabled={isLoading}
+                >
+                  <i className="bx bx-sort-down me-1"></i>
+                  Azalan
+                </button>
+                <button
+                  className={`btn btn-sm ${
+                    sortOrder === undefined
+                      ? "btn-primary"
+                      : "btn-outline-secondary"
+                  }`}
+                  onClick={() => handleSortChange(undefined)}
+                  disabled={isLoading}
+                >
+                  <i className="bx bx-x me-1"></i>
+                  Varsayılan
+                </button>
+              </div>
+            </div>
+            <div className="col-md-4 d-flex align-items-end">
               <button
-                className="btn btn-dark me-2"
+                className="btn btn-primary me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
               >
@@ -103,7 +153,7 @@ function StockReportPage() {
 
       {/* Results Section */}
       <div className="card">
-        <div className="card-header bg-white d-flex justify-content-between align-items-center" style={{ borderBottom: "0px" }}>
+        <div className="card-header d-flex justify-content-between align-items-center">
           <h5 className="card-title mb-0 p-3">Stok Raporu</h5>
           <button
             className="btn btn-success btn-sm m-3"
@@ -148,7 +198,7 @@ function StockReportPage() {
               Array.isArray(data.data.items) &&
               data.data.items.length > 0 ? (
                 <div className="table-responsive">
-                  <table className="table table-striped table-lg">
+                  <table className="table table-striped table-sm">
                     <thead>
                       <tr>
                         <th className="small">#</th>
@@ -163,9 +213,9 @@ function StockReportPage() {
                       {data.data.items.map((item, index) => {
                         return (
                           <tr key={item.id}>
-                            <td className="large">
+                            <td className="small">
                               <span
-                                className="badge text-gray badge-sm"
+                                className="badge text-primary badge-sm"
                                 style={{ fontSize: "0.7rem" }}
                               >
                                 {getGlobalRowNumber(
@@ -175,14 +225,14 @@ function StockReportPage() {
                                 )}
                               </span>
                             </td>
-                            <td className="large text-gray">{item.title}</td>
-                            <td className="large text-gray">{item.price}₺</td>
-                            <td className="large text-gray">{item.barcodeNumber}</td>
-                            <td className="large text-gray">
+                            <td className="small">{item.title}</td>
+                            <td className="small">{item.price}₺</td>
+                            <td className="small">{item.barcodeNumber}</td>
+                            <td className="small">
                               <span
                                 className={`badge badge-sm ${
                                   item.sellableQuantity > 10
-                                    ? "bg-dark"
+                                    ? "bg-success"
                                     : item.sellableQuantity > 0
                                     ? "bg-warning"
                                     : "bg-danger"
@@ -194,7 +244,7 @@ function StockReportPage() {
                                 {item.sellableQuantity}
                               </span>
                             </td>
-                            <td className="large">
+                            <td className="small">
                               {item?.modifiedOnValue || item?.createdOnValue
                                 ? new Date(
                                     item.modifiedOnValue || item.createdOnValue

@@ -39,6 +39,7 @@ function GeneralContentPage() {
 
   useEffect(() => {
     refetchContents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContentType]);
 
   const handleAdd = async (formData: FormData) => {
@@ -50,7 +51,7 @@ function GeneralContentPage() {
         formData.get("content") as string,
         formData.get("contentUrl") as string,
         formData.get("imageUrl") as string,
-        contents?.items.length || 0,
+        contents?.items.length || 0, // yeni içerik için order
         selectedContentType
       );
       $("#addContentModal").modal("hide");
@@ -68,7 +69,7 @@ function GeneralContentPage() {
       const updatedContent = {
         $id: editingContent.$id,
         id: editingContent.id,
-        order: editingContent.order,
+        order: editingContent.order, // order korunuyor
         title: formData.get("title") as string,
         content: formData.get("content") as string,
         contentUrl: formData.get("contentUrl") as string,
@@ -129,18 +130,13 @@ function GeneralContentPage() {
       );
     }
 
-    // if (contents?.items.$values.length === 0) {
-    //     return (
-    //         <div className="text-center py-5">
-    //             <i className="fas fa-inbox mb-3" style={{ fontSize: '2rem', color: '#ccc' }}></i>
-    //             <p className="text-muted">Bu kategoride henüz içerik bulunmuyor</p>
-    //         </div>
-    //     )
-    // }
-
     return (
       <GeneralContentEditGrid
-        contents={contents?.items as GeneralContentModel[]}
+        contents={
+          (contents?.items as GeneralContentModel[])
+            ?.slice()
+            ?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        }
         updateContent={updateContent}
         refetchContent={refetchContents}
         deleteContent={handleDeleteClick}
@@ -159,21 +155,15 @@ function GeneralContentPage() {
             <li key={key} className={styles.tabItem}>
               <button
                 type="button"
-                className={`btn btn-outline-primary ${selectedContentType === value ? "active" : ""
-                  }`}
+                className={`btn btn-outline-primary ${
+                  selectedContentType === value ? "active" : ""
+                }`}
                 onClick={() =>
                   setSelectedContentType(value as GeneralContentType)
                 }
               >
                 {getGeneralContentTypeName(value as GeneralContentType)}
               </button>
-              {/* <button
-                                type="button"
-                                className={`${styles.tabButton} ${selectedContentType === value ? styles.tabButtonActive : ''}`}
-                                onClick={() => setSelectedContentType(value as GeneralContentType)}
-                            >
-                                {key.replace(/_/g, ' ')}
-                            </button> */}
             </li>
           ))}
       </ul>
@@ -181,12 +171,7 @@ function GeneralContentPage() {
       {/* İçerik Listesi */}
       <div className="content-area">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h4 className="mb-0">
-            {/* {selectedContentType !== null
-                            ? `${Object.keys(GeneralContentType)[selectedContentType].replace(/_/g, ' ')} İçerikler`
-                            : ''
-                        } */}
-          </h4>
+          <h4 className="mb-0"></h4>
           <button
             type="button"
             className="btn btn-success"
@@ -197,16 +182,13 @@ function GeneralContentPage() {
         </div>
 
         {selectedContentType &&
-          isContentTypeCustomizable(selectedContentType) ? (
+        isContentTypeCustomizable(selectedContentType) ? (
           <>{noGeneralContentView()}</>
         ) : (
           <div className={styles.contentList}>
             {isLoading ? (
               <div className="text-center py-5">
-                <div
-                  className="spinner-border text-primary"
-                  role="status"
-                ></div>
+                <div className="spinner-border text-primary" role="status"></div>
               </div>
             ) : selectedContentType === null ? (
               <div className="text-center py-5">
@@ -230,48 +212,53 @@ function GeneralContentPage() {
                 </p>
               </div>
             ) : (
-              contents?.items.map((content: any) => (
-                <div
-                  key={content.id}
-                  className={`${styles.contentCard} p-4 mb-3 border rounded`}
-                >
-                  <div className={styles.contentInfo}>
-                    <h5 className="mb-3">{content.title}</h5>
-                    <p className="text-muted mb-3">{content.content}</p>
-                    {content.imageUrl && (
-                      <Image
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        src={content.imageUrl}
-                        alt={content.title}
-                        className={`${styles.contentImage} rounded`}
-                      />
-                    )}
-                  </div>
-                  <div className={`d-flex justify-content-between mt-3`}>
-                    <button
-                      type="button"
-                      className={`btn btn-primary mx-2`}
-                      onClick={() => handleEdit(content)}
-                    >
-                      <i className="fas fa-edit mr-1"></i>
-                      Düzenle
-                    </button>
+              contents?.items
+                ?.slice()
+                ?.sort(
+                  (a: any, b: any) => (a.order ?? 0) - (b.order ?? 0)
+                )
+                .map((content: any) => (
+                  <div
+                    key={content.id}
+                    className={`${styles.contentCard} p-4 mb-3 border rounded`}
+                  >
+                    <div className={styles.contentInfo}>
+                      <h5 className="mb-3">{content.title}</h5>
+                      <p className="text-muted mb-3">{content.content}</p>
+                      {content.imageUrl && (
+                        <Image
+                          width={0}
+                          height={0}
+                          sizes="100vw"
+                          src={content.imageUrl}
+                          alt={content.title}
+                          className={`${styles.contentImage} rounded`}
+                        />
+                      )}
+                    </div>
+                    <div className={`d-flex justify-content-between mt-3`}>
+                      <button
+                        type="button"
+                        className={`btn btn-primary mx-2`}
+                        onClick={() => handleEdit(content)}
+                      >
+                        <i className="fas fa-edit mr-1"></i>
+                        Düzenle
+                      </button>
 
-                    <button
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() =>
-                        handleDeleteClick(content.id, content.title)
-                      }
-                      disabled={isDeleting}
-                    >
-                      <i className="bx bx-trash me-1"></i>
-                      Sil
-                    </button>
+                      <button
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() =>
+                          handleDeleteClick(content.id, content.title)
+                        }
+                        disabled={isDeleting}
+                      >
+                        <i className="bx bx-trash me-1"></i>
+                        Sil
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))
             )}
           </div>
         )}
@@ -282,6 +269,7 @@ function GeneralContentPage() {
           {/* Ekleme Modalı */}
           <GeneralModal id="addContentModal" title="Yeni İçerik Ekle" size="lg">
             <ContentForm
+              key={`add-${selectedContentType}`} // kategori değişiminde sıfırla
               onSubmit={handleAdd}
               isLoading={isAdding}
               selectedContentType={selectedContentType}
@@ -290,22 +278,19 @@ function GeneralContentPage() {
 
           {/* Düzenleme Modalı */}
           <GeneralModal id="editContentModal" title="İçerik Düzenle" size="lg">
-            {
-              editingContent && (
-
-                <ContentForm
-                  editingContent={editingContent}
-                  onSubmit={handleUpdate}
-                  isLoading={isUpdating}
-                  onCancel={() => {
-                    setEditingContent(null);
-                    $("#editContentModal").modal("hide");
-                  }}
-                  selectedContentType={selectedContentType}
-                />
-              )
-            }
-
+            {editingContent && (
+              <ContentForm
+                key={editingContent.id}
+                editingContent={editingContent}
+                onSubmit={handleUpdate}
+                isLoading={isUpdating}
+                onCancel={() => {
+                  setEditingContent(null);
+                  $("#editContentModal").modal("hide");
+                }}
+                selectedContentType={selectedContentType}
+              />
+            )}
           </GeneralModal>
 
           {/* Silme Modalı */}

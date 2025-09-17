@@ -34,7 +34,7 @@ export default function EditBundleDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -66,7 +66,7 @@ export default function EditBundleDiscount() {
         maxDiscountValue: discount.maxDiscountValue || 0,
         startDate: discount.startDate || "",
         endDate: discount.endDate || "",
-        isActive: discount.isActive || true,
+        isActive: discount.isActive ?? true,
         type: DiscountType.Bundle,
         isWithinActiveDateRange: false,
         productIds: productIds,
@@ -92,7 +92,6 @@ export default function EditBundleDiscount() {
       });
       router.push("/admin/campaigns/bundle-discount");
     } catch (error) {
-      console.error("Error updating discount:", error);
     }
   };
 
@@ -213,7 +212,8 @@ export default function EditBundleDiscount() {
                   name="bundlePrice"
                   value={formData.bundlePrice}
                   onChange={handleChange}
-                  min="0"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
                 {formData.bundlePrice > 0 && totalOriginalPrice > 0 && (
@@ -235,7 +235,8 @@ export default function EditBundleDiscount() {
                   name="maxDiscountValue"
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
-                  min="0"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>

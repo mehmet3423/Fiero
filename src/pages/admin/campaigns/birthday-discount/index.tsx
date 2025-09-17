@@ -55,19 +55,18 @@ const BirthdayDiscountPage = () => {
       toast.success("Doğum günü indirimi başarıyla silindi");
     } catch (error) {
       toast.error("Doğum günü indirimi silinirken bir hata oluştu");
-      console.error("Error deleting discount:", error);
     }
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchName(e.target.value);
-    setPage(1);
+    setPage(0);
   };
 
   const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setIsActive(value === "" ? undefined : value === "true");
-    setPage(1);
+    setPage(0);
   };
 
   const formatDate = (dateString: string) => {
@@ -77,6 +76,8 @@ const BirthdayDiscountPage = () => {
 
   const formatDiscountValue = (discount: BirthdayDiscount) => {
     return discount.discountValueType === 0
+      ? discount.discountValue
+      : discount.discountValueType === 1
       ? `%${discount.discountValue}`
       : `${discount.discountValue} ₺`;
   };
@@ -186,22 +187,36 @@ const BirthdayDiscountPage = () => {
                     <td>{formatDiscountValue(discount)}</td>
                     <td>
                       <small className="text-muted">
-                        {discount.validDaysBefore} gün önce -{" "}
+                        {discount.validDaysBefore} gün -{" "}
                         {discount.validDaysAfter} gün sonra
                       </small>
                     </td>
                     <td>{formatDate(discount.startDate)}</td>
                     <td>{formatDate(discount.endDate)}</td>
                     <td>
-                      {discount.isActive && discount.isWithinActiveDateRange
-                        ? "Aktif"
-                        : "Pasif"}
+                      <span
+                        className={`badge bg-${
+                          discount.isActive &&
+                          (discount.isWithinActiveDateRange === undefined ||
+                            discount.isWithinActiveDateRange)
+                            ? "success"
+                            : "danger"
+                        }`}
+                      >
+                        {discount.isActive
+                          ? discount.isWithinActiveDateRange === undefined
+                            ? "Aktif (Deaktif Tarih)"
+                            : discount.isWithinActiveDateRange
+                            ? "Aktif"
+                            : "Aktif (Deaktif Tarih)"
+                          : "Pasif"}
+                      </span>
                     </td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-primary d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-icon btn-outline-primary"
                           onClick={() => handleEdit(discount.id)}
                           title="Düzenle"
                           disabled={isDeleting}
@@ -211,7 +226,7 @@ const BirthdayDiscountPage = () => {
 
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-danger d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-icon btn-outline-danger"
                           onClick={() => confirmDelete(discount.id)}
                           title="Sil"
                           disabled={isDeleting}

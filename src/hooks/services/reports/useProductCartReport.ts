@@ -46,7 +46,6 @@ const fetchProductCartReport = async (
 
       if (Date.now() >= exp) {
         handleLogout();
-        toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
         throw new Error("Token expired");
       }
     }
@@ -63,7 +62,6 @@ const fetchProductCartReport = async (
   if (!response.ok) {
     // 401 error handling
     if (response.status === 401 && token) {
-      toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
       handleLogout();
     }
     throw new Error(`HTTP error! status: ${response.status}`);

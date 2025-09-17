@@ -6,25 +6,34 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 function AdminLoginPage() {
   const router = useRouter();
-  const { handleLogin, loginLoading, userProfile } = useAuth();
+  const {
+    handleLogin,
+    loginLoading,
+    userProfile,
+    userProfileLoading,
+    refetchUserProfile,
+  } = useAuth();
   const { isAdmin } = useIsAdmin();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     remember: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   // If user is already logged in as admin, redirect to admin dashboard
   useEffect(() => {
-    if (userProfile && isAdmin) {
+    if (userProfile && isAdmin && !userProfileLoading) {
       router.replace("/admin");
     }
-  }, [userProfile, isAdmin, router]);
+  }, [userProfile, isAdmin, userProfileLoading, router]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleLogin(formData, () => {});
+      await handleLogin(formData);
+      // Login başarılı olduktan sonra user profile otomatik güncellenecek
+      // useEffect zaten userProfile ve isAdmin değiştiğinde yönlendirme yapacak
     } catch (error) {
       toast.error("Giriş yapılırken bir hata oluştu");
     }
@@ -67,17 +76,42 @@ function AdminLoginPage() {
                       <label htmlFor="password" className="form-label">
                         Şifre
                       </label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        value={formData.password}
-                        onChange={(e) =>
-                          setFormData({ ...formData, password: e.target.value })
-                        }
-                        placeholder="••••••••"
-                        required
-                      />
+                      <div className="position-relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          className="form-control"
+                          id="password"
+                          value={formData.password}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              password: e.target.value,
+                            })
+                          }
+                          placeholder="••••••••"
+                          required
+                          style={{ paddingRight: "45px" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                          style={{
+                            border: "none",
+                            background: "none",
+                            padding: "0 10px",
+                            color: "#6c757d",
+                            textDecoration: "none",
+                            zIndex: 10,
+                          }}
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <i className="fas fa-eye-slash small"></i>
+                          ) : (
+                            <i className="fas fa-eye small"></i>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
                     <div
