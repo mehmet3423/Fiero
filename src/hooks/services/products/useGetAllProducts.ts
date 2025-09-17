@@ -1,7 +1,7 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_ALL_PRODUCTS } from "@/constants/links";
-import { ProductListResponse } from "@/constants/models/Product";
+import { WrappedProductListResponse } from "@/constants/models/Product";
 import useGetData from "@/hooks/useGetData";
 import {
   DiscountSort,
@@ -26,63 +26,27 @@ interface UseGetAllProductsOptions {
 
 // Ürünler ile ilgili hook
 export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
-  const params = new URLSearchParams();
-
-  // DiscountSort parametresi (fiyat sıralaması) - her zaman ekle
-  params.set(
-    "DiscountSort",
-    (options.discountSort !== undefined ? options.discountSort : 0).toString()
-  );
-
-  // RatingSort parametresi (puan sıralaması) - her zaman ekle
-  params.set(
-    "RatingSort",
-    (options.ratingSort !== undefined ? options.ratingSort : 0).toString()
-  );
-
-  // SalesCountSort parametresi (satış sayısı sıralaması) - her zaman ekle
-  params.set(
-    "SalesCountSort",
-    (options.salesCountSort !== undefined
-      ? options.salesCountSort
-      : 0
-    ).toString()
-  );
-
-  // LikeCountSort parametresi (beğeni sayısı sıralaması) - her zaman ekle
-  params.set(
-    "LikeCountSort",
-    (options.likeCountSort !== undefined ? options.likeCountSort : 0).toString()
-  );
-
-  // MainCategoryId parametresi eklenirse
-  if (options.mainCategoryId) {
-    params.set("MainCategoryId", options.mainCategoryId);
-  }
-
-  // SubCategoryId parametresi eklenirse
-  if (options.subCategoryId) {
-    params.set("SubCategoryId", options.subCategoryId);
-  }
-
   // Arama terimi - search parametresi öncelikli, yoksa searchTerm kullan
   const searchQuery = options.search || options.searchTerm;
-  if (searchQuery) {
-    params.set("Search", searchQuery);
-  }
 
-  params.set(
-    "Page",
-    options.page !== undefined ? options.page.toString() : "0"
-  );
-  params.set(
-    "PageSize",
-    options.pageSize !== undefined ? options.pageSize.toString() : "1000"
-  );
-  params.set("From", "0");
+  // Body data objesi oluştur
+  const bodyData = {
+    discountSort: options.discountSort !== undefined ? options.discountSort : 0,
+    ratingSort: options.ratingSort !== undefined ? options.ratingSort : 0,
+    salesCountSort:
+      options.salesCountSort !== undefined ? options.salesCountSort : 0,
+    likeCountSort:
+      options.likeCountSort !== undefined ? options.likeCountSort : 0,
+    page: options.page !== undefined ? options.page : 0,
+    pageSize: options.pageSize !== undefined ? options.pageSize : 1000,
+    from: 0,
+    ...(options.mainCategoryId && { mainCategoryId: options.mainCategoryId }),
+    ...(options.subCategoryId && { subCategoryId: options.subCategoryId }),
+    ...(searchQuery && { search: searchQuery }),
+  };
 
-  const { data, isLoading, error } = useGetData<ProductListResponse>({
-    url: `${GET_ALL_PRODUCTS}?${params.toString()}`,
+  const { data, isLoading, error } = useGetData<WrappedProductListResponse>({
+    url: GET_ALL_PRODUCTS,
     queryKey: [
       QueryKeys.ALL_PRODUCTS,
       options.page?.toString(),
@@ -96,12 +60,21 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
       searchQuery, // search query'yi de key'e ekle
     ],
     method: HttpMethod.POST,
+    data: bodyData,
     enabled: options.enabled !== false,
   });
 
   return {
-    data,
+ 
+    data: data?.data, // Wrapper'dan data field'ını çıkar
+    items: data?.data?.items || [],
+    count: data?.data?.count || 0,
+    hasNext: data?.data?.hasNext || false,
+    hasPrevious: data?.data?.hasPrevious || false,
+ 
     isLoading,
     error,
+    isSuccess: data?.isSucceed,
+    message: data?.message,
   };
 };

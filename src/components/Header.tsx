@@ -20,7 +20,7 @@ import LanguageSwitcher from "./shared/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
   const router = useRouter();
   const {
     userRole,
@@ -45,7 +45,7 @@ export default function Header() {
   // Chunk subcategories into groups of 10 for column layout
   const chunkedSubCategories = useMemo(() => {
     if (!subCategories) return [];
-    const sorted = [...subCategories].sort(
+    const sorted = [...subCategories.data].sort(
       (a, b) => a.displayIndex - b.displayIndex
     );
     const chunks: (typeof sorted)[] = [];
@@ -204,7 +204,10 @@ export default function Header() {
         <div className="tf-top-bar bg_white line py-4 fixed-top">
           <div className="px_15 lg-px_40">
             <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
-              <div className="col-4 tf-lg-hidden" style={{ paddingLeft: "25px" }}>
+              <div
+                className="col-4 tf-lg-hidden"
+                style={{ paddingLeft: "25px" }}
+              >
                 <button onClick={toggleMobileMenu} className="nav-icon-item">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -244,7 +247,8 @@ export default function Header() {
                       <p className="top-bar-text fw-5">
                         {t("header.springSale")}
                         <Link href="/products" className="tf-btn btn-line">
-                          {t("header.shopNow")}<i className="icon icon-arrow1-top-left"></i>
+                          {t("header.shopNow")}
+                          <i className="icon icon-arrow1-top-left"></i>
                         </Link>
                       </p>
                     </div>
@@ -258,7 +262,6 @@ export default function Header() {
                   paddingRight: windowWidth > 1024 ? "10%" : "25px",
                 }}
               >
-
                 <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                   <LanguageSwitcher />
                   <li className="nav-search tf-md-hidden">
@@ -286,10 +289,13 @@ export default function Header() {
                               <div className="user-name">
                                 {showAdminFeatures
                                   ? "Admin"
-                                  : `${userProfile?.applicationUser?.firstName ||
-                                  "Kullanıcı"
-                                  } ${userProfile?.applicationUser?.lastName || ""
-                                  }`}
+                                  : `${
+                                      userProfile?.applicationUser?.firstName ||
+                                      "Kullanıcı"
+                                    } ${
+                                      userProfile?.applicationUser?.lastName ||
+                                      ""
+                                    }`}
                               </div>
                             </div>
                           </div>
@@ -300,7 +306,7 @@ export default function Header() {
                                 className="dropdown-item"
                               >
                                 <i className="icon-user"></i>
-                                <span>  {t("header.profile")}</span>
+                                <span> {t("header.profile")}</span>
                               </Link>
                             )}
                             {showCustomerFeatures && (
@@ -362,8 +368,9 @@ export default function Header() {
                   </li>
                   <li className="nav-wishlist tf-md-hidden">
                     <button
-                      className={`nav-icon-item ${totalFavorites > 0 ? "has-favorites" : ""
-                        }`}
+                      className={`nav-icon-item ${
+                        totalFavorites > 0 ? "has-favorites" : ""
+                      }`}
                       onClick={() => router.push("/favorites")}
                       style={{ marginTop: "3px" }}
                     >
@@ -385,7 +392,10 @@ export default function Header() {
                         ></i>
                       )}
                       {totalFavorites > 0 && (
-                        <span className="count-box" style={{ marginTop: "2px" }}>
+                        <span
+                          className="count-box"
+                          style={{ marginTop: "2px" }}
+                        >
                           {totalFavorites}
                         </span>
                       )}
@@ -433,8 +443,8 @@ export default function Header() {
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center">
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
-                  {categories?.items?.length &&
-                    categories.items
+                  {categories?.data?.length &&
+                    categories.data
                       .slice()
                       .sort((a, b) => a.displayIndex - b.displayIndex)
                       .map((category) => (

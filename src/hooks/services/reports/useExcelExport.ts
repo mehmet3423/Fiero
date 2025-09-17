@@ -59,7 +59,6 @@ export function useExcelExport() {
 
           if (Date.now() >= exp) {
             handleLogout();
-            toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
             throw new Error("Token expired");
           }
         }
@@ -77,7 +76,6 @@ export function useExcelExport() {
       if (!response.ok) {
         // 401 error handling
         if (response.status === 401 && token) {
-          toast.error("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
           handleLogout();
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -122,19 +120,6 @@ export function useExcelExport() {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error("Excel export error:", error);
-      console.error("Error details:", {
-        message: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
-        endpoint,
-        params: filteredParams,
-        fullUrl,
-      });
-      alert(
-        `Excel dosyası indirilemedi. Hata: ${
-          error instanceof Error ? error.message : "Bilinmeyen hata"
-        }`
-      );
     } finally {
       setIsExporting(false);
     }

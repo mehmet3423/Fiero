@@ -44,7 +44,7 @@ function EditCouponDiscount() {
         name: discount.name,
         description: discount.description || "",
         discountValue: discount.discountValue,
-        discountValueType: DiscountValueType.Percentage,
+        discountValueType: discount.discountValueType,
         startDate: discount.startDate,
         endDate: discount.endDate,
         isActive: discount.isActive,
@@ -60,11 +60,9 @@ function EditCouponDiscount() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log(formData);
       await updateDiscount(formData as CouponDiscount);
       router.push("/admin/campaigns/coupon-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -77,9 +75,11 @@ function EditCouponDiscount() {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : type === "number"
-          ? parseFloat(value)
-          : value,
+          : name === "discountValueType"
+            ? Number(value) // <-- burada string'i sayıya çeviriyoruz
+            : type === "number"
+              ? parseFloat(value)
+              : value,
     }));
   };
 
@@ -173,7 +173,7 @@ function EditCouponDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -187,8 +187,8 @@ function EditCouponDiscount() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={DiscountValueType.Percentage}>Yüzde (%)</option>
+                  <option value={DiscountValueType.FixedAmount}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -200,6 +200,7 @@ function EditCouponDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   placeholder="Maksimum indirim değeri"
                 />
               </div>
@@ -227,6 +228,7 @@ function EditCouponDiscount() {
                   value={formData.maxUsageCount}
                   onChange={handleChange}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   placeholder="Kullanım limiti"
                 />
               </div>

@@ -1,4 +1,3 @@
-import { useLanguage } from "@/context/LanguageContext";
 import { ReactNode } from "react";
 
 interface GeneralModalProps {
@@ -12,8 +11,6 @@ interface GeneralModalProps {
   approveButtonText?: string;
   isLoading?: boolean;
   formId?: string;
-  approveButtonStyle?: React.CSSProperties; // Add this prop
-  approveButtonClassName?: string; // Added className prop for approve button
 }
 
 function GeneralModal({
@@ -24,14 +21,10 @@ function GeneralModal({
   onApprove,
   size = "md",
   showFooter = false,
-  approveButtonText,
+  approveButtonText = "Onayla",
   isLoading = false,
   formId,
-  approveButtonStyle,
-  approveButtonClassName, // Added className prop for approve button
 }: GeneralModalProps) {
-  const { t } = useLanguage();
-  const defaultApproveButtonText = approveButtonText || t("modalProps.approveButtonText");
   return (
     <div className="modal fade" id={id} tabIndex={-1} aria-hidden="true">
       <div
@@ -63,17 +56,16 @@ function GeneralModal({
                 data-bs-dismiss="modal"
                 onClick={onClose}
               >
-                {t("modalProps.cancel")}
+                İptal
               </button>
               <button
                 type={formId ? "submit" : "button"}
                 form={formId}
-                className={`btn ${approveButtonClassName || "btn-dark"}`}
+                className="btn btn-primary"
                 onClick={!formId ? onApprove : undefined}
                 disabled={isLoading}
-                style={approveButtonStyle}
               >
-                {isLoading ? t("modalProps.processing") : defaultApproveButtonText}
+                {isLoading ? "İşleniyor..." : approveButtonText}
               </button>
             </div>
           )}

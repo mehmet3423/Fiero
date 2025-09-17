@@ -15,7 +15,6 @@ export const useActiveCollectionCookie = () => {
             try {
                 setActiveCollection(JSON.parse(cookie));
             } catch (error) {
-                console.error('Error parsing active collection cookie:', error);
                 Cookies.remove('activeCollection');
             }
         }
@@ -34,7 +33,6 @@ export const useActiveCollectionCookie = () => {
         if (!activeCollection) return;
 
         if (activeCollection.collectionItemIds.includes(itemId)) {
-            console.log('Item already exists in collection:', itemId);
             return;
         }
 
@@ -53,7 +51,6 @@ export const useActiveCollectionCookie = () => {
         }
 
         if (activeCollection.collectionItemIds.some(id => itemIds.includes(id))) {
-            console.log('Item already exists in collection:', itemIds);
             return;
         }
 
@@ -111,7 +108,6 @@ export const useActiveCollectionCookie = () => {
     };
 
     const canAddToCart = (collectionId: string): boolean => {
-        console.log(activeCollection)
         if (!activeCollection) return true;
         return activeCollection.collectionId === collectionId;
     };

@@ -30,7 +30,7 @@ export default function EditCategoryDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -99,7 +99,7 @@ export default function EditCategoryDiscount() {
         name: discount.name || "",
         description: discount.description || "",
         discountValue: discount.discountValue || 0,
-        discountValueType: discount.discountValueType || 0,
+        discountValueType: discount.discountValueType || 1,
         maxDiscountValue: discount.maxDiscountValue || 0,
         startDate: discount.startDate || "",
         endDate: discount.endDate || "",
@@ -111,7 +111,6 @@ export default function EditCategoryDiscount() {
       });
     }
   }, [discount, categories]);
-  console.log("formData", formData);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,7 +131,6 @@ export default function EditCategoryDiscount() {
       });
       router.push("/admin/campaigns/category-discount");
     } catch (error) {
-      console.error("Error updating discount:", error);
     }
   };
 
@@ -146,8 +144,8 @@ export default function EditCategoryDiscount() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "discountValueType" || name === "discountValue"
-          ? Number(value)
-          : value,
+            ? Number(value)
+            : value,
     }));
   };
 
@@ -231,6 +229,7 @@ export default function EditCategoryDiscount() {
                   onChange={handleChange}
                   min={0}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-md-4 mb-3">
@@ -242,8 +241,8 @@ export default function EditCategoryDiscount() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -255,6 +254,7 @@ export default function EditCategoryDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
@@ -362,6 +362,12 @@ export default function EditCategoryDiscount() {
               >
                 {isUpdating ? "Kaydediliyor..." : "Kaydet"}
               </button>
+              <Link
+                href="/admin/campaigns/category-discount"
+                className="btn btn-outline-secondary"
+              >
+                İptal
+              </Link>
             </div>
           </form>
         </div>

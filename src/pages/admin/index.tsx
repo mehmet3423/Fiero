@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useStockReport } from "@/hooks/services/reports/useStockReport";
 import { useMostLikedProductsReport } from "@/hooks/services/reports/useMostLikedProductsReport";
 import { useProductSalesReport } from "@/hooks/services/reports/useProductSalesReport";
@@ -6,6 +6,11 @@ import { usePassiveProductsReport } from "@/hooks/services/reports/usePassivePro
 import { useProductCartReport } from "@/hooks/services/reports/useProductCartReport";
 import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
 import { useGetSupportTickets } from "@/hooks/services/support/useGetSupportTicket";
+import { useGetOrderSupportTickets } from "@/hooks/services/support/order/useGetOrderSupportTickets";
+import {
+  SupportTicketStatus,
+  SupportTicketStatusLabels,
+} from "@/constants/enums/support-ticket/GeneralSupportTicket/SupportTicketStatus";
 import Link from "next/link";
 
 function AdminHomePage() {
@@ -20,6 +25,18 @@ function AdminHomePage() {
     totalSupportTickets: 0,
     pendingSupportTickets: 0,
   });
+  // Track which animations have been triggered to prevent re-animation
+  const animationTriggered = useRef({
+    stockItems: false,
+    likedProducts: false,
+    salesCount: false,
+    passiveProducts: false,
+    cartItems: false,
+    mainCategories: false,
+    totalSupportTickets: false,
+    pendingSupportTickets: false,
+  });
+
   // Reports data
   const { data: stockReport } = useStockReport({ pageSize: 1 });
   const { data: likedProductsReport } = useMostLikedProductsReport({
@@ -33,120 +50,209 @@ function AdminHomePage() {
 
   // Categories data
   const { categories: mainCategories } = useMainCategoriesLookUp();
-  const { totalCount: totalSupportTickets } = useGetSupportTickets({
-    pageSize: 1,
-  });
-  const { totalCount: pendingSupportTickets } = useGetSupportTickets({
-    pageSize: 1,
-    requestType: 0, // Assuming 0 is pending status, adjust as needed
-  });
+  // Support tickets data - single hook call with both counts
+  const { totalCount: totalSupportTickets, tickets: allTickets } =
+    useGetSupportTickets({
+      page: 0,
+      pageSize: 1000, // Get all tickets to calculate pending count
+    });
 
-  // Animation function
-  const animateNumber = (
-    target: number,
-    setter: (value: number) => void,
-    duration = 2000
-  ) => {
-    const startTime = Date.now();
-    const startValue = 0;
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentValue = Math.floor(
-        startValue + (target - startValue) * easeOutQuart
-      );
-
-      setter(currentValue);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+  // Order support tickets data
+  const { totalCount: totalOrderSupportTickets, tickets: allOrderTickets } =
+    useGetOrderSupportTickets({
+      page: 0,
+      pageSize: 1000, // Get all order tickets to calculate pending count
+    });
+  // Calculate support ticket status counts (both regular and order tickets)
+  const supportTicketStatusCounts = useMemo(() => {
+    const counts = {
+      pending: 0,
+      inProgress: 0,
+      resolved: 0,
+      closed: 0,
+      cancelled: 0,
     };
 
-    requestAnimationFrame(animate);
-  };
+    // Count regular support tickets
+    allTickets.forEach((ticket) => {
+      switch (ticket.supportTicketStatus) {
+        case SupportTicketStatus.Pending:
+          counts.pending++;
+          break;
+        case SupportTicketStatus.InProgress:
+          counts.inProgress++;
+          break;
+        case SupportTicketStatus.Resolved:
+          counts.resolved++;
+          break;
+        case SupportTicketStatus.Closed:
+          counts.closed++;
+          break;
+        case SupportTicketStatus.Cancelled:
+          counts.cancelled++;
+          break;
+      }
+    });
 
-  // Trigger animations when data loads
+    return counts;
+  }, [allTickets, allOrderTickets]);
+
+  // Calculate pending tickets from the data (legacy - using requestType)
+  const pendingSupportTickets = useMemo(() => {
+    const regularPending = allTickets.filter(
+      (ticket) => ticket.requestType === 0
+    ).length;
+    const orderPending = allOrderTickets.filter(
+      (ticket) => ticket.requestType === 0
+    ).length;
+    return regularPending + orderPending;
+  }, [allTickets, allOrderTickets]);
+
+  // Memoize the data values to prevent unnecessary re-renders
+  const reportData = useMemo(
+    () => ({
+      stockCount: stockReport?.data?.count || 0,
+      likedCount: likedProductsReport?.data?.count || 0,
+      salesCount: salesReport?.data?.count || 0,
+      passiveCount: passiveProductsReport?.data?.count || 0,
+      cartCount: cartReport?.data?.count || 0,
+      categoryCount: Array.isArray(mainCategories?.data)
+        ? mainCategories.data.length
+        : 0,
+      supportCount:
+        (totalSupportTickets || 0) + (totalOrderSupportTickets || 0),
+      pendingCount: pendingSupportTickets || 0,
+    }),
+    [
+      stockReport?.data?.count,
+      likedProductsReport?.data?.count,
+      salesReport?.data?.count,
+      passiveProductsReport?.data?.count,
+      cartReport?.data?.count,
+      mainCategories?.data,
+      totalSupportTickets,
+      totalOrderSupportTickets,
+      pendingSupportTickets,
+    ]
+  );
+
+  // Animation function - memoized to prevent recreation on every render
+  const animateNumber = useCallback(
+    (target: number, setter: (value: number) => void, duration = 2000) => {
+      const startTime = Date.now();
+      const startValue = 0;
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(
+          startValue + (target - startValue) * easeOutQuart
+        );
+
+        setter(currentValue);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    },
+    []
+  );
+
+  // Trigger animations when data loads - only once per data source
   useEffect(() => {
-    if (stockReport?.data?.count) {
-      animateNumber(stockReport.data.count, (value) =>
+    if (reportData.stockCount > 0 && !animationTriggered.current.stockItems) {
+      animationTriggered.current.stockItems = true;
+      animateNumber(reportData.stockCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, stockItems: value }))
       );
     }
-  }, [stockReport]);
+  }, [reportData.stockCount, animateNumber]);
 
   useEffect(() => {
-    if (likedProductsReport?.data?.count) {
-      animateNumber(likedProductsReport.data.count, (value) =>
+    if (
+      reportData.likedCount > 0 &&
+      !animationTriggered.current.likedProducts
+    ) {
+      animationTriggered.current.likedProducts = true;
+      animateNumber(reportData.likedCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, likedProducts: value }))
       );
     }
-  }, [likedProductsReport]);
+  }, [reportData.likedCount, animateNumber]);
 
   useEffect(() => {
-    if (salesReport?.data?.count) {
-      animateNumber(salesReport.data.count, (value) =>
+    if (reportData.salesCount > 0 && !animationTriggered.current.salesCount) {
+      animationTriggered.current.salesCount = true;
+      animateNumber(reportData.salesCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, salesCount: value }))
       );
     }
-  }, [salesReport]);
+  }, [reportData.salesCount, animateNumber]);
 
   useEffect(() => {
-    if (passiveProductsReport?.data?.count) {
-      animateNumber(passiveProductsReport.data.count, (value) =>
+    if (
+      reportData.passiveCount > 0 &&
+      !animationTriggered.current.passiveProducts
+    ) {
+      animationTriggered.current.passiveProducts = true;
+      animateNumber(reportData.passiveCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, passiveProducts: value }))
       );
     }
-  }, [passiveProductsReport]);
+  }, [reportData.passiveCount, animateNumber]);
 
   useEffect(() => {
-    if (cartReport?.data?.count) {
-      animateNumber(cartReport.data.count, (value) =>
+    if (reportData.cartCount > 0 && !animationTriggered.current.cartItems) {
+      animationTriggered.current.cartItems = true;
+      animateNumber(reportData.cartCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, cartItems: value }))
       );
     }
-  }, [cartReport]);
+  }, [reportData.cartCount, animateNumber]);
 
   // Categories animations
   useEffect(() => {
-    // Farklı veri yapılarını dene
-    let categoryCount = 0;
-    if (mainCategories?.items?.length) {
-      categoryCount = mainCategories.items.length;
-    } else if (Array.isArray(mainCategories)) {
-      categoryCount = mainCategories.length;
-    }
-
-    if (categoryCount > 0) {
-      animateNumber(categoryCount, (value) =>
+    if (
+      reportData.categoryCount > 0 &&
+      !animationTriggered.current.mainCategories
+    ) {
+      animationTriggered.current.mainCategories = true;
+      animateNumber(reportData.categoryCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, mainCategories: value }))
       );
-    } else {
-      // Eğer veri yoksa 0 olarak set et
-      setAnimatedCounts((prev) => ({ ...prev, mainCategories: 0 }));
     }
-  }, [mainCategories]);
+  }, [reportData.categoryCount, animateNumber]);
 
   // Support tickets animations
   useEffect(() => {
-    if (totalSupportTickets) {
-      animateNumber(totalSupportTickets, (value) =>
+    if (
+      reportData.supportCount > 0 &&
+      !animationTriggered.current.totalSupportTickets
+    ) {
+      animationTriggered.current.totalSupportTickets = true;
+      animateNumber(reportData.supportCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, totalSupportTickets: value }))
       );
     }
-  }, [totalSupportTickets]);
+  }, [reportData.supportCount, animateNumber]);
 
   useEffect(() => {
-    if (pendingSupportTickets) {
-      animateNumber(pendingSupportTickets, (value) =>
+    if (
+      reportData.pendingCount > 0 &&
+      !animationTriggered.current.pendingSupportTickets
+    ) {
+      animationTriggered.current.pendingSupportTickets = true;
+      animateNumber(reportData.pendingCount, (value) =>
         setAnimatedCounts((prev) => ({ ...prev, pendingSupportTickets: value }))
       );
     }
-  }, [pendingSupportTickets]);
+  }, [reportData.pendingCount, animateNumber]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -1011,19 +1117,48 @@ function AdminHomePage() {
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
-                    <span>Bekleyen Talepler</span>
+                    <span>
+                      {SupportTicketStatusLabels[SupportTicketStatus.Pending]}
+                    </span>
                     <span className="badge bg-warning">
-                      {animatedCounts.pendingSupportTickets}
+                      {supportTicketStatusCounts.pending}
                     </span>
                   </div>
                   <div
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
-                    <span>Yanıtlanan Talepler</span>
+                    <span>
+                      {
+                        SupportTicketStatusLabels[
+                          SupportTicketStatus.InProgress
+                        ]
+                      }
+                    </span>
+                    <span className="badge bg-info">
+                      {supportTicketStatusCounts.inProgress}
+                    </span>
+                  </div>
+                  <div
+                    className="d-flex justify-content-between align-items-center"
+                    style={{ fontSize: "0.75rem" }}
+                  >
+                    <span>
+                      {SupportTicketStatusLabels[SupportTicketStatus.Resolved]}
+                    </span>
                     <span className="badge bg-success">
-                      {animatedCounts.totalSupportTickets -
-                        animatedCounts.pendingSupportTickets}
+                      {supportTicketStatusCounts.resolved}
+                    </span>
+                  </div>
+                  <div
+                    className="d-flex justify-content-between align-items-center"
+                    style={{ fontSize: "0.75rem" }}
+                  >
+                    <span>
+                      {SupportTicketStatusLabels[SupportTicketStatus.Closed]}
+                    </span>
+                    <span className="badge bg-secondary">
+                      {supportTicketStatusCounts.closed}
                     </span>
                   </div>
                 </div>

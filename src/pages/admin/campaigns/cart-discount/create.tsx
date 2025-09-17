@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CartDiscountForm {
   name: string;
@@ -22,6 +24,7 @@ interface CartDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateCartDiscountPage = () => {
@@ -43,6 +46,16 @@ const CreateCartDiscountPage = () => {
     isActive: true,
     type: DiscountType.Cart,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,6 +85,15 @@ const CreateCartDiscountPage = () => {
       ...prev,
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -151,9 +173,9 @@ const CreateCartDiscountPage = () => {
                       name="discountValue"
                       value={formData.discountValue}
                       onChange={handleChange}
-                      min="0"
-                      step="0.01"
+                      min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                   <div className="col-md-4">
@@ -179,15 +201,14 @@ const CreateCartDiscountPage = () => {
                       name="maxDiscountValue"
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
-                      min="0"
-                      step="0.01"
-                      required
+                      min={0}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                 </div>
 
                 <div className="row mb-3">
-                  <div className="col-md-6">
+                  <div className="col-md-3">
                     <label className="form-label">Minimum Sepet Tutarı</label>
                     <input
                       type="number"
@@ -195,12 +216,12 @@ const CreateCartDiscountPage = () => {
                       name="minimumCartAmount"
                       value={formData.minimumCartAmount}
                       onChange={handleChange}
-                      min="0"
-                      step="0.01"
+                      min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-md-3">
                     <label className="form-label">Maximum Sepet Tutarı</label>
                     <input
                       type="number"
@@ -208,14 +229,11 @@ const CreateCartDiscountPage = () => {
                       name="maximumCartAmount"
                       value={formData.maximumCartAmount}
                       onChange={handleChange}
-                      min="0"
-                      step="0.01"
+                      min={0}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-6">
+                  <div className="col-md-3">
                     <label className="form-label">Minimum Ürün Sayısı</label>
                     <input
                       type="number"
@@ -223,11 +241,11 @@ const CreateCartDiscountPage = () => {
                       name="minimumCartProductCount"
                       value={formData.minimumCartProductCount}
                       onChange={handleChange}
-                      min="0"
-                      required
+                      min={0}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-md-3">
                     <label className="form-label">Maximum Ürün Sayısı</label>
                     <input
                       type="number"
@@ -235,7 +253,8 @@ const CreateCartDiscountPage = () => {
                       name="maximumCartProductCount"
                       value={formData.maximumCartProductCount}
                       onChange={handleChange}
-                      min="0"
+                      min={0}
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                 </div>
@@ -270,44 +289,47 @@ const CreateCartDiscountPage = () => {
                   </div>
                 </div>
 
-                <div className="col-md-6">
-                  <label className="form-label">Durum</label>
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input form-check-input-sm"
-                      name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleChange}
-                      style={{ transform: "scale(0.7)" }}
-                    />
-                    <label
-                      className="form-check-label small"
-                      style={{
-                        fontSize: "1.1rem",
-                        position: "relative",
-                        top: "-2px",
-                      }}
-                    >
-                      {formData.isActive && formData.isWithinActiveDateRange
-                        ? "Aktif"
-                        : "Pasif"}
-                    </label>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Durum</label>
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input form-check-input-sm"
+                        name="isActive"
+                        checked={formData.isActive}
+                        onChange={handleChange}
+                        style={{ transform: "scale(0.7)" }}
+                      />
+                      <label
+                        className="form-check-label"
+                        style={{ fontSize: "0.875rem" }}
+                      >
+                        İndirim aktif
+                      </label>
+                    </div>
                   </div>
-                  <div className="mt-4">
-                    <button
-                      type="submit"
-                      className="btn btn-outline-secondary"
-                      style={{
-                        backgroundColor: "#e9e9e9",
-                        color: "#000",
-                        borderColor: "#d9d9d9",
-                      }}
-                      disabled={isPending}
-                    >
-                      {isPending ? "Kaydediliyor..." : "Kaydet"}
-                    </button>
-                  </div>
+                </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
+
+                <div className="mt-4">
+                  <button
+                    type="submit"
+                    className="btn btn-outline-secondary"
+                    style={{
+                      backgroundColor: "#e9e9e9",
+                      color: "#000",
+                      borderColor: "#d9d9d9",
+                    }}
+                    disabled={isPending}
+                  >
+                    {isPending ? "Kaydediliyor..." : "Kaydet"}
+                  </button>
                 </div>
               </form>
             </div>

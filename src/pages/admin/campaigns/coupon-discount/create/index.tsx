@@ -3,6 +3,8 @@ import { useCreateCouponDiscount } from "@/hooks/services/discounts/coupon-disco
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateCouponDiscountForm {
   name: string;
@@ -17,6 +19,7 @@ interface CreateCouponDiscountForm {
   isWithinActiveDateRange: boolean;
   maxUsageCount: number;
   maxDiscountValue: number;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateCouponDiscountPage = () => {
@@ -28,7 +31,7 @@ const CreateCouponDiscountPage = () => {
     description: "",
     couponCode: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     startDate: "",
     endDate: "",
     isActive: true,
@@ -36,6 +39,16 @@ const CreateCouponDiscountPage = () => {
     isWithinActiveDateRange: false,
     maxUsageCount: 0,
     maxDiscountValue: 0,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +57,6 @@ const CreateCouponDiscountPage = () => {
       await createCouponDiscount(formData);
       router.push("/admin/campaigns/coupon-discount");
     } catch (error) {
-      console.error("Error creating coupon discount:", error);
     }
   };
 
@@ -60,6 +72,15 @@ const CreateCouponDiscountPage = () => {
           : type === "number"
           ? parseFloat(value)
           : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -156,7 +177,7 @@ const CreateCouponDiscountPage = () => {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="İndirim değeri"
                     />
@@ -172,7 +193,7 @@ const CreateCouponDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="Maksimum indirim değeri"
                     />
@@ -202,6 +223,7 @@ const CreateCouponDiscountPage = () => {
                       onChange={handleChange}
                       min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       placeholder="Kullanım limiti"
                     />
                   </div>
@@ -253,6 +275,12 @@ const CreateCouponDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

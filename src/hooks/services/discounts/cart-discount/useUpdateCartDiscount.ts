@@ -11,18 +11,20 @@ export const useUpdateCartDiscount = () => {
   const { mutateAsync, isPending } = useMyMutation<CartDiscount>();
 
   const updateDiscount = async (data: CartDiscount) => {
-
     await mutateAsync(
       {
         url: `${UPDATE_CART_DISCOUNT}`,
         method: HttpMethod.PUT,
-        data
+        data,
       },
       {
         onSuccess: () => {
           toast.success("İndirim başarıyla güncellendi");
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.DISCOUNT_DETAIL],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNTS],
           });
         },
       }

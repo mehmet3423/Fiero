@@ -30,7 +30,6 @@ export const useDeleteCollection = () => {
         }
       );
     } catch (error) {
-      console.error("Koleksiyon silme hatası:", error);
     }
   };
 

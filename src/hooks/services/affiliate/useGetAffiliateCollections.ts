@@ -32,7 +32,6 @@ export const useGetAffiliateCollections = (
       queryKey: [QueryKeys.AFFILIATE_COLLECTIONS],
       method: HttpMethod.GET,
       onError: (err: any) => {
-        console.error("Affiliate collections error:", err);
       },
     }
   );

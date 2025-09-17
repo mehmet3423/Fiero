@@ -15,55 +15,49 @@ export const useUpdateProduct = () => {
     product: UpdateDtoProduct
   ) => {
     try {
-      const params = new URLSearchParams();
-
-      params.append("Id", productId);
-      params.append("Price", product.price.toString());
-      params.append("sellableQuantity", product.sellableQuantity.toString());
-      params.append("BarcodeNumber", product.barcodeNumber);
-      params.append("StockCode", product.stockCode);
-      params.append("BaseImageUrl", product.baseImageUrl);
-      params.append("Title", product.title);
-      params.append("Description", product.description);
-      params.append("VideoUrl", product.videoUrl || "");
-      params.append("IsAvailable", product.isAvailable.toString());
-      params.append("IsOutlet", product.isOutlet.toString());
-      params.append("Refundable", product.refundable.toString());
-      // Her bir content image URL'i için ayrı bir parametre ekle
-      product.contentImageUrls.forEach((url) => {
-        params.append("ContentImageUrls", url);
-      });
-
-      product.banner?.forEach((url) => {
-        params.append("Banner", url);
-      });
+      // Body olarak gönderilecek veri
+      const body = {
+        Id: productId,
+        Price: product.price,
+        SellableQuantity: product.sellableQuantity,
+        BarcodeNumber: product.barcodeNumber,
+        StockCode: product.stockCode,
+        BaseImageUrl: product.baseImageUrl,
+        Title: product.title,
+        Description: product.description,
+        VideoUrl: product.videoUrl || "",
+        IsAvailable: product.isAvailable,
+        IsOutlet: product.isOutlet,
+        Refundable: product.refundable,
+        ContentImageUrls: product.contentImageUrls,
+        Banner: product.banner,
+      };
 
       await mutateAsync(
         {
-          url: `${UPDATE_PRODUCT}?${params.toString()}`,
+          url: UPDATE_PRODUCT,
           method: HttpMethod.PUT,
+          data: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
         {
           onSuccess: () => {
             toast.success("Ürün başarıyla güncellendi");
-            // Tüm ürün listelerini invalidate et
+            // ...invalidate işlemleri...
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.ALL_PRODUCTS],
             });
-            // Genel ürün listesini invalidate et
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.PRODUCT_LIST],
             });
-            // Admin ürün listesini invalidate et
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.Products],
             });
-            // Güncellenecek ürünün detay bilgilerini invalidate et
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.PRODUCT_DETAIL, productId],
             });
-
-            // Kategori bazlı ürün listelerini de invalidate et - tüm kategori bazlı sorguları temizler
             queryClient.invalidateQueries({
               predicate: (query) => {
                 const queryKey = query.queryKey;
@@ -81,7 +75,6 @@ export const useUpdateProduct = () => {
         }
       );
     } catch (error) {
-      console.error("Update product error:", error);
       toast.error("Ürün güncellenirken bir hata oluştu");
     }
   };

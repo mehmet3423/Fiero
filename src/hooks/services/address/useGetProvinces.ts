@@ -10,7 +10,6 @@ export const useGetProvinces = () => {
     queryKey: [QueryKeys.PROVINCES],
     method: HttpMethod.GET,
     onError: (error) => {
-      console.error("İl listesi alınırken hata oluştu:", error);
     },
   });
 

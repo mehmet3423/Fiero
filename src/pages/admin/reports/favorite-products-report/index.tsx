@@ -73,20 +73,6 @@ function FavoriteProductsReportPage() {
     return new Date(dateString).toLocaleDateString("tr-TR");
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString("tr-TR");
-  };
-
-  const getFavoriteLevel = (count: number) => {
-    if (count >= 50)
-      return { level: "Ultra Popular", color: "bg-danger", emoji: "🔥" };
-    if (count >= 20)
-      return { level: "Very Popular", color: "bg-warning", emoji: "⭐" };
-    if (count >= 10) return { level: "Popular", color: "bg-info", emoji: "👍" };
-    if (count >= 5) return { level: "Liked", color: "bg-primary", emoji: "💙" };
-    return { level: "New", color: "bg-secondary", emoji: "💚" };
-  };
-
   const getActiveFiltersCount = () => {
     return Object.keys(filters).filter(
       (key) => filters[key as keyof typeof filters]
@@ -103,13 +89,13 @@ function FavoriteProductsReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y px-4">
-      <h5 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y">
+      <h4 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Favori Ürünler
-      </h5>
+      </h4>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -164,7 +150,7 @@ function FavoriteProductsReportPage() {
             </div>
             <div className="col-md-3 d-flex align-items-end">
               <button
-                className="btn btn-dark btn-sm me-2"
+                className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
                 style={{ fontSize: "0.8rem" }}
@@ -334,7 +320,7 @@ function FavoriteProductsReportPage() {
                                 className="text-muted"
                                 style={{ fontSize: "0.75rem" }}
                               >
-                                {formatDateTime(item.favoritedOn)}
+                                {formatDate(item.favoritedOn)}
                               </small>
                             </td>
                             <td className="small">

@@ -1,7 +1,7 @@
-import { OrderSupportRequestType } from "@/constants/enums/OrderSupportRequestType";
+import { OrderSupportRequestType } from "@/constants/enums/support-ticket/OrderSupportTicket/OrderSupportRequestType";
 import { getAllOrderSupportRequestTypes } from "@/helpers/enum/orderSupportRequestType";
-import { useGetUserOrders } from "@/hooks/services/order/useGetUserOrders";
-import { useOrderSupportTicket } from "@/hooks/services/support/useOrderSupportTicket";
+import { useGetOrdersFromToken } from "@/hooks/services/order/useGetUserOrders";
+import { useOrderSupportTicket } from "@/hooks/services/support/order/useOrderSupportTicket";
 import { useState } from "react";
 import { Order, OrderItem } from "@/constants/models/Order";
 import { toast } from "react-hot-toast";
@@ -21,7 +21,7 @@ function OrderSupportTicket() {
   });
 
   // Kullanıcının siparişlerini getir
-  const { orders, isLoading: ordersLoading } = useGetUserOrders(1, 50); // page=1, pageSize=50
+  const { orders, isLoading: ordersLoading } = useGetOrdersFromToken(1, 50); // page=1, pageSize=50
 
   // Order Support Ticket hook
   const { handleSubmitTicket, isPending: isSubmitting } =
@@ -73,9 +73,7 @@ function OrderSupportTicket() {
   if (ordersLoading) {
     return (
       <div className="text-center py-4">
-        <div className="spinner-border" role="status">
-
-        </div>
+        <div className="spinner-border" role="status"></div>
         <span className="sr-only">{t("loading")}</span>
       </div>
     );
@@ -85,7 +83,9 @@ function OrderSupportTicket() {
     <div className="pt-2">
       {/* Sipariş Seçimi */}
       <div className="form-group mb-4">
-        <label className="form-label">{t("orderSupportTicket.selectOrder")}</label>
+        <label className="form-label">
+          {t("orderSupportTicket.selectOrder")}
+        </label>
         {orders.length === 0 ? (
           <div className="alert alert-info">
             {t("orderSupportTicket.noOrders")}
@@ -95,12 +95,18 @@ function OrderSupportTicket() {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className={`order-card ${selectedOrder?.id === order.id ? "selected" : ""
-                  }`}
+                className={`order-card ${
+                  selectedOrder?.id === order.id ? "selected" : ""
+                }`}
                 onClick={() => handleOrderSelect(order)}
               >
                 <div className="order-header">
-                  <strong> {t("orderSupportTicket.orderNumber") + ": #" + order.orderNumber}</strong>
+                  <strong>
+                    {" "}
+                    {t("orderSupportTicket.orderNumber") +
+                      ": #" +
+                      order.orderNumber}
+                  </strong>
                   <span className="order-date">
                     {new Date(order.createdOnValue).toLocaleDateString("tr-TR")}
                   </span>
@@ -109,7 +115,8 @@ function OrderSupportTicket() {
                   {order.recipientFirstName} {order.recipientLastName}
                 </div>
                 <div className="order-items-count">
-                  {order.orderItems?.length || 0} {t("orderSupportTicket.product")}
+                  {order.orderItems?.length || 0}{" "}
+                  {t("orderSupportTicket.product")}
                 </div>
               </div>
             ))}
@@ -127,8 +134,9 @@ function OrderSupportTicket() {
             {selectedOrder.orderItems?.map((orderItem) => (
               <div
                 key={orderItem.id}
-                className={`order-item-card ${selectedOrderItem?.id === orderItem.id ? "selected" : ""
-                  }`}
+                className={`order-item-card ${
+                  selectedOrderItem?.id === orderItem.id ? "selected" : ""
+                }`}
                 onClick={() => handleOrderItemSelect(orderItem)}
               >
                 <div className="order-item-content">
@@ -146,11 +154,13 @@ function OrderSupportTicket() {
                       {orderItem.product?.title || "Ürün Adı Yok"}
                     </div>
                     <div className="order-item-info">
-                      {t("orderSupportTicket.quantity")}: {orderItem.quantity} • {t("orderSupportTicket.price")}:{" "}
+                      {t("orderSupportTicket.quantity")}: {orderItem.quantity} •{" "}
+                      {t("orderSupportTicket.price")}:{" "}
                       {orderItem.discountedPrice || orderItem.price}₺
                     </div>
                     <div className="order-item-number">
-                      {t("orderSupportTicket.productNumber")}: {orderItem.orderItemNumber}
+                      {t("orderSupportTicket.productNumber")}:{" "}
+                      {orderItem.orderItemNumber}
                     </div>
                   </div>
                 </div>
@@ -227,7 +237,9 @@ function OrderSupportTicket() {
             disabled={isSubmitting}
           >
             <span>
-              {isSubmitting ? t("orderSupportTicket.submitting") : t("orderSupportTicket.submitButton")}
+              {isSubmitting
+                ? t("orderSupportTicket.submitting")
+                : t("orderSupportTicket.submitButton")}
             </span>
             <i className="icon-long-arrow-right"></i>
           </button>

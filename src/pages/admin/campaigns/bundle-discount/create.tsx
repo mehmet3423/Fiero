@@ -4,6 +4,8 @@ import { useCreateBundleDiscount } from "@/hooks/services/discounts/bundle-disco
 import { DiscountType } from "@/constants/enums/DiscountType";
 import Link from "next/link";
 import ProductSelector from "@/components/ProductSelector";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 const CreateBundleDiscountPage = () => {
   const router = useRouter();
@@ -17,11 +19,21 @@ const CreateBundleDiscountPage = () => {
     description: "",
     discountValue: 0,
     maxDiscountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     startDate: "",
     endDate: "",
     isActive: true,
     type: DiscountType.Bundle,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +42,6 @@ const CreateBundleDiscountPage = () => {
       await createBundleDiscount(formData);
       router.push("/admin/campaigns/bundle-discount");
     } catch (error) {
-      console.error("Error creating bundle discount:", error);
     }
   };
 
@@ -55,6 +66,15 @@ const CreateBundleDiscountPage = () => {
       productIds: prev.productIds.includes(productId)
         ? prev.productIds.filter((id) => id !== productId)
         : [...prev.productIds, productId],
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -144,8 +164,8 @@ const CreateBundleDiscountPage = () => {
                   name="bundlePrice"
                   value={formData.bundlePrice}
                   onChange={handleChange}
-                  min="0"
-                  step="0.01"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
                 {formData.bundlePrice > 0 && totalOriginalPrice > 0 && (
@@ -167,8 +187,8 @@ const CreateBundleDiscountPage = () => {
                   name="maxDiscountValue"
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
-                  min="0"
-                  step="0.01"
+                  min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -217,6 +237,12 @@ const CreateBundleDiscountPage = () => {
                 {formData.isActive ? "Aktif" : "Pasif"}
               </label>
             </div>
+
+            {/* Notification Settings */}
+            <NotificationSettings
+              value={formData.notificationSettings}
+              onChange={handleNotificationSettingsChange}
+            />
 
             <button
               type="submit"

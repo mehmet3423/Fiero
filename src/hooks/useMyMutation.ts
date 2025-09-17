@@ -9,6 +9,7 @@ interface MutationOptions {
   method: HttpMethod;
   data?: any;
   headers?: object;
+  showErrorToast?: boolean; // Add option to disable automatic error toast
 }
 
 interface ErrorModel {
@@ -32,17 +33,20 @@ export default function useMyMutation<T>() {
         headers: token
           ? {
             Authorization: `Bearer ${token}`,
+            ...options.headers,
           }
-          : {},
+          : { ...options.headers },
         data: options.data,
       });
     },
-    onError: (error) => {
-      const errorMessage =
-        error.response?.data.message;
-      if (!errorMessage) return;
-      toast.error(error.response?.data.detail);
-
+    onError: (error, variables) => {
+      // Only show automatic error toast if not disabled
+      if (variables.showErrorToast !== false) {
+        const errorMessage = error.response?.data.message || error.response?.data.detail;
+        if (errorMessage) {
+          toast.error(errorMessage);
+        }
+      }
     },
   });
 

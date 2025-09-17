@@ -43,9 +43,7 @@ function SettingsPage() {
 
   // Create modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedSettingType, setSelectedSettingType] = useState<number | null>(
-    null
-  );
+  const [selectedSettingType, setSelectedSettingType] = useState<string>("");
   const [newSettingValue, setNewSettingValue] = useState("");
   const [newSettingDescription, setNewSettingDescription] = useState("");
 
@@ -82,7 +80,7 @@ function SettingsPage() {
         // Modal kapandığında state'i temizle (bir kez ekle)
         const handleHidden = () => {
           setShowCreateModal(false);
-          setSelectedSettingType(null);
+          setSelectedSettingType("");
           setNewSettingValue("");
           setNewSettingDescription("");
         };
@@ -194,11 +192,6 @@ function SettingsPage() {
                 ? updates.description
                 : currentSetting.description || "",
           };
-
-          console.log(
-            `Updating setting: ${currentSetting.key}, id: ${settingId}`,
-            updateRequest
-          );
           await updateSystemSettings(updateRequest);
         }
       }
@@ -207,7 +200,6 @@ function SettingsPage() {
       await refetch();
       toast.success("Ayarlar başarıyla güncellendi!");
     } catch (error) {
-      console.error("Settings update error:", error);
       toast.error("Ayarlar güncellenirken bir hata oluştu!");
     }
   };
@@ -227,11 +219,11 @@ function SettingsPage() {
     try {
       // Seçilen setting type'ının key'ini bul
       const selectedType = settingTypes.find(
-        (type) => type.value === selectedSettingType
+        (type) => String(type.value) === selectedSettingType
       );
 
       const createRequest = {
-        key: selectedSettingType, // Bu zaten integer enum value (0, 1, 2, 3...)
+        key: Number(selectedSettingType), // enum integer
         value: newSettingValue,
         description: newSettingDescription || "",
       };
@@ -252,7 +244,7 @@ function SettingsPage() {
       }
 
       // Reset form
-      setSelectedSettingType(null);
+      setSelectedSettingType("");
       setNewSettingValue("");
       setNewSettingDescription("");
       setShowCreateModal(false);
@@ -261,8 +253,6 @@ function SettingsPage() {
       await refetch();
       toast.success("Yeni ayar başarıyla oluşturuldu!");
     } catch (error) {
-      console.error("Create setting error:", error);
-      toast.error("Ayar oluşturulurken bir hata oluştu!");
     }
   };
 
@@ -295,7 +285,6 @@ function SettingsPage() {
       setDeletingSettingId(null);
       setDeletingSettingName("");
     } catch (error) {
-      console.error("Delete setting error:", error);
       toast.error("Ayar silinirken bir hata oluştu!");
     }
   };
@@ -353,8 +342,8 @@ function SettingsPage() {
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center">
             <div>
-              <h2 className="fw-bold text-gray mb-1" style={{ fontSize: "2rem" }}>
-                <FontAwesomeIcon icon={faCog} className="me-3 text-dark" />
+              <h2 className="fw-bold text-dark mb-1">
+                <FontAwesomeIcon icon={faCog} className="me-3 text-primary" />
                 Sistem Ayarları
               </h2>
               <p className="text-muted mb-0">
@@ -364,7 +353,7 @@ function SettingsPage() {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn btn-dark btn-sm px-3"
+                className="btn btn-success btn-sm px-3"
                 onClick={() => setShowCreateModal(true)}
                 disabled={isPending || isCreating}
               >
@@ -578,16 +567,11 @@ function SettingsPage() {
         title="Yeni Sistem Ayarı Ekle"
         showFooter={true}
         approveButtonText={isCreating ? "Oluşturuluyor..." : "Oluştur"}
-        approveButtonStyle={{
-          backgroundColor: '#000',
-          borderColor: '#000',
-          color: '#ffffff'
-        }}
         isLoading={isCreating}
         onApprove={handleCreateSetting}
         onClose={() => {
           setShowCreateModal(false);
-          setSelectedSettingType(null);
+          setSelectedSettingType("");
           setNewSettingValue("");
           setNewSettingDescription("");
         }}
@@ -601,19 +585,17 @@ function SettingsPage() {
             </label>
             <select
               className="form-select"
-              value={selectedSettingType || ""}
-              onChange={(e) =>
-                setSelectedSettingType(Number(e.target.value) || null)
-              }
+              value={selectedSettingType}
+              onChange={(e) => setSelectedSettingType(e.target.value)}
             >
               <option value="">Ayar türü seçiniz...</option>
               {settingTypes
                 .filter(
                   (type) =>
-                    !settings.some((setting) => setting.key === type.key)
+                    !settings.some((setting) => Number(setting.key) === type.value)
                 )
                 .map((type) => (
-                  <option key={type.value} value={type.value}>
+                  <option key={type.value} value={String(type.value)}>
                     {type.displayName}
                   </option>
                 ))}
@@ -622,6 +604,7 @@ function SettingsPage() {
               Sadece henüz oluşturulmamış ayar türleri gösterilmektedir.
             </small>
           </div>
+
           <div className="col-12 mb-3">
             <label className="form-label fw-medium">
               <i className="fas fa-edit me-2"></i>
@@ -656,18 +639,14 @@ function SettingsPage() {
       <GeneralModal
         id="deleteSettingModal"
         title="Ayarı Sil"
-        size="lg"
+        size="sm"
         onClose={() => {
           setDeletingSettingId(null);
           setDeletingSettingName("");
         }}
         onApprove={handleConfirmDeleteSetting}
         approveButtonText="Evet, Sil"
-        approveButtonStyle={{
-          backgroundColor: '#000',
-          borderColor: '#000',
-          color: '#ffffff'
-        }} isLoading={isDeleting}
+        isLoading={isDeleting}
         showFooter={true}
       >
         <div className="text-center">

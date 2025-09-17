@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useCreateProductDiscount } from "@/hooks/services/discounts/product-discount/useCreateProductDiscount";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import ProductSelector from "@/components/ProductSelector";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface ProductDiscountForm {
   name: string;
@@ -18,6 +20,7 @@ interface ProductDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 export default function CreateProductDiscount() {
@@ -32,7 +35,7 @@ export default function CreateProductDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -41,6 +44,16 @@ export default function CreateProductDiscount() {
     isActive: true,
     type: DiscountType.Product,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +68,6 @@ export default function CreateProductDiscount() {
       await createProductDiscount(formData);
       router.push("/admin/campaigns/product-discount");
     } catch (error) {
-      console.error("Error creating product discount:", error);
     }
   };
 
@@ -63,14 +75,33 @@ export default function CreateProductDiscount() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+
+    const numberFields = [
+      "discountValueType",
+      "day",
+      "month",
+      "discountValue",
+      "maxDiscountValue",
+    ];
     setFormData((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : name === "discountValueType" || name === "discountValue"
-          ? Number(value)
-          : value,
+          : type === "number" || numberFields.includes(name)
+            ? name === "discountValueType" || name === "day" || name === "month"
+              ? parseInt(value, 10) // Integer alanlar için
+              : parseFloat(value) // Float alanlar için
+            : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -172,6 +203,7 @@ export default function CreateProductDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -181,11 +213,11 @@ export default function CreateProductDiscount() {
                   className="form-select"
                   name="discountValueType"
                   value={formData.discountValueType}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e)}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4">
@@ -197,6 +229,7 @@ export default function CreateProductDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -293,17 +326,22 @@ export default function CreateProductDiscount() {
               </div>
             </div>
 
+            {/* Notification Settings */}
+            <NotificationSettings
+              value={formData.notificationSettings}
+              onChange={handleNotificationSettingsChange}
+            />
+
             {/* Submit button */}
             <div className="d-flex gap-2">
               <button
                 type="submit"
-                className={`btn ${
-                  isPending || !formData.productId
+                className={`btn ${isPending || !formData.productId
                     ? "btn-light text-muted"
                     : productWithDiscountWarning.show
-                    ? "btn-warning"
-                    : "btn-primary"
-                }`}
+                      ? "btn-warning"
+                      : "btn-primary"
+                  }`}
                 disabled={isPending || !formData.productId}
                 style={{
                   filter:
@@ -316,8 +354,8 @@ export default function CreateProductDiscount() {
                 {isPending
                   ? "Kaydediliyor..."
                   : productWithDiscountWarning.show
-                  ? "Mevcut İndirimi Değiştir ve Kaydet"
-                  : "Kaydet"}
+                    ? "Mevcut İndirimi Değiştir ve Kaydet"
+                    : "Kaydet"}
               </button>
             </div>
           </form>

@@ -26,6 +26,25 @@ export const useCreateProductDiscount = () => {
           EndDate: data.endDate,
           IsActive: data.isActive.toString(),
           Type: data.type.toString(),
+          // Notification Settings
+          IsEmailNotificationEnabled:
+            data.notificationSettings?.isEmailNotificationEnabled?.toString() ||
+            "false",
+          EmailNotificationSubject:
+            data.notificationSettings?.emailNotificationSubject || "",
+          EmailNotificationTextBody:
+            data.notificationSettings?.emailNotificationTextBody || "",
+          EmailNotificationHtmlBody:
+            data.notificationSettings?.emailNotificationHtmlBody || "",
+          IsSMSNotificationEnabled:
+            data.notificationSettings?.isSMSNotificationEnabled?.toString() ||
+            "false",
+          SMSNotificationSubject:
+            data.notificationSettings?.smsNotificationSubject || "",
+          SMSNotificationTextBody:
+            data.notificationSettings?.smsNotificationTextBody || "",
+          SMSNotificationHtmlBody:
+            data.notificationSettings?.smsNotificationHtmlBody || "",
         } as Record<string, string>)
       ).toString();
 

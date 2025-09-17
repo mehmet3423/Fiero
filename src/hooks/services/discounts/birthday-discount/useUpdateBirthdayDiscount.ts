@@ -37,6 +37,9 @@ export const useUpdateBirthdayDiscount = () => {
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.DISCOUNT_DETAIL],
           });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNTS],
+          });
         },
       }
     );

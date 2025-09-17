@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useCreateWeekdayDiscount } from "@/hooks/services/discounts/weekday-dicount/useCreateWeekdayDiscount";
 import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { WeekdayDiscount } from "@/constants/models/Discount";
 import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import { useUpdateWeekdayDiscount } from "@/hooks/services/discounts/weekday-dicount/useUpdateWeekdayDiscount";
 
 interface WeekdayDiscountForm {
   name: string;
@@ -24,28 +24,14 @@ function EditWeekdayDiscount() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { isPending: isCreating } = useCreateWeekdayDiscount();
-
   // Fetch discount data for edit mode
   const { discounts: allDiscounts, isLoading: isLoadingDiscounts } =
     useGetDiscountList({
       discountType: DiscountType.WeekdayDiscount,
     });
 
-  const [formData, setFormData] = useState<WeekdayDiscountForm>({
-    name: "",
-    description: "",
-    discountValue: 0,
-    discountValueType: 0,
-    maxDiscountValue: 0,
-    startDate: "",
-    endDate: "",
-    dayOfWeek: 1, // Default: Pazartesi
-    isActive: true,
-    type: DiscountType.WeekdayDiscount,
-    isWithinActiveDateRange: false,
-  });
 
+  const { updateDiscount, isPending } = useUpdateWeekdayDiscount();
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
@@ -55,19 +41,14 @@ function EditWeekdayDiscount() {
         (d) => d.id === String(id)
       ) as WeekdayDiscount;
       if (discount) {
-        console.log("Found discount for edit:", discount);
-        console.log("dayOfWeek:", discount.dayOfWeek);
-
-        // API'den gelen veride weekday-specific alanlar olmayabilir
-        // Bu durumda default değerleri kullanıyoruz
-        const dayOfWeek = discount.dayOfWeek ?? 1; // Default: Pazartesi
+        const dayOfWeek = Number(discount.weekdayDiscount?.dayOfWeek ?? 1);
 
         setFormData({
           name: discount.name,
           description: discount.description || "",
           discountValue: discount.discountValue,
           discountValueType: discount.discountValueType,
-          maxDiscountValue: discount.maxDiscountValue || 0,
+          maxDiscountValue: discount.maxDiscountValue ?? 0,
           startDate: discount.startDate.includes("T")
             ? discount.startDate.slice(0, 16)
             : new Date(discount.startDate).toISOString().slice(0, 16),
@@ -77,30 +58,40 @@ function EditWeekdayDiscount() {
           dayOfWeek: dayOfWeek,
           isActive: discount.isActive,
           type: DiscountType.WeekdayDiscount,
-          isWithinActiveDateRange: discount.isWithinActiveDateRange || false,
+          isWithinActiveDateRange: discount.isWithinActiveDateRange ?? false,
         });
         setIsDataLoaded(true);
 
-        console.log("Form data set with dayOfWeek:", dayOfWeek);
       } else {
-        console.log("Discount not found with id:", id, "Type:", typeof id);
-        console.log(
-          "Available discounts IDs:",
-          allDiscounts.map((d) => ({ id: d.id, type: typeof d.id }))
-        );
       }
     }
   }, [id, allDiscounts, isDataLoaded]);
+  const [formData, setFormData] = useState<WeekdayDiscountForm>({
+    name: "",
+    description: "",
+    discountValue: 0,
+    discountValueType: 1,
+    maxDiscountValue: 0,
+    startDate: "",
+    endDate: "",
+    dayOfWeek: 1, // Default: Pazartesi
+    isActive: true,
+    type: DiscountType.WeekdayDiscount,
+    isWithinActiveDateRange: false,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // TODO: Implement update functionality when needed
-      // For now, we only support create
-      console.warn("Edit functionality not yet implemented");
+      const apiData: WeekdayDiscount = {
+        id: String(id),
+        ...formData,
+        createdOn: 0, // API dolduracaksa 0 bırak
+        createdOnValue: "", // API dolduracaksa boş bırak
+      };
+      await updateDiscount(apiData);
       router.push("/admin/campaigns/weekday-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -113,9 +104,11 @@ function EditWeekdayDiscount() {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : type === "number"
-          ? parseFloat(value)
-          : value,
+          : name === "dayOfWeek" || name === "discountValueType"
+            ? Number(value)
+            : type === "number"
+              ? parseFloat(value)
+              : value,
     }));
   };
 
@@ -219,7 +212,7 @@ function EditWeekdayDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -233,8 +226,8 @@ function EditWeekdayDiscount() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -246,7 +239,7 @@ function EditWeekdayDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                 />
               </div>
@@ -283,7 +276,7 @@ function EditWeekdayDiscount() {
                 <select
                   className="form-select"
                   name="dayOfWeek"
-                  value={formData.dayOfWeek}
+                  value={Number(formData.dayOfWeek)}
                   onChange={handleChange}
                   required
                 >
@@ -327,9 +320,9 @@ function EditWeekdayDiscount() {
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={isCreating}
+                    disabled={isPending}
                   >
-                    {isCreating ? (
+                    {isPending ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm me-2"

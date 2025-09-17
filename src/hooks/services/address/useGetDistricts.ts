@@ -11,7 +11,6 @@ export const useGetDistricts = (provinceId: string) => {
     method: HttpMethod.GET,
     enabled: !!provinceId,
     onError: (error) => {
-      console.error("İlçe listesi alınırken hata oluştu:", error);
       return {
         $id: "0",
         $values: [],

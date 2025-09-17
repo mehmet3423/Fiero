@@ -15,7 +15,6 @@ export const useGetUserPaymentCards = () => {
     queryKey: QueryKeys.USER_PAYMENT_CARD_LIST,
     method: HttpMethod.GET,
     onError(err) {
-      console.log(err);
     },
   });
 

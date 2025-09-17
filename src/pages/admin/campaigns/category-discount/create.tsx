@@ -7,6 +7,8 @@ import { useCategories } from "@/hooks/services/categories/useCategories";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { SubCategory } from "@/constants/models/Category";
 import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateSubCategoryDiscountForm {
   name: string;
@@ -21,6 +23,7 @@ interface CreateSubCategoryDiscountForm {
   type: DiscountType;
   subCategory: SubCategory;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateSubCategoryDiscountPage = () => {
@@ -51,7 +54,7 @@ const CreateSubCategoryDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -60,6 +63,16 @@ const CreateSubCategoryDiscountPage = () => {
     type: DiscountType.SubCategory,
     subCategory: {} as SubCategory,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +81,6 @@ const CreateSubCategoryDiscountPage = () => {
       await createSubCategoryDiscount(formData);
       router.push("/admin/campaigns/category-discount");
     } catch (error) {
-      console.error("Error creating discount:", error);
     }
   };
 
@@ -76,7 +88,7 @@ const CreateSubCategoryDiscountPage = () => {
   const checkCategoryHasDiscount = (
     categoryId: string
   ): { hasDiscount: boolean; categoryName: string } => {
-    const selectedCategory = subCategories?.find(
+    const selectedCategory = subCategories?.items?.find(
       (cat) => cat.id === categoryId
     );
 
@@ -129,6 +141,15 @@ const CreateSubCategoryDiscountPage = () => {
             : value,
       }));
     }
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
+    }));
   };
 
   return (
@@ -210,6 +231,7 @@ const CreateSubCategoryDiscountPage = () => {
                       onChange={handleChange}
                       min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                   <div className="col-md-4">
@@ -236,6 +258,8 @@ const CreateSubCategoryDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
+                      required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     />
                   </div>
                 </div>
@@ -294,7 +318,7 @@ const CreateSubCategoryDiscountPage = () => {
                       disabled={!selectedMainCategoryId || subCategoriesLoading}
                     >
                       <option value="">Alt Kategori Seçin</option>
-                      {subCategories?.map((subCategory) => (
+                      {subCategories?.items?.map((subCategory) => (
                         <option key={subCategory.id} value={subCategory.id}>
                           {subCategory.name}
                         </option>
@@ -354,6 +378,12 @@ const CreateSubCategoryDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="mt-4">
                   <button

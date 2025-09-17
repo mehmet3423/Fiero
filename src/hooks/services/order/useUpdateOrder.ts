@@ -12,13 +12,15 @@ export const useUpdateOrder = () => {
   const updateOrder = async (orderData: UpdateOrderRequest) => {
     try {
       const params = new URLSearchParams();
-      params.append("id", orderData.id);
-      params.append("status", orderData.status.toString());
-      
-      if (orderData.recipientFirstName) params.append("recipientFirstName", orderData.recipientFirstName);
-      if (orderData.recipientLastName) params.append("recipientLastName", orderData.recipientLastName);
+      params.append("orderId", orderData.orderId);
+
+      if (orderData.recipientName) params.append("recipientName", orderData.recipientName);
+      if (orderData.recipientSurname) params.append("recipientSurname", orderData.recipientSurname);
       if (orderData.recipientPhoneNumber) params.append("recipientPhoneNumber", orderData.recipientPhoneNumber);
       if (orderData.recipientIdentityNumber) params.append("recipientIdentityNumber", orderData.recipientIdentityNumber);
+      if (orderData.billingAddressId) params.append("billingAddressId", orderData.billingAddressId);
+      if (orderData.shippingAddressId) params.append("shippingAddressId", orderData.shippingAddressId);
+      if (orderData.cargoStatus !== undefined) params.append("cargoStatus", orderData.cargoStatus.toString());
 
       await mutateAsync({
         url: `${UPDATE_ORDER}?${params}`,
@@ -27,7 +29,7 @@ export const useUpdateOrder = () => {
         onSuccess: () => {
           // İlgili sorguları invalidate et
           queryClient.invalidateQueries({ queryKey: ["orders"] });
-          queryClient.invalidateQueries({ queryKey: ["order", orderData.id] });
+          queryClient.invalidateQueries({ queryKey: ["order", orderData.orderId] });
           toast.success("Sipariş başarıyla güncellendi");
         }
       });

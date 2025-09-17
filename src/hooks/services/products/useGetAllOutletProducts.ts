@@ -1,7 +1,11 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_ALL_OUTLET_PRODUCTS } from "@/constants/links";
-import { ProductListResponse } from "@/constants/models/Product";
+import {
+  GetAllOutletProductsResponse,
+  PaginationListResponse,
+  ProductBasicDTO,
+} from "@/constants/models/Product";
 import useGetData from "@/hooks/useGetData";
 import {
   DiscountSort,
@@ -27,46 +31,58 @@ interface UseGetAllOutletProductsOptions {
 export const useGetAllOutletProducts = (
   options: UseGetAllOutletProductsOptions = {}
 ) => {
-  const params = new URLSearchParams();
+  // Request body oluştur
+  const requestBody: {
+    discountSort?: DiscountSort;
+    ratingSort?: RatingSort;
+    salesCountSort?: SalesCountSort;
+    likeCountSort?: LikeCountSort;
+    mainCategoryId?: string;
+    subCategoryId?: string;
+    page?: number;
+    pageSize?: number;
+    from?: number;
+  } = {};
 
   if (options.discountSort !== undefined) {
-    params.append("DiscountSort", options.discountSort.toString());
+    requestBody.discountSort = options.discountSort;
   }
 
   if (options.ratingSort !== undefined) {
-    params.append("RatingSort", options.ratingSort.toString());
+    requestBody.ratingSort = options.ratingSort;
   }
 
   if (options.salesCountSort !== undefined) {
-    params.append("SalesCountSort", options.salesCountSort.toString());
+    requestBody.salesCountSort = options.salesCountSort;
   }
 
   if (options.likeCountSort !== undefined) {
-    params.append("LikeCountSort", options.likeCountSort.toString());
+    requestBody.likeCountSort = options.likeCountSort;
   }
 
   if (options.mainCategoryId) {
-    params.append("MainCategoryId", options.mainCategoryId);
+    requestBody.mainCategoryId = options.mainCategoryId;
   }
 
   if (options.subCategoryId) {
-    params.append("SubCategoryId", options.subCategoryId);
+    requestBody.subCategoryId = options.subCategoryId;
   }
 
   if (options.page !== undefined) {
-    params.append("Page", options.page.toString());
+    requestBody.page = options.page;
   }
 
   if (options.pageSize !== undefined) {
-    params.append("PageSize", options.pageSize.toString());
+    requestBody.pageSize = options.pageSize;
   }
 
   if (options.from !== undefined) {
-    params.append("From", options.from.toString());
+    requestBody.from = options.from;
   }
 
-  const { data, isLoading, error } = useGetData<ProductListResponse>({
-    url: `${GET_ALL_OUTLET_PRODUCTS}?${params.toString()}`,
+  const { data, isLoading, error } = useGetData<GetAllOutletProductsResponse>({
+    url: GET_ALL_OUTLET_PRODUCTS,
+
     queryKey: [
       QueryKeys.ALL_PRODUCTS,
       "outlet",
@@ -80,12 +96,24 @@ export const useGetAllOutletProducts = (
       options.subCategoryId,
     ],
     method: HttpMethod.POST,
+    data: requestBody,
     enabled: options.enabled !== false,
   });
 
   return {
-    data,
+    data: data?.data || {
+      items: [],
+      from: 0,
+      index: 0,
+      size: 0,
+      count: 0,
+      pages: 0,
+      hasPrevious: false,
+      hasNext: false,
+    },
     isLoading,
     error,
+    isSuccess: data?.isSucceed,
+    message: data?.message,
   };
 };

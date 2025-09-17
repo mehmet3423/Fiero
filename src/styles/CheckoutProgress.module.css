@@ -1,0 +1,159 @@
+.checkoutProgress {
+  background: #f8f9fa;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.progressSteps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.stepIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.progressStep.completed .stepIcon {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.progressStep.active .stepIcon {
+  background: #007bff;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.progressStep:not(.completed):not(.active) .stepIcon {
+  background: #e9ecef;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
+}
+
+.stepContent {
+  max-width: 120px;
+}
+
+.stepTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: #495057;
+}
+
+.stepDescription {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.progressStep.completed .stepTitle,
+.progressStep.active .stepTitle {
+  color: #212529;
+}
+
+.progressStep.completed .stepDescription,
+.progressStep.active .stepDescription {
+  color: #495057;
+}
+
+.stepConnector {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  z-index: -1;
+}
+
+.connectorLine {
+  height: 100%;
+  background: #e9ecef;
+  transition: background 0.3s ease;
+}
+
+.progressStep.completed + .progressStep .connectorLine,
+.progressStep.completed .stepConnector .connectorLine {
+  background: #28a745;
+}
+
+.progressStep.clickable {
+  cursor: pointer;
+}
+
+.progressStep.clickable:hover .stepIcon {
+  transform: scale(1.05);
+}
+
+.progressStep.active.clickable:hover .stepIcon {
+  transform: scale(1.15);
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .checkoutProgress {
+    padding: 1rem 0;
+  }
+  
+  .progressSteps {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .stepConnector {
+    display: none;
+  }
+  
+  .stepContent {
+    max-width: none;
+  }
+  
+  .stepTitle {
+    font-size: 1rem;
+  }
+  
+  .stepDescription {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .stepIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .stepTitle {
+    font-size: 0.9rem;
+  }
+  
+  .stepDescription {
+    font-size: 0.75rem;
+  }
+}

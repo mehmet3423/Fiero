@@ -5,7 +5,7 @@ import { Discount } from "@/constants/models/Discount";
 import useGetData from "@/hooks/useGetData";
 
 export const useGetDiscountById = (discountId: string) => {
-  const { data, isLoading, error, refetch } = useGetData<Discount>({
+  const { data, isLoading, error, refetch } = useGetData<{ data: Discount }>({
     url: `${GET_DISCOUNT_BY_ID}?Id=${discountId}`,
     queryKey: [QueryKeys.DISCOUNT_DETAIL, discountId],
     method: HttpMethod.GET,
@@ -13,7 +13,7 @@ export const useGetDiscountById = (discountId: string) => {
   });
 
   return {
-    discount: data,
+    discount: data?.data,
     isLoading,
     error,
     refetch,

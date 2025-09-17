@@ -46,7 +46,6 @@ const CartDiscountPage = () => {
       toast.success("İndirim başarıyla silindi");
     } catch (error) {
       toast.error("İndirim silinirken bir hata oluştu");
-      console.error("Error deleting discount:", error);
     }
   };
   const confirmDelete = (id: string) => {
@@ -56,13 +55,13 @@ const CartDiscountPage = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchName(e.target.value);
-    setPage(1);
+    setPage(0);
   };
 
   const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setIsActive(value === "" ? undefined : value === "true");
-    setPage(1);
+    setPage(0);
   };
 
   const formatDate = (dateString: string) => {
@@ -179,15 +178,29 @@ const CartDiscountPage = () => {
                     <td>{formatDate(discount.startDate)}</td>
                     <td>{formatDate(discount.endDate)}</td>
                     <td>
-                      {discount.isActive && discount.isWithinActiveDateRange
-                        ? "Aktif"
-                        : "Pasif"}
+                      <span
+                        className={`badge bg-${
+                          discount.isActive &&
+                          (discount.isWithinActiveDateRange === undefined ||
+                            discount.isWithinActiveDateRange)
+                            ? "success"
+                            : "danger"
+                        }`}
+                      >
+                        {discount.isActive
+                          ? discount.isWithinActiveDateRange === undefined
+                            ? "Aktif (Deaktif Tarih)"
+                            : discount.isWithinActiveDateRange
+                            ? "Aktif"
+                            : "Aktif (Deaktif Tarih)"
+                          : "Pasif"}
+                      </span>
                     </td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-primary d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-icon btn-outline-primary"
                           onClick={() => handleEdit(discount.id)}
                           title="Düzenle"
                           disabled={isDeleting}
@@ -196,7 +209,7 @@ const CartDiscountPage = () => {
                         </button>
                         <button
                           type="button"
-                          className="btn btn-sm btn-icon btn-outline-danger d-flex align-items-center justify-content-center"
+                          className="btn btn-sm btn-icon btn-outline-danger"
                           onClick={() => confirmDelete(discount.id)}
                           title="Sil"
                           disabled={isDeleting}

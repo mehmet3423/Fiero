@@ -1,6 +1,7 @@
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
+import PageLoadingAnimation from "@/components/shared/PageLoadingAnimation";
 
 interface AdminGuardProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     if (userProfileLoading) return;
 
     if (!userProfile) {
+      setIsLoading(false);
       return;
     }
 
@@ -27,12 +29,17 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       setIsLoading(false);
       return;
     }
+
+    // Admin yetkisi varsa loading'i kapat
+    if (isAdmin) {
+      setIsLoading(false);
+    }
   }, [router.pathname, isAdmin, userProfileLoading, userProfile]);
 
   // UserProfile yüklenene kadar loading göster
-  // if (userProfileLoading || isLoading) {
-  //     return <PageLoadingAnimation />;
-  // }
+  if (userProfileLoading || isLoading) {
+    return <PageLoadingAnimation />;
+  }
 
   if (
     router.pathname.startsWith("/admin") &&

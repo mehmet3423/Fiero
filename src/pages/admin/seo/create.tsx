@@ -43,7 +43,7 @@ function CanonicalAutocomplete({
   baseUrl,
   allowedRegex,
   invalidCharsFn,
-  required
+  required,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -57,19 +57,32 @@ function CanonicalAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!value) setSuggestions(staticPages);
-    else setSuggestions(staticPages.filter(page => page.value && page.value.toLowerCase().includes(value.toLowerCase())));
+    else
+      setSuggestions(
+        staticPages.filter(
+          (page) =>
+            page.value && page.value.toLowerCase().includes(value.toLowerCase())
+        )
+      );
   }, [value]);
   return (
-    <div className="mb-3" style={{ position: 'relative' }}>
+    <div className="mb-3" style={{ position: "relative" }}>
       <label className="form-label">Canonical URL</label>
       <div className="input-group">
-        <span className="input-group-text" style={{ background: '#f8f9fa', fontSize: '0.9em' }}>{baseUrl}/</span>
+        <span
+          className="input-group-text"
+          style={{ background: "#f8f9fa", fontSize: "0.9em" }}
+        >
+          {baseUrl}/
+        </span>
         <input
           ref={inputRef}
           type="text"
-          className={`form-control ${!value || !allowedRegex.test(value) ? 'is-invalid' : ''}`}
+          className={`form-control ${
+            !value || !allowedRegex.test(value) ? "is-invalid" : ""
+          }`}
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           placeholder="örnek: about-us veya kendi yolunuzu yazın"
@@ -78,52 +91,56 @@ function CanonicalAutocomplete({
         />
       </div>
       {focused && suggestions.length > 0 && (
-        <ul style={{
-          position: 'absolute',
-          zIndex: 10,
-          left: 0,
-          right: 0,
-          marginTop: 2,
-          background: '#fff',
-          border: '1px solid #ddd',
-          borderRadius: 4,
-          maxHeight: 180,
-          overflowY: 'auto',
-          listStyle: 'none',
-          padding: 0
-        }}>
-          {suggestions.map(page => (
+        <ul
+          style={{
+            position: "absolute",
+            zIndex: 10,
+            left: 0,
+            right: 0,
+            marginTop: 2,
+            background: "#fff",
+            border: "1px solid #ddd",
+            borderRadius: 4,
+            maxHeight: 180,
+            overflowY: "auto",
+            listStyle: "none",
+            padding: 0,
+          }}
+        >
+          {suggestions.map((page) => (
             <li
               key={page.value}
-              style={{ padding: '8px 12px', cursor: 'pointer' }}
+              style={{ padding: "8px 12px", cursor: "pointer" }}
               onMouseDown={() => {
                 onChange(page.value);
                 setFocused(false);
                 if (inputRef.current) inputRef.current.blur();
               }}
             >
-              <span style={{ color: '#555' }}>{page.label}</span>
-              <span style={{ float: 'right', color: '#888', fontSize: 12 }}>{page.value}</span>
+              <span style={{ color: "#555" }}>{page.label}</span>
+              <span style={{ float: "right", color: "#888", fontSize: 12 }}>
+                {page.value}
+              </span>
             </li>
           ))}
         </ul>
       )}
-      <small className={
-        value && !allowedRegex.test(value)
-          ? 'text-danger'
-          : ''
-      } style={{
-        display: 'block',
-        fontSize: value && !allowedRegex.test(value) ? undefined : '0.85em',
-        fontStyle: value && !allowedRegex.test(value) ? undefined : 'italic',
-        color: value && !allowedRegex.test(value) ? undefined : '#6c757d',
-        marginTop: 4,
-        marginLeft: 2,
-        minHeight: 20
-      }}>
-        {(value && !allowedRegex.test(value)) ? (
+      <small
+        className={value && !allowedRegex.test(value) ? "text-danger" : ""}
+        style={{
+          display: "block",
+          fontSize: value && !allowedRegex.test(value) ? undefined : "0.85em",
+          fontStyle: value && !allowedRegex.test(value) ? undefined : "italic",
+          color: value && !allowedRegex.test(value) ? undefined : "#6c757d",
+          marginTop: 4,
+          marginLeft: 2,
+          minHeight: 20,
+        }}
+      >
+        {value && !allowedRegex.test(value) ? (
           <>
-            Sadece harf, rakam, tire, alt tire, slash ve nokta kullanabilirsiniz. Örnek: <b>about-us</b>
+            Sadece harf, rakam, tire, alt tire, slash ve nokta
+            kullanabilirsiniz. Örnek: <b>about-us</b>
             {value && invalidCharsFn(value) && (
               <>
                 <br />
@@ -133,9 +150,24 @@ function CanonicalAutocomplete({
           </>
         ) : (
           <>
-            <span style={{ fontSize: '0.75em', marginRight: 4, verticalAlign: 'middle' }}>ℹ️</span>
-            <span style={{ fontSize: '0.75em', fontStyle: 'italic', color: '#6c757d' }}>
-              Sadece harf, rakam, tire, alt tire, slash ve nokta kullanabilirsiniz. Örnek: <b>about-us</b>
+            <span
+              style={{
+                fontSize: "0.75em",
+                marginRight: 4,
+                verticalAlign: "middle",
+              }}
+            >
+              ℹ️
+            </span>
+            <span
+              style={{
+                fontSize: "0.75em",
+                fontStyle: "italic",
+                color: "#6c757d",
+              }}
+            >
+              Sadece harf, rakam, tire, alt tire, slash ve nokta
+              kullanabilirsiniz. Örnek: <b>about-us</b>
             </span>
           </>
         )}
@@ -167,15 +199,26 @@ function CreateSeoPage() {
     mainCategoryId: "",
     subCategoryId: "",
   });
-  const [seoType, setSeoType] = useState<"homepage" | "general" | "product" | "category">(
-    "general"
+  const [seoType, setSeoType] = useState<
+    "homepage" | "general" | "product" | "category"
+  >("general");
+  const {
+    data: mainCategoriesWithSubs,
+    isLoading: mainCategoriesLoading,
+    error: mainCategoriesError,
+  } = useMainCategoriesWithSubCategories();
+  const selectedMainCategory = mainCategoriesWithSubs.find(
+    (cat) => cat.id === formData.mainCategoryId
   );
-  const { data: mainCategoriesWithSubs, isLoading: mainCategoriesLoading, error: mainCategoriesError } = useMainCategoriesWithSubCategories();
-  const selectedMainCategory = mainCategoriesWithSubs.find(cat => cat.id === formData.mainCategoryId);
-  const subCategories = selectedMainCategory ? selectedMainCategory.subCategories : [];
+  const subCategories = selectedMainCategory
+    ? selectedMainCategory.subCategories
+    : [];
   const [categoryError, setCategoryError] = useState<string | null>(null);
-  const { products: productList, loading: productsLoading, error: productsError } = useBasicProductList();
-
+  const {
+    products: productList,
+    loading: productsLoading,
+    error: productsError,
+  } = useBasicProductList();
   // Base URL'i al (client-side)
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -190,8 +233,10 @@ function CreateSeoPage() {
       setCanonicalSuggestions(staticPages);
     } else {
       setCanonicalSuggestions(
-        staticPages.filter(page =>
-          page.value && page.value.toLowerCase().includes(formData.canonical.toLowerCase())
+        staticPages.filter(
+          (page) =>
+            page.value &&
+            page.value.toLowerCase().includes(formData.canonical.toLowerCase())
         )
       );
     }
@@ -222,11 +267,14 @@ function CreateSeoPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSeoTypeChange = (type: "homepage" | "general" | "product" | "category") => {
+  const handleSeoTypeChange = (
+    type: "homepage" | "general" | "product" | "category"
+  ) => {
     setSeoType(type);
     if (type === "homepage") {
       // Ana sayfa seçilirse isHomePage true, diğer id alanları temizlenir
-      const baseUrl = typeof window !== "undefined" ? window.location.origin + "/" : "";
+      const baseUrl =
+        typeof window !== "undefined" ? window.location.origin + "/" : "";
       setFormData((prev) => ({
         ...prev,
         isHomePage: true,
@@ -260,11 +308,16 @@ function CreateSeoPage() {
   const [selectedStaticPage, setSelectedStaticPage] = useState<string>("");
 
   // Toast/hata mesajı için state
-  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // OG görsel yükleme için state
   const [ogImageUploading, setOgImageUploading] = useState(false);
-  const [ogImageUploadError, setOgImageUploadError] = useState<string | null>(null);
+  const [ogImageUploadError, setOgImageUploadError] = useState<string | null>(
+    null
+  );
   const ogImageInputRef = useRef<HTMLInputElement>(null);
 
   // Drag & drop event handler
@@ -277,7 +330,9 @@ function CreateSeoPage() {
   };
 
   // Dosya seçme event handler
-  const handleOgImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOgImageFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setOgImageUploadError(null);
     const file = e.target.files?.[0];
     if (!file) return;
@@ -289,7 +344,9 @@ function CreateSeoPage() {
     setOgImageUploading(true);
     setOgImageUploadError(null);
     try {
-      validateImage(file, { allowedTypes: ["image/jpeg", "image/png", "image/jpg"] });
+      validateImage(file, {
+        allowedTypes: ["image/jpeg", "image/png", "image/jpg"],
+      });
       const res = await uploadImageToCloudinary(file);
       handleInputChange("ogImageUrl", res.secure_url);
     } catch (err: any) {
@@ -322,8 +379,14 @@ function CreateSeoPage() {
     }
 
     // Kategori SEO'su için ana veya alt kategori zorunlu
-    if (seoType === "category" && !formData.mainCategoryId && !formData.subCategoryId) {
-      setCategoryError("Lütfen en az bir ana kategori veya alt kategori seçiniz.");
+    if (
+      seoType === "category" &&
+      !formData.mainCategoryId &&
+      !formData.subCategoryId
+    ) {
+      setCategoryError(
+        "Lütfen en az bir ana kategori veya alt kategori seçiniz."
+      );
       return;
     } else {
       setCategoryError(null);
@@ -355,14 +418,23 @@ function CreateSeoPage() {
 
       if (type === "general") {
         // Sadece path gönder (örn. 'about-us')
-        mapped.Canonical = data.canonical ? data.canonical.replace(/^\//, "") : null;
+        mapped.Canonical = data.canonical
+          ? data.canonical.replace(/^\//, "")
+          : null;
       }
       if (type === "product") {
-        mapped.ProductId = data.productId && data.productId !== "" ? data.productId : null;
+        mapped.ProductId =
+          data.productId && data.productId !== "" ? data.productId : null;
       }
       if (type === "category") {
-        mapped.MainCategoryId = data.mainCategoryId && data.mainCategoryId !== "" ? data.mainCategoryId : null;
-        mapped.SubCategoryId = data.subCategoryId && data.subCategoryId !== "" ? data.subCategoryId : null;
+        mapped.MainCategoryId =
+          data.mainCategoryId && data.mainCategoryId !== ""
+            ? data.mainCategoryId
+            : null;
+        mapped.SubCategoryId =
+          data.subCategoryId && data.subCategoryId !== ""
+            ? data.subCategoryId
+            : null;
       }
       // Diğerlerinde canonical null kalır
       return mapped;
@@ -372,23 +444,29 @@ function CreateSeoPage() {
 
     try {
       await createSeo(submitData);
-      setToast({ type: 'success', message: 'SEO kaydı başarıyla oluşturuldu.' });
+      setToast({
+        type: "success",
+        message: "SEO kaydı başarıyla oluşturuldu.",
+      });
       router.push("/admin/seo");
     } catch (error: any) {
       // Backend'den dönen hata mesajı ister string, ister array, ister object olsun, uygun şekilde göster
-      let errorMsg = 'SEO kaydı oluşturulamadı.';
+      let errorMsg = "SEO kaydı oluşturulamadı.";
       if (error?.response?.data) {
         if (Array.isArray(error.response.data)) {
-          errorMsg = error.response.data.join(' | ');
-        } else if (typeof error.response.data === 'object' && error.response.data.message) {
+          errorMsg = error.response.data.join(" | ");
+        } else if (
+          typeof error.response.data === "object" &&
+          error.response.data.message
+        ) {
           errorMsg = error.response.data.message;
-        } else if (typeof error.response.data === 'string') {
+        } else if (typeof error.response.data === "string") {
           errorMsg = error.response.data;
         }
       } else if (error?.message) {
         errorMsg = error.message;
       }
-      setToast({ type: 'error', message: errorMsg });
+      setToast({ type: "error", message: errorMsg });
       // Do NOT redirect on error
     }
   };
@@ -490,15 +568,24 @@ function CreateSeoPage() {
                     <select
                       className="form-select"
                       value={formData.productId}
-                      onChange={e => handleInputChange("productId", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("productId", e.target.value)
+                      }
                       disabled={productsLoading}
                     >
                       <option value="">Ürün seçiniz</option>
-                      {productsLoading && <option disabled>Yükleniyor...</option>}
-                      {productsError && <option disabled>Ürünler yüklenemedi</option>}
-                      {productList && productList.map(product => (
-                        <option key={product.id} value={product.id}>{product.title}</option>
-                      ))}
+                      {productsLoading && (
+                        <option disabled>Yükleniyor...</option>
+                      )}
+                      {productsError && (
+                        <option disabled>Ürünler yüklenemedi</option>
+                      )}
+                      {productList &&
+                        productList?.map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.title}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 )}
@@ -510,32 +597,48 @@ function CreateSeoPage() {
                       <select
                         className="form-select"
                         value={formData.mainCategoryId}
-                        onChange={e => {
+                        onChange={(e) => {
                           handleInputChange("mainCategoryId", e.target.value);
                           handleInputChange("subCategoryId", "");
                         }}
                         disabled={mainCategoriesLoading}
                       >
                         <option value="">Ana kategori seçiniz</option>
-                        {mainCategoriesWithSubs && mainCategoriesWithSubs.map((cat) => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
+                        {mainCategoriesWithSubs &&
+                          mainCategoriesWithSubs.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </option>
+                          ))}
                       </select>
-                      {mainCategoriesLoading && <div className="text-info">Yükleniyor...</div>}
-                      {mainCategoriesError && <div className="text-danger">{mainCategoriesError.toString()}</div>}
+                      {mainCategoriesLoading && (
+                        <div className="text-info">Yükleniyor...</div>
+                      )}
+                      {mainCategoriesError && (
+                        <div className="text-danger">
+                          {mainCategoriesError.toString()}
+                        </div>
+                      )}
                     </div>
                     <div className="mb-3">
-                      <label className="form-label">Alt Kategori Seç (Opsiyonel)</label>
+                      <label className="form-label">
+                        Alt Kategori Seç (Opsiyonel)
+                      </label>
                       <select
                         className="form-select"
                         value={formData.subCategoryId}
-                        onChange={e => handleInputChange("subCategoryId", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("subCategoryId", e.target.value)
+                        }
                         disabled={!formData.mainCategoryId}
                       >
                         <option value="">Alt kategori seçiniz</option>
-                        {subCategories && subCategories.map((sub) => (
-                          <option key={sub.id} value={sub.id}>{sub.name}</option>
-                        ))}
+                        {subCategories &&
+                          subCategories.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                   </>
@@ -554,11 +657,13 @@ function CreateSeoPage() {
                       </label>
                       <input
                         type="text"
-                        className={`form-control ${formData.title.length > 0 &&
-                          (formData.title.length < 5 || formData.title.length > 70)
-                          ? 'is-invalid'
-                          : ''
-                          }`}
+                        className={`form-control ${
+                          formData.title.length > 0 &&
+                          (formData.title.length < 5 ||
+                            formData.title.length > 70)
+                            ? "is-invalid"
+                            : ""
+                        }`}
                         value={formData.title}
                         onChange={(e) =>
                           handleInputChange("title", e.target.value)
@@ -566,14 +671,19 @@ function CreateSeoPage() {
                         placeholder="Sayfa başlığı (5-70 karakter)"
                         maxLength={100}
                       />
-                      <small className={`${formData.title.length > 0 &&
-                        (formData.title.length < 5 || formData.title.length > 70)
-                        ? 'text-danger'
-                        : 'text-muted'
-                        }`}>
+                      <small
+                        className={`${
+                          formData.title.length > 0 &&
+                          (formData.title.length < 5 ||
+                            formData.title.length > 70)
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
                         {formData.title.length}/70 karakter
                         {formData.title.length > 0 &&
-                          (formData.title.length < 5 || formData.title.length > 70) &&
+                          (formData.title.length < 5 ||
+                            formData.title.length > 70) &&
                           " (SEO için ideal değil)"}
                       </small>
                     </div>
@@ -583,8 +693,9 @@ function CreateSeoPage() {
                         Açıklama <span className="text-danger">*</span>
                       </label>
                       <textarea
-                        className={`form-control ${formData.description.length > 160 ? 'is-invalid' : ''
-                          }`}
+                        className={`form-control ${
+                          formData.description.length > 160 ? "is-invalid" : ""
+                        }`}
                         value={formData.description}
                         onChange={(e) =>
                           handleInputChange("description", e.target.value)
@@ -593,8 +704,13 @@ function CreateSeoPage() {
                         rows={3}
                         maxLength={160}
                       />
-                      <small className={`${formData.description.length > 160 ? 'text-danger' : 'text-muted'
-                        }`}>
+                      <small
+                        className={`${
+                          formData.description.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
                         {formData.description.length}/160 karakter
                       </small>
                     </div>
@@ -603,8 +719,9 @@ function CreateSeoPage() {
                       <label className="form-label">Meta Başlık</label>
                       <input
                         type="text"
-                        className={`form-control ${formData.metaTitle.length > 70 ? 'is-invalid' : ''
-                          }`}
+                        className={`form-control ${
+                          formData.metaTitle.length > 70 ? "is-invalid" : ""
+                        }`}
                         value={formData.metaTitle}
                         onChange={(e) =>
                           handleInputChange("metaTitle", e.target.value)
@@ -612,8 +729,13 @@ function CreateSeoPage() {
                         placeholder="Meta title (maksimum 70 karakter)"
                         maxLength={70}
                       />
-                      <small className={`${formData.metaTitle.length > 70 ? 'text-danger' : 'text-muted'
-                        }`}>
+                      <small
+                        className={`${
+                          formData.metaTitle.length > 70
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
                         {formData.metaTitle.length}/70 karakter
                       </small>
                     </div>
@@ -621,8 +743,11 @@ function CreateSeoPage() {
                     <div className="mb-3">
                       <label className="form-label">Meta Açıklama</label>
                       <textarea
-                        className={`form-control ${formData.metaDescription.length > 160 ? 'is-invalid' : ''
-                          }`}
+                        className={`form-control ${
+                          formData.metaDescription.length > 160
+                            ? "is-invalid"
+                            : ""
+                        }`}
                         value={formData.metaDescription}
                         onChange={(e) =>
                           handleInputChange("metaDescription", e.target.value)
@@ -631,8 +756,13 @@ function CreateSeoPage() {
                         rows={3}
                         maxLength={160}
                       />
-                      <small className={`${formData.metaDescription.length > 160 ? 'text-danger' : 'text-muted'
-                        }`}>
+                      <small
+                        className={`${
+                          formData.metaDescription.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
                         {formData.metaDescription.length}/160 karakter
                       </small>
                     </div>
@@ -641,8 +771,9 @@ function CreateSeoPage() {
                       <label className="form-label">Anahtar Kelimeler</label>
                       <input
                         type="text"
-                        className={`form-control ${formData.keywords.length > 255 ? 'is-invalid' : ''
-                          }`}
+                        className={`form-control ${
+                          formData.keywords.length > 255 ? "is-invalid" : ""
+                        }`}
                         value={formData.keywords}
                         onChange={(e) =>
                           handleInputChange("keywords", e.target.value)
@@ -650,9 +781,15 @@ function CreateSeoPage() {
                         placeholder="kelime1, kelime2, kelime3"
                         maxLength={255}
                       />
-                      <small className={`${formData.keywords.length > 255 ? 'text-danger' : 'text-muted'
-                        }`}>
-                        {formData.keywords.length}/255 karakter - Virgülle ayırın
+                      <small
+                        className={`${
+                          formData.keywords.length > 255
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.keywords.length}/255 karakter - Virgülle
+                        ayırın
                       </small>
                     </div>
 
@@ -660,7 +797,7 @@ function CreateSeoPage() {
                     {seoType === "general" && (
                       <CanonicalAutocomplete
                         value={formData.canonical}
-                        onChange={v => handleInputChange("canonical", v)}
+                        onChange={(v) => handleInputChange("canonical", v)}
                         baseUrl={baseUrl}
                         allowedRegex={canonicalAllowedRegex}
                         invalidCharsFn={invalidCanonicalChars}
@@ -708,13 +845,18 @@ function CreateSeoPage() {
                         onDrop={handleOgImageDrop}
                         onDragOver={handleOgImageDragOver}
                         onClick={() => ogImageInputRef.current?.click()}
-                        style={{ position: 'relative', width: 180, height: 120, marginBottom: 8 }}
+                        style={{
+                          position: "relative",
+                          width: 180,
+                          height: 120,
+                          marginBottom: 8,
+                        }}
                       >
                         <input
                           ref={ogImageInputRef}
                           type="file"
                           accept="image/jpeg,image/png,image/jpg"
-                          style={{ display: 'none' }}
+                          style={{ display: "none" }}
                           onChange={handleOgImageFileChange}
                           disabled={ogImageUploading}
                         />
@@ -724,12 +866,12 @@ function CreateSeoPage() {
                               src={formData.ogImageUrl}
                               alt="OG Görsel Önizleme"
                               style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
                                 borderRadius: 12,
-                                border: '1.5px solid #eee',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                                border: "1.5px solid #eee",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                               }}
                             />
                             <div className="og-image-overlay">
@@ -742,15 +884,23 @@ function CreateSeoPage() {
                               <span>Yükleniyor...</span>
                             ) : (
                               <>
-                                <span style={{ color: '#888', fontSize: 15 }}>Görseli sürükleyin veya tıklayın</span>
+                                <span style={{ color: "#888", fontSize: 15 }}>
+                                  Görseli sürükleyin veya tıklayın
+                                </span>
                                 <br />
-                                <span style={{ fontSize: 11, color: '#aaa' }}>(JPG, JPEG, PNG. Maks 10MB)</span>
+                                <span style={{ fontSize: 11, color: "#aaa" }}>
+                                  (JPG, JPEG, PNG. Maks 10MB)
+                                </span>
                               </>
                             )}
                           </div>
                         )}
                       </div>
-                      {ogImageUploadError && <div className="text-danger" style={{ fontSize: 13 }}>{ogImageUploadError}</div>}
+                      {ogImageUploadError && (
+                        <div className="text-danger" style={{ fontSize: 13 }}>
+                          {ogImageUploadError}
+                        </div>
+                      )}
                     </div>
 
                     <h6 className="fw-bold mb-3 text-warning">Ek Bilgiler</h6>
@@ -788,7 +938,9 @@ function CreateSeoPage() {
                       <select
                         className="form-select"
                         value={formData.language}
-                        onChange={(e) => handleInputChange("language", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("language", e.target.value)
+                        }
                         required
                       >
                         <option value="tr">tr</option>
@@ -804,11 +956,15 @@ function CreateSeoPage() {
                       <select
                         className="form-select"
                         value={formData.robotsMetaTag}
-                        onChange={(e) => handleInputChange("robotsMetaTag", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("robotsMetaTag", e.target.value)
+                        }
                         required
                       >
                         {validRobotsMetaTags.map((tag) => (
-                          <option key={tag} value={tag}>{tag}</option>
+                          <option key={tag} value={tag}>
+                            {tag}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -821,11 +977,13 @@ function CreateSeoPage() {
                     Yapılandırılmış Veri (JSON-LD)
                   </label>
                   <textarea
-                    className={`form-control ${formData.structuredDataJson.length > 10000 ||
-                      (formData.structuredDataJson && !isValidJson(formData.structuredDataJson))
-                      ? 'is-invalid'
-                      : ''
-                      }`}
+                    className={`form-control ${
+                      formData.structuredDataJson.length > 10000 ||
+                      (formData.structuredDataJson &&
+                        !isValidJson(formData.structuredDataJson))
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     value={formData.structuredDataJson}
                     onChange={(e) =>
                       handleInputChange("structuredDataJson", e.target.value)
@@ -835,12 +993,17 @@ function CreateSeoPage() {
                     style={{ fontFamily: "monospace" }}
                     maxLength={10000}
                   />
-                  <small className={`${formData.structuredDataJson.length > 10000 ||
-                    (formData.structuredDataJson && !isValidJson(formData.structuredDataJson))
-                    ? 'text-danger'
-                    : 'text-muted'
-                    }`}>
-                    {formData.structuredDataJson.length}/10,000 karakter - Geçerli JSON formatında giriniz
+                  <small
+                    className={`${
+                      formData.structuredDataJson.length > 10000 ||
+                      (formData.structuredDataJson &&
+                        !isValidJson(formData.structuredDataJson))
+                        ? "text-danger"
+                        : "text-muted"
+                    }`}
+                  >
+                    {formData.structuredDataJson.length}/10,000 karakter -
+                    Geçerli JSON formatında giriniz
                   </small>
                 </div>
 
@@ -865,9 +1028,27 @@ function CreateSeoPage() {
 
       {/* Toast/alert mesajı */}
       {toast && (
-        <div className={`alert alert-${toast.type === 'error' ? 'danger' : 'success'} fixed-top`} style={{ top: 70, left: '50%', transform: 'translateX(-50%)', zIndex: 2000, minWidth: 300, maxWidth: 500 }}>
+        <div
+          className={`alert alert-${
+            toast.type === "error" ? "danger" : "success"
+          } fixed-top`}
+          style={{
+            top: 70,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 2000,
+            minWidth: 300,
+            maxWidth: 500,
+          }}
+        >
           {toast.message}
-          <button type="button" className="btn-close float-end" aria-label="Close" onClick={() => setToast(null)} style={{ fontSize: 12 }}></button>
+          <button
+            type="button"
+            className="btn-close float-end"
+            aria-label="Close"
+            onClick={() => setToast(null)}
+            style={{ fontSize: 12 }}
+          ></button>
         </div>
       )}
 
@@ -953,8 +1134,11 @@ function CreateSeoPage() {
         }
         .og-image-overlay {
           position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.18);
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.18);
           color: #fff;
           display: flex;
           align-items: center;

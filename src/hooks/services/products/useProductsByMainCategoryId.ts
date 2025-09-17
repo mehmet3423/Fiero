@@ -59,8 +59,10 @@ export const useProductsByMainCategoryId = (
   });
 
   return {
-    products: data,
+    products: data?.data || { items: [], from: 0, index: 0, size: 0, count: 0, pages: 0, hasPrevious: false, hasNext: false },
     isLoading,
     error,
+    isSuccess: data?.isSucceed,
+    message: data?.message,
   };
 };
