@@ -45,7 +45,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         <div className="card-header">
           <div className="form-check form-switch">
             <input
-              className="form-check-input"
+              className="form-check-input "
               type="checkbox"
               id="isEmailNotificationEnabled"
               checked={value.isEmailNotificationEnabled}

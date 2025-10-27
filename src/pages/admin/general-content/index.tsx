@@ -25,6 +25,7 @@ function GeneralContentPage() {
     id: string;
     title: string;
   } | null>(null);
+  const [addFormKey, setAddFormKey] = useState(0);
 
   const { contents, isLoading, refetchContents } =
     useGeneralContents(selectedContentType);
@@ -51,7 +52,7 @@ function GeneralContentPage() {
         formData.get("content") as string,
         formData.get("contentUrl") as string,
         formData.get("imageUrl") as string,
-        contents?.items.length || 0, // yeni içerik için order
+        contents?.items?.length || 0, // yeni içerik için order
         selectedContentType
       );
       $("#addContentModal").modal("hide");
@@ -132,11 +133,9 @@ function GeneralContentPage() {
 
     return (
       <GeneralContentEditGrid
-        contents={
-          (contents?.items as GeneralContentModel[])
-            ?.slice()
-            ?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-        }
+        contents={(contents?.items as GeneralContentModel[])
+          ?.slice()
+          ?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))}
         updateContent={updateContent}
         refetchContent={refetchContents}
         deleteContent={handleDeleteClick}
@@ -175,7 +174,10 @@ function GeneralContentPage() {
           <button
             type="button"
             className="btn btn-success"
-            onClick={() => $("#addContentModal").modal("show")}
+            onClick={() => {
+              setAddFormKey((prev) => prev + 1);
+              $("#addContentModal").modal("show");
+            }}
           >
             <i className="fas fa-plus mr-1"></i> Yeni İçerik Ekle
           </button>
@@ -188,7 +190,10 @@ function GeneralContentPage() {
           <div className={styles.contentList}>
             {isLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status"></div>
+                <div
+                  className="spinner-border text-primary"
+                  role="status"
+                ></div>
               </div>
             ) : selectedContentType === null ? (
               <div className="text-center py-5">
@@ -201,7 +206,7 @@ function GeneralContentPage() {
                   olarak yönetmenizi sağlar. Başlamak için bir içerik seçiniz.
                 </p>
               </div>
-            ) : contents?.items.length === 0 ? (
+            ) : contents?.items?.length === 0 ? (
               <div className="text-center py-5">
                 <i
                   className="fas fa-inbox mb-3"
@@ -214,9 +219,7 @@ function GeneralContentPage() {
             ) : (
               contents?.items
                 ?.slice()
-                ?.sort(
-                  (a: any, b: any) => (a.order ?? 0) - (b.order ?? 0)
-                )
+                ?.sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
                 .map((content: any) => (
                   <div
                     key={content.id}
@@ -269,7 +272,7 @@ function GeneralContentPage() {
           {/* Ekleme Modalı */}
           <GeneralModal id="addContentModal" title="Yeni İçerik Ekle" size="lg">
             <ContentForm
-              key={`add-${selectedContentType}`} // kategori değişiminde sıfırla
+              key={`add-${selectedContentType}-${addFormKey}`}
               onSubmit={handleAdd}
               isLoading={isAdding}
               selectedContentType={selectedContentType}
@@ -297,7 +300,7 @@ function GeneralContentPage() {
           <GeneralModal
             id="deleteContentModal"
             title="İçerik Sil"
-            size="sm"
+            size="md"
             showFooter={true}
             approveButtonText="Evet, Sil"
             onApprove={handleDelete}

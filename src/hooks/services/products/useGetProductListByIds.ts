@@ -18,6 +18,7 @@ export function useGetProductListByIds(productIds: string[]) {
     },
     enabled: productIds && productIds.length > 0, // enabled ile kontrol et, erken return yapma
     onError: (err) => {
+      console.log("useGetProductListByIds error:", err);
       // Product ID'ler bulunamadığında sessizce devam et, hata mesajı gösterme
     },
   });

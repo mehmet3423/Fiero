@@ -5,6 +5,7 @@ export enum QueryKeys {
   GET_USER_PROFILE = "UserInfo",
   UPDATE_USER_PROFILE = "UpdateUserProfile",
   MAIN_CATEGORY_LIST = "MainCategoryList",
+  MAIN_CATEGORY_LOOKUP_LIST = "MainCategoryLookupList",
   SUB_CATEGORY_LIST = "SubCategoryList",
   PRODUCT_LIST = "ProductList",
   PRODUCT_LIST_BY_CATEGORY = "ProductList_ByCategory",

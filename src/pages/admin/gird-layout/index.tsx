@@ -26,7 +26,7 @@ const defaultWidgets: GeneralContentModel[] = [
       '{"lg":[{"w":3,"h":1,"x":1,"y":0,"i":"a3c590e4-d789-4768-9376-14b68cec0f7e","moved":false,"static":false}]}',
     contentUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
-    generalContentType: GeneralContentType.Index_ShowcaseBanner,
+    generalContentType: GeneralContentType.MainBanner,
     imageUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
     order: 1,
@@ -40,7 +40,7 @@ const defaultWidgets: GeneralContentModel[] = [
       '{"lg":[{"w":1,"h":1,"x":0,"y":0,"i":"29c468a8-a1a0-455a-9614-f3d423f6d60d","moved":false,"static":false}]}',
     contentUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
-    generalContentType: GeneralContentType.Index_ShowcaseBanner,
+    generalContentType: GeneralContentType.MainBanner,
     imageUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
     order: 0,
@@ -54,7 +54,7 @@ const defaultWidgets: GeneralContentModel[] = [
       '{"lg":[{"w":1,"h":1,"x":2,"y":0,"i":"29c468a8-a1a0-455a-9614-f3d423f6120d","moved":false,"static":false}]}',
     contentUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
-    generalContentType: GeneralContentType.Index_ShowcaseBanner,
+    generalContentType: GeneralContentType.MainBanner,
     imageUrl:
       "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQmoHh2b_js2SxvzfQJpmb6xx1cUTOiycC0aTQzwYmh9-Hd4IwYbi2qnxPw1I0LjLQZ8w6FfsnwUFiJJUQnIE8QinNxvKe1Il2VEueZS_g",
     order: 2,
@@ -99,8 +99,7 @@ function parseContentToLayout(contentArray: GeneralContentModel[]) {
             layouts[size] = [...(layouts[size] || []), ...layoutConfig[size]];
           }
         });
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   });
 

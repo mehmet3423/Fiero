@@ -22,7 +22,6 @@ const BundleSidebar: React.FC<BundleSidebarProps> = ({
 }) => {
   const { addToCart } = useCart();
   const [isAddingBundle, setIsAddingBundle] = useState(false);
-  console.log("bundleDiscount", bundleDiscount);
 
   // Bundle discount'tan product ID'leri çıkar
   const productIds =
@@ -43,12 +42,6 @@ const BundleSidebar: React.FC<BundleSidebarProps> = ({
     useGetDiscountById(bundleDiscountId || "");
 
   const handleAddBundleToCart = async () => {
-    console.log("BundleSidebar - Bundle Discount Debug:", {
-      bundleDiscount,
-      bundleDiscountId,
-      bundleDiscountProducts: (bundleDiscount as any).bundleDiscountProducts,
-    });
-
     if (!bundleDiscountId) {
       toast.error("Bundle ID bulunamadı");
       return;

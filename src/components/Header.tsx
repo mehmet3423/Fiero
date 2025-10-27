@@ -443,11 +443,12 @@ export default function Header() {
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center">
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
-                  {categories?.data?.length &&
+                  {Array.isArray(categories?.data) &&
+                    categories.data.length > 0 &&
                     categories.data
                       .slice()
-                      .sort((a, b) => a.displayIndex - b.displayIndex)
-                      .map((category) => (
+                      .sort((a: any, b: any) => a.displayIndex - b.displayIndex)
+                      .map((category: any) => (
                         <li
                           key={category.id}
                           className="menu-item"
@@ -526,10 +527,10 @@ export default function Header() {
                     onMouseLeave={() => setSustainabilityDropdownOpen(false)}
                     style={{ position: "relative" }}
                   >
-                    <Link href={PathEnums.SUSTAINABILITY} className="item-link">
+                    {/* <Link href={PathEnums.SUSTAINABILITY} className="item-link">
                       {t("header.content")}
                       <i className="icon icon-arrow-down"></i>
-                    </Link>
+                    </Link> */}
 
                     {/* Sürdürülebilirlik Dropdown */}
                     {/* {sustainabilityDropdownOpen && (

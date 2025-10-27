@@ -82,10 +82,7 @@ export default function SellerProductEditPage() {
     updatedData: UpdateDtoProduct
   ) => {
     try {
-      console.log(
-        "Güncellenecek ürün verisi:",
-        JSON.stringify(updatedData, null, 2)
-      );
+     
       await updateProduct(productId, updatedData);
       toast.success("Ürün başarıyla güncellendi");
       router.push(PathEnums.SELLER_PRODUCTS);

@@ -4,7 +4,6 @@ export enum GeneralContentType {
   // Index_MainCarouselBanner = 1,
   // Index_ShortInfo = 2,
 
-  Index_ShowcaseBanner = 4,
   // Index_Default = 5,
 
   // Index_Categories = 4,
@@ -17,18 +16,18 @@ export enum GeneralContentType {
   // PrivacyPolicy = 11,
   // TermsOfUse = 12
   Explore = 13,
-  AccordionCargoInfos = 13,
+  AccordionCargoInfos = 26,
   AccordionOrderAndReturns = 14,
   AccordionPayment = 15,
   AboutName = 16,
   AboutDesign = 18,
   PrivacyPolicy = 19,
   MainSlider = 20,
-  SecondSlider = 21,
   MainBanner = 22,
   MainProductList = 23,
   CookiePolicies = 24,
   DistanceSalesAgreement = 25,
+  Policies = 27,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -46,7 +45,6 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
 > = {
   // [GeneralContentType.Index_MainCarouselBanner]: IsCustomizable.No,
   // [GeneralContentType.Index_ShortInfo]: IsCustomizable.No,
-  [GeneralContentType.Index_ShowcaseBanner]: IsCustomizable.Yes,
   // [GeneralContentType.Index_Default]: IsCustomizable.No,
 
   // [GeneralContentType.Index_Categories]: IsCustomizable.No,
@@ -58,6 +56,7 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   // [GeneralContentType.Contact]: IsCustomizable.No,
   // [GeneralContentType.PrivacyPolicy]: IsCustomizable.No,
   // [GeneralContentType.TermsOfUse]: IsCustomizable.No,
+  [GeneralContentType.Explore]: IsCustomizable.No,
   [GeneralContentType.AccordionCargoInfos]: IsCustomizable.No,
   [GeneralContentType.AccordionOrderAndReturns]: IsCustomizable.No,
   [GeneralContentType.AccordionPayment]: IsCustomizable.No,
@@ -65,11 +64,11 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.AboutDesign]: IsCustomizable.No,
   [GeneralContentType.PrivacyPolicy]: IsCustomizable.No,
   [GeneralContentType.MainSlider]: IsCustomizable.No,
-  [GeneralContentType.SecondSlider]: IsCustomizable.No,
   [GeneralContentType.MainBanner]: IsCustomizable.No,
   [GeneralContentType.MainProductList]: IsCustomizable.No,
   [GeneralContentType.DistanceSalesAgreement]: IsCustomizable.No,
   [GeneralContentType.CookiePolicies]: IsCustomizable.No,
+  [GeneralContentType.Policies]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -130,8 +129,6 @@ export const getGeneralContentTypeName = (
     // case GeneralContentType.Index_ShortInfo:
     //     return "Ana Sayfa Kısa Bilgi";
 
-    case GeneralContentType.Index_ShowcaseBanner:
-      return "Ana Sayfa Vitrin Banner";
     // case GeneralContentType.Index_Default:
     // return "Yapım Aşamasında..";
     // case GeneralContentType.Index_Categories:
@@ -168,8 +165,6 @@ export const getGeneralContentTypeName = (
       return "Gizlilik Politikası";
     case GeneralContentType.MainSlider:
       return "Ana Sayfa Slider";
-    case GeneralContentType.SecondSlider:
-      return "Ana Sayfa Slider 2";
     case GeneralContentType.MainBanner:
       return "Ana Sayfa Banner";
     case GeneralContentType.MainProductList:
@@ -178,6 +173,8 @@ export const getGeneralContentTypeName = (
       return "Satış Sözleşmesi";
     case GeneralContentType.CookiePolicies:
       return "Çerez Politikaları";
+    case GeneralContentType.Policies:
+      return "Politikalar ve Belgeler";
     default:
       return "Bilinmeyen İçerik Türü";
   }

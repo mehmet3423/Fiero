@@ -137,6 +137,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -160,6 +161,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
     setOpenMenus(menusToOpen);
   }, [router.pathname]);
+
+  // Handle click outside for user dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".user-dropdown-wrapper")) {
+        setIsUserDropdownOpen(false);
+      }
+    }
+
+    if (isUserDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isUserDropdownOpen]);
 
   const toggleMenu = (itemPath: string) => {
     setOpenMenus((prev) =>
@@ -351,65 +368,77 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </li>
                 {/* User */}
                 <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a
-                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown"
-                  >
-                    <div className="avatar avatar-online me-2">
-                      <Image
-                        src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                        alt="User Avatar"
-                        className="rounded-circle"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    <div className="flex-grow-1">
-                      <span className="fw-semibold d-block">
-                        {userProfile?.applicationUser?.firstName ||
-                          "Admin Kullanıcı"}
-                      </span>
-                      <small className="text-muted">Admin</small>
-                    </div>
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        <div className="d-flex">
-                          <div className="avatar avatar-online me-2">
-                            <Image
-                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                              alt="User Avatar"
-                              className="rounded-circle"
-                              width={40}
-                              height={40}
-                            />
+                  <div className="user-dropdown-wrapper">
+                    <a
+                      className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsUserDropdownOpen(!isUserDropdownOpen);
+                      }}
+                    >
+                      <div className="avatar avatar-online me-2">
+                        <Image
+                          src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                          alt="User Avatar"
+                          className="rounded-circle"
+                          width={40}
+                          height={40}
+                        />
+                      </div>
+                      <div className="flex-grow-1">
+                        <span className="fw-semibold d-block">
+                          {userProfile?.applicationUser?.firstName ||
+                            "Admin Kullanıcı"}
+                        </span>
+                        <small className="text-muted">Admin</small>
+                      </div>
+                    </a>
+                    <ul
+                      className={`dropdown-menu dropdown-menu-end ${
+                        isUserDropdownOpen ? "show" : ""
+                      }`}
+                    >
+                      <li>
+                        <a className="dropdown-item" href="#">
+                          <div className="d-flex">
+                            <div className="avatar avatar-online me-2">
+                              <Image
+                                src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                                alt="User Avatar"
+                                className="rounded-circle"
+                                width={40}
+                                height={40}
+                              />
+                            </div>
+                            <div className="flex-grow-1">
+                              <span className="fw-semibold d-block">
+                                {userProfile?.applicationUser?.firstName ||
+                                  "Admin Kullanıcı"}
+                              </span>
+                              <small className="text-muted">Admin</small>
+                            </div>
                           </div>
-                          <div className="flex-grow-1">
-                            <span className="fw-semibold d-block">
-                              {userProfile?.applicationUser?.firstName ||
-                                "Admin Kullanıcı"}
-                            </span>
-                            <small className="text-muted">Admin</small>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div className="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item text-danger"
-                        href="#"
-                        onClick={handleLogout}
-                      >
-                        <i className="bx bx-power-off me-2"></i>
-                        <span className="align-middle">Çıkış Yap</span>
-                      </a>
-                    </li>
-                  </ul>
+                        </a>
+                      </li>
+                      <li>
+                        <div className="dropdown-divider"></div>
+                      </li>
+                      <li>
+                        <a
+                          className="dropdown-item text-danger"
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleLogout();
+                          }}
+                        >
+                          <i className="bx bx-power-off me-2"></i>
+                          <span className="align-middle">Çıkış Yap</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </li>
                 {/* /User */}
               </ul>
@@ -441,6 +470,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           userProfile={userProfile}
         />
       )}
+
+      {/* Dropdown Styles */}
+      <style jsx>{`
+        .user-dropdown-wrapper {
+          position: relative;
+        }
+        .user-dropdown-wrapper .dropdown-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          right: 0;
+          min-width: 250px;
+          z-index: 1000;
+          margin-top: 0.5rem;
+        }
+        .user-dropdown-wrapper .dropdown-menu.show {
+          display: block;
+        }
+      `}</style>
     </div>
   );
 }
