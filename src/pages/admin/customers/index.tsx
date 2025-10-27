@@ -34,7 +34,6 @@ export default function CustomersPage() {
     page: currentPage - 1, // API expects 0-based page indexing
     pageSize: 20,
   });
-  console.log(customersData);
   // Eğer mevcut sayfada hiç item yoksa ve sayfa 1'den büyükse, önceki sayfaya git
   useEffect(() => {
     if (customersData?.data && currentPage > 1) {

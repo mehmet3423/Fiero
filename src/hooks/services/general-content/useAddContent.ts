@@ -20,20 +20,21 @@ export const useAddContent = () => {
     order: number,
     generalContentType: GeneralContentType
   ) => {
-    const params = new URLSearchParams({
-      Order: order.toString(),
+    const body = {
+      Order: order,
       Title: title || "",
       Content: content || "",
       ContentUrl: contentUrl || "",
       ImageUrl: imageUrl || "",
-      WillRender: "true",
-      GeneralContentType: generalContentType.toString(),
-    }).toString();
+      WillRender: true,
+      GeneralContentType: generalContentType,
+    };
 
     await mutateAsync(
       {
-        url: `${CREATE_GENERAL_CONTENT}?${params}`,
+        url: CREATE_GENERAL_CONTENT,
         method: HttpMethod.POST,
+        data: body,
         showErrorToast: false,
       },
       {

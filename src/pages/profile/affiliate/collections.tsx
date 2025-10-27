@@ -53,8 +53,8 @@ export default function AffiliateCollectionsPage({
     };
 
     if (openDropdownId) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [openDropdownId]);
 
@@ -62,9 +62,15 @@ export default function AffiliateCollectionsPage({
   const getCollectionTypeText = (type: AffiliateCollectionType): string => {
     const typeTexts = {
       [AffiliateCollectionType.Product]: t("affiliateCollections.productBased"),
-      [AffiliateCollectionType.Collection]: t("affiliateCollections.collectionBased"),
-      [AffiliateCollectionType.Combination]: t("affiliateCollections.combinationBased"),
-      [AffiliateCollectionType.Category]: t("affiliateCollections.categoryBased"),
+      [AffiliateCollectionType.Collection]: t(
+        "affiliateCollections.collectionBased"
+      ),
+      [AffiliateCollectionType.Combination]: t(
+        "affiliateCollections.combinationBased"
+      ),
+      [AffiliateCollectionType.Category]: t(
+        "affiliateCollections.categoryBased"
+      ),
     };
     return typeTexts[type] || t("affiliateCollections.unknown");
   };
@@ -139,13 +145,21 @@ export default function AffiliateCollectionsPage({
     const collectionType = getCollectionType(collection);
     switch (collectionType) {
       case AffiliateCollectionType.Product:
-        return `${collection.productBasedAffiliateItems?.length || 0} ${t("item")}`;
+        return `${collection.productBasedAffiliateItems?.length || 0} ${t(
+          "item"
+        )}`;
       case AffiliateCollectionType.Category:
-        return `${collection.categoryBasedAffiliateItems?.length || 0} ${t("item")}`;
+        return `${collection.categoryBasedAffiliateItems?.length || 0} ${t(
+          "item"
+        )}`;
       case AffiliateCollectionType.Combination:
-        return `${collection.combinationBasedAffiliateItems?.length || 0} ${t("item")}`;
+        return `${collection.combinationBasedAffiliateItems?.length || 0} ${t(
+          "item"
+        )}`;
       case AffiliateCollectionType.Collection:
-        return `${collection.collectionBasedAffiliateItems?.length || 0} ${t("item")}`;
+        return `${collection.collectionBasedAffiliateItems?.length || 0} ${t(
+          "item"
+        )}`;
       default:
         return `${0} ${t("item")}`;
     }
@@ -184,7 +198,8 @@ export default function AffiliateCollectionsPage({
                     style={{ minWidth: "180px" }}
                   >
                     <option value="">
-                      <i className="bx bx-filter-alt me-1"></i> {t("affiliateCollections.allCollections")}
+                      <i className="bx bx-filter-alt me-1"></i>{" "}
+                      {t("affiliateCollections.allCollections")}
                     </option>
                     <option value={AffiliateCollectionType.Product}>
                       {t("affiliateCollections.productBased")}
@@ -213,29 +228,33 @@ export default function AffiliateCollectionsPage({
 
             {collectionsLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border" role="status">
-
-                </div>
+                <div className="spinner-border" role="status"></div>
                 <span className="sr-only"> {t("loading")}</span>
               </div>
             ) : collections && collections.length > 0 ? (
               <div className="row">
                 {filteredCollections.map((collection) => (
-                  <div key={collection.id} className="col-lg-4 col-md-6 col-sm-12 mb-3">
+                  <div
+                    key={collection.id}
+                    className="col-lg-4 col-md-6 col-sm-12 mb-3"
+                  >
                     <div
-                      className={`card h-100 shadow-sm border position-relative overflow-hidden ${!collection.isActive ? 'bg-white' : 'bg-white'}`}
+                      className={`card h-100 shadow-sm border position-relative overflow-hidden ${
+                        !collection.isActive ? "bg-white" : "bg-white"
+                      }`}
                       style={{
                         cursor: "pointer",
                         opacity: collection.isActive ? 1 : 0.7,
                         transition: "all 0.3s ease",
                         borderRadius: "0.75rem",
                         borderTop: "4px solid #040404",
-                        border: "1px solid #e8e8e8"
+                        border: "1px solid #e8e8e8",
                       }}
                       onClick={() => handleViewCollection(collection.id)}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = "translateY(-4px)";
-                        e.currentTarget.style.boxShadow = "0 12px 35px rgba(0, 0, 0, 0.12)";
+                        e.currentTarget.style.boxShadow =
+                          "0 12px 35px rgba(0, 0, 0, 0.12)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = "translateY(0)";
@@ -249,7 +268,10 @@ export default function AffiliateCollectionsPage({
                               <div>
                                 <h6
                                   className="card-title mb-0 fw-bold text-dark"
-                                  style={{ fontSize: "1rem", lineHeight: "1.2" }}
+                                  style={{
+                                    fontSize: "1rem",
+                                    lineHeight: "1.2",
+                                  }}
                                 >
                                   {collection.name}
                                 </h6>
@@ -262,13 +284,17 @@ export default function AffiliateCollectionsPage({
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setOpenDropdownId(openDropdownId === collection.id ? null : collection.id);
+                                setOpenDropdownId(
+                                  openDropdownId === collection.id
+                                    ? null
+                                    : collection.id
+                                );
                               }}
                               style={{
                                 fontSize: "1rem",
                                 padding: "2px 6px",
                                 color: "#666",
-                                borderRadius: "4px"
+                                borderRadius: "4px",
                               }}
                             >
                               ⋮
@@ -282,7 +308,7 @@ export default function AffiliateCollectionsPage({
                                   zIndex: 1000,
                                   minWidth: "80px",
                                   fontSize: "0.75rem",
-                                  marginTop: "2px"
+                                  marginTop: "2px",
                                 }}
                               >
                                 <div
@@ -295,10 +321,15 @@ export default function AffiliateCollectionsPage({
                                   style={{
                                     cursor: "pointer",
                                     fontSize: "0.75rem",
-                                    borderBottom: "1px solid #eee"
+                                    borderBottom: "1px solid #eee",
                                   }}
-                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
-                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.backgroundColor =
+                                      "#f8f9fa")
+                                  }
+                                  onMouseLeave={(e) =>
+                                    (e.currentTarget.style.backgroundColor = "")
+                                  }
                                 >
                                   {t("edit")}
                                 </div>
@@ -311,10 +342,15 @@ export default function AffiliateCollectionsPage({
                                   }}
                                   style={{
                                     cursor: "pointer",
-                                    fontSize: "0.75rem"
+                                    fontSize: "0.75rem",
                                   }}
-                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
-                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ""}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.backgroundColor =
+                                      "#f8f9fa")
+                                  }
+                                  onMouseLeave={(e) =>
+                                    (e.currentTarget.style.backgroundColor = "")
+                                  }
                                 >
                                   {t("delete")}
                                 </div>
@@ -333,7 +369,7 @@ export default function AffiliateCollectionsPage({
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: "vertical",
                             overflow: "hidden",
-                            minHeight: "1.8rem"
+                            minHeight: "1.8rem",
                           }}
                         >
                           {collection.description}
@@ -351,7 +387,10 @@ export default function AffiliateCollectionsPage({
                           {getItemCount(collection)}
                         </span>
                         {collection.totalEarnedCommission > 0 && (
-                          <span className="badge bg-success text-white" style={{ fontSize: "0.7rem" }}>
+                          <span
+                            className="badge bg-success text-white"
+                            style={{ fontSize: "0.7rem" }}
+                          >
                             <i className="bx bx-money me-1"></i>
                             {collection.totalEarnedCommission.toFixed(2)}₺
                           </span>
@@ -361,24 +400,49 @@ export default function AffiliateCollectionsPage({
                       {/* Date Information */}
                       <div className="border-top pt-1 px-2 pb-1">
                         <div className="d-flex justify-content-between align-items-center">
-                          <small className="text-muted" style={{ fontSize: "0.65rem" }}>
+                          <small
+                            className="text-muted"
+                            style={{ fontSize: "0.65rem" }}
+                          >
                             <i className="bx bx-calendar me-1"></i>
-                            {new Date(collection.startDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })} - {new Date(collection.expirationDate).toLocaleDateString("tr-TR", { day: '2-digit', month: '2-digit' })}
+                            {new Date(collection.startDate).toLocaleDateString(
+                              "tr-TR",
+                              { day: "2-digit", month: "2-digit" }
+                            )}{" "}
+                            -{" "}
+                            {new Date(
+                              collection.expirationDate
+                            ).toLocaleDateString("tr-TR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                            })}
                           </small>
                           <span
                             className="badge"
                             style={{
                               fontSize: "0.65rem",
-                              backgroundColor: getCollectionType(collection) === 1 ? "#e8f0fe" :
-                                getCollectionType(collection) === 2 ? "#f0f4ff" :
-                                  getCollectionType(collection) === 3 ? "#f5f5f5" : "#faf7ff",
-                              color: getCollectionType(collection) === 1 ? "#1565c0" :
-                                getCollectionType(collection) === 2 ? "#3949ab" :
-                                  getCollectionType(collection) === 3 ? "#5f6368" : "#7c4dff",
-                              border: "1px solid #e9ecef"
+                              backgroundColor:
+                                getCollectionType(collection) === 1
+                                  ? "#e8f0fe"
+                                  : getCollectionType(collection) === 2
+                                  ? "#f0f4ff"
+                                  : getCollectionType(collection) === 3
+                                  ? "#f5f5f5"
+                                  : "#faf7ff",
+                              color:
+                                getCollectionType(collection) === 1
+                                  ? "#1565c0"
+                                  : getCollectionType(collection) === 2
+                                  ? "#3949ab"
+                                  : getCollectionType(collection) === 3
+                                  ? "#5f6368"
+                                  : "#7c4dff",
+                              border: "1px solid #e9ecef",
                             }}
                           >
-                            {getCollectionTypeText(getCollectionType(collection))}
+                            {getCollectionTypeText(
+                              getCollectionType(collection)
+                            )}
                           </span>
                         </div>
                       </div>
@@ -463,7 +527,9 @@ export default function AffiliateCollectionsPage({
           size="sm"
           onClose={() => setDeletingCollectionId(null)}
           onApprove={handleConfirmDelete}
-          approveButtonText={t("affiliateCollections.deleteCollectionApproveButton")}
+          approveButtonText={t(
+            "affiliateCollections.deleteCollectionApproveButton"
+          )}
           approveButtonClassName="btn-danger"
           isLoading={deleteCollectionPending}
           showFooter={true}
@@ -473,7 +539,9 @@ export default function AffiliateCollectionsPage({
               className="bx bx-error-circle mb-2"
               style={{ fontSize: "3rem", color: "#dc3545" }}
             ></i>
-            <h4 className="mt-3">{t("affiliateCollections.deleteCollectionConfirmTitle")}</h4>
+            <h4 className="mt-3">
+              {t("affiliateCollections.deleteCollectionConfirmTitle")}
+            </h4>
             <p className="text-muted">
               {t("affiliateCollections.deleteCollectionConfirmMessage")}
             </p>

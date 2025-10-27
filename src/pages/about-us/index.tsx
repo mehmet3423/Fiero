@@ -346,7 +346,6 @@ function AboutUs({ seoData }: AboutProps) {
                   initialSlide={activeSlide}
                   onSwiper={(swiper) => {
                     thumbsSwiperRef.current = swiper;
-                    console.log('Thumbnail swiper initialized:', swiper);
                   }}
                   className="tf-thumb-tes"
                 >

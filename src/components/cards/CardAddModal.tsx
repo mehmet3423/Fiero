@@ -31,7 +31,8 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
   const lastCheckedBinRef = useRef<string>("");
   const { t } = useLanguage();
   const defaultTitle = title || t("myCards.addCardButton");
-  const defaultApproveButtonText = approveButtonText || t("modalProps.approveButtonText");
+  const defaultApproveButtonText =
+    approveButtonText || t("modalProps.approveButtonText");
 
   // BIN kontrolü için effect
   useEffect(() => {
@@ -46,8 +47,6 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           return;
         }
 
-        console.log("BIN kontrolü yapılıyor:", binNumber); // Debug için
-
         try {
           const binInfo = await checkBin({
             binNumber,
@@ -59,9 +58,7 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
 
           // Başarısız durumda toast göster
           if (!binInfo.data?.success) {
-            toast.error(
-              (t("myCards.binCheckFailed"))
-            );
+            toast.error(t("myCards.binCheckFailed"));
           } else {
             console.log("BIN kontrolü başarılı:", binInfo.data); // Debug için
           }
@@ -135,14 +132,16 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
       formId="addCardForm"
       onClose={onClose}
       approveButtonStyle={{
-        backgroundColor: '#000000',
-        borderColor: '#000000',
-        color: '#ffffff'
+        backgroundColor: "#000000",
+        borderColor: "#000000",
+        color: "#ffffff",
       }}
     >
       <form id="addCardForm" onSubmit={handleAddCard}>
         <div className="mb-3">
-          <label className="form-label">{t("myCards.cardHolderNameLabel")}</label>
+          <label className="form-label">
+            {t("myCards.cardHolderNameLabel")}
+          </label>
           <input
             type="text"
             className="form-control mb-3 shadow-none"
@@ -170,7 +169,8 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           {isBinChecking && (
             <div className="mt-2">
               <small className="text-info">
-                <i className="fas fa-spinner fa-spin"></i>{t("myCards.cardControl")}
+                <i className="fas fa-spinner fa-spin"></i>
+                {t("myCards.cardControl")}
               </small>
             </div>
           )}
@@ -196,7 +196,9 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
                     setNewCard({ ...newCard, expireMonth: e.target.value })
                   }
                 >
-                  <option value="">{t("myCards.expireMonthPlaceholder")}</option>
+                  <option value="">
+                    {t("myCards.expireMonthPlaceholder")}
+                  </option>
                   {Array.from({ length: 12 }, (_, i) => {
                     const month = (i + 1).toString().padStart(2, "0");
                     return (

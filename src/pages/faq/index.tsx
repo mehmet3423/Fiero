@@ -43,13 +43,19 @@ const FAQPage: NextPage = () => {
               <div className="flat-accordion style-default has-btns-arrow mb_60">
                 {shippingFaqs?.map((faq, index) => (
                   <div
-                    className={`flat-toggle${openedShipping === index ? " active" : ""}`}
+                    className={`flat-toggle${
+                      openedShipping === index ? " active" : ""
+                    }`}
                     key={faq.id}
                   >
                     <div
-                      className={`toggle-title${openedShipping === index ? " active" : ""}`}
+                      className={`toggle-title${
+                        openedShipping === index ? " active" : ""
+                      }`}
                       onClick={() =>
-                        setOpenedShipping(openedShipping === index ? null : index)
+                        setOpenedShipping(
+                          openedShipping === index ? null : index
+                        )
                       }
                       style={{ cursor: "pointer" }}
                     >
@@ -57,7 +63,9 @@ const FAQPage: NextPage = () => {
                     </div>
                     <div
                       className="toggle-content"
-                      style={{ display: openedShipping === index ? "block" : "none" }}
+                      style={{
+                        display: openedShipping === index ? "block" : "none",
+                      }}
                     >
                       <p>{faq.answer}</p>
                     </div>
@@ -66,15 +74,19 @@ const FAQPage: NextPage = () => {
               </div>
 
               {/* --- Sipariş ve İadeler --- */}
-              <h5 className="mb_24">Sipariş ve İadeler</h5>
+              {/* <h5 className="mb_24">Sipariş ve İadeler</h5>
               <div className="flat-accordion style-default has-btns-arrow mb_60">
-                {ordersAndReturns?.items.map((faq, index) => (
+                {ordersAndReturns?.items?.map((faq, index) => (
                   <div
-                    className={`flat-toggle${openedOrders === index ? " active" : ""}`}
+                    className={`flat-toggle${
+                      openedOrders === index ? " active" : ""
+                    }`}
                     key={faq.id}
                   >
                     <div
-                      className={`toggle-title${openedOrders === index ? " active" : ""}`}
+                      className={`toggle-title${
+                        openedOrders === index ? " active" : ""
+                      }`}
                       onClick={() =>
                         setOpenedOrders(openedOrders === index ? null : index)
                       }
@@ -84,24 +96,30 @@ const FAQPage: NextPage = () => {
                     </div>
                     <div
                       className="toggle-content"
-                      style={{ display: openedOrders === index ? "block" : "none" }}
+                      style={{
+                        display: openedOrders === index ? "block" : "none",
+                      }}
                     >
                       <p>{faq.content}</p>
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
 
               {/* --- Ödeme --- */}
-              <h5 className="mb_24">Ödeme</h5>
+              {/* <h5 className="mb_24">Ödeme</h5>
               <div className="flat-accordion style-default has-btns-arrow">
                 {payment?.items.map((faq, index) => (
                   <div
-                    className={`flat-toggle${openedPayment === index ? " active" : ""}`}
+                    className={`flat-toggle${
+                      openedPayment === index ? " active" : ""
+                    }`}
                     key={faq.id}
                   >
                     <div
-                      className={`toggle-title${openedPayment === index ? " active" : ""}`}
+                      className={`toggle-title${
+                        openedPayment === index ? " active" : ""
+                      }`}
                       onClick={() =>
                         setOpenedPayment(openedPayment === index ? null : index)
                       }
@@ -111,13 +129,15 @@ const FAQPage: NextPage = () => {
                     </div>
                     <div
                       className="toggle-content"
-                      style={{ display: openedPayment === index ? "block" : "none" }}
+                      style={{
+                        display: openedPayment === index ? "block" : "none",
+                      }}
                     >
                       <p>{faq.content}</p>
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
 
             {/* Sağ kutu */}
@@ -127,11 +147,12 @@ const FAQPage: NextPage = () => {
             >
               <h5 className="mb_20">Sorunuz mu var?</h5>
               <p className="text_black-2 mb_40">
-                Burada cevabını bulamadığınız sorularınız için bizimle iletişime geçebilirsiniz.
+                Burada cevabını bulamadığınız sorularınız için bizimle iletişime
+                geçebilirsiniz.
                 <br />
                 <br />
-                Lütfen paketiniz bize ulaştıktan sonra 6 - 12 iş günü içinde iade işleminizin
-                tamamlanacağını unutmayın.
+                Lütfen paketiniz bize ulaştıktan sonra 6 - 12 iş günü içinde
+                iade işleminizin tamamlanacağını unutmayın.
               </p>
               <div className="d-flex gap-20 align-items-center">
                 <a
@@ -140,9 +161,9 @@ const FAQPage: NextPage = () => {
                 >
                   İletişim
                 </a>
-                <a href="/live-chat" className="tf-btn btn-line">
+                {/* <a href="/live-chat" className="tf-btn btn-line">
                   Canlı Sohbet <i className="icon icon-arrow1-top-left"></i>
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

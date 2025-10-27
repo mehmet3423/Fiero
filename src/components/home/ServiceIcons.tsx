@@ -65,7 +65,7 @@ function ServiceIcons() {
                             className="placeholder-image"
                             style={{
                               width: "100%",
-                              height: "200px",
+                              height: "250px",
                               backgroundColor: "#f0f0f0",
                               borderRadius: "8px",
                             }}
@@ -106,16 +106,23 @@ function ServiceIcons() {
                             width={500}
                             height={500}
                             style={{
-                              width: "250px",
-                              height: "300px",
+                              width: "100%",
+                              height: "250px",
+                              objectFit: "contain",
+
                               borderRadius: "8px",
                             }}
                           />
                         </Link>
-                        <div className="collection-content">
+                        <div
+                          className="collection-content"
+                          style={{
+                            paddingRight: "25px",
+                          }}
+                        >
                           <Link
                             href={`/products?categoryId=${category.id}`}
-                            className="tf-btn collection-title hover-icon fs-15 rounded-full"
+                            className="tf-btn collection-title hover-icon fs-15 rounded-full "
                           >
                             <span>{category.name}</span>
                             <i className="icon icon-arrow1-top-left"></i>

@@ -9,7 +9,7 @@ export const useMainCategoriesLookUp = () => {
     data: MainCategoryiesLookUpResponse;
   }>({
     url: GET_MAIN_CATEGORY_LOOKUP_LIST,
-    queryKey: QueryKeys.MAIN_CATEGORY_LIST,
+    queryKey: QueryKeys.MAIN_CATEGORY_LOOKUP_LIST,
     method: HttpMethod.GET,
     onError(err) {},
   });
