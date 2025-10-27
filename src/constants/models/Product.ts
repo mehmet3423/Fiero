@@ -1,10 +1,197 @@
 import { Discount, SubCategoryDiscount } from "./Discount";
 import { PaginationModel } from "./Pagination";
+import { CommandResultWithData } from "./CommandResult";
+
+// Yeni API response wrapper
+export interface ApiResponse<T> {
+  data: T;
+  isSucceed: boolean;
+  message: string;
+}
 
 export interface ProductListResponse extends PaginationModel {
-  $id: string;
+  $id?: string;
   items: Product[];
 }
+// Base entity interface
+export interface BaseEntity {
+  id: string;
+  createdOnValue?: string;
+  modifiedOnValue?: string;
+  isDeleted: boolean;
+}
+
+// SEO response interface
+export interface SEOResponse extends BaseEntity {
+  slug?: string;
+  title: string;
+  description: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string;
+  canonical?: string;
+  robotsMetaTag?: string;
+  author?: string;
+  publisher?: string;
+  language: string;
+  htmlContent?: string;
+  h1Count: number;
+  h2Count: number;
+  h3Count: number;
+  h4Count: number;
+  h5Count: number;
+  h6Count: number;
+  imageCount: number;
+  linkCount: number;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImageUrl?: string;
+  structuredDataJson?: string;
+  isIndexed: boolean;
+  isFollowed: boolean;
+  productId?: string;
+  mainCategoryId?: string;
+  subCategoryId?: string;
+  qualityScore: number;
+}
+
+// Base product response interface
+export interface BaseProductResponse extends BaseEntity {
+  name: string;
+}
+
+// Address interface
+export interface AddressDTO extends BaseEntity {
+  firstName: string;
+  lastName: string;
+  title: string;
+  country: string;
+  city: string;
+  district: string;
+  neighbourhood: string;
+  street: string;
+  postalCode?: string;
+  fullAddress: string;
+  applicationUserId: string;
+}
+
+// Application user interface
+export interface ApplicationUserDTO {
+  id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  email: string;
+  phoneNumber: string;
+  birthDate?: string;
+  gender: string;
+  emailConfirmed: boolean;
+  userGroupIds: string[];
+  roleIds: string[];
+  roles: string[];
+  addresses?: AddressDTO[];
+  userPaymentCard?: any[];
+}
+
+// Seller interface
+export interface SellerDTO extends BaseEntity {
+  companyName: string;
+  companyAddress?: AddressDTO;
+  applicationUser: ApplicationUserDTO;
+  products: any[];
+}
+
+// SubCategory specification interfaces
+export interface SubCategorySpecificationDTO extends BaseEntity {
+  name: string;
+  specificationOptions: SpecificationOptionDTO[];
+}
+
+export interface SpecificationOptionDTO extends BaseEntity {
+  value: string;
+}
+
+// Product only specification interface
+export interface ProductOnlySpecificationDTO extends BaseEntity {
+  name: string;
+  value: string;
+}
+
+// Comment interface
+export interface CommentDTO extends BaseEntity {
+  title: string;
+  content: string;
+  rating: number;
+  imageUrl?: string;
+  customerId: string;
+  customerName: string;
+  productId: string;
+}
+
+// Technical detail interface
+export interface TechnicalDetailDTO extends BaseEntity {
+  title: string;
+  description: string;
+}
+
+// BuyXPayY discount interface
+export interface BuyXPayYDiscountBasicResponse extends BaseEntity {
+  buyXCount: number;
+  payYCount: number;
+}
+
+// Free product discount interface
+export interface FreeProductDiscountBasicResponse extends BaseEntity {
+  minimumQuantity: number;
+}
+
+// New ProductWithDiscountDTO interface matching backend
+export interface ProductWithDiscountDTO extends BaseEntity {
+  baseProductId?: string;
+  baseProduct?: BaseProductResponse;
+  externalId: number;
+  title: string;
+  description: string;
+  sellableQuantity: number;
+  barcodeNumber: string;
+  price: number;
+  discountedPrice: number;
+  ratingCount: number;
+  averageRating: number;
+  isAvailable: boolean;
+  isOutlet: boolean;
+  refundable: boolean;
+  baseImageUrl: string;
+  contentImageUrls: string[];
+  banner: string[];
+  videoUrl?: string;
+  currencyType: string;
+  seoId: string;
+  seo: SEOResponse;
+  subCategoryId: string;
+  sellerId?: string;
+  seller?: SellerDTO;
+  subCategorySpecifications?: SubCategorySpecificationDTO[];
+  productOnlySpecifications: ProductOnlySpecificationDTO[];
+  comments: CommentDTO[];
+  technicalDetails: TechnicalDetailDTO[];
+  discountResponse?: Discount;
+  buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
+  freeProductDiscountResponse?: FreeProductDiscountBasicResponse;
+}
+
+// API response type for GetProductById
+export interface GetProductByIdResponse
+  extends CommandResultWithData<ProductWithDiscountDTO> {}
+
+export interface ProductListResponse
+  extends CommandResultWithData<PaginationListResponse<Product>> {
+  $id?: string;
+}
+
+// useGetData'da kullanılacak wrapped response tipi
+export type WrappedProductListResponse = ApiResponse<ProductListResponse>;
 
 export interface Product {
   $id: string;
@@ -31,7 +218,6 @@ export interface Product {
   stockCode: string;
   price: number;
   discountedPrice: number;
-  discountDTO: Discount;
   baseImageUrl: string;
   contentImageUrls: string[];
   isAvailable: boolean;
@@ -44,6 +230,15 @@ export interface Product {
   technicalDetails: TechnicalDetail[];
   productDiscounts: Discount[];
   subCategoryDiscounts: SubCategoryDiscount[];
+  discountResponse?: Discount;
+  buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
+  freeProductDiscountResponse?: FreeProductDiscountBasicResponse;
+  productInfos?: {
+    id?: string;
+    title: string;
+    description: string;
+    icon: string;
+  }[];
 }
 
 // public required int ExternalId { get; set; } // This will be provided from the external API
@@ -121,5 +316,62 @@ export interface ProductDetailResponse {
   subCategoryDiscounts: SubCategoryDiscount[];
   videoUrl: string;
   seo: any | null; // Added for SEO support
-  seoId: string;   // Added for SEO support
+  seoId: string; // Added for SEO support
+
+  productInfos?: {
+    id?: string;
+    title: string;
+    description: string;
+    icon: string;
+  }[];
 }
+
+// ProductInfo interface for ProductBasicDTO
+export interface ProductInfoDTO {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+// ProductBasicDTO interface for outlet products
+export interface ProductBasicDTO extends BaseEntity {
+  baseProductId?: string;
+  baseProduct?: BaseProductResponse;
+  title: string;
+  barcodeNumber: string;
+  sellableQuantity: number;
+  price: number;
+  discountedPrice: number;
+  isAvailable: boolean;
+  isOutlet: boolean;
+  refundable: boolean;
+  averageRating: number;
+  ratingCount: number;
+  baseImageUrl: string;
+  productInfos: ProductInfoDTO[];
+  contentImageUrls: string[];
+  currencyType: string;
+  discountResponse?: Discount;
+  buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
+  freeProductDiscountResponse?: FreeProductDiscountBasicResponse;
+}
+
+// PaginationListResponseBase interface
+export interface PaginationListResponseBase {
+  from: number;
+  index: number;
+  size: number;
+  count: number;
+  pages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+// PaginationListResponse interface
+export interface PaginationListResponse<T> extends PaginationListResponseBase {
+  items: T[];
+}
+
+// API response type for GetAllOutletProducts
+export interface GetAllOutletProductsResponse
+  extends CommandResultWithData<PaginationListResponse<ProductBasicDTO>> {}

@@ -5,8 +5,11 @@ export interface MainCategoryLookUp {
   createdOnValue: string;
   modifiedOnValue: string;
   isDeleted: boolean;
+  imageUrl?: string;
 }
 
 export interface MainCategoryiesLookUpResponse {
-  items: MainCategoryLookUp[];
+  data: {
+    items: MainCategoryLookUp[];
+  }
 }

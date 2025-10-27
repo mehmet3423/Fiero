@@ -21,7 +21,6 @@ interface BannerCollectionProps {
 }
 
 const BannerCollection: React.FC<BannerCollectionProps> = ({ banners }) => {
-  console.log(banners);
   return (
     <section className="flat-spacing-10 pb_0">
       <div className="container">

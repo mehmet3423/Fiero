@@ -8,7 +8,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 
 interface MobileMenuProps {
@@ -26,9 +26,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   );
   const { searchTerm, setSearchTerm } = useSearch();
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
+  const collapseRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Alt kategori verisi
-  const { categories: subCategories = [] } = useSubCategoriesLookUp(
+  const { categories: subCategories } = useSubCategoriesLookUp(
     expandedCategoryId || ""
   );
 
@@ -38,7 +40,48 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const showAdminFeatures = userRole === UserRole.ADMIN;
 
   const handleCategoryClick = (categoryId: string) => {
-    setExpandedCategoryId((prevId) => (prevId === categoryId ? null : categoryId));
+    if (isAnimating) return; // Animasyon devam ederken yeni tıklamaları engelle
+
+    const isCurrentlyExpanded = expandedCategoryId === categoryId;
+    const collapseElement = collapseRefs.current[categoryId];
+
+    if (!collapseElement) {
+      setExpandedCategoryId(isCurrentlyExpanded ? null : categoryId);
+      return;
+    }
+
+    setIsAnimating(true);
+
+    if (isCurrentlyExpanded) {
+      // Kapatma animasyonu
+      collapseElement.style.height = collapseElement.scrollHeight + "px";
+      collapseElement.offsetHeight; // Force reflow
+      collapseElement.style.height = "0px";
+      collapseElement.style.overflow = "hidden";
+
+      setTimeout(() => {
+        setExpandedCategoryId(null);
+        collapseElement.style.height = "";
+        collapseElement.style.overflow = "";
+        setIsAnimating(false);
+      }, 350);
+    } else {
+      // Açma animasyonu
+      collapseElement.style.height = "0px";
+      collapseElement.style.overflow = "hidden";
+      setExpandedCategoryId(categoryId);
+
+      // Alt kategoriler yüklendikten sonra animasyonu başlat
+      setTimeout(() => {
+        collapseElement.style.height = collapseElement.scrollHeight + "px";
+
+        setTimeout(() => {
+          collapseElement.style.height = "";
+          collapseElement.style.overflow = "";
+          setIsAnimating(false);
+        }, 350);
+      }, 50);
+    }
   };
 
   const handleLinkClick = (path: string) => {
@@ -60,7 +103,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   return (
     <>
       <div
-        className={`offcanvas offcanvas-start canvas-mb ${isOpen ? "show" : ""}`}
+        className={`offcanvas offcanvas-start canvas-mb ${
+          isOpen ? "show" : ""
+        }`}
         id="mobileMenu"
       >
         <span
@@ -76,49 +121,62 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 categories.items.map((category) => (
                   <li key={category.id} className="nav-mb-item">
                     <a
-                      href={`#dropdown-menu-${category.id}`}
-                      className={`collapsed mb-menu-link ${expandedCategoryId === category.id ? "current" : ""
-                        }`}
-                      data-bs-toggle="collapse"
-                      aria-expanded={expandedCategoryId === category.id}
-                      aria-controls={`dropdown-menu-${category.id}`}
+                      href="#"
+                      className={`mb-menu-link ${
+                        expandedCategoryId === category.id ? "current" : ""
+                      }`}
                       onClick={(e) => {
                         e.preventDefault();
                         handleCategoryClick(category.id);
                       }}
                     >
                       <span>{category.name}</span>
-                      <span className="btn-open-sub"></span>
+                      <span
+                        className={`btn-open-sub ${
+                          expandedCategoryId === category.id ? "expanded" : ""
+                        }`}
+                      ></span>
                     </a>
 
                     <div
-                      id={`dropdown-menu-${category.id}`}
-                      className={`collapse ${expandedCategoryId === category.id ? "show" : ""
-                        }`}
+                      ref={(el) => {
+                        collapseRefs.current[category.id] = el;
+                      }}
+                      className={`custom-collapse ${
+                        expandedCategoryId === category.id ? "show" : ""
+                      }`}
+                      style={{
+                        transition: "height 0.35s ease",
+                        overflow: "hidden",
+                      }}
                     >
-                      {subCategories?.length > 0 && (
-                        <ul className="sub-nav-menu" id="sub-menu-navigation">
-                          {subCategories.map((subCategory) => (
-                            <li key={subCategory.id}>
-                              <a
-                                href="#"
-                                className={`sub-nav-link ${router.query.subCategoryId === subCategory.id
-                                    ? "current"
-                                    : ""
+                      {expandedCategoryId === category.id &&
+                        subCategories?.data &&
+                        subCategories.data.length > 0 && (
+                          <ul className="sub-nav-menu" id="sub-menu-navigation">
+                            {subCategories.data.map((subCategory) => (
+                              <li key={subCategory.id}>
+                                <a
+                                  href="#"
+                                  className={`sub-nav-link ${
+                                    router.query.subCategoryId ===
+                                    subCategory.id
+                                      ? "current"
+                                      : ""
                                   }`}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleLinkClick(
-                                    `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
-                                  );
-                                }}
-                              >
-                                {subCategory.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLinkClick(
+                                      `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
+                                    );
+                                  }}
+                                >
+                                  {subCategory.name}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                     </div>
                   </li>
                 ))}
@@ -127,10 +185,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 <li className="nav-mb-item">
                   <a
                     href="#"
-                    className={`mb-menu-link ${router.pathname === PathEnums.SELLER_PRODUCTS
+                    className={`mb-menu-link ${
+                      router.pathname === PathEnums.SELLER_PRODUCTS
                         ? "current"
                         : ""
-                      }`}
+                    }`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleLinkClick(PathEnums.SELLER_PRODUCTS);
@@ -145,8 +204,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 <li className="nav-mb-item">
                   <a
                     href="#"
-                    className={`mb-menu-link ${router.pathname === "/admin" ? "current" : ""
-                      }`}
+                    className={`mb-menu-link ${
+                      router.pathname === "/admin" ? "current" : ""
+                    }`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleLinkClick("/admin");

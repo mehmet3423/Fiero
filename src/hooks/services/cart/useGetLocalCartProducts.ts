@@ -38,14 +38,39 @@ export const useGetLocalCartProducts = (
                   const response = await fetch(
                     `${GET_PRODUCT_BY_ID}?id=${item.id}`
                   );
-                  const product = await response.json();
-                  return { ...product, quantity: item.quantity };
+                  const json = await response.json();
+                  // API bazı yerlerde veriyi wrapper içinde (data) döndürüyor
+                  const product: any = json?.data ?? json;
+
+                  // Sayısal alanları güvenli hale getir (NaN engelle)
+                  const price = Number(
+                    product?.price !== undefined && product?.price !== null
+                      ? product.price
+                      : 0
+                  );
+                  const discountedPrice = Number(
+                    product?.discountedPrice !== undefined &&
+                      product?.discountedPrice !== null
+                      ? product.discountedPrice
+                      : price
+                  );
+
+                  // Görsel alanı için fallback (imageUrl -> baseImageUrl)
+                  const baseImageUrl =
+                    product?.baseImageUrl || product?.imageUrl || "";
+
+                  return {
+                    ...product,
+                    price,
+                    discountedPrice,
+                    baseImageUrl,
+                    quantity: item.quantity,
+                  };
                 })
               );
               setCartProducts(products);
               prevItemIdsRef.current = cartItems.map((item) => item.id);
             } catch (error) {
-              console.error("Sepet ürünleri getirilirken hata oluştu:", error);
             }
           } else {
             prevItemIdsRef.current = [];

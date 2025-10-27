@@ -3,6 +3,7 @@ export interface StockReportParams {
   page?: number;
   pageSize?: number;
   from?: number;
+  ascending?: boolean;
 }
 
 export interface StockReportItem {

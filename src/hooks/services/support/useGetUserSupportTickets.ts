@@ -41,11 +41,11 @@ export const useGetUserSupportTickets = ({
   );
 
   return {
-    tickets: data?.items || [],
-    totalCount: data?.count || 0,
-    totalPages: data?.pages || 0,
-    hasNext: data?.hasNext || false,
-    hasPrevious: data?.hasPrevious || false,
+    tickets: data?.data?.items || [],
+    totalCount: data?.data?.count || 0,
+    totalPages: data?.data?.pages || 0,
+    hasNext: data?.data?.hasNext || false,
+    hasPrevious: data?.data?.hasPrevious || false,
     isLoading,
     error,
     refetch,

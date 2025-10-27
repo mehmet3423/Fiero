@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useCreateBirthdayDiscount } from "@/hooks/services/discounts/birthday-discount/useCreateBirthdayDiscount";
 import Link from "next/link";
+import { useUpdateBirthdayDiscount } from "@/hooks/services/discounts/birthday-discount/useUpdateBirthdayDiscount";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { BirthdayDiscount } from "@/constants/models/Discount";
 import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
@@ -24,8 +25,7 @@ interface BirthdayDiscountForm {
 function EditBirthdayDiscount() {
   const router = useRouter();
   const { id } = router.query;
-
-  const { isPending: isCreating } = useCreateBirthdayDiscount();
+  const { updateDiscount, isPending: isUpdating } = useUpdateBirthdayDiscount();
 
   // Fetch discount data for edit mode
   const { discounts: allDiscounts, isLoading: isLoadingDiscounts } =
@@ -37,7 +37,7 @@ function EditBirthdayDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -82,7 +82,6 @@ function EditBirthdayDiscount() {
         });
         setIsDataLoaded(true);
       } else {
-        console.log("Discount not found with id:", id, "Type:", typeof id);
       }
     }
   }, [id, allDiscounts, isDataLoaded]);
@@ -90,11 +89,20 @@ function EditBirthdayDiscount() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // TODO: Implement update functionality when needed
+      const apiData: BirthdayDiscount = {
+        id: String(id),
+        ...formData,
+        createdOn: Date.now(),
+        createdOnValue: new Date().toISOString(),
+      };
+      // Son kontrol: discountValueType'ı number'a çevir
+      if (typeof apiData.discountValueType === "string") {
+        apiData.discountValueType = parseInt(apiData.discountValueType, 10);
+      }
 
+      await updateDiscount(apiData);
       router.push("/admin/campaigns/birthday-discount");
     } catch (error) {
-      console.error("Error saving discount:", error);
     }
   };
 
@@ -108,8 +116,8 @@ function EditBirthdayDiscount() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? parseFloat(value)
+            : value,
     }));
   };
 
@@ -166,7 +174,7 @@ function EditBirthdayDiscount() {
 
       <div className="card">
         <div className="card-body">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => { handleSubmit(e); }}>
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label">İndirim Adı *</label>
@@ -203,7 +211,7 @@ function EditBirthdayDiscount() {
                   value={formData.discountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="İndirim değeri"
                 />
@@ -230,7 +238,7 @@ function EditBirthdayDiscount() {
                   value={formData.maxDiscountValue}
                   onChange={handleChange}
                   min={0}
-                  step="0.01"
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="Maksimum indirim değeri"
                 />
@@ -274,6 +282,7 @@ function EditBirthdayDiscount() {
                   value={formData.validDaysBefore}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   required
                   placeholder="Örn: 7 (7 gün önce)"
                 />
@@ -293,6 +302,7 @@ function EditBirthdayDiscount() {
                   onChange={handleChange}
                   min={0}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                   placeholder="Örn: 7 (7 gün sonra)"
                 />
                 <small className="form-text text-muted">
@@ -327,9 +337,9 @@ function EditBirthdayDiscount() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={isCreating}
+                disabled={isUpdating}
               >
-                {isCreating ? (
+                {isUpdating ? (
                   <>
                     <span
                       className="spinner-border spinner-border-sm me-2"

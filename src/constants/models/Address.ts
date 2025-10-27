@@ -11,6 +11,9 @@ export interface Address {
   neighbourhood: string;
   street: string;
   postalCode: string;
+  districtId: string;
+  cityId: string;
+  phoneNumber: string;
 }
 
 export interface AddressListResponse {

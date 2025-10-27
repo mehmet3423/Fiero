@@ -18,7 +18,6 @@ const SEOHead: React.FC<SEOHeadProps> = ({ seoId, canonical, slug }) => {
     isLoading = result.isLoading;
   } else if (canonical) {
     const result = useGetSeoByCanonical(canonical);
-    console.log(result)
     seoData = result.seoData;
     isLoading = result.isLoading;
   } else if (slug) {
@@ -46,29 +45,57 @@ const SEOHead: React.FC<SEOHeadProps> = ({ seoId, canonical, slug }) => {
     <Head>
       {/* Basic Meta Tags */}
       <title>{seoData.metaTitle || seoData.title}</title>
-      <meta name="description" content={seoData.metaDescription || seoData.description} />
+      <meta
+        name="description"
+        content={seoData.metaDescription || seoData.description}
+      />
       {seoData.keywords && <meta name="keywords" content={seoData.keywords} />}
-      {seoData.robotsMetaTag && <meta name="robots" content={seoData.robotsMetaTag} />}
+      {seoData.robotsMetaTag && (
+        <meta name="robots" content={seoData.robotsMetaTag} />
+      )}
       {seoData.canonical && <link rel="canonical" href={seoData.canonical} />}
       {seoData.author && <meta name="author" content={seoData.author} />}
-      {seoData.publisher && <meta name="publisher" content={seoData.publisher} />}
-      {seoData.language && <meta httpEquiv="content-language" content={seoData.language} />}
+      {seoData.publisher && (
+        <meta name="publisher" content={seoData.publisher} />
+      )}
+      {seoData.language && (
+        <meta httpEquiv="content-language" content={seoData.language} />
+      )}
 
       {/* Open Graph Tags */}
-      {seoData.ogTitle && <meta property="og:title" content={seoData.ogTitle} />}
-      {seoData.ogDescription && <meta property="og:description" content={seoData.ogDescription} />}
+      {seoData.ogTitle && (
+        <meta property="og:title" content={seoData.ogTitle} />
+      )}
+      {seoData.ogDescription && (
+        <meta property="og:description" content={seoData.ogDescription} />
+      )}
       <meta property="og:type" content="website" />
-      {seoData.ogImageUrl && <meta property="og:image" content={seoData.ogImageUrl} />}
-      {seoData.ogImageUrl && <meta property="og:image:alt" content={`${seoData.ogTitle || seoData.title} - Görsel`} />}
+      {seoData.ogImageUrl && (
+        <meta property="og:image" content={seoData.ogImageUrl} />
+      )}
+      {seoData.ogImageUrl && (
+        <meta
+          property="og:image:alt"
+          content={`${seoData.ogTitle || seoData.title} - Görsel`}
+        />
+      )}
       {seoData.ogImageUrl && <meta property="og:image:width" content="1200" />}
       {seoData.ogImageUrl && <meta property="og:image:height" content="630" />}
       <meta property="og:site_name" content="Nors" />
-      {seoData.language && <meta property="og:locale" content={seoData.language} />}
+      {seoData.language && (
+        <meta property="og:locale" content={seoData.language} />
+      )}
 
       {/* Twitter Cards */}
-      {seoData.ogTitle && <meta name="twitter:title" content={seoData.ogTitle} />}
-      {seoData.ogDescription && <meta name="twitter:description" content={seoData.ogDescription} />}
-      {seoData.ogImageUrl && <meta name="twitter:image" content={seoData.ogImageUrl} />}
+      {seoData.ogTitle && (
+        <meta name="twitter:title" content={seoData.ogTitle} />
+      )}
+      {seoData.ogDescription && (
+        <meta name="twitter:description" content={seoData.ogDescription} />
+      )}
+      {seoData.ogImageUrl && (
+        <meta name="twitter:image" content={seoData.ogImageUrl} />
+      )}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@norsworldwide" />
 

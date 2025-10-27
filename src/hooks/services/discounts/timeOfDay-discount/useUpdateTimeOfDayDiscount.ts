@@ -17,6 +17,7 @@ export const useUpdateTimeOfDayDiscount = () => {
       description: data.description,
       discountValue: data.discountValue,
       discountValueType: data.discountValueType,
+      maxDiscountValue: data.maxDiscountValue,
       startDate: data.startDate,
       endDate: data.endDate,
       isActive: data.isActive,
@@ -35,6 +36,9 @@ export const useUpdateTimeOfDayDiscount = () => {
           toast.success("İndirim başarıyla güncellendi");
           queryClient.invalidateQueries({
             queryKey: [QueryKeys.DISCOUNT_DETAIL],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.DISCOUNTS],
           });
         },
       }

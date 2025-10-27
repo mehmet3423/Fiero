@@ -5,26 +5,16 @@ import { AddressListResponse } from "@/constants/models/Address";
 import useGetData from "@/hooks/useGetData";
 
 export const useGetAddresses = () => {
-  const { data, isLoading, error, refetch } = useGetData<AddressListResponse>({
+  const { data, isLoading, error, refetch } = useGetData<{ data: AddressListResponse }>({
     url: GET_USER_ADDRESS_LIST,
     queryKey: [QueryKeys.USER_ADDRESS_LIST],
     method: HttpMethod.GET,
     onError: (error) => {
-      console.log("Adres getirme hatası:", error);
-      // Hata durumunda boş bir dizi döndür
-      return {
-        $id: "0",
-        items: {
-          $id: "1",
-          $values: [],
-        },
-      };
     },
   });
 
   // Veri yoksa veya hata varsa boş dizi döndür
-  // error varsa data'yı kullanma, direkt boş dizi döndür
-  const addresses = error ? [] : data?.items || [];
+  const addresses = error ? [] : data?.data?.items || [];
 
   return {
     addresses,

@@ -25,9 +25,7 @@ function AffiliatePage() {
   if (isLoading) {
     return (
       <div className="text-center py-5">
-        <div className="spinner-border" role="status">
-          
-        </div>
+        <div className="spinner-border" role="status"></div>
         <span className="sr-only">{t("loading")}</span>
       </div>
     );
@@ -66,8 +64,9 @@ function AffiliatePage() {
             </button>
             {affiliateUser.status === AffiliateStatus.Approved && (
               <button
-                className={`nav-link ${activeTab === "collections" ? "active" : ""
-                  }`}
+                className={`nav-link ${
+                  activeTab === "collections" ? "active" : ""
+                }`}
                 onClick={() => setActiveTab("collections")}
                 style={{
                   border: "none",

@@ -101,13 +101,13 @@ function MediaMissingProductsReportPage() {
   };
 
   return (
-    <div className="container-xxl flex-grow-1 container-p-y px-4">
-      <h5 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y">
+      <h4 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Medya Eksik Ürünler Raporu
-      </h5>
+      </h4>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -221,7 +221,7 @@ function MediaMissingProductsReportPage() {
           <div className="row mt-3">
             <div className="col-12">
               <button
-                className="btn btn-dark me-2"
+                className="btn btn-primary me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
               >
@@ -304,7 +304,7 @@ function MediaMissingProductsReportPage() {
                           <tr key={item.id}>
                             <td className="small">
                               <span
-                                className="badge text-dark badge-sm"
+                                className="badge text-primary badge-sm"
                                 style={{ fontSize: "0.7rem" }}
                               >
                                 {getGlobalRowNumber(

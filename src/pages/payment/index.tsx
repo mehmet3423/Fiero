@@ -92,23 +92,13 @@ function PaymentPage() {
               conversationId:
                 typeof orderNumber === "string" ? orderNumber : "",
             });
-            console.log("GetInstallmentInfo Response:", response.data);
-            console.log(
-              "installmentDetails:",
-              response.data.installmentDetails
-            );
+            
             if (
               response.data.installmentDetails &&
               response.data.installmentDetails.length > 0
             ) {
-              console.log(
-                "First installmentDetail:",
-                response.data.installmentDetails[0]
-              );
-              console.log(
-                "installmentPrices:",
-                response.data.installmentDetails[0].installmentPrices
-              );
+              
+              
             }
             if (
               response.data.status === "success" &&
@@ -117,7 +107,6 @@ function PaymentPage() {
             ) {
               const installmentPrices =
                 response.data.installmentDetails[0].installmentPrices;
-              console.log("Installment Prices:", installmentPrices);
               // InstallmentPrice'ı InstallmentOption'a dönüştür
               const options = installmentPrices.map((price) => ({
                 installmentNumber: price.installmentNumber,
@@ -125,7 +114,6 @@ function PaymentPage() {
                 totalPrice: price.totalPrice,
                 installmentRate: 0, // API'den gelmiyor, varsayılan 0
               }));
-              console.log("Mapped Options:", options);
               setInstallmentOptions(options);
             } else {
               console.log("No installment details found in response");
@@ -234,26 +222,13 @@ function PaymentPage() {
         conversationId: typeof orderNumber === "string" ? orderNumber : "",
       });
 
-      console.log(
-        "GetInstallmentInfo Response (handleCardSelect):",
-        response.data
-      );
-      console.log(
-        "installmentDetails (handleCardSelect):",
-        response.data.installmentDetails
-      );
+      
       if (
         response.data.installmentDetails &&
         response.data.installmentDetails.length > 0
       ) {
-        console.log(
-          "First installmentDetail (handleCardSelect):",
-          response.data.installmentDetails[0]
-        );
-        console.log(
-          "installmentPrices (handleCardSelect):",
-          response.data.installmentDetails[0].installmentPrices
-        );
+        
+          
       }
       if (
         response.data.status === "success" &&
@@ -262,10 +237,7 @@ function PaymentPage() {
       ) {
         const installmentPrices =
           response.data.installmentDetails[0].installmentPrices;
-        console.log(
-          "Installment Prices (handleCardSelect):",
-          installmentPrices
-        );
+       
         // InstallmentPrice'ı InstallmentOption'a dönüştür
         const options = installmentPrices.map((price) => ({
           installmentNumber: price.installmentNumber,
@@ -273,7 +245,6 @@ function PaymentPage() {
           totalPrice: price.totalPrice,
           installmentRate: 0, // API'den gelmiyor, varsayılan 0
         }));
-        console.log("Mapped Options (handleCardSelect):", options);
         setInstallmentOptions(options);
       } else {
         console.log(

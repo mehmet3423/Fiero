@@ -5,4 +5,5 @@ export interface SubCategoriesLookUp {
   createdOnValue: string;
   modifiedOnValue: string;
   isDeleted: boolean;
+  imageUrl?: string;
 }

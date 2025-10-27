@@ -34,7 +34,7 @@ export default function EditCartDiscount() {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -53,7 +53,7 @@ export default function EditCartDiscount() {
         name: discount.name || "",
         description: discount.description || "",
         discountValue: discount.discountValue || 0,
-        discountValueType: discount.discountValueType || 0,
+        discountValueType: discount.discountValueType || 1,
         maxDiscountValue: discount.maxDiscountValue || 0,
         startDate: discount.startDate || "",
         endDate: discount.endDate || "",
@@ -83,7 +83,6 @@ export default function EditCartDiscount() {
       });
       router.push("/admin/campaigns/cart-discount");
     } catch (error) {
-      console.error("Error updating discount:", error);
     }
   };
 
@@ -102,8 +101,8 @@ export default function EditCartDiscount() {
             name === "maximumCartAmount" ||
             name === "minimumCartProductCount" ||
             name === "maximumCartProductCount"
-          ? Number(value)
-          : value,
+            ? Number(value)
+            : value,
     }));
   };
 
@@ -187,6 +186,7 @@ export default function EditCartDiscount() {
                   onChange={handleChange}
                   min={0}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-md-4 mb-3">
@@ -198,8 +198,8 @@ export default function EditCartDiscount() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
+                  <option value={1}>Yüzde (%)</option>
+                  <option value={2}>Tutar (₺)</option>
                 </select>
               </div>
               <div className="col-md-4 mb-3">
@@ -212,6 +212,7 @@ export default function EditCartDiscount() {
                   onChange={handleChange}
                   min={0}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>
@@ -226,6 +227,7 @@ export default function EditCartDiscount() {
                   value={formData.minimumCartAmount}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -237,6 +239,7 @@ export default function EditCartDiscount() {
                   value={formData.maximumCartAmount}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -249,6 +252,7 @@ export default function EditCartDiscount() {
                   onChange={handleChange}
                   min={0}
                   required
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
               <div className="col-md-3 mb-3">
@@ -260,6 +264,7 @@ export default function EditCartDiscount() {
                   value={formData.maximumCartProductCount}
                   onChange={handleChange}
                   min={0}
+                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
                 />
               </div>
             </div>

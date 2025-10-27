@@ -102,13 +102,13 @@ function ProductSalesReportPage() {
   };
 
   return (
-    <div className="container-xxxl flex-grow-1 container-p-y px-4">
-      <h5 className="fw-bold py-3 mb-4">
+    <div className="container-xxl flex-grow-1 container-p-y">
+      <h4 className="fw-bold py-3 mb-4">
         <span className="text-muted fw-light">
           <Link href="/admin/reports">Raporlar</Link> /
         </span>{" "}
         Ürün Satış Raporu
-      </h5>
+      </h4>
       <BackButton href="/admin/reports" />
       {/* Filter Section */}
       <div className="card mb-4">
@@ -239,7 +239,7 @@ function ProductSalesReportPage() {
             </div>
             <div className="col-md-6 d-flex align-items-end">
               <button
-                className="btn btn-dark btn-sm me-2"
+                className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}
                 disabled={isLoading}
                 style={{ fontSize: "0.8rem" }}
@@ -363,7 +363,7 @@ function ProductSalesReportPage() {
           )}
 
           {error && (
-            <div className="alert alert-danger mt-4" role="alert">
+            <div className="alert alert-danger" role="alert">
               Aradığınız kriterlere uygun satış kaydı bulunamadı.
             </div>
           )}

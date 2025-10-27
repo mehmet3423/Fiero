@@ -51,10 +51,22 @@ function AdminOrderDetail() {
 
   // Calculate total amount for an order
   const calculateTotalAmount = () => {
-    if (!order?.orderItems || !order.orderItems) return 0;
+    // API'den gelen totalPrice varsa onu kullan
+    if (order?.totalPrice !== undefined) {
+      return order.totalPrice;
+    }
 
-    return order.orderItems.reduce((sum: number, item: OrderItem) => {
-      const price = typeof item.price === "number" ? item.price : 0;
+    // orderProducts veya orderItems kullan
+    const orderItems = order?.orderProducts || order?.orderItems || [];
+    if (!orderItems || orderItems.length === 0) return 0;
+
+    return orderItems.reduce((sum: number, item: OrderItem) => {
+      const price =
+        typeof item.orderItemPrice === "number"
+          ? item.orderItemPrice
+          : typeof item.price === "number"
+            ? item.price
+            : 0;
       const quantity = typeof item.quantity === "number" ? item.quantity : 0;
       return sum + price * quantity;
     }, 0);
@@ -66,6 +78,37 @@ function AdminOrderDetail() {
       style: "currency",
       currency: "TRY",
     }).format(amount);
+  };
+
+  // Cargo status helper functions
+  const getCargoStatusText = (status: number) => {
+    switch (status) {
+      case 0:
+        return "Hazırlanıyor";
+      case 1:
+        return "Kargoya Verildi";
+      case 2:
+        return "Teslim Edildi";
+      case 3:
+        return "İptal Edildi";
+      default:
+        return "Bilinmeyen";
+    }
+  };
+
+  const getStatusBadgeClass = (status: number) => {
+    switch (status) {
+      case 0:
+        return "bg-warning";
+      case 1:
+        return "bg-info";
+      case 2:
+        return "bg-success";
+      case 3:
+        return "bg-danger";
+      default:
+        return "bg-secondary";
+    }
   };
 
   if (isLoading) {
@@ -201,7 +244,8 @@ function AdminOrderDetail() {
                     Ürün Sayısı
                   </small>
                   <div style={{ fontSize: "0.8rem" }}>
-                    {order?.orderItems?.length} Ürün
+                    {(order.orderProducts || order.orderItems || []).length}{" "}
+                    Ürün
                   </div>
                 </div>
               </div>
@@ -220,9 +264,8 @@ function AdminOrderDetail() {
           <li className="nav-item">
             <button
               type="button"
-              className={`nav-link py-1 ${
-                activeTab === "details" ? "active" : ""
-              }`}
+              className={`nav-link py-1 ${activeTab === "details" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("details")}
             >
               <i className="bx bx-detail me-1"></i> Sipariş Detayları
@@ -231,9 +274,8 @@ function AdminOrderDetail() {
           <li className="nav-item">
             <button
               type="button"
-              className={`nav-link py-1 ${
-                activeTab === "items" ? "active" : ""
-              }`}
+              className={`nav-link py-1 ${activeTab === "items" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("items")}
             >
               <i className="bx bx-package me-1"></i> Ürünler
@@ -242,9 +284,8 @@ function AdminOrderDetail() {
           <li className="nav-item">
             <button
               type="button"
-              className={`nav-link py-1 ${
-                activeTab === "customer" ? "active" : ""
-              }`}
+              className={`nav-link py-1 ${activeTab === "customer" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("customer")}
             >
               <i className="bx bx-user me-1"></i> Müşteri Bilgileri
@@ -255,9 +296,8 @@ function AdminOrderDetail() {
         <div className="tab-content">
           {/* Sipariş Detayları Tab */}
           <div
-            className={`tab-pane fade ${
-              activeTab === "details" ? "show active" : ""
-            }`}
+            className={`tab-pane fade ${activeTab === "details" ? "show active" : ""
+              }`}
           >
             <div className="card shadow-sm">
               <div className="table-responsive text-nowrap">
@@ -287,6 +327,18 @@ function AdminOrderDetail() {
                       </td>
                     </tr>
                     <tr>
+                      <td className="text-muted py-2">Durum</td>
+                      <td className="py-2">
+                        <span
+                          className={`badge ${getStatusBadgeClass(
+                            order.cargoStatus
+                          )}`}
+                        >
+                          {getCargoStatusText(order.cargoStatus)}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
                       <td className="text-muted py-2">Son Güncelleme</td>
                       <td className="py-2">
                         {order.modifiedOnValue
@@ -302,13 +354,12 @@ function AdminOrderDetail() {
 
           {/* Ürünler Tab */}
           <div
-            className={`tab-pane fade ${
-              activeTab === "items" ? "show active" : ""
-            }`}
+            className={`tab-pane fade ${activeTab === "items" ? "show active" : ""
+              }`}
           >
             <div className="card shadow-sm">
               <div className="table-responsive text-nowrap">
-                {order.orderItems.length > 0 ? (
+                {(order.orderProducts || order.orderItems || []).length > 0 ? (
                   <table className="table mb-0" style={{ fontSize: "0.8rem" }}>
                     <thead>
                       <tr>
@@ -316,31 +367,73 @@ function AdminOrderDetail() {
                         <th className="py-2">Ürün</th>
                         <th className="py-2">Birim Fiyat</th>
                         <th className="py-2">Adet</th>
+                        <th className="py-2">Toplam</th>
                       </tr>
                     </thead>
                     <tbody className="table-border-bottom-0">
-                      {order.orderItems.map((item: OrderItem) => (
-                        <tr key={item.id}>
-                          <td className="py-2">
-                            <span className="fw-medium">
-                              {item.product?.title || "Ürün Adı Bulunamadı"}
-                            </span>
-                            <small
-                              className="d-block text-muted"
-                              style={{ fontSize: "0.7rem" }}
-                            >
-                              Ürün Kodu: {item.orderItemNumber}
-                            </small>
-                          </td>
-                          <td className="py-2">{formatCurrency(item.price)}</td>
-                          <td className="py-2">{item.quantity}</td>
-                          <td className="py-2">
-                            {formatCurrency(item.price * item.quantity)}
-                          </td>
-                        </tr>
-                      ))}
+                      {(order.orderProducts || order.orderItems || []).map(
+                        (item: OrderItem) => (
+                          <tr key={item.id}>
+                            <td className="py-2">
+                              {item.baseImageUrl ? (
+                                <img
+                                  src={item.baseImageUrl}
+                                  alt={
+                                    item.productTitle ||
+                                    item.product?.title ||
+                                    "Ürün"
+                                  }
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    objectFit: "cover",
+                                    borderRadius: "4px",
+                                    border: "1px solid #eee",
+                                  }}
+                                />
+                              ) : (
+                                <span
+                                  style={{
+                                    display: "inline-block",
+                                    width: "40px",
+                                    height: "40px",
+                                    background: "#f5f5f5",
+                                    borderRadius: "4px",
+                                    border: "1px solid #eee",
+                                  }}
+                                ></span>
+                              )}
+                            </td>
+                            <td className="py-2">
+                              <span className="fw-medium">
+                                {item.productTitle ||
+                                  item.product?.title ||
+                                  "Ürün Adı Bulunamadı"}
+                              </span>
+                              <small
+                                className="d-block text-muted"
+                                style={{ fontSize: "0.7rem" }}
+                              >
+                                Ürün Kodu: {item.orderItemNumber}
+                              </small>
+                            </td>
+                            <td className="py-2">
+                              {formatCurrency(
+                                item.orderItemPrice || item.price || 0
+                              )}
+                            </td>
+                            <td className="py-2">{item.quantity}</td>
+                            <td className="py-2">
+                              {formatCurrency(
+                                (item.orderItemPrice || item.price || 0) *
+                                item.quantity
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      )}
                       <tr className="table-active">
-                        <td colSpan={3} className="text-end fw-medium py-2">
+                        <td colSpan={4} className="text-end fw-medium py-2">
                           Toplam:
                         </td>
                         <td className="fw-bold py-2">
@@ -361,9 +454,8 @@ function AdminOrderDetail() {
 
           {/* Müşteri Bilgileri Tab */}
           <div
-            className={`tab-pane fade ${
-              activeTab === "customer" ? "show active" : ""
-            }`}
+            className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""
+              }`}
           >
             <div className="card shadow-sm">
               <div className="table-responsive text-nowrap">
@@ -377,7 +469,8 @@ function AdminOrderDetail() {
                         Müşteri Adı
                       </td>
                       <td className="py-2">
-                        {order.recipientFirstName} {order.recipientLastName}
+                        {order.shippingAddress?.firstName}{" "}
+                        {order.shippingAddress?.lastName}
                       </td>
                     </tr>
                     <tr>
@@ -387,9 +480,12 @@ function AdminOrderDetail() {
                     <tr>
                       <td className="text-muted py-2">Adres</td>
                       <td className="py-2">
-                        {order.address.city} {order.address.district}
-                        {order.address.country}
-                        {order.address.fullAddress} {order.address.postalCode}
+                        {order.address?.district}{" "}
+                        {order.shippingAddress?.fullAddress}{" "}
+                        {order.shippingAddress?.postalCode}{" "}
+                        {order.shippingAddress?.city}
+                        {"/"}
+                        {order.shippingAddress?.country}{" "}
                       </td>
                     </tr>
                     <tr>

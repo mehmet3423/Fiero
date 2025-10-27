@@ -1,8 +1,6 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { GET_SUPPORT_TICKETS } from "@/constants/links";
-import {
-  SupportTicketResponse
-} from "@/constants/models/SupportTicket";
+import { SupportTicketResponse } from "@/constants/models/SupportTicket";
 import useGetData from "@/hooks/useGetData";
 
 interface UseGetSupportTicketsProps {
@@ -28,24 +26,27 @@ export const useGetSupportTickets = ({
     ...(from !== undefined && { From: from }),
   };
 
-  const { data, isLoading, error } = useGetData<SupportTicketResponse>({
-    url: GET_SUPPORT_TICKETS,
-    params,
-    queryKey: [
-      "supportTickets",
-      String(page),
-      String(pageSize),
-      requestType !== undefined ? String(requestType) : undefined,
-      title,
-      from,
-    ],
-    method: HttpMethod.GET,
-  });
+  const { data, isLoading, error, refetch } = useGetData<SupportTicketResponse>(
+    {
+      url: GET_SUPPORT_TICKETS,
+      params,
+      queryKey: [
+        "supportTickets",
+        String(page),
+        String(pageSize),
+        requestType !== undefined ? String(requestType) : undefined,
+        title,
+        from,
+      ],
+      method: HttpMethod.GET,
+    }
+  );
 
   return {
-    tickets: data?.items || [],
-    totalCount: data?.count || 0,
+    tickets: data?.data?.items || [],
+    totalCount: data?.data?.count || 0,
     isLoading,
     error,
+    refetch,
   };
 };

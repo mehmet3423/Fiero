@@ -4,6 +4,8 @@ import { useCreateBirthdayDiscount } from "@/hooks/services/discounts/birthday-d
 import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { BirthdayDiscount } from "@/constants/models/Discount";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateBirthdayDiscountForm {
   name: string;
@@ -18,6 +20,7 @@ interface CreateBirthdayDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateBirthdayDiscountPage = () => {
@@ -28,7 +31,7 @@ const CreateBirthdayDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -37,6 +40,16 @@ const CreateBirthdayDiscountPage = () => {
     isActive: true,
     type: DiscountType.BirthdayDiscount,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +58,6 @@ const CreateBirthdayDiscountPage = () => {
       await createBirthdayDiscount(formData);
       router.push("/admin/campaigns/birthday-discount");
     } catch (error) {
-      console.error("Error creating birthday discount:", error);
     }
   };
 
@@ -61,6 +73,15 @@ const CreateBirthdayDiscountPage = () => {
           : type === "number"
           ? parseFloat(value)
           : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -143,7 +164,7 @@ const CreateBirthdayDiscountPage = () => {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="İndirim değeri"
                     />
@@ -173,7 +194,7 @@ const CreateBirthdayDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="Maksimum indirim değeri"
                     />
@@ -218,6 +239,7 @@ const CreateBirthdayDiscountPage = () => {
                       onChange={handleChange}
                       min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       placeholder="Örn: 7 (7 gün önce)"
                     />
                     <small className="form-text text-muted">
@@ -236,6 +258,7 @@ const CreateBirthdayDiscountPage = () => {
                       onChange={handleChange}
                       min={0}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       placeholder="Örn: 7 (7 gün sonra)"
                     />
                     <small className="form-text text-muted">
@@ -265,6 +288,12 @@ const CreateBirthdayDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

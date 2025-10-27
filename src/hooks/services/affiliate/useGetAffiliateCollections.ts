@@ -1,7 +1,10 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_CURRENT_USERS_COLLECTIONS } from "@/constants/links";
-import { AffiliateCollection } from "@/constants/models/Affiliate";
+import {
+  AffiliateCollection,
+  AffiliateCollectionsResponse,
+} from "@/constants/models/Affiliate";
 import useGetData from "@/hooks/useGetData";
 
 interface UseGetAffiliateCollectionsParams {
@@ -26,26 +29,25 @@ export const useGetAffiliateCollections = (
     queryParams.toString() ? "?" + queryParams.toString() : ""
   }`;
 
-  const { data, isLoading, error, refetch } = useGetData<AffiliateCollection[]>(
-    {
+  const { data, isLoading, error, refetch } =
+    useGetData<AffiliateCollectionsResponse>({
       url,
       queryKey: [QueryKeys.AFFILIATE_COLLECTIONS],
       method: HttpMethod.GET,
-      onError: (err: any) => {
-        console.error("Affiliate collections error:", err);
-      },
-    }
-  );
+      onError: (err: any) => {},
+    });
+
+  const collections = data?.data || [];
 
   return {
-    collections: data || [],
+    collections,
     pagination: {
       page: page,
       size: pageSize,
-      count: data?.length ?? 0,
-      pages: Math.ceil((data?.length ?? 0) / pageSize),
+      count: collections.length,
+      pages: Math.ceil(collections.length / pageSize),
       hasPrevious: page > 1,
-      hasNext: page < Math.ceil((data?.length ?? 0) / pageSize),
+      hasNext: page < Math.ceil(collections.length / pageSize),
     },
     isLoading,
     error,

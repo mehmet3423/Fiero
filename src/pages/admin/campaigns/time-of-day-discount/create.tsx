@@ -5,6 +5,8 @@ import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { TimeOfDayDiscount } from "@/constants/models/Discount";
 import { DiscountValueType } from "@/constants/enums/DiscountValueType";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateTimeOfDayDiscountForm {
   name: string;
@@ -19,6 +21,7 @@ interface CreateTimeOfDayDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateTimeOfDayDiscountPage = () => {
@@ -29,7 +32,7 @@ const CreateTimeOfDayDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -38,6 +41,16 @@ const CreateTimeOfDayDiscountPage = () => {
     isActive: true,
     type: DiscountType.TimeOfDayDiscount,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +72,6 @@ const CreateTimeOfDayDiscountPage = () => {
       await createTimeOfDayDiscount(apiData as any);
       router.push("/admin/campaigns/time-of-day-discount");
     } catch (error) {
-      console.error("Error creating time of day discount:", error);
     }
   };
 
@@ -73,8 +85,17 @@ const CreateTimeOfDayDiscountPage = () => {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : type === "number"
-          ? parseFloat(value)
-          : value,
+            ? parseFloat(value)
+            : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -171,7 +192,7 @@ const CreateTimeOfDayDiscountPage = () => {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="İndirim değeri"
                     />
@@ -200,7 +221,7 @@ const CreateTimeOfDayDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="Maksimum indirim değeri"
                     />
@@ -310,6 +331,12 @@ const CreateTimeOfDayDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

@@ -1261,7 +1261,7 @@ label {
 }
 
 .flat-spacing-11 {
-  padding-top: 80px;
+  /* padding-top: 80px; */
   padding-bottom: 70px;
 }
 
@@ -2079,6 +2079,21 @@ label {
 .nav-ul-mb .sub-nav-link.line-clamp .demo-label {
   top: -5px;
   right: -38px;
+}
+
+/* Custom collapse animation for mobile menu */
+.nav-ul-mb .custom-collapse {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.35s ease;
+}
+
+.nav-ul-mb .custom-collapse.show {
+  height: auto;
+}
+
+.nav-ul-mb .btn-open-sub.expanded::before {
+  transform: rotate(90deg);
 }
 
 .header-list-categories {

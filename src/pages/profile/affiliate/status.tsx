@@ -223,12 +223,21 @@ export default function AffiliateStatusPage({
               <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
                 <div className="card-body py-3 px-2">
                   <div className="card-icon mb-2">
-                    <i className="bx bx-money text-success" style={{ fontSize: "2.5rem" }}></i>
+                    <i
+                      className="bx bx-money text-success"
+                      style={{ fontSize: "2.5rem" }}
+                    ></i>
                   </div>
-                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                  <h6
+                    className="card-title text-uppercase text-muted mb-1 fw-bold"
+                    style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}
+                  >
                     {t("affiliateStatus.totalEarnings")}
                   </h6>
-                  <h4 className="text-success mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                  <h4
+                    className="text-success mb-0 fw-bold"
+                    style={{ fontSize: "1.5rem" }}
+                  >
                     {affiliateUser.totalEarnings?.toFixed(2) || "0.00"} ₺
                   </h4>
                 </div>
@@ -239,12 +248,21 @@ export default function AffiliateStatusPage({
               <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
                 <div className="card-body py-3 px-2">
                   <div className="card-icon mb-2">
-                    <i className="bx bx-transfer text-info" style={{ fontSize: "2.5rem" }}></i>
+                    <i
+                      className="bx bx-transfer text-info"
+                      style={{ fontSize: "2.5rem" }}
+                    ></i>
                   </div>
-                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                  <h6
+                    className="card-title text-uppercase text-muted mb-1 fw-bold"
+                    style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}
+                  >
                     {t("affiliateStatus.transferable")}
                   </h6>
-                  <h4 className="text-info mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                  <h4
+                    className="text-info mb-0 fw-bold"
+                    style={{ fontSize: "1.5rem" }}
+                  >
                     {affiliateUser.transferableEarnings?.toFixed(2) || "0.00"} ₺
                   </h4>
                 </div>
@@ -255,13 +273,24 @@ export default function AffiliateStatusPage({
               <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
                 <div className="card-body py-3 px-2">
                   <div className="card-icon mb-2">
-                    <i className="bx bx-time-five text-warning" style={{ fontSize: "2.5rem" }}></i>
+                    <i
+                      className="bx bx-time-five text-warning"
+                      style={{ fontSize: "2.5rem" }}
+                    ></i>
                   </div>
-                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                  <h6
+                    className="card-title text-uppercase text-muted mb-1 fw-bold"
+                    style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}
+                  >
                     {t("affiliateStatus.pendingApproval")}
                   </h6>
-                  <h4 className="text-warning mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
-                    {affiliateUser.pendingApprovalEarnings?.toFixed(2) || "0.00"} ₺
+                  <h4
+                    className="text-warning mb-0 fw-bold"
+                    style={{ fontSize: "1.5rem" }}
+                  >
+                    {affiliateUser.pendingApprovalEarnings?.toFixed(2) ||
+                      "0.00"}{" "}
+                    ₺
                   </h4>
                 </div>
               </div>
@@ -271,12 +300,21 @@ export default function AffiliateStatusPage({
               <div className="card h-100 text-center shadow-sm border-0 rounded-4 transition-all">
                 <div className="card-body py-3 px-2">
                   <div className="card-icon mb-2">
-                    <i className="bx bx-check-circle text-primary" style={{ fontSize: "2.5rem" }}></i>
+                    <i
+                      className="bx bx-check-circle text-primary"
+                      style={{ fontSize: "2.5rem" }}
+                    ></i>
                   </div>
-                  <h6 className="card-title text-uppercase text-muted mb-1 fw-bold" style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}>
+                  <h6
+                    className="card-title text-uppercase text-muted mb-1 fw-bold"
+                    style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}
+                  >
                     {t("affiliateStatus.transferred")}
                   </h6>
-                  <h4 className="text-primary mb-0 fw-bold" style={{ fontSize: "1.5rem" }}>
+                  <h4
+                    className="text-primary mb-0 fw-bold"
+                    style={{ fontSize: "1.5rem" }}
+                  >
                     {affiliateUser.transferredEarnings?.toFixed(2) || "0.00"} ₺
                   </h4>
                 </div>
@@ -293,7 +331,9 @@ export default function AffiliateStatusPage({
                   <div className="d-flex align-items-center">
                     <i className="bx bx-calendar text-muted me-2"></i>
                     <div>
-                      <small className="text-muted d-block">{t("affiliateStatus.applicationDate")}</small>
+                      <small className="text-muted d-block">
+                        {t("affiliateStatus.applicationDate")}
+                      </small>
                       <span className="fw-semibold">
                         {new Date(affiliateUser.appliedAt).toLocaleDateString(
                           "tr-TR",
@@ -335,12 +375,17 @@ export default function AffiliateStatusPage({
         )}
 
         <div className="card shadow-sm border-0 rounded-4 mb-4">
-          <div className="card-body p-4" style={{
-            borderLeft: `4px solid ${getStatusColor(affiliateUser.status)}`,
-          }}>
+          <div
+            className="card-body p-4"
+            style={{
+              borderLeft: `4px solid ${getStatusColor(affiliateUser.status)}`,
+            }}
+          >
             <div className="d-flex justify-content-between align-items-start">
               <div className="flex-grow-1">
-                <h5 className="card-title mb-2">{t("affiliateStatus.applicationStatus")}</h5>
+                <h5 className="card-title mb-2">
+                  {t("affiliateStatus.applicationStatus")}
+                </h5>
                 <div className="text-muted">
                   {affiliateUser.status === AffiliateStatus.InProgress && (
                     <div>
@@ -348,7 +393,8 @@ export default function AffiliateStatusPage({
                       <span>{t("affiliateStatus.applicationInProgress")}</span>
                       <br />
                       <small className="text-muted mt-2 d-block">
-                        <strong>Not:</strong> {t("affiliateStatus.applicationNote")}
+                        <strong>Not:</strong>{" "}
+                        {t("affiliateStatus.applicationNote")}
                       </small>
                     </div>
                   )}
@@ -393,29 +439,29 @@ export default function AffiliateStatusPage({
 
         {(affiliateUser.status === AffiliateStatus.Approved ||
           affiliateUser.status === AffiliateStatus.InProgress) && (
-            <div className="row g-3 justify-content-center">
-              <div className="col-sm-6 col-md-4">
-                <button
-                  className="btn btn-dark rounded-pill w-100 py-2"
-                  onClick={handleEditUserStatus}
-                  title={t("affiliateStatus.updateIbanModalTitle")}
-                >
-                  <i className="bx bx-edit me-2"></i>
-                  {t("affiliateStatus.updateIban")}
-                </button>
-              </div>
-              <div className="col-sm-6 col-md-4">
-                <button
-                  className="btn btn-outline-danger rounded-pill w-100 py-2"
-                  onClick={handleCancelAccount}
-                  title={t("affiliateStatus.closeAccount")}
-                >
-                  <i className="bx bx-trash me-2"></i>
-                  {t("affiliateStatus.cancelAccount")}
-                </button>
-              </div>
+          <div className="row g-3 justify-content-center">
+            <div className="col-sm-6 col-md-4">
+              <button
+                className="btn btn-dark rounded-pill w-100 py-2"
+                onClick={handleEditUserStatus}
+                title={t("affiliateStatus.updateIbanModalTitle")}
+              >
+                <i className="bx bx-edit me-2"></i>
+                {t("affiliateStatus.updateIban")}
+              </button>
             </div>
-          )}
+            <div className="col-sm-6 col-md-4">
+              <button
+                className="btn btn-outline-danger rounded-pill w-100 py-2"
+                onClick={handleCancelAccount}
+                title={t("affiliateStatus.closeAccount")}
+              >
+                <i className="bx bx-trash me-2"></i>
+                {t("affiliateStatus.cancelAccount")}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* IBAN Güncelleme Modal */}
@@ -426,7 +472,6 @@ export default function AffiliateStatusPage({
         onClose={() => setIsEditingUserStatus(false)}
         onApprove={handleSaveUserStatus}
         approveButtonText={t("affiliateStatus.updateIban")}
-        approveButtonClassName="btn-dark"
         isLoading={isUpdatingStatus}
         showFooter={true}
       >
@@ -477,7 +522,9 @@ export default function AffiliateStatusPage({
           title={t("affiliateStatus.accountCancelConfirmTitle")}
           message={t("affiliateStatus.accountCancelConfirmMessage")}
           confirmButtonText={
-            isUpdatingStatus ? t("affiliateStatus.cancelling") : t("affiliateStatus.accountCancelConfirmButton")
+            isUpdatingStatus
+              ? t("affiliateStatus.cancelling")
+              : t("affiliateStatus.accountCancelConfirmButton")
           }
           cancelButtonText={t("affiliateStatus.accountCancelCancelButton")}
         />

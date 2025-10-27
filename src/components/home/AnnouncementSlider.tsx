@@ -4,8 +4,6 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 
-
-
 const AnnouncementSlider: React.FC = () => {
   const { t } = useLanguage();
   const announcements = [
@@ -27,11 +25,11 @@ const AnnouncementSlider: React.FC = () => {
     <>
       <style jsx>{`
         .announcement-bar {
-        position: sticky !important;
-        top: 0;
+          position: sticky !important;
+          top: 0;
           height: 30px !important;
           padding: 0 65px 0 0 !important;
-          z-index: 1003 !important;
+          z-index: 999 !important;
         }
         .announcement-bar-item p {
           padding: 5px 0px !important;

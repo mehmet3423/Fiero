@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { useCreateSpecialDayDiscount } from "@/hooks/services/discounts/specialDay-discount/useCreateSpecialDayDiscount";
 import Link from "next/link";
 import { DiscountType } from "@/constants/enums/DiscountType";
+import NotificationSettings from "@/components/shared/NotificationSettings";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CreateSpecialDayDiscountForm {
   name: string;
@@ -17,6 +19,7 @@ interface CreateSpecialDayDiscountForm {
   isActive: boolean;
   type: DiscountType;
   isWithinActiveDateRange: boolean;
+  notificationSettings: NotificationSettingsType;
 }
 
 const CreateSpecialDayDiscountPage = () => {
@@ -27,7 +30,7 @@ const CreateSpecialDayDiscountPage = () => {
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: 0,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
@@ -36,6 +39,16 @@ const CreateSpecialDayDiscountPage = () => {
     isActive: true,
     type: DiscountType.SpecialDayDiscount,
     isWithinActiveDateRange: false,
+    notificationSettings: {
+      isEmailNotificationEnabled: false,
+      emailNotificationSubject: "",
+      emailNotificationTextBody: "",
+      emailNotificationHtmlBody: "",
+      isSMSNotificationEnabled: false,
+      smsNotificationSubject: "",
+      smsNotificationTextBody: "",
+      smsNotificationHtmlBody: "",
+    },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,10 +57,8 @@ const CreateSpecialDayDiscountPage = () => {
       await createSpecialDayDiscount(formData);
       router.push("/admin/campaigns/special-day-discount");
     } catch (error) {
-      console.error("Error creating special day discount:", error);
     }
   };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -57,9 +68,20 @@ const CreateSpecialDayDiscountPage = () => {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : type === "number"
-          ? parseFloat(value)
-          : value,
+          : name === "discountValueType" || name === "month" || name === "day"
+            ? Number(value)
+            : type === "number"
+              ? parseFloat(value)
+              : value,
+    }));
+  };
+
+  const handleNotificationSettingsChange = (
+    notificationSettings: NotificationSettingsType
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      notificationSettings,
     }));
   };
 
@@ -167,7 +189,7 @@ const CreateSpecialDayDiscountPage = () => {
                       value={formData.discountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="İndirim değeri"
                     />
@@ -181,8 +203,8 @@ const CreateSpecialDayDiscountPage = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="1">Yüzde (%)</option>
-                      <option value="2">Tutar (₺)</option>
+                      <option value={1}>Yüzde (%)</option>
+                      <option value={2}>Tutar (₺)</option>
                     </select>
                   </div>
                   <div className="col-md-4">
@@ -196,7 +218,7 @@ const CreateSpecialDayDiscountPage = () => {
                       value={formData.maxDiscountValue}
                       onChange={handleChange}
                       min={0}
-                      step="0.01"
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                       required
                       placeholder="Maksimum indirim değeri"
                     />
@@ -237,6 +259,7 @@ const CreateSpecialDayDiscountPage = () => {
                       value={formData.month}
                       onChange={handleChange}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     >
                       {months.map((month) => (
                         <option key={month.value} value={month.value}>
@@ -253,6 +276,7 @@ const CreateSpecialDayDiscountPage = () => {
                       value={formData.day}
                       onChange={handleChange}
                       required
+                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     >
                       {dayOptions.map((day) => (
                         <option key={day} value={day}>
@@ -284,6 +308,12 @@ const CreateSpecialDayDiscountPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Notification Settings */}
+                <NotificationSettings
+                  value={formData.notificationSettings}
+                  onChange={handleNotificationSettingsChange}
+                />
 
                 <div className="row">
                   <div className="col-12">

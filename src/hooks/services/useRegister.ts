@@ -13,6 +13,8 @@ interface RegisterData {
   phoneNumber: string;
   birthDate: string;
   gender: number;
+  IsSMSNotificationEnabled: boolean;
+  IsEmailNotificationEnabled: boolean;
   companyName?: string;
   companyAddress?: {
     country: number;
@@ -71,24 +73,33 @@ export const useRegister = () => {
         PhoneNumber: data.phoneNumber,
         BirthDate: data.birthDate,
         Gender: data.gender.toString(),
+        IsSMSNotificationEnabled: data.IsSMSNotificationEnabled ?? false,
+        IsEmailNotificationEnabled: data.IsEmailNotificationEnabled ?? false,
       };
 
       const sellerParams =
         userRole === UserRole.SELLER
           ? {
-              CompanyName: data.companyName,
-              "CompanyAddress.Country": data.companyAddress?.country,
-              "CompanyAddress.State": data.companyAddress?.state,
-              "CompanyAddress.City": data.companyAddress?.city,
-              "CompanyAddress.FullAddress": data.companyAddress?.fullAddress,
-            }
+            CompanyName: data.companyName,
+            "CompanyAddress.Country": data.companyAddress?.country,
+            "CompanyAddress.State": data.companyAddress?.state,
+            "CompanyAddress.City": data.companyAddress?.city,
+            "CompanyAddress.FullAddress": data.companyAddress?.fullAddress,
+          }
           : {};
 
       const params = new URLSearchParams();
 
       // Base params
       Object.entries(baseParams).forEach(([key, value]) => {
-        params.append(key, value.toString());
+        if (value !== undefined && value !== null) {
+          // Handle boolean values properly - convert to "true"/"false" strings
+          if (typeof value === "boolean") {
+            params.append(key, value ? "true" : "false");
+          } else {
+            params.append(key, value.toString());
+          }
+        }
       });
 
       // Seller params
@@ -107,11 +118,10 @@ export const useRegister = () => {
         {
           url: `${registerUrl}?${params.toString()}`,
           method: HttpMethod.POST,
+          showErrorToast: false,
         },
         {
           onSuccess: (res) => {
-            console.log("Register response:", res.data);
-
             if (res.data && res.data.data.accessToken) {
               // Save token to localStorage for automatic login
               setToken(res.data.data.accessToken);
@@ -129,14 +139,11 @@ export const useRegister = () => {
             }
           },
           onError: (error) => {
-            console.error("Register error:", error);
-            toast.error(error.response?.data?.detail || "Kayıt başarısız!");
+            toast.error(error.response?.data?.message || "Kayıt başarısız!");
           },
         }
       );
-    } catch (error) {
-      console.error("Register error:", error);
-      toast.error("Kayıt başarısız!");
+    } catch (error: any) {
     }
   };
 

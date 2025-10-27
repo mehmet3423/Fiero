@@ -5,7 +5,9 @@ import { SettingsApiResponse } from "@/constants/models/settings";
 import useGetData from "@/hooks/useGetData";
 
 export const useGetSystemSettings = () => {
-  const { data, isLoading, error, refetch } = useGetData<SettingsApiResponse>({
+  const { data, isLoading, error, refetch } = useGetData<{
+    data: SettingsApiResponse;
+  }>({
     queryKey: QueryKeys.SYSTEM_SETTINGS,
     url: GET_SYSTEM_SETTINGS,
     method: HttpMethod.GET,
@@ -13,7 +15,7 @@ export const useGetSystemSettings = () => {
   });
 
   return {
-    settings: data || [],
+    settings: data?.data || [],
     isLoading,
     error,
     refetch,

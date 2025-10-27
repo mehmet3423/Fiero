@@ -24,7 +24,12 @@ export const FAVORITES_CLEAR = `${FAVORITES}/Clear`;
 
 //Auth endpoints
 export const GET_USER_PROFILE = `${BASE_URL}api/Authentication/UserInfo`;
-export const UPDATE_USER_PROFILE = `${BASE_URL}api/Users/CustomerProfileUpdateRequest`;
+export const UPDATE_USER_PROFILE = `${BASE_URL}api/Users/UpdateCustomer`;
+
+// Customer endpoints (Admin)
+export const GET_CUSTOMERS_LIST = `${BASE_URL}api/Users/GetCustomersList`;
+export const UPDATE_CUSTOMER = `${BASE_URL}api/Users/UpdateCustomer`;
+export const DELETE_CUSTOMER = `${BASE_URL}api/Users/DeleteCustomer`;
 
 // Product endpoints
 export const GET_PRODUCT_LIST_BY_SUB_CATEGORY_ID = `${BASE_URL}api/Product/GetProductListBySubCategoryId`;
@@ -69,12 +74,14 @@ export const GET_REVIEWS = `${BASE_URL}api/Comment/GetCommentListByProduct`;
 export const UPDATE_REVIEW = `${BASE_URL}api/Comment/UpdateComment`;
 export const DELETE_REVIEW = `${BASE_URL}api/Comment/DeleteComment`;
 export const GET_USER_REVIEWS = `${BASE_URL}api/Comment/GetCommentListByCustomer`;
+export const GET_COMMENT_LIST = `${BASE_URL}api/Comment/GetCommentList`;
+export const REJECT_COMMENT = `${BASE_URL}api/Comment/RejectComment`;
+export const APPROVE_COMMENT = `${BASE_URL}api/Comment/ApproveComment`;
 
 // Order endpoints
 export const CREATE_ORDER = `${BASE_URL}api/Order/CreateOrder`;
 export const GET_ORDER_BY_ID = `${BASE_URL}api/Order/GetOrderById`;
-export const GET_CUSTOMER_ORDERS = `${BASE_URL}api/Order/GetOrderListByCustomerId`;
-export const GET_SELLER_ORDERS = `${BASE_URL}api/Order/GetOrderListBySellerId`;
+export const GET_ORDER_LIST_FROM_TOKEN = `${BASE_URL}api/Order/GetOrderListFromToken`;
 export const GET_USER_ORDERS = `${BASE_URL}api/Order/GetUsersOrderList`;
 export const UPDATE_ORDER = `${BASE_URL}api/Order/UpdateOrder`;
 export const DELETE_ORDER = `${BASE_URL}api/Order/DeleteOrder`;
@@ -98,6 +105,8 @@ export const GET_INSTALLMENT_INFO = `${BASE_URL}api/Payments/GetInstallmentInfo`
 export const CHECK_BIN = `${BASE_URL}api/Payments/CheckBin`;
 export const PROCESS_REFUND_ITEMS = `${BASE_URL}api/Payments/ProcessRefundItems`;
 export const PROCESS_REFUND_ITEMS_BY_ORDER = `${BASE_URL}api/Payments/ProcessRefundItemsByOrder`;
+export const PAYMENT_THREE_D_SECURE_INITIALIZE = `${BASE_URL}api/Payments/PaymentThreeDSecureInitialize`;
+export const COMPLETE_THREE_D_SECURE_PAYMENT = `${BASE_URL}api/Payments/CompleteThreeDSecurePayment`;
 
 // User Address endpoints
 export const GET_USER_ADDRESS_LIST = `${BASE_URL}api/Address/GetUsersAddressList`;
@@ -122,7 +131,11 @@ export const DELETE_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/Genera
 export const CREATE_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/General/CreateGeneralSupportTicket`;
 export const GET_SUPPORT_TICKETS = `${BASE_URL}api/GeneralSupportTicket/General/GetAllGeneralSupportTickets`;
 export const GET_SUPPORT_TICKET_BY_ID = `${BASE_URL}api/GeneralSupportTicket/General/GetGeneralSupportById`;
+export const UPDATE_GENERAL_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/General/UpdateGeneralSupportTicket`;
 export const CREATE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/CreateOrderSupportTicket`;
+export const GET_ORDER_SUPPORT_TICKETS = `${BASE_URL}api/OrderSupportTicket/Order/GetAllOrderSupportTickets`;
+export const UPDATE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/UpdateOrderSupportTicket`;
+export const DELETE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/DeleteOrderSupportTicket`;
 export const LOCATION_BASE_URL = process.env.NEXT_PUBLIC_LOCATION_BASE_URL;
 
 // Discount endpoints
@@ -140,6 +153,7 @@ export const GET_DISCOUNT_LIST = `${BASE_URL}api/Discount/GetDiscountList`;
 export const DELETE_DISCOUNT = `${BASE_URL}api/Discount/DeleteDiscount`;
 export const CREATE_SHIPPING_DISCOUNT = `${BASE_URL}api/Discount/CreateCargoDiscount`;
 export const CREATE_BUY_X_PAY_Y_DISCOUNT = `${BASE_URL}api/Discount/CreateBuyXPayYDiscount`;
+export const CREATE_FREE_PRODUCT_DISCOUNT = `${BASE_URL}api/Discount/CreateFreeProductDiscount`;
 
 //Update Discount
 export const UPDATE_SHIPPING_DISCOUNT = `${BASE_URL}api/Discount/UpdateCargoDiscount`;
@@ -153,6 +167,7 @@ export const UPDATE_BIRTHDAY_DISCOUNT = `${BASE_URL}api/Discount/UpdateBirthdayD
 export const UPDATE_SPECIAL_DAY_DISCOUNT = `${BASE_URL}api/Discount/UpdateSpecialDayDiscount`;
 export const UPDATE_COUPON_DISCOUNT = `${BASE_URL}api/Discount/UpdateCouponDiscount`;
 export const UPDATE_FREE_PRODUCT_DISCOUNT = `${BASE_URL}api/Discount/UpdateFreeProductDiscount`;
+export const UPDATE_BUY_X_PAY_Y_DISCOUNT = `${BASE_URL}api/Discount/UpdateBuyXPayYDiscount`;
 
 // Affiliate endpoints
 export const GET_CURRENT_USER_AFFILIATE_USER = `${BASE_URL}api/AffiliateUsers/GetCurrentUsersAffiliateUser`;
@@ -200,7 +215,6 @@ export const GET_SEO_BY_CANONICAL = `${BASE_URL}api/SEO/GetSEOByCanonical`;
 // Settings endpoints
 export const GET_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
 export const UPDATE_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
-export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptions/GetSystemSettingTypes`;
 export const CREATE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
 export const DELETE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
 
@@ -214,7 +228,7 @@ export const GET_MOST_COMMENTED_PRODUCTS_REPORT = `${BASE_URL}api/Reports/MostCo
 export const GET_FAVORITE_PRODUCTS_REPORT = `${BASE_URL}api/Reports/FavoriteProductsReportPaginated`;
 export const GET_PRODUCT_RETURN_REPORT = `${BASE_URL}api/Reports/ProductReturnReportPaginated`;
 export const GET_RETURN_REASON_REPORT = `${BASE_URL}api/Reports/ReturnReasonReportPaginated`;
-export const GET_PRODUCT_CART_REPORT = `${BASE_URL}api/Reports/ProductCartReportPaginated`;
+export const GET_PRODUCT_CART_REPORT = `  ${BASE_URL}api/Reports/ProductCartReportPaginated`;
 export const GET_UNSOLD_PRODUCTS_REPORT = `${BASE_URL}api/Reports/UnsoldProductsReportPaginated`;
 export const GET_PRODUCT_SALES_REPORT = `${BASE_URL}api/Reports/ProductSalesReportPaginated`;
 
@@ -242,3 +256,115 @@ export const GET_ALL_SITEMAP_ITEMS = `${BASE_URL}api/SitemapItems/GetAll`;
 export const CREATE_SITEMAP_ITEM = `${BASE_URL}api/SitemapItems`;
 export const DELETE_SITEMAP_ITEM = `${BASE_URL}api/SitemapItems`;
 export const UPDATE_SITEMAP_ITEM = `${BASE_URL}api/SitemapItems`;
+
+// Trendyol Marketplace endpoints
+export const CREATE_TRENDYOL_PRODUCTS = `${BASE_URL}api/TrendyolMarketplace/CreateProducts`;
+export const UPDATE_TRENDYOL_PRODUCTS = `${BASE_URL}api/TrendyolMarketplace/UpdateProducts`;
+export const UPDATE_TRENDYOL_PRICE_INVENTORY = `${BASE_URL}api/TrendyolMarketplace/UpdateProductsPriceAndInventory`;
+export const DELETE_TRENDYOL_PRODUCTS = `${BASE_URL}api/TrendyolMarketplace/DeleteProduct`;
+export const FILTER_TRENDYOL_PRODUCTS = `${BASE_URL}api/TrendyolMarketplace/FilterProducts`;
+export const GET_ALL_PRODUCTS_WITH_TRENDYOL_LIST = `${BASE_URL}api/TrendyolMarketplace/GetAllProductsWithTrendyolList`;
+export const GET_TRENDYOL_CATEGORIES = `${BASE_URL}api/TrendyolMarketplace/GetCategoryTree`;
+export const GET_TRENDYOL_CATEGORY_ATTRIBUTES = (categoryId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetCategoryAttributes/${categoryId}`;
+export const GET_TRENDYOL_BRANDS = `${BASE_URL}api/TrendyolMarketplace/GetBrands`;
+export const GET_TRENDYOL_BRAND_BY_NAME = `${BASE_URL}api/TrendyolMarketplace/GetBrandByName`;
+export const GET_TRENDYOL_CARGO_PROVIDERS = `${BASE_URL}api/TrendyolMarketplace/GetCargoProviders`;
+export const GET_TRENDYOL_CARGO_PROVIDER_BY_ID = (id: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetCargoProviderById/${id}`;
+export const GET_TRENDYOL_SUPPLIER_ADDRESSES = `${BASE_URL}api/TrendyolMarketplace/GetSupplierAddresses`;
+export const GET_TRENDYOL_CREATE_BATCH_RESULT = `${BASE_URL}api/TrendyolMarketplace/GetCreateBatchResult`;
+export const GET_TRENDYOL_UPDATE_BATCH_RESULT = `${BASE_URL}api/TrendyolMarketplace/GetUpdateBatchResult`;
+export const GET_TRENDYOL_INVENTORY_BATCH_RESULT = `${BASE_URL}api/TrendyolMarketplace/GetInventoryBatchResult`;
+export const GET_PRODUCT_WITH_TRENDYOL = `${BASE_URL}api/TrendyolMarketplace/GetProductWithTrendyol`;
+
+// Trendyol Orders endpoints
+export const CREATE_TEST_ORDER = `${BASE_URL}api/TrendyolMarketplace/CreateTestOrder`;
+export const GET_SHIPMENT_PACKAGES = `${BASE_URL}api/TrendyolMarketplace/GetShipmentPackages`;
+export const GET_AWAITING_SHIPMENT_PACKAGES = `${BASE_URL}api/TrendyolMarketplace/GetAwaitingShipmentPackages`;
+export const UPDATE_TRACKING_NUMBER = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/UpdateTrackingNumber/${packageId}`;
+export const UPDATE_SHIPMENT_PACKAGE_STATUS = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/UpdateShipmentPackageStatus/${packageId}`;
+export const NOTIFY_UNSUPPLIED_ITEMS = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/NotifyUnsuppliedItems/${packageId}`;
+export const GET_UNSUPPLIED_REASONS = `${BASE_URL}api/TrendyolMarketplace/GetUnsuppliedReasons`;
+export const GET_AVAILABLE_PACKAGE_STATUSES = `${BASE_URL}api/TrendyolMarketplace/GetAvailablePackageStatuses`;
+export const SEND_INVOICE_LINK = `${BASE_URL}api/TrendyolMarketplace/SendInvoiceLink`;
+export const DELETE_INVOICE_LINK = `${BASE_URL}api/TrendyolMarketplace/DeleteInvoiceLink`;
+export const SPLIT_SHIPMENT_PACKAGE = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/SplitShipmentPackage/${packageId}`;
+export const SPLIT_MULTI_PACKAGE_BY_QUANTITY = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/SplitMultiPackageByQuantity/${packageId}`;
+export const SPLIT_SHIPMENT_PACKAGE_MULTI_GROUP = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/SplitShipmentPackageMultiGroup/${packageId}`;
+export const SPLIT_SHIPMENT_PACKAGE_BY_QUANTITY = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/SplitShipmentPackageByQuantity/${packageId}`;
+export const UPDATE_BOX_INFO = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/UpdateBoxInfo/${packageId}`;
+export const PROCESS_ALTERNATIVE_DELIVERY = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/ProcessAlternativeDelivery/${packageId}`;
+export const MANUAL_DELIVER = (cargoTrackingNumber: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/ManualDeliver/${cargoTrackingNumber}`;
+export const MANUAL_RETURN = (cargoTrackingNumber: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/ManualReturn/${cargoTrackingNumber}`;
+export const DELIVERED_BY_SERVICE = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/DeliveredByService/${packageId}`;
+export const CHANGE_CARGO_PROVIDER = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/ChangeCargoProvider/${packageId}`;
+export const UPDATE_WAREHOUSE = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/UpdateWarehouse/${packageId}`;
+export const EXTEND_AGREED_DELIVERY_DATE = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/ExtendAgreedDeliveryDate/${packageId}`;
+export const UPDATE_TEST_ORDER_STATUS = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/UpdateTestOrderStatus/${packageId}`;
+export const SET_CLAIM_TO_WAITING_IN_ACTION = `${BASE_URL}api/TrendyolMarketplace/SetClaimToWaitingInAction`;
+export const GET_TRENDYOL_COUNTRIES = `${BASE_URL}api/TrendyolMarketplace/GetCountries`;
+export const GET_TRENDYOL_CITIES = (countryCode: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetCities/${countryCode}`;
+export const GET_TRENDYOL_DISTRICTS = (countryCode: string, cityId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetDistricts/${countryCode}/${cityId}`;
+export const GET_DOMESTIC_AZ_CITIES = `${BASE_URL}api/TrendyolMarketplace/GetDomesticAZCities`;
+export const GET_DOMESTIC_AZ_DISTRICTS = (cityId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetDomesticAZDistricts/${cityId}`;
+export const GET_DOMESTIC_TR_CITIES = `${BASE_URL}api/TrendyolMarketplace/GetDomesticTRCities`;
+export const GET_DOMESTIC_TR_DISTRICTS = (cityId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetDomesticTRDistricts/${cityId}`;
+export const GET_DOMESTIC_TR_NEIGHBORHOODS = (
+  cityId: number,
+  districtId: number
+) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetDomesticTRNeighborhoods/${cityId}/${districtId}`;
+export const SET_LABOR_COST = (packageId: number) =>
+  `${BASE_URL}api/TrendyolMarketplace/SetLaborCost/${packageId}`;
+
+//Cargo endpoints
+export const GET_CARGO_BY_INTEGRATION_CODES = `${BASE_URL}api/Logistics/GetCargoByIntegrationCodes`;
+export const CANCEL_CARGO_BY_INTEGRATION_CODE = `${BASE_URL}api/Logistics/CancelCargoByIntegrationCode`;
+export const GET_CREATED_CARGO_WITH_INTEGRATION_CODE = `${BASE_URL}api/Logistics/GetCreatedCargoWithIntegrationCode`;
+export const SET_CARGO = `${BASE_URL}api/Logistics/SetCargo`;
+export const CREATE_CARGO = `${BASE_URL}api/Order/CreateCargo`;
+
+// Enum Options endpoints
+export const GET_TRENDYOL_PRODUCT_STATUS_OPTIONS = `${BASE_URL}api/EnumOptions/GetTrendyolProductStatus`;
+export const GET_TRENDYOL_OPERATION_TYPES = `${BASE_URL}api/EnumOptions/GetTrendyolOperationTypes`;
+export const GET_MARKETPLACE_TYPES = `${BASE_URL}api/EnumOptions/GetMarketplaceTypes`;
+export const GET_MARKETPLACE_INVOICE_STATUSES = `${BASE_URL}api/EnumOptions/GetMarketplaceInvoiceStatuses`;
+export const GET_INSTALLMENT_TYPES = `${BASE_URL}api/EnumOptions/GetInstallmentTypes`;
+export const GET_LOCALE_TYPES = `${BASE_URL}api/EnumOptions/GetLocaleTypes`;
+export const GET_PAYMENT_CHANNEL_TYPES = `${BASE_URL}api/EnumOptions/GetPaymentChannelTypes`;
+export const GET_PAYMENT_GROUP_TYPES = `${BASE_URL}api/EnumOptions/GetPaymentGroupTypes`;
+export const GET_REGISTER_CARD_TYPES = `${BASE_URL}api/EnumOptions/GetRegisterCardTypes`;
+export const GET_ALL_CANCEL_REASON_TYPES = `${BASE_URL}api/EnumOptions/GetAllCancelReasonTypes`;
+export const GET_ADMIN_CANCEL_REASON_TYPES = `${BASE_URL}api/EnumOptions/GetAdminCancelReasonTypes`;
+export const GET_USER_CANCEL_REASON_TYPES = `${BASE_URL}api/EnumOptions/GetUserCancelReasonTypes`;
+export const GET_REFUND_REJECT_REASONS = `${BASE_URL}api/EnumOptions/GetRefundRejectReasons`;
+export const GET_DISCOUNT_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountTypes`;
+export const GET_LIKE_COUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetLikeCountSortTypes`;
+export const GET_SALES_COUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetSalesCountSortTypes`;
+export const GET_RATING_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetRatingSortTypes`;
+export const GET_DISCOUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountSortTypes`;
+export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptions/GetSystemSettingTypes`;
+export const GET_DISCOUNT_VALUE_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountValueTypes`;
+export const GET_PAYMENT_SOURCE_TYPES = `${BASE_URL}api/EnumOptions/GetPaymentSourceTypes`;
+export const GET_CARGO_STATUSES = `${BASE_URL}api/EnumOptions/GetCargoStatuses`;

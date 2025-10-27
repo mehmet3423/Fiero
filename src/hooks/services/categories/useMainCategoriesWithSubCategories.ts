@@ -23,17 +23,18 @@ export interface MainCategoryResponse {
 }
 
 export const useMainCategoriesWithSubCategories = () => {
-  const { data, isLoading, error } = useGetData<MainCategoryResponse[]>({
+  const { data, isLoading, error } = useGetData<{
+    data: MainCategoryResponse[];
+  }>({
     url: GET_ALL_MAIN_CATEGORIES,
     queryKey: QueryKeys.MAIN_CATEGORIES_WITH_SUBS,
     method: HttpMethod.GET,
     onError(err) {
-      console.error("Ana kategoriler yüklenirken hata oluştu:", err);
     },
   });
 
   return {
-    data: data || [],
+    data: data?.data || [],
     isLoading,
     error,
   };
