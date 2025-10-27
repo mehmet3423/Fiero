@@ -6,8 +6,6 @@ import { CommandResultWithData } from "@/constants/models/CommandResult";
 import useGetData from "@/hooks/useGetData";
 
 export function useGetProductListByIds(productIds: string[]) {
-  console.log("useGetProductListByIds called with:", productIds);
-
   // Her id için useGetData hookunu çağır - hook'lar her zaman aynı sırada çağrılmalı
   const { data, isLoading, error } = useGetData<
     CommandResultWithData<Product | Product[]>

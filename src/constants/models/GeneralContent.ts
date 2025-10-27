@@ -27,6 +27,7 @@ export enum GeneralContentType {
   MainProductList = 23,
   CookiePolicies = 24,
   DistanceSalesAgreement = 25,
+  Policies = 27,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -67,6 +68,7 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.MainProductList]: IsCustomizable.No,
   [GeneralContentType.DistanceSalesAgreement]: IsCustomizable.No,
   [GeneralContentType.CookiePolicies]: IsCustomizable.No,
+  [GeneralContentType.Policies]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -171,6 +173,8 @@ export const getGeneralContentTypeName = (
       return "Satış Sözleşmesi";
     case GeneralContentType.CookiePolicies:
       return "Çerez Politikaları";
+    case GeneralContentType.Policies:
+      return "Politikalar ve Belgeler";
     default:
       return "Bilinmeyen İçerik Türü";
   }

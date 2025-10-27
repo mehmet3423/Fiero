@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ProductFilterSidebar from "@/components/product/ProductFilterSidebar";
 import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -95,8 +97,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   >({});
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [maxPossiblePrice, setMaxPossiblePrice] = useState<number>(1000);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
+  const [maxPossiblePrice, setMaxPossiblePrice] = useState<number>(100000);
   const [displayPage, setDisplayPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -105,39 +107,13 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   const [grid, setGrid] = useState<number>(4);
 
-  // Collection verilerini bir JSON dizisi olarak tanımla:
-  const collections = [
-    {
-      key: "Accessories",
-      title: t("productCategories.accessories"),
-      image: "/assets/site/images/collections/collection-14.jpg", // kendi yolunuza göre güncelleyin
-    },
-    {
-      key: "men",
-      title: t("productCategories.men"),
-      image: "/assets/site/images/collections/collection-1.jpg",
-    },
-    {
-      key: "shoes",
-      title: t("productCategories.shoes"),
-      image: "/assets/site/images/collections/collection-16.jpg",
-    },
-    {
-      key: "new-arrivals",
-      title: t("productCategories.newArrivals"),
-      image: "/assets/site/images/collections/collection-17.jpg",
-    },
-    {
-      key: "handbag",
-      title: t("productCategories.handbag"),
-      image: "/assets/site/images/collections/collection-18.jpg",
-    },
-
-    {
-      key: "women",
-      title: t("productCategories.women"),
-      image: "/assets/site/images/collections/collection-2.jpg",
-    },
+  // Varsayılan kategori resimleri (kategori resmi yoksa kullanılacak)
+  const defaultCategoryImages = [
+    "/assets/site/images/collections/collection-42.jpg",
+    "/assets/site/images/collections/collection-43.jpg",
+    "/assets/site/images/collections/collection-44.jpg",
+    "/assets/site/images/collections/collection-45.jpg",
+    "/assets/site/images/collections/collection-46.jpg",
   ];
 
   const getSortParameters = (
@@ -188,8 +164,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
         ) as SwiperElement;
 
         if (swiperElement && !swiperElement.swiper) {
-          console.log("Initializing collection swiper...");
-
           const swiper = new window.Swiper(".tf-sw-collection", {
             slidesPerView: 2,
             spaceBetween: 15,
@@ -213,8 +187,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
               },
             },
           });
-
-          console.log("Collection swiper initialized:", swiper);
         }
       }
     };
@@ -280,6 +252,12 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   const { categories, isLoading: categoriesLoading } = useCategories();
 
+  // Kategorileri displayIndex'e göre sırala ve ilk 5'ini al
+  const sortedCategories =
+    categories?.items
+      ?.sort((a, b) => a.displayIndex - b.displayIndex)
+      .slice(0, 5) || [];
+
   const isOutletPage = selectedMainCategoryId === "outlet";
 
   const { data: allProducts, isLoading: allProductsLoading } =
@@ -338,13 +316,21 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const actualPageSize = currentProductData?.size || pageSize;
   const totalCount = currentProductData?.count || 0;
 
+  // Debug için console.log ekleyelim
+  console.log("Debug Info:", {
+    currentProductData,
+    apiProducts: apiProducts?.length,
+    totalCount,
+    priceRange,
+    selectedFilters,
+    isLoading,
+  });
+
   useEffect(() => {
     if (apiProducts && apiProducts.length > 0) {
       const prices = apiProducts.map((product: Product) => {
         const finalPrice = product.discountedPrice || product.price;
-        console.log(
-          `${product.title}: Original=${product.price}, Discounted=${product.discountedPrice}, Final=${finalPrice}`
-        );
+
         return finalPrice;
       });
 
@@ -352,24 +338,26 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       const maxPrice = Math.ceil(Math.max(...prices));
       const roundedMaxPrice = Math.ceil(maxPrice / 10) * 10;
 
-      console.log("Price range calculated:", {
-        minPrice,
-        maxPrice,
-        roundedMaxPrice,
-      });
-
       setMaxPossiblePrice(roundedMaxPrice);
       setPriceRange([minPrice, roundedMaxPrice]);
     }
   }, [apiProducts]);
 
   const filteredProducts = useMemo(() => {
-    if (!apiProducts) return [];
-
-    console.log("Filtreleme başlıyor...");
-    console.log("Price Range:", priceRange);
+    if (!apiProducts || apiProducts.length === 0) return [];
 
     let filtered = [...apiProducts];
+
+    // Fiyat filtrelemesi - sadece priceRange güncellenmişse uygula
+    if (priceRange[1] > 1000) {
+      // priceRange güncellenmişse
+      filtered = filtered.filter((product: Product) => {
+        const finalPrice = product.discountedPrice || product.price;
+        return finalPrice >= priceRange[0] && finalPrice <= priceRange[1];
+      });
+    }
+
+    // Diğer filtreler
     if (Object.keys(selectedFilters).length > 0) {
       filtered = filtered.filter((product: Product) => {
         return Object.entries(selectedFilters).every(
@@ -385,26 +373,18 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
         );
       });
     }
-    filtered = filtered.filter((product: Product) => {
-      const finalPrice = product.discountedPrice || product.price; // || kullanarak null/undefined kontrolü
 
-      console.log(`Product ${product.title}:`, {
-        originalPrice: product.price,
-        discountedPrice: product.discountedPrice,
-        finalPrice: finalPrice,
-        priceRange: priceRange,
-        isInRange: finalPrice >= priceRange[0] && finalPrice <= priceRange[1],
-      });
-
-      return finalPrice >= priceRange[0] && finalPrice <= priceRange[1];
+    console.log("Filtered Products:", {
+      originalCount: apiProducts?.length,
+      filteredCount: filtered.length,
+      priceRange,
+      selectedFilters,
     });
 
-    console.log("Filtered products count:", filtered.length);
     return filtered;
   }, [apiProducts, selectedFilters, priceRange]);
 
   const sortedProducts = filteredProducts;
-  console.log("Sorted Products:", sortedProducts);
 
   const toggleFilters = () => {
     setIsFilterVisible(!isFilterVisible);
@@ -418,6 +398,51 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     setPriceRange([0, maxPossiblePrice]);
     setSelectedSpecificationIds([]);
     setDisplayPage(1);
+  };
+
+  // Kategori değiştiğinde URL'yi güncelle
+  const handleMainCategoryChange = (categoryId: string) => {
+    setSelectedMainCategoryId(categoryId);
+    setSelectedSubCategoryId(""); // Ana kategori değiştiğinde alt kategoriyi sıfırla
+    setDisplayPage(1);
+
+    const newQuery = { ...router.query };
+    if (categoryId) {
+      newQuery.categoryId = categoryId;
+    } else {
+      delete newQuery.categoryId;
+    }
+    delete newQuery.subCategoryId; // Alt kategoriyi kaldır
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
+  const handleSubCategoryChange = (subCategoryId: string) => {
+    setSelectedSubCategoryId(subCategoryId);
+    setDisplayPage(1);
+
+    const newQuery = { ...router.query };
+    if (subCategoryId) {
+      newQuery.subCategoryId = subCategoryId;
+    } else {
+      delete newQuery.subCategoryId;
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   const handlePageChange = useCallback(
@@ -466,6 +491,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
           onSpecificationChange={setSelectedSpecificationIds}
           priceRange={priceRange}
           onPriceRangeChange={setPriceRange}
+          selectedMainCategoryId={selectedMainCategoryId}
+          selectedSubCategoryId={selectedSubCategoryId}
+          onMainCategoryChange={handleMainCategoryChange}
+          onSubCategoryChange={handleSubCategoryChange}
         />
       )}
 
@@ -570,31 +599,86 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
               data-auto-play="false"
             >
               <div className="swiper-wrapper">
-                {collections.map((col) => (
-                  <div className="swiper-slide" key={col.key} data-lazy="true">
-                    <div className="collection-item style-2 hover-img">
-                      <div className="collection-inner">
-                        <a href="#" className="collection-image img-style">
-                          <img
-                            className="lazyload"
-                            data-src={col.image}
-                            src={col.image}
-                            alt="collection-img"
-                          />
-                        </a>
-                        <div className="collection-content">
-                          <a
-                            href="#"
-                            className="tf-btn collection-title hover-icon fs-15"
-                          >
-                            <span>{col.title}</span>
-                            <i className="icon icon-arrow1-top-left"></i>
-                          </a>
+                {categoriesLoading
+                  ? // Loading durumu için placeholder'lar
+                    Array.from({ length: 5 }).map((_, index) => (
+                      <div
+                        className="swiper-slide"
+                        key={`loading-${index}`}
+                        data-lazy="true"
+                      >
+                        <div className="collection-item style-2 hover-img">
+                          <div className="collection-inner">
+                            <div className="collection-image img-style">
+                              <div
+                                className="placeholder-image"
+                                style={{
+                                  width: "100%",
+                                  height: "250px",
+                                  backgroundColor: "#f0f0f0",
+                                  borderRadius: "8px",
+                                }}
+                              ></div>
+                            </div>
+                            <div className="collection-content">
+                              <div className="tf-btn collection-title hover-icon fs-15">
+                                <span>{t("common.loading")}</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    ))
+                  : sortedCategories.map((category, index) => (
+                      <div
+                        className="swiper-slide"
+                        key={category.id}
+                        data-lazy="true"
+                      >
+                        <div className="collection-item style-2 hover-img">
+                          <div className="collection-inner">
+                            <Link
+                              href={`/products?categoryId=${category.id}`}
+                              className="collection-image img-style"
+                            >
+                              <Image
+                                className="lazyload"
+                                data-src={
+                                  category.imageUrl ||
+                                  defaultCategoryImages[
+                                    index % defaultCategoryImages.length
+                                  ]
+                                }
+                                src={
+                                  category.imageUrl ||
+                                  defaultCategoryImages[
+                                    index % defaultCategoryImages.length
+                                  ]
+                                }
+                                alt={`${category.name} kategorisi`}
+                                width={500}
+                                height={500}
+                                style={{
+                                  width: "100%",
+                                  height: "250px",
+                                  objectFit: "contain",
+                                  borderRadius: "8px",
+                                }}
+                              />
+                            </Link>
+                            <div className="collection-content ">
+                              <Link
+                                href={`/products?categoryId=${category.id}`}
+                                className="tf-btn collection-title hover-icon fs-15 rounded-full"
+                              >
+                                <span>{category.name}</span>
+                                <i className="icon icon-arrow1-top-left"></i>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
               </div>
             </div>
 

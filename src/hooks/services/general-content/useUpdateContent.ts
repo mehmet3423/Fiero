@@ -13,21 +13,23 @@ export const useUpdateContent = () => {
     contentId: string,
     content: GeneralContentModel
   ) => {
-    const params = new URLSearchParams({
+    // Data will be sent in the body instead of URL parameters
+    const body = {
       Id: contentId,
-      Order: content.order.toString(),
+      Order: content.order,
       Title: content.title || "",
       Content: content.content || "",
       ContentUrl: content.contentUrl || "",
       ImageUrl: content.imageUrl || "",
-      WillRender: content.willRender.toString(),
-      GeneralContentType: content.generalContentType.toString(),
-    }).toString();
+      WillRender: content.willRender,
+      GeneralContentType: content.generalContentType,
+    };
 
     await mutateAsync(
       {
-        url: `${UPDATE_GENERAL_CONTENT}?${params}`,
+        url: UPDATE_GENERAL_CONTENT,
         method: HttpMethod.PUT,
+        data: body,
         showErrorToast: false,
       },
       {

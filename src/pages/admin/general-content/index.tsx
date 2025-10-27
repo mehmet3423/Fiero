@@ -25,6 +25,7 @@ function GeneralContentPage() {
     id: string;
     title: string;
   } | null>(null);
+  const [addFormKey, setAddFormKey] = useState(0);
 
   const { contents, isLoading, refetchContents } =
     useGeneralContents(selectedContentType);
@@ -173,7 +174,10 @@ function GeneralContentPage() {
           <button
             type="button"
             className="btn btn-success"
-            onClick={() => $("#addContentModal").modal("show")}
+            onClick={() => {
+              setAddFormKey((prev) => prev + 1);
+              $("#addContentModal").modal("show");
+            }}
           >
             <i className="fas fa-plus mr-1"></i> Yeni İçerik Ekle
           </button>
@@ -268,7 +272,7 @@ function GeneralContentPage() {
           {/* Ekleme Modalı */}
           <GeneralModal id="addContentModal" title="Yeni İçerik Ekle" size="lg">
             <ContentForm
-              key={`add-${selectedContentType}`} // kategori değişiminde sıfırla
+              key={`add-${selectedContentType}-${addFormKey}`}
               onSubmit={handleAdd}
               isLoading={isAdding}
               selectedContentType={selectedContentType}
@@ -296,7 +300,7 @@ function GeneralContentPage() {
           <GeneralModal
             id="deleteContentModal"
             title="İçerik Sil"
-            size="sm"
+            size="md"
             showFooter={true}
             approveButtonText="Evet, Sil"
             onApprove={handleDelete}

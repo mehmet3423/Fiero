@@ -16,17 +16,18 @@ export interface SupportTicket {
   isDeleted?: boolean;
 }
 
-// API response'unda items ve count root seviyede geliyor
-export interface SupportTicketResponse extends CommandResult {
-  items: SupportTicket[];
-  count: number;
-  from: number;
-  index: number;
-  size: number;
-  pages: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
-  data?: {
+// API response yapısı: root seviyede isSucceed, message ve data objesi
+export interface SupportTicketResponse {
+  data: {
     items: SupportTicket[];
+    count: number;
+    from: number;
+    index: number;
+    size: number;
+    pages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
+  isSucceed: boolean;
+  message: string;
 }

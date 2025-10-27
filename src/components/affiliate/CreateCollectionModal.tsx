@@ -18,8 +18,6 @@ interface CreateCollectionModalProps {
   affiliateUserId: string;
 }
 
-
-
 // Data Factory Functions
 const createCollectionItems = (
   type: AffiliateCollectionType,
@@ -129,7 +127,6 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   const [expirationDate, setExpirationDate] = useState<string>("");
   // Validation Functions
   const validateBasicFields = (name: string, description: string): boolean => {
-    
     if (!name.trim()) {
       toast.error(t("affiliateCollections.validationNameRequired"));
       return false;
@@ -141,8 +138,10 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
     return true;
   };
 
-  const validateDates = (startDate: string, expirationDate: string): boolean => {
-    
+  const validateDates = (
+    startDate: string,
+    expirationDate: string
+  ): boolean => {
     if (!startDate) {
       toast.error(t("affiliateCollections.validationStartDateRequired"));
       return false;
@@ -164,7 +163,6 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
     mainCategoryIds: string[],
     subCategoryIds: string[]
   ): boolean => {
-    const { t } = useLanguage();
     switch (type) {
       case AffiliateCollectionType.Product:
       case AffiliateCollectionType.Combination:
@@ -343,8 +341,11 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
       id="createCollectionModal"
       title={t("affiliateCollections.createCollectionTitle")}
       showFooter={true}
-      approveButtonText={isPending ? t("affiliateCollections.createCollectionLoading") : t("affiliateCollections.createCollectionApproveButton")}
-      approveButtonClassName="btn-dark"
+      approveButtonText={
+        isPending
+          ? t("affiliateCollections.createCollectionLoading")
+          : t("affiliateCollections.createCollectionApproveButton")
+      }
       isLoading={isPending}
       onApprove={handleSubmit}
       onClose={onClose}
@@ -354,7 +355,8 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
         <div className="col-md-6">
           <div>
             <label className="form-label">
-              {t("affiliateCollections.collectionTypeLabel")} <span className="text-danger">*</span>
+              {t("affiliateCollections.collectionTypeLabel")}{" "}
+              <span className="text-danger">*</span>
             </label>
             <select
               className="form-select border border-light shadow-none"
@@ -387,7 +389,8 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
         <div className="col-md-6">
           <div>
             <label className="form-label">
-              {t("affiliateCollections.collectionNameLabel")} <span className="text-danger">*</span>
+              {t("affiliateCollections.collectionNameLabel")}{" "}
+              <span className="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -403,12 +406,15 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
 
       <div>
         <label className="form-label">
-          {t("affiliateCollections.collectionDescriptionLabel")} <span className="text-danger">*</span>
+          {t("affiliateCollections.collectionDescriptionLabel")}{" "}
+          <span className="text-danger">*</span>
         </label>
         <textarea
           className="form-control shadow-none border border-light"
           rows={3}
-          placeholder={t("affiliateCollections.collectionDescriptionPlaceholder")}
+          placeholder={t(
+            "affiliateCollections.collectionDescriptionPlaceholder"
+          )}
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
           maxLength={500}
@@ -418,140 +424,18 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
       {(collectionType === AffiliateCollectionType.Product ||
         collectionType === AffiliateCollectionType.Combination ||
         collectionType === AffiliateCollectionType.Collection) && (
-          <div>
-            <label className="form-label">
-              {t("affiliateCollections.productsLabel")} <span className="text-danger">*</span>
-            </label>
-
-            {/* Tarih Seçim Alanları - Ürün Bazlı için */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">
-                  {t("affiliateCollections.startDateLabel")} <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  className="form-control shadow-none"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  min={new Date().toISOString().slice(0, 16)}
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">
-                  {t("affiliateCollections.endDateLabel")} <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  className="form-control shadow-none"
-                  value={expirationDate}
-                  onChange={(e) => setExpirationDate(e.target.value)}
-                  min={startDate || new Date().toISOString().slice(0, 16)}
-                />
-              </div>
-            </div>
-
-            <div>
-              <input
-                type="text"
-                className="form-control shadow-none"
-                placeholder={t("affiliateCollections.productsPlaceholder")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {productsLoading ? (
-              <div className="text-center py-3">
-                <div className="spinner-border spinner-border-sm" role="status">
-                  <span className="sr-only">{t("loading")}</span>
-                </div>
-              </div>
-            ) : (
-              <div
-                className="products-list"
-                style={{
-                  maxHeight: "300px",
-                  overflowY: "auto",
-                  border: "1px solid #dee2e6",
-                  borderRadius: "0.375rem",
-                  padding: "0.5rem",
-                }}
-              >
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      className="form-check d-flex align-items-center p-2 border-bottom"
-                    >
-                      <input
-                        className="form-check-input me-3 border-2"
-                        type="checkbox"
-                        id={`product-${product.id}`}
-                        checked={selectedProductIds.includes(product.id)}
-                        onChange={() => handleProductToggle(product.id)}
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          borderColor: selectedProductIds.includes(product.id) ? "#212529" : "#dee2e6",
-                          backgroundColor: selectedProductIds.includes(product.id) ? "#212529" : "#ffffff",
-                        }}
-                      />
-                      <div className="d-flex align-items-center flex-grow-1">
-                        <img
-                          src={product.baseImageUrl || "/placeholder-image.jpg"}
-                          alt={product.title}
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                            marginRight: "0.75rem",
-                            marginLeft: "10px",
-                          }}
-                        />
-                        <div>
-                          <label
-                            className="form-check-label fw-medium"
-                            htmlFor={`product-${product.id}`}
-                            style={{ cursor: "pointer" }}
-                          >
-                            {product.title}
-                          </label>
-                          <div className="text-muted small">
-                            {product.price?.toFixed(2)} ₺
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-3 text-muted">
-                    {searchTerm
-                      ? t("affiliateCollections.noProductsMatchSearch")
-                      : t("affiliateCollections.noProductsFound")}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <small className="text-muted mt-2 d-block">
-              {t("affiliateCollections.selectedProductsCount")}: {selectedProductIds.length}
-            </small>
-          </div>
-        )}
-
-      {collectionType === AffiliateCollectionType.Category && (
         <div>
           <label className="form-label">
-            {t("affiliateCollections.categoriesLabel")} <span className="text-danger">*</span>
+            {t("affiliateCollections.productsLabel")}{" "}
+            <span className="text-danger">*</span>
           </label>
 
-          {/* Tarih Seçim Alanları */}
+          {/* Tarih Seçim Alanları - Ürün Bazlı için */}
           <div className="row mb-3">
             <div className="col-md-6">
               <label className="form-label">
-                {t("affiliateCollections.startDateLabel")} <span className="text-danger">*</span>
+                {t("affiliateCollections.startDateLabel")}{" "}
+                <span className="text-danger">*</span>
               </label>
               <input
                 type="datetime-local"
@@ -563,7 +447,140 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
             </div>
             <div className="col-md-6">
               <label className="form-label">
-                {t("affiliateCollections.endDateLabel")} <span className="text-danger">*</span>
+                {t("affiliateCollections.endDateLabel")}{" "}
+                <span className="text-danger">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                className="form-control shadow-none"
+                value={expirationDate}
+                onChange={(e) => setExpirationDate(e.target.value)}
+                min={startDate || new Date().toISOString().slice(0, 16)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <input
+              type="text"
+              className="form-control shadow-none"
+              placeholder={t("affiliateCollections.productsPlaceholder")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {productsLoading ? (
+            <div className="text-center py-3">
+              <div className="spinner-border spinner-border-sm" role="status">
+                <span className="sr-only">{t("loading")}</span>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="products-list"
+              style={{
+                maxHeight: "300px",
+                overflowY: "auto",
+                border: "1px solid #dee2e6",
+                borderRadius: "0.375rem",
+                padding: "0.5rem",
+              }}
+            >
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="form-check d-flex align-items-center p-2 border-bottom"
+                  >
+                    <input
+                      className="form-check-input me-3 border-2"
+                      type="checkbox"
+                      id={`product-${product.id}`}
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => handleProductToggle(product.id)}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        borderColor: selectedProductIds.includes(product.id)
+                          ? "#212529"
+                          : "#dee2e6",
+                        backgroundColor: selectedProductIds.includes(product.id)
+                          ? "#212529"
+                          : "#ffffff",
+                      }}
+                    />
+                    <div className="d-flex align-items-center flex-grow-1">
+                      <img
+                        src={product.baseImageUrl || "/placeholder-image.jpg"}
+                        alt={product.title}
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          objectFit: "cover",
+                          borderRadius: "4px",
+                          marginRight: "0.75rem",
+                          marginLeft: "10px",
+                        }}
+                      />
+                      <div>
+                        <label
+                          className="form-check-label fw-medium"
+                          htmlFor={`product-${product.id}`}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {product.title}
+                        </label>
+                        <div className="text-muted small">
+                          {product.price?.toFixed(2)} ₺
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-3 text-muted">
+                  {searchTerm
+                    ? t("affiliateCollections.noProductsMatchSearch")
+                    : t("affiliateCollections.noProductsFound")}
+                </div>
+              )}
+            </div>
+          )}
+
+          <small className="text-muted mt-2 d-block">
+            {t("affiliateCollections.selectedProductsCount")}:{" "}
+            {selectedProductIds.length}
+          </small>
+        </div>
+      )}
+
+      {collectionType === AffiliateCollectionType.Category && (
+        <div>
+          <label className="form-label">
+            {t("affiliateCollections.categoriesLabel")}{" "}
+            <span className="text-danger">*</span>
+          </label>
+
+          {/* Tarih Seçim Alanları */}
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <label className="form-label">
+                {t("affiliateCollections.startDateLabel")}{" "}
+                <span className="text-danger">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                className="form-control shadow-none"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
+              />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label">
+                {t("affiliateCollections.endDateLabel")}{" "}
+                <span className="text-danger">*</span>
               </label>
               <input
                 type="datetime-local"
@@ -632,12 +649,13 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
                                   }
                                 >
                                   <i
-                                    className={`bx ${expandedMainCategories.has(
-                                      mainCategory.id
-                                    )
-                                      ? "bx-chevron-down"
-                                      : "bx-chevron-right"
-                                      }`}
+                                    className={`bx ${
+                                      expandedMainCategories.has(
+                                        mainCategory.id
+                                      )
+                                        ? "bx-chevron-down"
+                                        : "bx-chevron-right"
+                                    }`}
                                   ></i>
                                 </button>
                               )}
@@ -699,8 +717,10 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
           )}
 
           <small className="text-muted mt-2 d-block">
-            {t("affiliateCollections.selectedMainCategoriesCount")}: {selectedMainCategoryIds.length},
-            {t("affiliateCollections.selectedSubCategoriesCount")}: {selectedSubCategoryIds.length}
+            {t("affiliateCollections.selectedMainCategoriesCount")}:{" "}
+            {selectedMainCategoryIds.length},
+            {t("affiliateCollections.selectedSubCategoriesCount")}:{" "}
+            {selectedSubCategoryIds.length}
           </small>
         </div>
       )}

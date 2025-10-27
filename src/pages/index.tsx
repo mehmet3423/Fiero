@@ -40,7 +40,6 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ seoData }) => {
-  console.log("seoData", seoData);
   const { userProfile } = useAuth();
   // Ana sayfada gösterilecek son 3 blog gönderisi
   const latestPosts = blogPosts?.slice(0, 3) || [];
@@ -198,16 +197,12 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     const sortedItems = mainProductListContentsData.items.sort(
       (a, b) => (a.order ?? 0) - (b.order ?? 0)
     );
-    console.log("Sorted items:", sortedItems);
 
     // İlk eleman (order: 0) Main Product List 1
     if (sortedItems[0]) {
       try {
-        console.log("MainProductList title:", sortedItems[0].title);
-        console.log("MainProductList content:", sortedItems[0].content);
         mainProductList1Title = sortedItems[0].title || "Ecomus's Favorites";
         mainProductList1ProductIds = JSON.parse(sortedItems[0].content || "[]");
-        console.log("Parsed product IDs:", mainProductList1ProductIds);
       } catch (error) {
         console.log("Parse error:", error);
         mainProductList1ProductIds = [];
@@ -217,11 +212,8 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     // İkinci eleman (order: 1) Main Product List 2
     if (sortedItems[1]) {
       try {
-        console.log("MainProductList2 title:", sortedItems[1].title);
-        console.log("MainProductList2 content:", sortedItems[1].content);
         mainProductList2Title = sortedItems[1].title || "Ecomus's Favorites";
         mainProductList2ProductIds = JSON.parse(sortedItems[1].content || "[]");
-        console.log("Parsed product IDs 2:", mainProductList2ProductIds);
       } catch (error) {
         console.log("Parse error 2:", error);
         mainProductList2ProductIds = [];

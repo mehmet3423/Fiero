@@ -31,6 +31,14 @@ export default function ContentForm({
     isUploading: isImageUploading,
   } = useCloudinaryImageUpload();
 
+  // Düzenleme modunda mevcut resmi başlangıçta yükle
+  React.useEffect(() => {
+    if (editingContent?.imageUrl && !imageUrl) {
+      setImageUrl(editingContent.imageUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingContent?.imageUrl]);
+
   // MainProductList özel form state'i
   const [selectedProductIds, setSelectedProductIds] = React.useState<string[]>(
     () => {
@@ -76,17 +84,15 @@ export default function ContentForm({
       return;
     }
 
-    // Görsel yüklü değilse veya yükleniyorsa engelle (MainProductList hariç)
-    if (!imageUrl) {
-      toast.error("Lütfen bir görsel yükleyin");
-      return;
-    }
+    // Görsel yükleniyorsa engelle
     if (isImageUploading) {
       toast.error("Görsel yükleniyor, lütfen bekleyin");
       return;
     }
 
-    formData.set("imageUrl", imageUrl);
+    // Resim URL'ini belirle: yeni yüklenen resim varsa onu kullan, yoksa mevcut resmi kullan (düzenleme modunda)
+    const finalImageUrl = imageUrl || editingContent?.imageUrl || "";
+    formData.set("imageUrl", finalImageUrl);
     onSubmit(formData);
   };
 
@@ -95,13 +101,9 @@ export default function ContentForm({
     return (
       <form
         id={editingContent ? "editContentForm" : "addContentForm"}
-        className="p-4"
         onSubmit={handleSubmit}
       >
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h4 className="mb-0">
-            {editingContent ? "İçerik Düzenle" : "Yeni İçerik Ekle"}
-          </h4>
           {onCancel && (
             <button
               type="button"
@@ -120,7 +122,6 @@ export default function ContentForm({
             name="title"
             className="form-control"
             defaultValue={editingContent?.title}
-            required
           />
         </div>
         <div className="form-group mb-4">
@@ -170,7 +171,6 @@ export default function ContentForm({
   return (
     <form
       id={editingContent ? "editContentForm" : "addContentForm"}
-      className="p-4"
       onSubmit={handleSubmit}
     >
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -196,7 +196,6 @@ export default function ContentForm({
           name="title"
           className="form-control"
           defaultValue={editingContent?.title}
-          required
         />
       </div>
 
@@ -210,7 +209,6 @@ export default function ContentForm({
             className="form-control"
             rows={4}
             defaultValue={editingContent?.content}
-            required
           />
         </div>
       )}
@@ -261,25 +259,18 @@ export default function ContentForm({
             </>
           )}
         </button>
-        {!imageUrl && editingContent?.imageUrl && (
-          <div className="mt-2">
-            <img
-              src={editingContent.imageUrl}
-              alt="Mevcut görsel"
-              style={{ maxWidth: 200, maxHeight: 120, borderRadius: 8 }}
-            />
-            <div className="text-muted" style={{ fontSize: 12 }}>
-              Mevcut görsel
-            </div>
-          </div>
-        )}
         {imageUrl && (
           <div className="mt-2">
             <img
               src={imageUrl}
-              alt="Yüklenen görsel"
+              alt={selectedFile ? "Yüklenen görsel" : "Mevcut görsel"}
               style={{ maxWidth: 200, maxHeight: 120, borderRadius: 8 }}
             />
+            {!selectedFile && editingContent?.imageUrl && (
+              <div className="text-muted" style={{ fontSize: 12 }}>
+                Mevcut görsel
+              </div>
+            )}
           </div>
         )}
       </div>

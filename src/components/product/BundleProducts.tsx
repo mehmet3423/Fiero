@@ -63,12 +63,6 @@ const SingleBundle: React.FC<SingleBundleProps> = ({
     const bundleDiscountId = (bundleDiscount as any).bundleDiscountProducts?.[0]
       ?.bundleDiscountId;
 
-    console.log("SingleBundle - Bundle Discount Debug:", {
-      bundleDiscount,
-      bundleDiscountId,
-      bundleDiscountProducts: (bundleDiscount as any).bundleDiscountProducts,
-    });
-
     if (!bundleDiscountId) {
       toast.error("Bundle ID bulunamadı");
       return;

@@ -2,6 +2,20 @@ import { AffiliateStatus } from "../enums/AffiliateStatus";
 
 export { AffiliateStatus };
 
+export interface AffiliateUserResponse {
+  data: AffiliateUser;
+  affiliateCollections: AffiliateCollection[];
+  affiliateCommissions: any[];
+  isSucceed: boolean;
+  message: string;
+}
+
+export interface AffiliateCollectionsResponse {
+  data: AffiliateCollection[];
+  isSucceed: boolean;
+  message: string;
+}
+
 // User & Application Models
 export interface AffiliateUser {
   $id?: string;
@@ -18,6 +32,17 @@ export interface AffiliateUser {
   affiliateSince?: string;
   createdOnValue?: string;
   iban?: string;
+  applicationUserId?: string;
+  applicationUser?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    name: string;
+    email: string;
+    birthDate: string;
+    createdOnValue: string;
+    updatedOnValue?: string;
+  };
 }
 
 export interface AffiliateApplicationRequest {
@@ -47,18 +72,19 @@ export interface AffiliateCollection {
   collectionCommissionRate: number | null;
   createdOnValue: string;
   updatedOnValue: string;
-  affiliateUserApplicationUserId: string;
-  affiliateUserIban: string | null;
-  affiliateUserTotalSales: number;
-  affiliateUserTransferredEarnings: number;
-  affiliateUserTransferableEarnings: number;
-  affiliateUserPendingApprovalEarnings: number;
-  affiliateUserPendingEarnings: number;
-  affiliateUserAppliedAt: string;
-  affiliateUserStatus: number;
-  affiliateUserAffiliateSince: string;
-  affiliateUserCreatedOnValue: string;
-  affiliateUserUpdatedOnValue: string;
+  // Affiliate user fields (embedded in collection response)
+  affiliateUserApplicationUserId?: string;
+  affiliateUserIban?: string | null;
+  affiliateUserTotalSales?: number;
+  affiliateUserTransferredEarnings?: number;
+  affiliateUserTransferableEarnings?: number;
+  affiliateUserPendingApprovalEarnings?: number;
+  affiliateUserPendingEarnings?: number;
+  affiliateUserAppliedAt?: string;
+  affiliateUserStatus?: number;
+  affiliateUserAffiliateSince?: string;
+  affiliateUserCreatedOnValue?: string;
+  affiliateUserUpdatedOnValue?: string;
   affiliateCommissions: any[];
   productBasedAffiliateItems: ProductBasedAffiliateItem[];
   categoryBasedAffiliateItems: CategoryBasedAffiliateItem[];

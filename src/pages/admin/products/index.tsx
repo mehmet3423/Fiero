@@ -279,7 +279,12 @@ function ProductsAdminPage() {
                         }
                         alt={product.title}
                         className="card-img-top"
-                        style={{ height: "200px", objectFit: "contain" }}
+                        style={{
+                          height: "200px",
+                          objectFit: "contain",
+                          width: "100%",
+                          marginLeft: "60%",
+                        }}
                       />
                     </Link>
                     <div

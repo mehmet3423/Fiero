@@ -41,7 +41,6 @@ function ProductBasedCollection({ productBasedAffiliateItems }: ProductBasedColl
     }
     updateQuantity(productId, quantity);
     updateActiveCollection(productId);
-    console.log(productId);
   }
 
   const isProductInCart = (productId: string) => {
