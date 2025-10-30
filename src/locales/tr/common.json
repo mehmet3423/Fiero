@@ -115,8 +115,12 @@
     "getDirections": "Yol Tarifi Al",
     "help": "Yardım",
     "policies": "Politikalarımız",
-    "returns": "İade + Değişim",
-    "terms": "Şartlar & Koşullar",
+    "returns": "Garanti ve İade Koşulları",
+    "privacyAndPayment": "Gizlilik ve Ödeme Güvenliği",
+    "privacyAndCookies": "KVKK ve Çerez Politikası",
+    "deliveryTerms": "Teslimat Koşulları",
+    "salesAgreement": "Satış Sözleşmesi",
+    "terms": "Üyelik ve Kullanım Şartları",
     "faq": "S.S.S.",
     "compare": "Karşılaştır",
     "favorites": "Favorilerim",
@@ -126,12 +130,13 @@
     "contact": "İletişim",
     "account": "Hesabım",
     "investorRelations": "Yatırımcı İlişkileri",
-    "aboutUs": "About Us",
+    "aboutUs": "Hakkımızda",
     "supportTicket": "Destek Talebi",
     "newsletter": "E-posta Kaydı",
     "newsletterDescription": "Yeni ürünler, indirimler, özel içerikler, etkinlikler ve daha fazlası için kayıt olun!",
     "subscribe": "Abone Ol",
-    "copyright": "Copyright"
+    "copyright": "Copyright",
+    "blog": "Bloglar"
   },
   "announcementSlider": {
     "announcements": [

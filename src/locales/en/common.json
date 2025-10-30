@@ -115,8 +115,12 @@
     "getDirections": "Get Directions",
     "help": "Help",
     "policies": "Our Policies",
-    "returns": "Returns + Exchanges",
-    "terms": "Terms & Conditions",
+    "returns": "Guarantee and Return Conditions",
+    "privacyAndPayment": "Privacy and Payment Security",
+    "privacyAndCookies": "KVKK and Cookie Policy",
+    "deliveryTerms": "Delivery Terms",
+    "salesAgreement": "Sales Agreement",
+    "terms": "Membership & Terms",
     "faq": "FAQs",
     "compare": "Compare",
     "favorites": "My Favorites",
@@ -131,7 +135,8 @@
     "newsletter": "Newsletter",
     "newsletterDescription": "Sign up for new products, discounts, exclusive content, events, and more!",
     "subscribe": "Subscribe",
-    "copyright": "Copyright"
+    "copyright": "Copyright",
+    "blog": "Blogs"
   },
   "announcementSlider": {
     "announcements": [
