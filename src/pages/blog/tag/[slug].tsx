@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import BlogPagination from "@/components/blog/BlogPagination";
+import BlogSidebar from "@/components/blog/BlogSidebar";
+import { blogPosts, categories, popularPosts, tags } from "@/data/blogData";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import BlogCard from "@/components/blog/BlogCard";
-import BlogSidebar from "@/components/blog/BlogSidebar";
-import BlogPagination from "@/components/blog/BlogPagination";
-import { blogPosts, popularPosts, categories, tags } from "@/data/blogData";
+import React, { useState } from "react";
 
 const TagPage: React.FC = () => {
   const router = useRouter();
@@ -72,7 +71,7 @@ const TagPage: React.FC = () => {
                   >
                     {currentPosts.map((post) => (
                       <div key={post.id} className="entry-item col-sm-6">
-                        <BlogCard post={post} />
+                        {/* <BlogCard post={post} /> */}
                       </div>
                     ))}
                   </div>

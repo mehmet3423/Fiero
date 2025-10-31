@@ -1,12 +1,17 @@
 
-import React from "react";
+
+import { GeneralContentType } from "@/constants/models/GeneralContent";
+import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
 
 const ReturnExchangePolicyPage = () => {
+  const { contents, isLoading } = useGeneralContents(
+    GeneralContentType.WarrantyAndReturnPolicies
+  );
   return (
     <>
       <div className="tf-page-title style-2">
         <div className="container-full">
-          <div className="heading text-center">İade &amp; Değişim Politikası</div>
+          <div className="heading text-center">Garanti ve İade Koşulları</div>
         </div>
       </div>
       <section className="flat-spacing-25">
@@ -14,12 +19,40 @@ const ReturnExchangePolicyPage = () => {
           <div className="tf-main-area-page">
             <div className="flatpage__content">
               <div className="flatpage__header">
-                <div className="flatpage__title flatpage__title--noimg">İade &amp; Değişim Politikası</div>
-                <img className="lazyload flatpage__img" src="" alt="İade &amp; Değişim Politikası" style={{ display: "none" }} />
+                <div className="flatpage__title flatpage__title--noimg">Garanti ve İade Koşulları</div>
+                <img className="lazyload flatpage__img" src="" alt="Garanti ve İade Koşulları" style={{ display: "none" }} />
               </div>
               <div className="flatpage__text">
-                <p>lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                </div>
+                {isLoading && <p>Yükleniyor...</p>}
+                {!isLoading && (
+                  <>
+                    {(contents?.items || [])
+                      .slice()
+                      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                      .map((item) => (
+                        <div key={item.id} className="gc-block">
+                          {item.title && <h3>{item.title}</h3>}
+                          {item.content && (
+                            <div
+                              className="gc-content"
+                              dangerouslySetInnerHTML={{ __html: item.content }}
+                            />
+                          )}
+                          {!item.content && item.contentUrl && (
+                            <p>
+                              <a href={item.contentUrl} target="_blank" rel="noopener noreferrer">
+                                {item.contentUrl}
+                              </a>
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    {(!contents || (contents.items || []).length === 0) && (
+                      <p>Şu anda görüntülenecek içerik bulunamadı.</p>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -32,13 +65,16 @@ const ReturnExchangePolicyPage = () => {
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
           border-radius: 10px;
         }
+        .tf-page-title .heading {
+          font-size: 1.6rem;
+        }
         .flatpage__header {
           display: flex;
           align-items: center;
           margin-bottom: 2rem;
         }
         .flatpage__title {
-          font-size: 1.5rem;
+          font-size: 1.25rem;
           font-weight: bold;
           color: #333;
           margin-bottom: 0;
@@ -54,8 +90,18 @@ const ReturnExchangePolicyPage = () => {
           color: #666;
           line-height: 1.6;
         }
+        .flatpage__text h3 {
+          font-size: 1.1rem;
+          margin: 1rem 0 0.5rem;
+        }
         .flatpage__text p {
           margin-bottom: 0.7rem;
+        }
+        .gc-block + .gc-block {
+          margin-top: 1rem;
+        }
+        .gc-content :global(p) {
+          margin: 0 0 0.7rem 0;
         }
       `}</style>
     </>
