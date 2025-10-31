@@ -1,19 +1,34 @@
-import React, { useState } from "react";
-import Link from "next/link";
 import BlogCard from "@/components/blog/BlogCard";
-import BlogSidebar from "@/components/blog/BlogSidebar";
-import BlogPagination from "@/components/blog/BlogPagination";
-import { blogPosts, popularPosts, categories, tags } from "@/data/blogData";
+import { GeneralContentType } from "@/constants/models/GeneralContent";
+import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
+import Link from "next/link";
+import React, { useMemo, useState } from "react";
 
 const BlogPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
-  const totalPages = Math.ceil(blogPosts.length / postsPerPage);
+  const { contents, isLoading } = useGeneralContents(GeneralContentType.BlogPosts);
 
-  // Geçerli sayfadaki gönderileri hesapla
+  const mappedPosts = useMemo(() => {
+    const items = contents?.items || [];
+    return items
+      .slice()
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((it) => ({
+        id: it.id,
+        slug: (it.contentUrl || "").split("/").filter(Boolean).pop() || it.id,
+        title: it.title || "",
+        image: it.imageUrl || "/assets/site/images/blog/placeholder.jpg",
+        type: "image",
+        images: undefined,
+        categories: [],
+      }));
+  }, [contents]);
+
+  const totalPages = Math.ceil(mappedPosts.length / postsPerPage);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = blogPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = mappedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -47,7 +62,10 @@ const BlogPage: React.FC = () => {
       <div className="blog-grid-main">
         <div className="container">
           <div className="row">
-            {currentPosts.map((post) => (
+            {isLoading && (
+              <div className="col-12 text-center py-5">Yükleniyor...</div>
+            )}
+            {!isLoading && currentPosts.map((post) => (
               <div key={post.id} className="col-xl-4 col-md-6 col-12">
                 <BlogCard post={post} />
               </div>

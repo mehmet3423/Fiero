@@ -1,14 +1,23 @@
-import React from "react";
 import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import React from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { BlogPost } from "@/data/blogData";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+type CardPost = {
+  id: string;
+  slug?: string;
+  title: string;
+  image?: string;
+  type?: string;
+  images?: string[];
+  categories?: string[];
+};
 
 interface BlogCardProps {
-  post: BlogPost;
+  post: CardPost;
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
@@ -24,7 +33,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
           >
             {post.images.map((image, index) => (
               <SwiperSlide key={index}>
-                <Link href={`/blog/${post.id}`}>
+                <Link href={`/blog/${post.slug || post.id}`}>
                   <img
                     className="lazyload"
                     data-src={image}
@@ -36,7 +45,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
             ))}
           </Swiper>
         ) : (
-          <Link href={`/blog/${post.id}`}>
+          <Link href={`/blog/${post.slug || post.id}`}>
             <img
               className="lazyload"
               data-src={post.image || "/assets/site/images/blog/placeholder.jpg"}
@@ -55,12 +64,12 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
       </div>
       <div className="article-content">
         <div className="article-title">
-          <Link href={`/blog/${post.id}`} className="">
+          <Link href={`/blog/${post.slug || post.id}`} className="">
             {post.title}
           </Link>
         </div>
         <div className="article-btn">
-          <Link href={`/blog/${post.id}`} className="tf-btn btn-line fw-6">
+          <Link href={`/blog/${post.slug || post.id}`} className="tf-btn btn-line fw-6">
             Read more<i className="icon icon-arrow1-top-left"></i>
           </Link>
         </div>

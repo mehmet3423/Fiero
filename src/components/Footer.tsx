@@ -1,10 +1,8 @@
 "use client";
 
-import { PathEnums } from "@/constants/enums/PathEnums";
-import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -127,6 +125,38 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
+                      <Link
+                        href="/delivery-terms"
+                        className="footer-menu_item"
+                      >
+                        {t("footer.deliveryTerms")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/sales-agreement"
+                        className="footer-menu_item"
+                      >
+                        {t("footer.salesAgreement")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/privacy-and-cookies"
+                        className="footer-menu_item"
+                      >
+                        {t("footer.privacyAndCookies")}
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/privacy-and-payment-security"
+                        className="footer-menu_item"
+                      >
+                        {t("footer.privacyAndPayment")}
+                      </Link>
+                    </li>
+                    <li>
                       <Link href="/terms" className="footer-menu_item">
                         {t("footer.terms")}
                       </Link>
@@ -171,7 +201,7 @@ export default function Footer() {
                       }`}
                   >
                     <li>
-                      <Link href="/about-us" className="footer-menu_item">
+                      <Link href="/our-story" className="footer-menu_item">
                         {t("footer.ourStory")}
                       </Link>
                     </li>
@@ -186,6 +216,11 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
+                      <Link href="/blog" className="footer-menu_item">
+                        {t("footer.blog")}
+                      </Link>
+                    </li>
+                    <li>
                       <Link href="/profile" className="footer-menu_item">
                         {t("footer.account")}
                       </Link>
@@ -196,7 +231,7 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/about-desa/about" className="footer-menu_item">
+                      <Link href="/about-us" className="footer-menu_item">
                         {t("footer.aboutUs")}
                       </Link>
                     </li>

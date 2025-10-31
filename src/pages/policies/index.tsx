@@ -29,9 +29,10 @@ const PoliciesPage: NextPage = () => {
           <div className="mb-5 p-5 bg-white shadow rounded">
             {isLoading ? (
               <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="sr-only">Yükleniyor...</span>
-                </div>
+                <div
+                  className="spinner-border text-primary"
+                  role="status"
+                ></div>
               </div>
             ) : policies && policies.length > 0 ? (
               <div>
