@@ -28,6 +28,14 @@ export enum GeneralContentType {
   CookiePolicies = 24,
   DistanceSalesAgreement = 25,
   Policies = 27,
+  WarrantyAndReturnPolicies = 28,
+  PrivacyAndPaymentSecurity = 29,
+  AboutUsContent = 30,
+  OurStoryContent = 31,
+  PrivacyAndCookiesCombined = 32,
+  DeliveryTerms = 33,
+  MembershipAndUsageTerms = 34,
+  BlogPosts = 35,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -69,6 +77,14 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.DistanceSalesAgreement]: IsCustomizable.No,
   [GeneralContentType.CookiePolicies]: IsCustomizable.No,
   [GeneralContentType.Policies]: IsCustomizable.No,
+  [GeneralContentType.WarrantyAndReturnPolicies]: IsCustomizable.No,
+  [GeneralContentType.PrivacyAndPaymentSecurity]: IsCustomizable.No,
+  [GeneralContentType.AboutUsContent]: IsCustomizable.No,
+  [GeneralContentType.OurStoryContent]: IsCustomizable.No,
+  [GeneralContentType.PrivacyAndCookiesCombined]: IsCustomizable.No,
+  [GeneralContentType.DeliveryTerms]: IsCustomizable.No,
+  [GeneralContentType.MembershipAndUsageTerms]: IsCustomizable.No,
+  [GeneralContentType.BlogPosts]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -175,6 +191,22 @@ export const getGeneralContentTypeName = (
       return "Çerez Politikaları";
     case GeneralContentType.Policies:
       return "Politikalar ve Belgeler";
+    case GeneralContentType.WarrantyAndReturnPolicies:
+      return "Garanti ve İade Koşulları";
+    case GeneralContentType.PrivacyAndPaymentSecurity:
+      return "Gizlilik ve Ödeme Güvenliği";
+    case GeneralContentType.AboutUsContent:
+      return "Hakkımızda İçeriği";
+    case GeneralContentType.OurStoryContent:
+      return "Hikayemiz";
+    case GeneralContentType.PrivacyAndCookiesCombined:
+      return "KVKK ve Çerez Politikası";
+    case GeneralContentType.DeliveryTerms:
+      return "Teslimat Koşulları";
+    case GeneralContentType.MembershipAndUsageTerms:
+      return "Üyelik ve Kullanım Şartları";
+    case GeneralContentType.BlogPosts:
+      return "Blog Yazıları";
     default:
       return "Bilinmeyen İçerik Türü";
   }
