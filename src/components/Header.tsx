@@ -315,14 +315,14 @@ export default function Header() {
                                   href={`${PathEnums.PROFILE}/orders`}
                                   className="dropdown-item"
                                 >
-                                  <i className="bx bx-shopping-bag"></i>
+                                  <i className="icon-bag"></i>
                                   <span>{t("header.orders")}</span>
                                 </Link>
                                 <Link
                                   href={`${PathEnums.PROFILE}/addresses`}
                                   className="dropdown-item"
                                 >
-                                  <i className="icon-map-marker"></i>
+                                  <i className="icon-place"></i>
                                   <span>{t("header.adres")}</span>
                                 </Link>
                               </>
