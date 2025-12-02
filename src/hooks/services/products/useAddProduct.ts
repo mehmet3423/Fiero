@@ -40,6 +40,7 @@ export const useAddProduct = () => {
             },
             createProductOnlySpecificationRequests:
               product.createProductOnlySpecificationRequests || [],
+            productInfos: product.productInfos || [],
           },
         },
         {

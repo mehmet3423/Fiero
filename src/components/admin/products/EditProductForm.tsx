@@ -35,6 +35,7 @@ export default function EditProductForm({
     isAvailable: product.isAvailable,
     refundable: product.refundable,
     isOutlet: product.isOutlet,
+    productInfos: product.productInfos || [],
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -165,6 +166,7 @@ export default function EditProductForm({
         isAvailable: product.isAvailable,
         refundable: product.refundable,
         isOutlet: product.isOutlet,
+        productInfos: product.productInfos || [],
       });
     } catch (error) {}
   }, [product]);
@@ -709,6 +711,99 @@ export default function EditProductForm({
         <small className="text-muted">
           Sadece 1 banner resmi ekleyebilirsiniz. ({bannerPreviewUrls.length}/1)
         </small>
+      </div>
+
+      {/* Ürün Bilgileri (Materyal & Bakım vb.) */}
+      <div className="form-group">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <label className="mb-0">Ürün Bilgileri (Materyal, Bakım vb.):</label>
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => {
+              setFormData((prev) => ({
+                ...prev,
+                productInfos: [
+                  ...(prev.productInfos || []),
+                  { title: "", description: "", icon: "icon-info" },
+                ],
+              }));
+            }}
+          >
+            <i className="bx bx-plus me-1"></i> Bilgi Ekle
+          </button>
+        </div>
+        
+        <div className="card border p-3 bg-light">
+          {formData.productInfos && formData.productInfos.length > 0 ? (
+            <div className="d-flex flex-column gap-2">
+              {formData.productInfos.map((info, index) => (
+                <div key={index} className="card p-2 border bg-white">
+                  <div className="row g-2 align-items-end">
+                    <div className="col-md-3">
+                      <label className="form-label small">Başlık</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Örn: Materyal"
+                        value={info.title}
+                        onChange={(e) => {
+                          const newInfos = [...(formData.productInfos || [])];
+                          newInfos[index].title = e.target.value;
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-3">
+                      <label className="form-label small">İkon (Class)</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Örn: icon-machine"
+                        value={info.icon}
+                        onChange={(e) => {
+                          const newInfos = [...(formData.productInfos || [])];
+                          newInfos[index].icon = e.target.value;
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-5">
+                      <label className="form-label small">Açıklama</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Örn: %100 Pamuk"
+                        value={info.description}
+                        onChange={(e) => {
+                          const newInfos = [...(formData.productInfos || [])];
+                          newInfos[index].description = e.target.value;
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-1 text-end">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger"
+                        onClick={() => {
+                          const newInfos = (formData.productInfos || []).filter((_, i) => i !== index);
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      >
+                        <i className="bx bx-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-muted small py-2">
+              Henüz eklenmiş ürün bilgisi yok.
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Product Specifications Section */}

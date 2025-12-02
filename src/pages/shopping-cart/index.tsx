@@ -589,6 +589,7 @@ function ShoppingCartPage() {
                                   {t("quantity")}: {item.quantity}
                                 </div>
                                 <button
+                                  type="button"
                                   onClick={() => removeFromCart(item.id)}
                                   disabled={removeLoading}
                                   className="remove-cart link remove"
@@ -699,6 +700,7 @@ function ShoppingCartPage() {
                               <div className="cart-quantity">
                                 <div className="wg-quantity">
                                   <button
+                                    type="button"
                                     disabled={
                                       updateLoading || item.quantity === 1
                                     }
@@ -740,6 +742,7 @@ function ShoppingCartPage() {
                                     }}
                                   />
                                   <button
+                                    type="button"
                                     disabled={updateLoading}
                                     onClick={() =>
                                       handleUpdateQuantity(
@@ -1323,7 +1326,6 @@ function ShoppingCartPage() {
                           </td>
                         </tr>
                       )}
-
                       {couponDiscountAmount > 0 && (
                         <tr className="summary-discount">
                           <td>
@@ -1405,7 +1407,6 @@ function ShoppingCartPage() {
                         <td>Ara Toplam:</td>
                         <td>{totalProductPhaseDiscountedPrice.toFixed(2)} ₺</td>
                       </tr>
-
                       <tr className="summary-shipping">
                         <td>Kargo:</td>
                         <td>
@@ -1470,7 +1471,6 @@ function ShoppingCartPage() {
                           })()}
                         </td>
                       </tr>
-
                       {isGiftWrap && (
                         <tr className="summary-gift-wrap">
                           <td>Hediye Paketi:</td>
@@ -1481,7 +1481,6 @@ function ShoppingCartPage() {
                           </td>
                         </tr>
                       )}
-
                       <tr className="summary-total">
                         <td style={{ fontWeight: "bold" }}>Toplam:</td>
                         <td>

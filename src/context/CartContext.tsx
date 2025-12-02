@@ -1,26 +1,32 @@
 import { UserRole } from "@/constants/enums/UserRole";
+import { LocalStorageKeys } from "@/constants/enums/LocalStorage";
 import { Product } from "@/constants/models/Product";
-import { CartBundle, CartFreeProduct } from "@/constants/models/Cart";
+import {
+  CartBundle,
+  CartFreeProduct,
+  CartProduct,
+} from "@/constants/models/Cart";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useLocalCart } from "@/hooks/local-storage/useLocalCart";
 import { useGetLocalCartProducts } from "@/hooks/services/cart/useGetLocalCartProducts";
 import {
   useAddToCart,
+  useAddItemsToCart,
   useClearCart,
   useGetCart,
   useRemoveFromCart,
   useUpdateCartQuantity,
 } from "@/hooks/services/shopping-cart/useCart";
+import { useGuestCart } from "@/hooks/services/shopping-cart/useGuestCart";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 // Bundle'ı Product tipine dönüştürme helper fonksiyonu
 const convertBundleToProduct = (
   cartBundle: CartBundle
-): Product & { quantity: number; isBundle: boolean } => {
+): Product & { quantity: number; isBundle: boolean; bundleDiscount?: any } => {
   const bundleProducts = cartBundle.bundleDiscount.bundleDiscountProducts;
   const firstProduct = bundleProducts.find((p) => p.product)?.product;
-
   return {
     $id: cartBundle.id,
     id: cartBundle.bundleId,
@@ -63,6 +69,7 @@ const convertBundleToProduct = (
     subCategoryDiscounts: [],
     quantity: cartBundle.quantity,
     isBundle: true,
+    bundleDiscount: cartBundle.bundleDiscount as any, // Bundle verilerini koru
   };
 };
 
@@ -195,6 +202,7 @@ interface CartContextType {
     isBuyXPayY?: boolean;
     buyXCount?: number;
     payYCount?: number;
+    bundleDiscount?: any;
   })[];
   totalItems: number;
   initialLoading: boolean;
@@ -205,6 +213,7 @@ interface CartContextType {
   updateLoading: boolean;
   removeLoading: boolean;
   addLoading: boolean;
+  addItemsLoading: boolean;
   clearLoading: boolean;
   cargoPrice: number;
   cargoDiscountedPrice: number | null;
@@ -214,6 +223,7 @@ interface CartContextType {
   totalPrice: number;
   totalDiscountedPrice: number;
   totalProductPhaseDiscountedPrice: number;
+  totalCartPhaseDiscountedPrice: number;
   // Hediye paketi state'leri
   isGiftWrap: boolean;
   giftWrapMessage: string;
@@ -232,6 +242,8 @@ interface CartContextType {
   updateGiftWrap: (isGiftWrap: boolean, message?: string) => Promise<void>;
   applyCoupon: (couponCode: string, couponData?: any) => Promise<void>;
   removeCoupon: () => void;
+  refetchCart: () => Promise<void>;
+  mergeLocalCartToApi: () => Promise<void>;
 }
 
 export const CartContext = createContext<CartContextType>({
@@ -242,6 +254,7 @@ export const CartContext = createContext<CartContextType>({
   updateLoading: false,
   removeLoading: false,
   addLoading: false,
+  addItemsLoading: false,
   clearLoading: false,
   cargoPrice: 0,
   cargoDiscountedPrice: null,
@@ -249,6 +262,7 @@ export const CartContext = createContext<CartContextType>({
   giftWrapPrice: 0,
   totalPrice: 0,
   totalProductPhaseDiscountedPrice: 0,
+  totalCartPhaseDiscountedPrice: 0,
   totalDiscountedPrice: 0,
   isGiftWrap: false,
   giftWrapMessage: "",
@@ -262,6 +276,8 @@ export const CartContext = createContext<CartContextType>({
   applyCoupon: async (couponCode: string, couponData?: any) => {},
   removeCoupon: () => {},
   totalDiscountlessPrice: 0,
+  refetchCart: async () => {},
+  mergeLocalCartToApi: async () => {},
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -274,6 +290,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     })[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [cargoPrice, setCargoPrice] = useState(0);
   const [cargoDiscountedPrice, setCargoDiscountedPrice] = useState<
     number | null
@@ -288,6 +305,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     totalProductPhaseDiscountedPrice,
     setTotalProductPhaseDiscountedPrice,
   ] = useState(0);
+  const [totalCartPhaseDiscountedPrice, setTotalCartPhaseDiscountedPrice] =
+    useState(0);
   const [isGiftWrap, setIsGiftWrap] = useState(false);
   const [giftWrapMessage, setGiftWrapMessage] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -318,6 +337,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     giftWrapMessage,
     appliedCoupon ? couponCode : ""
   );
+  const { addItems, isLoading: addItemsLoading } = useAddItemsToCart(
+    isGiftWrap,
+    giftWrapMessage,
+    appliedCoupon ? couponCode : ""
+  );
   const { removeItem, isLoading: removeLoading } = useRemoveFromCart(
     isGiftWrap,
     giftWrapMessage,
@@ -334,6 +358,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     giftWrapMessage,
     appliedCoupon ? couponCode : ""
   );
+  const { fetchGuestCart, isLoading: guestCartLoading } = useGuestCart();
 
   // Sepet ürünlerini güncelle (API veya Local'den)
   useEffect(() => {
@@ -386,33 +411,153 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setTotalProductPhaseDiscountedPrice(
         apiCart.totalProductPhaseDiscountedPrice || 0
       );
+      setTotalCartPhaseDiscountedPrice(
+        apiCart.totalCartPhaseDiscountedPrice || 0
+      );
       setTotalDiscountedPrice(apiCart.totalDiscountedPrice || 0);
-      // Backend'den totalDiscountlessPrice alanı gelmediği için manuel hesapla
-      // Ürünlerin indirimli fiyat toplamını hesapla
-      const discountedProductTotal = (apiCart.cartProducts || []).reduce(
-        (total, item) => {
-          const price = item.product.discountedPrice || item.product.price || 0;
-          return total + Number(price) * Number(item.quantity);
-        },
-        0
-      );
-      setTotalDiscountlessPrice(discountedProductTotal);
+      const discountlessPrice =
+        typeof apiCart.totalDiscountlessPrice === "number" &&
+        !Number.isNaN(apiCart.totalDiscountlessPrice)
+          ? apiCart.totalDiscountlessPrice
+          : 0;
+      setTotalDiscountlessPrice(discountlessPrice);
       setIsLoading(apiLoading);
-    } else {
-      setCartProducts(
-        localCartProducts.map((p) => ({
-          ...p,
-          isBundle: false,
-          isFreeProduct: false,
-        }))
-      );
+    }
+    // Guest kullanıcılar için cartProducts Guest Cart API'den gelecek (aşağıdaki useEffect'te)
+  }, [userRole, apiCart, apiLoading]);
+
+  // Guest kullanıcılar için sepet verilerini otomatik senkronize et
+  useEffect(() => {
+    // Sadece guest kullanıcılar için çalış
+    if (userRole !== null) return;
+
+    // LocalStorage verilerinin yüklenmesini bekle
+    if (!isLoaded) return;
+
+    // Sepet boşsa API'ye istek atma, fiyatları sıfırla
+    if (localCartItems.length === 0) {
+      setCartProducts([]);
       setCargoPrice(0);
       setCargoDiscountedPrice(null);
+      setGiftWrapPrice(0);
       setTotalPrice(0);
       setTotalDiscountedPrice(0);
-      setIsLoading(localProductsLoading);
+      setTotalProductPhaseDiscountedPrice(0);
+      setTotalCartPhaseDiscountedPrice(0);
+      setTotalDiscountlessPrice(0);
+      setMinimumCargoAmount(null);
+      setIsLoading(false);
+      return;
     }
-  }, [userRole, apiCart, localCartProducts, apiLoading, localProductsLoading]);
+
+    // Guest cart API'sini çağır
+    const syncGuestCart = async () => {
+      try {
+        // LocalStorage items'ı API formatına çevir
+        const items = localCartItems.map((item) => ({
+          itemId: item.id,
+          quantity: item.quantity,
+        }));
+
+        // Guest cart verilerini getir
+        const guestCartData = await fetchGuestCart(
+          items,
+          appliedCoupon ? couponCode : undefined,
+          isGiftWrap === true ? true : undefined,
+          giftWrapMessage || undefined
+        );
+
+        // Başarılı yanıt varsa state'leri güncelle
+        if (guestCartData) {
+          // Normal ürünleri dönüştür
+          const normalProducts = (guestCartData.cartProducts || []).map(
+            (item) => {
+              const mappedProduct = {
+                ...item.product,
+                id: item.productId, // productId'yi id olarak kullan
+                quantity: item.quantity,
+                isBundle: false,
+                isFreeProduct: false,
+              };
+              return mappedProduct;
+            }
+          );
+
+          // Bundle'ları "virtual" ürünler olarak ekle
+          const bundleProducts = (guestCartData.cartBundles || []).map(
+            (bundle) => convertBundleToProduct(bundle)
+          );
+
+          // Ücretsiz ürün indirimlerini mevcut ürünlere uygula
+          const productsWithFreeDiscounts = applyFreeProductDiscounts(
+            normalProducts,
+            guestCartData.cartFreeProducts || []
+          );
+
+          // BuyXPayY indirimlerini mevcut ürünlere uygula
+          const productsWithAllDiscounts = applyBuyXPayYDiscounts(
+            productsWithFreeDiscounts,
+            guestCartData.cartBuyXPayYs || []
+          );
+
+          // Tüm ürünleri birleştir
+          const allProducts = [...productsWithAllDiscounts, ...bundleProducts];
+          setCartProducts(allProducts);
+
+          setCargoPrice(guestCartData.cargoPrice || 0);
+          setCargoDiscountedPrice(
+            guestCartData.cargoDiscountedPrice !== undefined
+              ? guestCartData.cargoDiscountedPrice
+              : null
+          );
+          setGiftWrapPrice(guestCartData.giftWrapPrice || 0);
+          setTotalPrice(guestCartData.totalPrice || 0);
+          setTotalDiscountedPrice(guestCartData.totalDiscountedPrice || 0);
+          setTotalProductPhaseDiscountedPrice(
+            guestCartData.totalProductPhaseDiscountedPrice || 0
+          );
+          setTotalCartPhaseDiscountedPrice(
+            guestCartData.totalCartPhaseDiscountedPrice || 0
+          );
+          setMinimumCargoAmount(
+            guestCartData.cargoPrice !== undefined &&
+              guestCartData.cargoPrice !== null
+              ? null
+              : null
+          );
+
+          const discountlessPrice =
+            typeof guestCartData.totalDiscountlessPrice === "number" &&
+            !Number.isNaN(guestCartData.totalDiscountlessPrice)
+              ? guestCartData.totalDiscountlessPrice
+              : 0;
+
+          setTotalDiscountlessPrice(discountlessPrice);
+
+          // Guest cart senkronu tamamlandı, loading'i false yap
+          setIsLoading(false);
+        } else {
+          // API yanıtı null döndü, sadece loading'i false yap
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Guest cart sync error:", error);
+        // Hata durumunda loading'i false yap (değerler zaten önceki durumda kaldı)
+        setIsLoading(false);
+      }
+    };
+
+    syncGuestCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    userRole,
+    localCartItems,
+    isGiftWrap,
+    giftWrapMessage,
+    couponCode,
+    appliedCoupon,
+    isLoaded,
+  ]);
 
   const handleAddToCart = async (
     productId: string,
@@ -505,7 +650,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const handleApplyCoupon = async (couponCode: string, couponData?: any) => {
     try {
       setCouponCode(couponCode);
-      setAppliedCoupon(couponData || { code: couponCode, name: couponCode });
+      // Backend'den gelen data.data yapısını düzelt
+      const normalizedCouponData = couponData?.data?.data ||
+        couponData || {
+          code: couponCode,
+          name: couponCode,
+        };
+      setAppliedCoupon(normalizedCouponData);
 
       // Cart API'sini yenile
       if (userRole === UserRole.CUSTOMER) {
@@ -530,14 +681,76 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     toast.success("Kupon kodu kaldırıldı");
   };
 
+  const handleRefetchCart = async () => {
+    try {
+      if (userRole === UserRole.CUSTOMER) {
+        await refetchCart();
+      }
+    } catch (error) {
+      // Silent fail - sepet zaten otomatik yüklenecek
+    }
+  };
+
+  const handleMergeLocalCartToApi = async () => {
+    try {
+      // LocalStorage'dan cart'ı al
+      const localCartData = localStorage.getItem(LocalStorageKeys.CART);
+      if (!localCartData) {
+        return;
+      }
+
+      const localCartItems = JSON.parse(localCartData);
+      if (!Array.isArray(localCartItems) || localCartItems.length === 0) {
+        return;
+      }
+
+      // Local cart items'ları addItems formatına dönüştür
+      const itemsToAdd = localCartItems
+        .filter((item) => item.id && item.quantity)
+        .map((item) => ({
+          itemId: item.id,
+          quantity: item.quantity,
+        }));
+
+      if (itemsToAdd.length === 0) {
+        return;
+      }
+
+      // Tüm ürünleri tek seferde ekle
+      await addItems(itemsToAdd);
+
+      // Merge başarılı olduysa localStorage'ı temizle
+      localStorage.removeItem(LocalStorageKeys.CART);
+      toast.success("Sepetiniz güncellendi");
+
+      // Cart'ı yenile
+      await refetchCart();
+    } catch (error) {
+      console.error("Cart merge failed:", error);
+      toast.error("Sepet birleştirilirken bir hata oluştu");
+    }
+  };
+
+  // İlk yükleme tamamlandıktan sonra isInitialLoad'ı false yap
+  const computedInitialLoading =
+    isLoading ||
+    (userRole === null && isInitialLoad ? guestCartLoading : false);
+
+  useEffect(() => {
+    if (isInitialLoad && !computedInitialLoading) {
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad, computedInitialLoading]);
+
   const value = {
     cartProducts,
     totalItems:
       userRole === UserRole.CUSTOMER ? cartProducts.length : localTotalItems,
-    initialLoading: isLoading || localProductsLoading,
+    initialLoading: computedInitialLoading,
     updateLoading,
     removeLoading,
     addLoading,
+    addItemsLoading,
     clearLoading,
     cargoPrice,
     cargoDiscountedPrice,
@@ -545,6 +758,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     giftWrapPrice,
     totalPrice,
     totalProductPhaseDiscountedPrice,
+    totalCartPhaseDiscountedPrice,
     totalDiscountedPrice,
     isGiftWrap,
     giftWrapMessage,
@@ -560,6 +774,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     totalDiscountlessPrice,
     cartDiscount:
       userRole === UserRole.CUSTOMER ? apiCart?.cartDiscount ?? null : null, // <-- EKLE
+    refetchCart: handleRefetchCart,
+    mergeLocalCartToApi: handleMergeLocalCartToApi,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

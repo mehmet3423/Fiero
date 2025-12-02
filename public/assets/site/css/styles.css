@@ -2023,9 +2023,6 @@ label {
   align-items: center;
   justify-content: space-between;
 }
-.nav-ul-mb .nav-mb-item .mb-menu-link:not(.collapsed) .btn-open-sub::before {
-  transform: rotate(90deg);
-}
 .nav-ul-mb .btn-open-sub {
   position: relative;
   width: 30px;
@@ -2049,10 +2046,12 @@ label {
 .nav-ul-mb .btn-open-sub::before {
   width: 2px;
   height: 12px;
+  opacity: 1;
 }
 .nav-ul-mb .btn-open-sub::after {
   width: 12px;
   height: 2px;
+  opacity: 1;
 }
 .nav-ul-mb .sub-nav-menu {
   margin-left: 10px;
@@ -2094,6 +2093,10 @@ label {
 
 .nav-ul-mb .btn-open-sub.expanded::before {
   transform: rotate(90deg);
+  opacity: 0;
+}
+.nav-ul-mb .btn-open-sub.expanded::after {
+  opacity: 1;
 }
 
 .header-list-categories {
