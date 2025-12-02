@@ -21,6 +21,9 @@ interface UseGetAllProductsOptions {
   likeCountSort?: LikeCountSort;
   mainCategoryId?: string;
   subCategoryId?: string;
+  mainCategoryIds?: string[];
+  subCategoryIds?: string[];
+  specificationOptionIds?: string[];
   search?: string;
 }
 
@@ -28,6 +31,14 @@ interface UseGetAllProductsOptions {
 export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
   // Arama terimi - search parametresi öncelikli, yoksa searchTerm kullan
   const searchQuery = options.search || options.searchTerm;
+
+  const resolvedMainCategoryIds =
+    options.mainCategoryIds ??
+    (options.mainCategoryId ? [options.mainCategoryId] : undefined);
+
+  const resolvedSubCategoryIds =
+    options.subCategoryIds ??
+    (options.subCategoryId ? [options.subCategoryId] : undefined);
 
   // Body data objesi oluştur
   const bodyData = {
@@ -39,9 +50,18 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
       options.likeCountSort !== undefined ? options.likeCountSort : 0,
     page: options.page !== undefined ? options.page : 0,
     pageSize: options.pageSize !== undefined ? options.pageSize : 30,
-    from: 0,
-    ...(options.mainCategoryId && { mainCategoryId: options.mainCategoryId }),
-    ...(options.subCategoryId && { subCategoryId: options.subCategoryId }),
+    ...(resolvedMainCategoryIds &&
+      resolvedMainCategoryIds.length > 0 && {
+        mainCategoryIds: resolvedMainCategoryIds,
+      }),
+    ...(resolvedSubCategoryIds &&
+      resolvedSubCategoryIds.length > 0 && {
+        subCategoryIds: resolvedSubCategoryIds,
+      }),
+    ...(options.specificationOptionIds &&
+      options.specificationOptionIds.length > 0 && {
+        specificationOptionIds: options.specificationOptionIds,
+      }),
     ...(searchQuery && { search: searchQuery }),
   };
 
@@ -55,8 +75,8 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
       options.ratingSort?.toString(),
       options.salesCountSort?.toString(),
       options.likeCountSort?.toString(),
-      options.mainCategoryId,
-      options.subCategoryId,
+      resolvedMainCategoryIds?.join(","),
+      resolvedSubCategoryIds?.join(","),
       searchQuery, // search query'yi de key'e ekle
     ],
     method: HttpMethod.POST,

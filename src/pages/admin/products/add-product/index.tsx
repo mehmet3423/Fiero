@@ -35,6 +35,11 @@ const AddProductPage: React.FC = () => {
   interface ExtendedDtoProduct extends DtoProduct {
     specificationOptionIds?: string[];
     banner?: string[];
+    productInfos?: {
+      title: string;
+      description: string;
+      icon?: string;
+    }[];
   }
 
   const [product, setProduct] = useState<ExtendedDtoProduct>({
@@ -74,6 +79,7 @@ const AddProductPage: React.FC = () => {
       SubCategoryId: "",
     },
     refundable: true,
+    productInfos: [],
   });
 
   // Seçili özellikleri tutmak için state
@@ -758,6 +764,100 @@ const AddProductPage: React.FC = () => {
                         </div>
                       </div>
                     )}
+
+                  {/* Ürün Bilgileri (Materyal & Bakım vb.) */}
+                  <div className="col-12 mb-3">
+                    <div className="card border p-3">
+                      <div className="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                        <h6 className="mb-0">Ürün Bilgileri (Materyal, Bakım vb.)</h6>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-primary"
+                          onClick={() => {
+                            setProduct((prev) => ({
+                              ...prev,
+                              productInfos: [
+                                ...(prev.productInfos || []),
+                                { title: "", description: "", icon: "icon-info" },
+                              ],
+                            }));
+                          }}
+                        >
+                          <i className="bx bx-plus me-1"></i> Bilgi Ekle
+                        </button>
+                      </div>
+                      <div className="card-body p-2">
+                        {product.productInfos && product.productInfos.length > 0 ? (
+                          <div className="row g-2">
+                            {product.productInfos.map((info, index) => (
+                              <div key={index} className="col-12 border rounded p-2 mb-2 bg-white">
+                                <div className="row g-2 align-items-end">
+                                  <div className="col-md-3">
+                                    <label className="form-label small">Başlık</label>
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      placeholder="Örn: Materyal"
+                                      value={info.title}
+                                      onChange={(e) => {
+                                        const newInfos = [...(product.productInfos || [])];
+                                        newInfos[index].title = e.target.value;
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col-md-3">
+                                    <label className="form-label small">İkon (Class)</label>
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      placeholder="Örn: icon-machine"
+                                      value={info.icon}
+                                      onChange={(e) => {
+                                        const newInfos = [...(product.productInfos || [])];
+                                        newInfos[index].icon = e.target.value;
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col-md-5">
+                                    <label className="form-label small">Açıklama</label>
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      placeholder="Örn: %100 Pamuk"
+                                      value={info.description}
+                                      onChange={(e) => {
+                                        const newInfos = [...(product.productInfos || [])];
+                                        newInfos[index].description = e.target.value;
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col-md-1 text-end">
+                                    <button
+                                      type="button"
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() => {
+                                        const newInfos = (product.productInfos || []).filter((_, i) => i !== index);
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    >
+                                      <i className="bx bx-trash"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center text-muted small py-3">
+                            Henüz eklenmiş ürün bilgisi yok.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Resimler */}
                   <div className="col-12">

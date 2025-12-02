@@ -210,6 +210,8 @@ export default function Register({ onSuccess }: RegisterProps) {
       phoneNumber: formData.phoneNumber,
       birthDate: formData.birthDate,
       gender: formData.gender,
+      IsSMSNotificationEnabled: formData.smsNotification,
+      IsEmailNotificationEnabled: formData.emailNotification,
       ...(formData.isSeller && {
         companyName: formData.companyName,
         companyAddress: formData.companyAddress,
@@ -379,7 +381,7 @@ export default function Register({ onSuccess }: RegisterProps) {
         </div>
 
         <div className="form-group">
-          <label>Cinsiyet *</label>
+          <label>{t("register.gender")} *</label>
           <select
             className="form-control"
             value={formData.gender}
@@ -391,8 +393,8 @@ export default function Register({ onSuccess }: RegisterProps) {
             }
             required
           >
-            <option value={0}>Kadın</option>
-            <option value={1}>Erkek</option>
+            <option value={0}>{t("register.genderFemale")}</option>
+            <option value={1}>{t("register.genderMale")}</option>
           </select>
         </div>
 

@@ -20,6 +20,20 @@ export interface AddressListResponse {
   items: Address[];
 }
 
+export interface GuestAddressFormData {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  title?: string;
+  country: string;
+  city: string;
+  district: string;
+  neighbourhood: string;
+  street: string;
+  fullAddress: string;
+  postalCode?: string;
+}
+
 export interface Country {
   id: string;
   commonName: string;

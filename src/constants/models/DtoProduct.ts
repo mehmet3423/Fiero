@@ -43,6 +43,11 @@ export interface DtoProduct {
     name: string;
     value: string;
   }[];
+  productInfos?: {
+    title: string;
+    description: string;
+    icon?: string;
+  }[];
 }
 
 export interface UpdateDtoProduct {
@@ -63,4 +68,9 @@ export interface UpdateDtoProduct {
   isAvailable: boolean;
   refundable: boolean;
   isOutlet: boolean;
+  productInfos?: {
+    title: string;
+    description: string;
+    icon?: string;
+  }[];
 }

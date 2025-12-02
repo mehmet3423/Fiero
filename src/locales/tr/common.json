@@ -82,7 +82,8 @@
     "manageProducts": "Ürünleri Yönet",
     "adminPanel": "Admin Paneli",
     "logOut": "Çıkış Yap",
-    "content": "İÇERİK"
+    "content": "İÇERİK",
+    "blog": "Blog"
   },
   "searchBar": {
     "searchSite": "Sitemizde Ara",
@@ -129,6 +130,7 @@
     "stores": "Mağazalarımız",
     "contact": "İletişim",
     "account": "Hesabım",
+    "createAccount": "Hemen Kayıt Ol",
     "investorRelations": "Yatırımcı İlişkileri",
     "aboutUs": "Hakkımızda",
     "supportTicket": "Destek Talebi",

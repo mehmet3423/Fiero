@@ -3,10 +3,18 @@
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/hooks/context/useAuth";
 
 export default function Footer() {
   const { t } = useLanguage();
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const { userProfile } = useAuth();
+
+  const isLoggedIn = !!userProfile;
+  const accountLinkHref = isLoggedIn ? "/profile" : "/register";
+  const accountLinkLabel = isLoggedIn
+    ? t("footer.account")
+    : t("footer.createAccount");
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -108,8 +116,9 @@ export default function Footer() {
                     </h6>
                   </div>
                   <ul
-                    className={`footer-menu-list tf-collapse-content ${openSection === "help" ? "is-show" : ""
-                      }`}
+                    className={`footer-menu-list tf-collapse-content ${
+                      openSection === "help" ? "is-show" : ""
+                    }`}
                   >
                     <li>
                       <Link href="/policies" className="footer-menu_item">
@@ -125,10 +134,7 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        href="/delivery-terms"
-                        className="footer-menu_item"
-                      >
+                      <Link href="/delivery-terms" className="footer-menu_item">
                         {t("footer.deliveryTerms")}
                       </Link>
                     </li>
@@ -167,7 +173,10 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/compare-products" className="footer-menu_item">
+                      <Link
+                        href="/compare-products"
+                        className="footer-menu_item"
+                      >
                         {t("footer.compare")}
                       </Link>
                     </li>
@@ -197,8 +206,9 @@ export default function Footer() {
                     </h6>
                   </div>
                   <ul
-                    className={`footer-menu-list tf-collapse-content ${openSection === "about" ? "is-show" : ""
-                      }`}
+                    className={`footer-menu-list tf-collapse-content ${
+                      openSection === "about" ? "is-show" : ""
+                    }`}
                   >
                     <li>
                       <Link href="/our-story" className="footer-menu_item">
@@ -206,7 +216,10 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/store-locations" className="footer-menu_item">
+                      <Link
+                        href="/store-locations"
+                        className="footer-menu_item"
+                      >
                         {t("footer.stores")}
                       </Link>
                     </li>
@@ -221,15 +234,15 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <Link href="/profile" className="footer-menu_item">
-                        {t("footer.account")}
+                      <Link href={accountLinkHref} className="footer-menu_item">
+                        {accountLinkLabel}
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link href="/about-desa-tr" className="footer-menu_item">
                         {t("footer.investorRelations")}
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link href="/about-us" className="footer-menu_item">
                         {t("footer.aboutUs")}
@@ -262,8 +275,9 @@ export default function Footer() {
                       </h6>
                     </div>
                     <div
-                      className={`tf-collapse-content ${openSection === "newsletter" ? "is-show" : ""
-                        }`}
+                      className={`tf-collapse-content ${
+                        openSection === "newsletter" ? "is-show" : ""
+                      }`}
                     >
                       <div className="footer-menu_item">
                         {t("footer.newsletterDescription")}
@@ -312,7 +326,9 @@ export default function Footer() {
               <div className="row">
                 <div className="col-12">
                   <div className="footer-bottom-wrap d-flex gap-20 flex-wrap justify-content-between align-items-center">
-                    <div className="footer-menu_item">{t("footer.copyright")}</div>
+                    <div className="footer-menu_item">
+                      {t("footer.copyright")}
+                    </div>
                     <div className="tf-payment col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
                       <div className="d-flex justify-content-center justify-content-md-end gap-1 align-items-center flex-wrap">
                         <img
@@ -360,80 +376,80 @@ export default function Footer() {
         </div>
       </footer>
       <style jsx>{`
-  /* Desktop görünüm */
-  .footer-heading-desktop {
-    display: block;
-  }
-  .footer-heading-mobile {
-    display: none;
-  }
-  .tf-collapse-content {
-    display: block;
-  }
+        /* Desktop görünüm */
+        .footer-heading-desktop {
+          display: block;
+        }
+        .footer-heading-mobile {
+          display: none;
+        }
+        .tf-collapse-content {
+          display: block;
+        }
 
-  /* Footer column spacing */
-  .footer-col-block {
-    margin-bottom: 2rem;
-  }
+        /* Footer column spacing */
+        .footer-col-block {
+          margin-bottom: 2rem;
+        }
 
-  /* Mobile görünüm */
-  @media (max-width: 767px) {
-    .footer-heading-desktop {
-      display: none !important;
-    }
-    
-    .footer-heading-mobile {
-      display: block !important;
-      cursor: pointer;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-      margin-bottom: 0 !important;
-    }
-    
-    .footer-heading-mobile h6 {
-      margin: 0;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .tf-collapse-content {
-      display: none !important;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .tf-collapse-content.is-show {
-      display: block !important;
-      padding-top: 15px;
-    }
-    
-    .footer-col-block {
-      margin-bottom: 0 !important;
-    }
-    
-    .footer-menu-list {
-      padding-left: 0;
-      margin: 0;
-    }
-    
-    .footer-menu-list li {
-      margin-bottom: 10px;
-    }
-    
-    .footer-menu_item {
-      padding: 8px 0;
-      display: block;
-      color: #666;
-      text-decoration: none;
-    }
-    
-    .footer-menu_item:hover {
-      color: #333;
-    }
-  }
-`}</style>
+        /* Mobile görünüm */
+        @media (max-width: 767px) {
+          .footer-heading-desktop {
+            display: none !important;
+          }
+
+          .footer-heading-mobile {
+            display: block !important;
+            cursor: pointer;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 0 !important;
+          }
+
+          .footer-heading-mobile h6 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .tf-collapse-content {
+            display: none !important;
+            overflow: hidden;
+            transition: all 0.3s ease;
+          }
+
+          .tf-collapse-content.is-show {
+            display: block !important;
+            padding-top: 15px;
+          }
+
+          .footer-col-block {
+            margin-bottom: 0 !important;
+          }
+
+          .footer-menu-list {
+            padding-left: 0;
+            margin: 0;
+          }
+
+          .footer-menu-list li {
+            margin-bottom: 10px;
+          }
+
+          .footer-menu_item {
+            padding: 8px 0;
+            display: block;
+            color: #666;
+            text-decoration: none;
+          }
+
+          .footer-menu_item:hover {
+            color: #333;
+          }
+        }
+      `}</style>
     </>
   );
 }

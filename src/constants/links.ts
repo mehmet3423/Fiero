@@ -12,9 +12,11 @@ export const LOGOUT = `${BASE_URL}api/Authentication/Logout`;
 // Cart endpoints
 export const CART = `${BASE_URL}api/Cart`;
 export const CART_ADD_ITEM = `${CART}/AddItem`;
+export const CART_ADD_ITEMS = `${CART}/AddItems`;
 export const CART_UPDATE_QUANTITY = `${CART}/UpdateQuantity`;
 export const CART_REMOVE_ITEM = `${CART}/RemoveItem`;
 export const CART_CLEAR = `${CART}/Clear`;
+export const GUEST_CART = `${CART}/GuestCart`;
 
 // Favorites endpoints
 export const FAVORITES = `${BASE_URL}api/Favorite`;
@@ -107,6 +109,7 @@ export const PROCESS_REFUND_ITEMS = `${BASE_URL}api/Payments/ProcessRefundItems`
 export const PROCESS_REFUND_ITEMS_BY_ORDER = `${BASE_URL}api/Payments/ProcessRefundItemsByOrder`;
 export const PAYMENT_THREE_D_SECURE_INITIALIZE = `${BASE_URL}api/Payments/PaymentThreeDSecureInitialize`;
 export const COMPLETE_THREE_D_SECURE_PAYMENT = `${BASE_URL}api/Payments/CompleteThreeDSecurePayment`;
+export const GUEST_PAYMENT_THREE_D_SECURE_INITIALIZE = `${BASE_URL}api/Payments/GuestPaymentThreeDSecureInitialize`;
 
 // User Address endpoints
 export const GET_USER_ADDRESS_LIST = `${BASE_URL}api/Address/GetUsersAddressList`;

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { useState, useRef, useMemo } from "react";
 import toast from "react-hot-toast";
 import { useLanguage } from "@/context/LanguageContext";
+import { useRegister } from "@/hooks/services/useRegister";
+import { UserRole } from "@/constants/enums/UserRole";
+import type { Register } from "@/constants/models/Register";
 
 // Gerekirse enum ve yardımcı fonksiyonları ekleyebilirsin
 const isPasswordValid = (password: string) => password.length >= 6;
@@ -9,6 +12,7 @@ const getPasswordValidationMessage = () => "Şifre en az 6 karakter olmalı.";
 
 export default function RegisterPage() {
   const { t } = useLanguage();
+  const { handleRegister, isPending } = useRegister();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -147,8 +151,37 @@ export default function RegisterPage() {
         return;
       }
     }
-    toast.success(t("register.success.title"));
-    // Burada API'ye gönderme işlemini ekleyebilirsin
+
+    const registerData: Register = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phoneNumber,
+      birthDate: formData.birthDate,
+      gender: formData.gender,
+      IsSMSNotificationEnabled: formData.smsNotification,
+      IsEmailNotificationEnabled: formData.emailNotification,
+      ...(formData.isSeller && {
+        companyName: formData.companyName,
+        companyAddress: {
+          country: formData.companyAddress.country,
+          state: formData.companyAddress.state,
+          city: formData.companyAddress.city,
+          fullAddress: typeof formData.companyAddress.fullAddress === "string" 
+            ? (formData.companyAddress.fullAddress === "" ? 0 : parseInt(formData.companyAddress.fullAddress) || 0)
+            : formData.companyAddress.fullAddress,
+        },
+      }),
+    };
+
+    await handleRegister(
+      registerData,
+      formData.isSeller ? UserRole.SELLER : UserRole.CUSTOMER,
+      () => {
+        // Success callback - redirect or show success message
+      }
+    );
   };
 
   return (
@@ -346,8 +379,8 @@ export default function RegisterPage() {
                     }
                     required
                   >
-                    <option value={1}>Male</option>
-                    <option value={0}>Female</option>
+                    <option value={1}>{t("register.genderMale")}</option>
+                    <option value={0}>{t("register.genderFemale")}</option>
                   </select>
                   <label
                     className="tf-field-label fw-4 text_black-2"
@@ -413,8 +446,9 @@ export default function RegisterPage() {
                   <button
                     type="submit"
                     className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
+                    disabled={isPending}
                   >
-                    {t("register.registerButton")}
+                    {isPending ? t("register.registering") || "Kaydediliyor..." : t("register.registerButton")}
                   </button>
                 </div>
                 <div className="text-center">

@@ -11,6 +11,7 @@ import { useFavorites } from "@/hooks/context/useFavorites";
 import { Product } from "@/constants/models/Product";
 import { useProductDetail } from "@/hooks/services/products/useProductDetail";
 import { useLanguage } from "@/context/LanguageContext";
+import toast from "react-hot-toast";
 
 interface QuickViewProps {
   isOpen: boolean;
@@ -110,7 +111,14 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
     }, 100);
   };
 
+  const isOutOfStock =
+    !displayProduct.isAvailable || (displayProduct.sellableQuantity ?? 0) <= 0;
+
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      toast.error(t("productDetailComponent.buttons.outOfStock"));
+      return;
+    }
     addToCart(displayProduct.id, quantity);
   };
 
@@ -529,19 +537,30 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     <form className="">
                       <a
                         href="#"
-                        className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                        className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn${isOutOfStock ? " disabled" : ""}`}
                         onClick={(e) => {
                           e.preventDefault();
                           handleAddToCart();
                         }}
+                        aria-disabled={isOutOfStock}
                       >
-                        <span>{t("quickView.addToCart")} &nbsp;</span>
-                        <span className="tf-qty-price">
-                          {new Intl.NumberFormat("tr-TR", {
-                            style: "currency",
-                            currency: "TRY"
-                          }).format((displayProduct.discountedPrice || displayProduct.price) * quantity)}
+                        <span>
+                          {isOutOfStock
+                            ? t("productDetailComponent.buttons.outOfStock")
+                            : t("quickView.addToCart")}{" "}
+                          &nbsp;
                         </span>
+                        {!isOutOfStock && (
+                          <span className="tf-qty-price">
+                            {new Intl.NumberFormat("tr-TR", {
+                              style: "currency",
+                              currency: "TRY",
+                            }).format(
+                              (displayProduct.discountedPrice ||
+                                displayProduct.price) * quantity
+                            )}
+                          </span>
+                        )}
                       </a>
                       <a
                         href="javascript:void(0);"

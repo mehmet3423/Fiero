@@ -489,20 +489,6 @@ export default function Header() {
                                                       <Link
                                                         href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
                                                         className="menu-link-text link"
-                                                        style={{
-                                                          fontWeight:
-                                                            subIdx === 0
-                                                              ? "600"
-                                                              : "normal",
-                                                          color:
-                                                            subIdx === 0
-                                                              ? "#333"
-                                                              : "#666",
-                                                          fontSize:
-                                                            subIdx === 0
-                                                              ? "16px"
-                                                              : "12px",
-                                                        }}
                                                       >
                                                         {subCategory.name}
                                                       </Link>
@@ -521,6 +507,11 @@ export default function Header() {
                             )}
                         </li>
                       ))}
+                  <li className="menu-item">
+                    <Link href={PathEnums.BLOG} className="item-link">
+                      {t("header.blog")}
+                    </Link>
+                  </li>
                   <li
                     className="menu-item"
                     onMouseEnter={() => setSustainabilityDropdownOpen(true)}

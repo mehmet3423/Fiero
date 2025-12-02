@@ -3,6 +3,7 @@ import { QueryKeys } from "@/constants/enums/QueryKeys";
 import {
   CART,
   CART_ADD_ITEM,
+  CART_ADD_ITEMS,
   CART_CLEAR,
   CART_REMOVE_ITEM,
   CART_UPDATE_QUANTITY,
@@ -88,11 +89,54 @@ export const useAddToCart = (
           },
         }
       );
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return { addItem, isLoading: isPending };
+};
+
+// Sepete birden fazla ürün eklemek için hook
+export const useAddItemsToCart = (
+  isGiftWrap?: boolean,
+  giftWrapMessage?: string,
+  couponCode?: string
+) => {
+  const { mutateAsync, isPending } = useMyMutation<string>();
+  const { refetchCart } = useGetCart(isGiftWrap, giftWrapMessage, couponCode);
+
+  const addItems = async (items: { itemId: string; quantity: number }[]) => {
+    try {
+      // items kontrolü
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        throw new Error("Items array gerekli");
+      }
+
+      // Request body oluştur
+      const requestBody: {
+        items: { itemId: string; quantity: number }[];
+      } = {
+        items: items,
+      };
+
+      await mutateAsync(
+        {
+          url: CART_ADD_ITEMS,
+          method: HttpMethod.POST,
+          data: requestBody,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Ürünler sepete eklendi");
+            refetchCart();
+          },
+        }
+      );
+    } catch (error) {
+      console.error("AddItems error:", error);
+    }
+  };
+
+  return { addItems, isLoading: isPending };
 };
 
 // Ürün miktarını güncellemek için hook
@@ -128,8 +172,7 @@ export const useUpdateCartQuantity = (
           },
         }
       );
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return { updateQuantity, isLoading: isPending };
@@ -162,8 +205,7 @@ export const useRemoveFromCart = (
           },
         }
       );
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return { removeItem, isLoading: isPending };
@@ -192,8 +234,7 @@ export const useClearCart = (
           },
         }
       );
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return { clearCart, isLoading: isPending };

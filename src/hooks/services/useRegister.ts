@@ -13,8 +13,8 @@ interface RegisterData {
   phoneNumber: string;
   birthDate: string;
   gender: number;
-  IsSMSNotificationEnabled: boolean;
-  IsEmailNotificationEnabled: boolean;
+  IsSMSNotificationEnabled?: boolean;
+  IsEmailNotificationEnabled?: boolean;
   companyName?: string;
   companyAddress?: {
     country: number;
@@ -60,22 +60,27 @@ export const useRegister = () => {
     onSuccess?: () => void
   ) => {
     try {
-      if (!data.email || !data.password) {
-        toast.error("Lütfen tüm alanları doldurun");
+      // Validate required fields
+      if (!data.email || !data.password || !data.firstName || !data.lastName || !data.phoneNumber) {
+        toast.error("Lütfen tüm zorunlu alanları doldurun");
         return;
       }
 
-      const baseParams = {
+      const baseParams: Record<string, string | boolean> = {
         FirstName: data.firstName,
         LastName: data.lastName,
         Password: data.password,
         Email: data.email,
         PhoneNumber: data.phoneNumber,
-        BirthDate: data.birthDate,
         Gender: data.gender.toString(),
         IsSMSNotificationEnabled: data.IsSMSNotificationEnabled ?? false,
         IsEmailNotificationEnabled: data.IsEmailNotificationEnabled ?? false,
       };
+
+      // Only add BirthDate if it's not empty
+      if (data.birthDate && data.birthDate.trim() !== "") {
+        baseParams.BirthDate = data.birthDate;
+      }
 
       const sellerParams =
         userRole === UserRole.SELLER
@@ -93,6 +98,10 @@ export const useRegister = () => {
       // Base params
       Object.entries(baseParams).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
+          // Skip empty strings
+          if (typeof value === "string" && value.trim() === "") {
+            return;
+          }
           // Handle boolean values properly - convert to "true"/"false" strings
           if (typeof value === "boolean") {
             params.append(key, value ? "true" : "false");
@@ -122,19 +131,22 @@ export const useRegister = () => {
         },
         {
           onSuccess: (res) => {
+            // Backend'den gelen mesajı göster
+            const backendMessage = res.data?.message || "Kayıt başarılı!";
+            
             if (res.data && res.data.data.accessToken) {
               // Save token to localStorage for automatic login
               setToken(res.data.data.accessToken);
-              toast.success("Kayıt başarılı! Oturum açılıyor...");
+              toast.success(backendMessage);
 
               // Reload page to update AuthContext and userProfile
               setTimeout(() => {
                 window.location.reload();
-              }, 1000); // 1.5 saniye bekle, toast'ın görünmesi için
+              }, 1000); // 1 saniye bekle, toast'ın görünmesi için
 
               onSuccess?.();
             } else {
-              toast.success("Kayıt başarılı!");
+              toast.success(backendMessage);
               onSuccess?.();
             }
           },

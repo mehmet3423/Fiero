@@ -1,17 +1,25 @@
 import GeneralModal from "@/components/shared/GeneralModal";
-import PageLoadingAnimation from "@/components/shared/PageLoadingAnimation";
-import { Address, District, Province } from "@/constants/models/Address";
-import { CreateOrderRequest } from "@/constants/models/Order";
+import {
+  Address,
+  District,
+  Province,
+  GuestAddressFormData,
+} from "@/constants/models/Address";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useCart } from "@/hooks/context/useCart";
 import { useGetProvinces } from "@/hooks/services/address/useGetProvinces";
 import { useGetDistricts } from "@/hooks/services/address/useGetDistricts";
 import { useGetAddresses } from "@/hooks/services/address/useGetAddresses";
 import { useCreateAddress } from "@/hooks/services/address/useCreateAddress";
+import {
+  useCreateOrderGuest,
+  CreateOrderGuestRequest,
+} from "@/hooks/services/order/useCreateOrderGuest";
 import { useLanguage } from "@/context/LanguageContext";
+import { useRouter } from "next/router";
 
 import Select from "react-select";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 function CheckoutPage() {
@@ -65,13 +73,53 @@ function CheckoutPage() {
   const [isCorporateInvoice, setIsCorporateInvoice] = useState<boolean>(false);
 
   // Get user addresses and create address hook
-  const { addresses, isLoading: isAddressesLoading } = useGetAddresses();
+  const { addresses } = useGetAddresses();
   const { createAddress, isPending: isAddingAddress } = useCreateAddress();
 
   // Get provinces and districts
   const { provinces, isLoading: isProvincesLoading } = useGetProvinces();
   const { districts, isLoading: isDistrictsLoading } =
     useGetDistricts(selectedProvinceId);
+
+  const router = useRouter();
+  const { createGuestOrder, isCreatingOrder } = useCreateOrderGuest();
+  const isGuest = !userProfile;
+
+  const emptyGuestAddress: GuestAddressFormData = {
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    title: "",
+    country: "Türkiye",
+    city: "",
+    district: "",
+    neighbourhood: "",
+    street: "",
+    fullAddress: "",
+    postalCode: "",
+  };
+
+  const [guestShippingAddress, setGuestShippingAddress] =
+    useState<GuestAddressFormData>({ ...emptyGuestAddress });
+  const [guestBillingAddress, setGuestBillingAddress] =
+    useState<GuestAddressFormData>({ ...emptyGuestAddress });
+  const [guestShippingProvinceId, setGuestShippingProvinceId] =
+    useState<string>("");
+  const [guestShippingDistrictId, setGuestShippingDistrictId] =
+    useState<string>("");
+  const [guestBillingProvinceId, setGuestBillingProvinceId] =
+    useState<string>("");
+  const [guestBillingDistrictId, setGuestBillingDistrictId] =
+    useState<string>("");
+
+  const {
+    districts: guestShippingDistricts,
+    isLoading: isGuestShippingDistrictsLoading,
+  } = useGetDistricts(guestShippingProvinceId);
+  const {
+    districts: guestBillingDistricts,
+    isLoading: isGuestBillingDistrictsLoading,
+  } = useGetDistricts(guestBillingProvinceId);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -97,6 +145,54 @@ function CheckoutPage() {
     }
   };
 
+  useEffect(() => {
+    if (!isGuest) return;
+    setGuestShippingAddress((prev) => ({
+      ...prev,
+      firstName: formData.recipientName,
+      lastName: formData.recipientSurname,
+      phoneNumber: formData.phoneNumber,
+      country: "Türkiye",
+    }));
+  }, [
+    isGuest,
+    formData.recipientName,
+    formData.recipientSurname,
+    formData.phoneNumber,
+  ]);
+
+  useEffect(() => {
+    if (!isGuest) return;
+    if (billingSameAsDelivery) {
+      setGuestBillingAddress((prev) => ({
+        ...guestShippingAddress,
+        firstName: formData.recipientName,
+        lastName: formData.recipientSurname,
+        phoneNumber: formData.phoneNumber,
+        country: "Türkiye",
+      }));
+      setGuestBillingProvinceId(guestShippingProvinceId);
+      setGuestBillingDistrictId(guestShippingDistrictId);
+    } else {
+      setGuestBillingAddress((prev) => ({
+        ...prev,
+        firstName: formData.recipientName,
+        lastName: formData.recipientSurname,
+        phoneNumber: formData.phoneNumber,
+        country: "Türkiye",
+      }));
+    }
+  }, [
+    isGuest,
+    billingSameAsDelivery,
+    guestShippingAddress,
+    guestShippingProvinceId,
+    guestShippingDistrictId,
+    formData.recipientName,
+    formData.recipientSurname,
+    formData.phoneNumber,
+  ]);
+
   const handleUseProfileInfo = () => {
     if (userProfile?.applicationUser) {
       setFormData({
@@ -118,6 +214,42 @@ function CheckoutPage() {
 
   const handleBillingAddressSelection = (addressId: string) => {
     setSelectedBillingAddressId(addressId);
+  };
+
+  const handleBillingSameAsDeliveryChange = (checked: boolean) => {
+    setBillingSameAsDelivery(checked);
+    if (isGuest && checked) {
+      setGuestBillingAddress({
+        ...guestShippingAddress,
+        firstName: formData.recipientName,
+        lastName: formData.recipientSurname,
+        phoneNumber: formData.phoneNumber,
+        country: "Türkiye",
+      });
+      setGuestBillingProvinceId(guestShippingProvinceId);
+      setGuestBillingDistrictId(guestShippingDistrictId);
+    } else if (isGuest && !checked) {
+      setGuestBillingAddress({
+        ...emptyGuestAddress,
+        firstName: formData.recipientName,
+        lastName: formData.recipientSurname,
+        phoneNumber: formData.phoneNumber,
+      });
+      setGuestBillingProvinceId("");
+      setGuestBillingDistrictId("");
+    }
+  };
+
+  const handleGuestAddressChange = (
+    type: "shipping" | "billing",
+    field: keyof GuestAddressFormData,
+    value: string
+  ) => {
+    if (type === "shipping") {
+      setGuestShippingAddress((prev) => ({ ...prev, [field]: value }));
+    } else {
+      setGuestBillingAddress((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleAddAddress = async (e: React.FormEvent) => {
@@ -158,7 +290,7 @@ function CheckoutPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Form validation
@@ -196,23 +328,177 @@ function CheckoutPage() {
       return;
     }
 
-    // Backend'e gönderilecek veri
+    if (isGuest) {
+      if (cartProducts.length === 0) {
+        toast.error(t("checkoutPage.errors.emptyCart"));
+        return;
+      }
+
+      if (!guestShippingProvinceId) {
+        toast.error(t("checkoutPage.errors.selectProvince"));
+        return;
+      }
+
+      const shippingProvince = provinces.find(
+        (p) => p.id === guestShippingProvinceId
+      );
+      const shippingDistrict = guestShippingDistricts.find(
+        (d) => d.id === guestShippingDistrictId
+      );
+
+      if (!shippingProvince) {
+        toast.error(t("checkoutPage.errors.selectProvince"));
+        return;
+      }
+
+      if (!shippingDistrict) {
+        toast.error(t("checkoutPage.errors.selectDistrict"));
+        return;
+      }
+
+      if (
+        !guestShippingAddress.neighbourhood ||
+        !guestShippingAddress.street ||
+        !guestShippingAddress.fullAddress
+      ) {
+        toast.error(t("checkoutPage.errors.shippingAddressFields"));
+        return;
+      }
+
+      let billingAddressPayload: GuestAddressFormData = {
+        ...guestShippingAddress,
+        firstName: formData.recipientName,
+        lastName: formData.recipientSurname,
+        phoneNumber: formData.phoneNumber,
+        country: "Türkiye",
+        city: shippingProvince.name,
+        district: shippingDistrict.name,
+      };
+
+      if (!billingSameAsDelivery) {
+        if (!guestBillingProvinceId) {
+          toast.error(t("checkoutPage.errors.selectProvince"));
+          return;
+        }
+
+        const billingProvince = provinces.find(
+          (p) => p.id === guestBillingProvinceId
+        );
+        const billingDistrict = guestBillingDistricts.find(
+          (d) => d.id === guestBillingDistrictId
+        );
+
+        if (!billingProvince) {
+          toast.error(t("checkoutPage.errors.selectProvince"));
+          return;
+        }
+
+        if (!billingDistrict) {
+          toast.error(t("checkoutPage.errors.selectDistrict"));
+          return;
+        }
+
+        if (
+          !guestBillingAddress.neighbourhood ||
+          !guestBillingAddress.street ||
+          !guestBillingAddress.fullAddress
+        ) {
+          toast.error(t("checkoutPage.errors.billingAddressFields"));
+          return;
+        }
+
+        billingAddressPayload = {
+          ...guestBillingAddress,
+          firstName: formData.recipientName,
+          lastName: formData.recipientSurname,
+          phoneNumber: formData.phoneNumber,
+          country: "Türkiye",
+          city: billingProvince.name,
+          district: billingDistrict.name,
+        };
+      }
+
+      const items = cartProducts
+        .map((item: any) => ({
+          itemId: item.id,
+          quantity: item.quantity,
+        }))
+        .filter((item) => item.quantity > 0);
+
+      if (!items.length) {
+        toast.error(t("checkoutPage.errors.emptyCart"));
+        return;
+      }
+
+      const orderRequest: CreateOrderGuestRequest = {
+        createCartRequest: { items },
+        recipientName: formData.recipientName,
+        recipientSurname: formData.recipientSurname,
+        recipientPhoneNumber: formData.phoneNumber,
+        recipientIdentityNumber: formData.tcId,
+        email: formData.email,
+        createShippingAddress: {
+          ...guestShippingAddress,
+          firstName: formData.recipientName,
+          lastName: formData.recipientSurname,
+          phoneNumber: formData.phoneNumber,
+          country: "Türkiye",
+          city: shippingProvince.name,
+          district: shippingDistrict.name,
+        },
+        createBillingAddress: billingAddressPayload,
+        billingType: isCorporateInvoice ? 1 : 0,
+        corporateCompanyName: isCorporateInvoice
+          ? formData.companyName
+          : undefined,
+        corporateTaxNumber: isCorporateInvoice ? formData.taxNumber : undefined,
+        corporateTaxOffice: isCorporateInvoice ? formData.taxOffice : undefined,
+        cargoPrice: cargoPrice || 0,
+        couponCode: appliedCoupon ? couponCode || undefined : undefined,
+        isGiftWrap: isGiftWrap || undefined,
+        giftWrapMessage: giftWrapMessage || undefined,
+      };
+
+      const result = await createGuestOrder(orderRequest);
+
+      if (!result) {
+        toast.error(t("checkoutPage.errors.orderFailed"));
+        return;
+      }
+
+      toast.success(t("checkoutPage.orderSuccess"));
+
+      if (result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+        return;
+      }
+
+      router.push("/");
+      return;
+    }
+
+    if (!selectedAddressId) {
+      toast.error(t("checkoutPage.errors.selectDeliveryAddress"));
+      return;
+    }
+
+    if (!billingSameAsDelivery && !selectedBillingAddressId) {
+      toast.error(t("checkoutPage.errors.selectBillingAddress"));
+      return;
+    }
+
+    // Backend'e gönderilecek veri (müşteri kullanıcıları için)
     const orderData = {
-      // Kullanıcı bilgileri
       recipientName: formData.recipientName,
       recipientSurname: formData.recipientSurname,
       phoneNumber: formData.phoneNumber,
       tcId: formData.tcId,
       email: formData.email,
-
-      // Kurumsal fatura bilgileri (sadece kurumsal fatura seçilirse)
       ...(isCorporateInvoice && {
         companyName: formData.companyName,
         taxNumber: formData.taxNumber,
         taxOffice: formData.taxOffice,
       }),
-
-      // Adres bilgileri
       deliveryAddressId: selectedAddressId,
       billingAddressId: billingSameAsDelivery
         ? selectedAddressId
@@ -221,11 +507,18 @@ function CheckoutPage() {
       isCorporateInvoice,
     };
 
-    // Burada backend API çağrısı yapılacak
+    // TODO: Authenticated order creation will be handled separately.
   };
 
   // Sepet verisi
-  const { cartProducts = [] } = useCart();
+  const {
+    cartProducts = [],
+    cargoPrice = 0,
+    couponCode,
+    appliedCoupon,
+    isGiftWrap,
+    giftWrapMessage,
+  } = useCart();
   const total = cartProducts.reduce(
     (sum: number, item: any) =>
       sum + (item.discountedPrice || item.price) * item.quantity,
@@ -251,103 +544,46 @@ function CheckoutPage() {
               {/* Sipariş Bilgileri Section */}
               <h5 className="fw-5 mb_20">{t("checkoutPage.orderInfoTitle")}</h5>
 
-              <div className="mb-4">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary mb-3"
-                  onClick={handleUseProfileInfo}
-                >
-                  {t("checkoutPage.useProfileInfoButton")}
-                </button>
-              </div>
-
               <form className="form-checkout" onSubmit={handleSubmit}>
                 <div className="box grid-2">
-                  <fieldset className="fieldset">
-                    <label htmlFor="first-name">
-                      {t("checkoutPage.recipientName")}{" "}
-                    </label>
+                  <fieldset className="box fieldset">
+                    <label htmlFor="email">{t("checkoutPage.email")} </label>
                     <input
-                      type="text"
-                      id="first-name"
-                      name="recipientName"
-                      value={formData.recipientName}
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleInputChange}
                       required
+                      className="form-control"
                     />
                   </fieldset>
-                  <fieldset className="fieldset">
-                    <label htmlFor="last-name">
-                      {t("checkoutPage.recipientSurname")}{" "}
-                    </label>
-                    <input
-                      type="text"
-                      id="last-name"
-                      name="recipientSurname"
-                      value={formData.recipientSurname}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  <fieldset className="box fieldset">
+                    <label htmlFor="tcId">{t("checkoutPage.tcId")} </label>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        id="tcId"
+                        name="tcId"
+                        value={formData.tcId}
+                        onChange={handleInputChange}
+                        placeholder={t("checkoutPage.tcIdPlaceholder")}
+                        maxLength={11}
+                        required
+                        className="form-control"
+                      />
+                      <span className="input-group-text">
+                        <i className="icon-id-card"></i>
+                      </span>
+                    </div>
+                    {formData.tcId.length > 0 &&
+                      formData.tcId.length !== 11 && (
+                        <small className="text-danger">
+                          {t("checkoutPage.errors.tcIdLength")}
+                        </small>
+                      )}
                   </fieldset>
                 </div>
-
-                <fieldset className="box fieldset">
-                  <label htmlFor="phone">
-                    {t("checkoutPage.phoneNumber")}{" "}
-                  </label>
-                  <div className="input-group">
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      placeholder="5XX XXX XX XX"
-                      required
-                      className="form-control"
-                    />
-                    <span className="input-group-text">
-                      <i className="icon-phone"></i>
-                    </span>
-                  </div>
-                </fieldset>
-
-                <fieldset className="box fieldset">
-                  <label htmlFor="tcId">{t("checkoutPage.tcId")} </label>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      id="tcId"
-                      name="tcId"
-                      value={formData.tcId}
-                      onChange={handleInputChange}
-                      placeholder={t("checkoutPage.tcIdPlaceholder")}
-                      maxLength={11}
-                      required
-                      className="form-control"
-                    />
-                    <span className="input-group-text">
-                      <i className="icon-id-card"></i>
-                    </span>
-                  </div>
-                  {formData.tcId.length > 0 && formData.tcId.length !== 11 && (
-                    <small className="text-danger">
-                      {t("checkoutPage.errors.tcIdLength")}
-                    </small>
-                  )}
-                </fieldset>
-
-                <fieldset className="box fieldset">
-                  <label htmlFor="email">{t("checkoutPage.email")} </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </fieldset>
               </form>
 
               {/* Teslimat Adresi Section */}
@@ -356,45 +592,331 @@ function CheckoutPage() {
               </h5>
 
               {/* Address Selection */}
-              {addresses.length > 0 && (
-                <div className="row mb-3">
-                  {addresses.map((address) => (
-                    <div className="col-md-6 mb-2" key={address.id}>
-                      <div
-                        className={`border rounded p-3 cursor-pointer ${
-                          selectedAddressId === address.id
-                            ? "border-primary bg-light"
-                            : "border-light"
-                        }`}
-                        onClick={() => handleAddressSelection(address.id)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div className="fw-medium mb-1">{address.title}</div>
-                        <div className="small text-muted">
-                          {address.firstName} {address.lastName}
-                        </div>
-                        <div className="small text-muted">
-                          {address.city} / {address.district}
-                        </div>
-                        <div className="small text-muted">
-                          {address.fullAddress}
-                        </div>
-                        <div className="small text-muted">Türkiye</div>
-                      </div>
+              {isGuest ? (
+                <>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.firstNamePlaceholder")}
+                        value={guestShippingAddress.firstName}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "firstName",
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.lastNamePlaceholder")}
+                        value={guestShippingAddress.lastName}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "lastName",
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.phoneNumberPlaceholder")}
+                        value={guestShippingAddress.phoneNumber}
+                        onChange={(e) => {
+                          const numericValue = e.target.value.replace(
+                            /\D/g,
+                            ""
+                          );
+                          if (numericValue.length <= 10) {
+                            handleGuestAddressChange(
+                              "shipping",
+                              "phoneNumber",
+                              numericValue
+                            );
+                          }
+                        }}
+                        maxLength={10}
+                        required
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.addressTitlePlaceholder")}
+                        value={guestShippingAddress.title || ""}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "title",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <Select
+                        className="mb-3"
+                        options={
+                          provinces?.map((c: Province) => ({
+                            value: c.id,
+                            label: c.name,
+                          })) || []
+                        }
+                        value={
+                          guestShippingProvinceId
+                            ? {
+                                value: guestShippingProvinceId,
+                                label:
+                                  provinces?.find(
+                                    (option) =>
+                                      option.id === guestShippingProvinceId
+                                  )?.name || "",
+                              }
+                            : null
+                        }
+                        onChange={(selectedOption) => {
+                          setGuestShippingProvinceId(
+                            selectedOption?.value || ""
+                          );
+                          setGuestShippingDistrictId("");
+                        }}
+                        placeholder={
+                          isProvincesLoading
+                            ? t("checkoutPage.loading")
+                            : t("checkoutPage.provincePlaceholder")
+                        }
+                        isClearable
+                        isDisabled={isProvincesLoading}
+                        styles={{
+                          option: (provided) => ({
+                            ...provided,
+                            color: "#333",
+                            backgroundColor: "#fff",
+                            "&:hover": {
+                              backgroundColor: "#f5f5f5",
+                            },
+                          }),
+                          menu: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#f8f8f8",
+                          }),
+                          control: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: "#f8f8f8",
+                            outline: "none",
+                            boxShadow: "none",
+                            borderColor: state.isFocused
+                              ? "#ced4da"
+                              : provided.borderColor,
+                            "&:hover": {
+                              borderColor: "#ced4da",
+                              boxShadow: "none",
+                            },
+                          }),
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <Select
+                        className="mb-3"
+                        options={
+                          guestShippingDistricts?.map((d: District) => ({
+                            value: d.id,
+                            label: d.name,
+                          })) || []
+                        }
+                        value={
+                          guestShippingDistrictId
+                            ? {
+                                value: guestShippingDistrictId,
+                                label:
+                                  guestShippingDistricts?.find(
+                                    (option) =>
+                                      option.id === guestShippingDistrictId
+                                  )?.name || "",
+                              }
+                            : null
+                        }
+                        onChange={(selectedOption) =>
+                          setGuestShippingDistrictId(
+                            selectedOption?.value || ""
+                          )
+                        }
+                        placeholder={
+                          guestShippingProvinceId
+                            ? isGuestShippingDistrictsLoading
+                              ? t("checkoutPage.loading")
+                              : t("checkoutPage.districtPlaceholder")
+                            : t("checkoutPage.districtPlaceholder")
+                        }
+                        isClearable
+                        isDisabled={
+                          !guestShippingProvinceId ||
+                          isGuestShippingDistrictsLoading
+                        }
+                        styles={{
+                          option: (provided) => ({
+                            ...provided,
+                            color: "#333",
+                            backgroundColor: "#fff",
+                            "&:hover": {
+                              backgroundColor: "#f5f5f5",
+                            },
+                          }),
+                          menu: (provided) => ({
+                            ...provided,
+                            backgroundColor: "#f8f8f8",
+                          }),
+                          control: (provided, state) => ({
+                            ...provided,
+                            backgroundColor: "#f8f8f8",
+                            outline: "none",
+                            boxShadow: "none",
+                            borderColor: state.isFocused
+                              ? "#ced4da"
+                              : provided.borderColor,
+                            "&:hover": {
+                              borderColor: "#ced4da",
+                              boxShadow: "none",
+                            },
+                          }),
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.neighbourhoodPlaceholder")}
+                        value={guestShippingAddress.neighbourhood}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "neighbourhood",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.streetPlaceholder")}
+                        value={guestShippingAddress.street}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "street",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-md-8">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.fullAddressPlaceholder")}
+                        value={guestShippingAddress.fullAddress}
+                        onChange={(e) =>
+                          handleGuestAddressChange(
+                            "shipping",
+                            "fullAddress",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="col-md-4">
+                      <input
+                        type="text"
+                        className="form-control mb-3 shadow-none"
+                        placeholder={t("checkoutPage.postalCodePlaceholder")}
+                        value={guestShippingAddress.postalCode || ""}
+                        onChange={(e) => {
+                          const numericValue = e.target.value.replace(
+                            /\D/g,
+                            ""
+                          );
+                          if (numericValue.length <= 5) {
+                            handleGuestAddressChange(
+                              "shipping",
+                              "postalCode",
+                              numericValue
+                            );
+                          }
+                        }}
+                        maxLength={5}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {addresses.length > 0 && (
+                    <div className="row mb-3">
+                      {addresses.map((address) => (
+                        <div className="col-md-6 mb-2" key={address.id}>
+                          <div
+                            className={`border rounded p-3 cursor-pointer ${
+                              selectedAddressId === address.id
+                                ? "border-primary bg-light"
+                                : "border-light"
+                            }`}
+                            onClick={() => handleAddressSelection(address.id)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <div className="fw-medium mb-1">
+                              {address.title}
+                            </div>
+                            <div className="small text-muted">
+                              {address.firstName} {address.lastName}
+                            </div>
+                            <div className="small text-muted">
+                              {address.city} / {address.district}
+                            </div>
+                            <div className="small text-muted">
+                              {address.fullAddress}
+                            </div>
+                            <div className="small text-muted">Türkiye</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-              <div className="mb-3">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary"
-                  onClick={() => $("#addAddressModal").modal("show")}
-                >
-                  {t("checkoutPage.addAddressButton")}
-                </button>
-              </div>
+                  <div className="mb-3">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary"
+                      onClick={() => $("#addAddressModal").modal("show")}
+                    >
+                      {t("checkoutPage.addAddressButton")}
+                    </button>
+                  </div>
+                </>
+              )}
 
               {/* Checkboxes */}
               <div className="mt-4">
@@ -404,7 +926,9 @@ function CheckoutPage() {
                     type="checkbox"
                     id="billingSameAsDelivery"
                     checked={billingSameAsDelivery}
-                    onChange={(e) => setBillingSameAsDelivery(e.target.checked)}
+                    onChange={(e) =>
+                      handleBillingSameAsDeliveryChange(e.target.checked)
+                    }
                   />
                   <label
                     className="form-check-label"
@@ -488,48 +1012,342 @@ function CheckoutPage() {
                   <h6 className="fw-5 mb-3">
                     {t("checkoutPage.billingAddressTitle")}
                   </h6>
-                  {addresses.length > 0 && (
-                    <div className="row mb-3">
-                      {addresses.map((address) => (
-                        <div className="col-md-6 mb-2" key={address.id}>
-                          <div
-                            className={`border rounded p-3 cursor-pointer ${
-                              selectedBillingAddressId === address.id
-                                ? "border-primary bg-light"
-                                : "border-light"
-                            }`}
-                            onClick={() =>
-                              handleBillingAddressSelection(address.id)
+                  {isGuest ? (
+                    <>
+                      <div className="row mb-3">
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t("checkoutPage.firstNamePlaceholder")}
+                            value={guestBillingAddress.firstName}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "firstName",
+                                e.target.value
+                              )
                             }
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div className="fw-medium mb-1">
-                              {address.title}
-                            </div>
-                            <div className="small text-muted">
-                              {address.firstName} {address.lastName}
-                            </div>
-                            <div className="small text-muted">
-                              {address.city} / {address.district}
-                            </div>
-                            <div className="small text-muted">
-                              {address.fullAddress}
-                            </div>
-                            <div className="small text-muted">Türkiye</div>
-                          </div>
+                            required
+                          />
                         </div>
-                      ))}
-                    </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t("checkoutPage.lastNamePlaceholder")}
+                            value={guestBillingAddress.lastName}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "lastName",
+                                e.target.value
+                              )
+                            }
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t(
+                              "checkoutPage.phoneNumberPlaceholder"
+                            )}
+                            value={guestBillingAddress.phoneNumber}
+                            onChange={(e) => {
+                              const numericValue = e.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+                              if (numericValue.length <= 10) {
+                                handleGuestAddressChange(
+                                  "billing",
+                                  "phoneNumber",
+                                  numericValue
+                                );
+                              }
+                            }}
+                            maxLength={10}
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t(
+                              "checkoutPage.addressTitlePlaceholder"
+                            )}
+                            value={guestBillingAddress.title || ""}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "title",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-6">
+                          <Select
+                            className="mb-3"
+                            options={
+                              provinces?.map((c: Province) => ({
+                                value: c.id,
+                                label: c.name,
+                              })) || []
+                            }
+                            value={
+                              guestBillingProvinceId
+                                ? {
+                                    value: guestBillingProvinceId,
+                                    label:
+                                      provinces?.find(
+                                        (option) =>
+                                          option.id === guestBillingProvinceId
+                                      )?.name || "",
+                                  }
+                                : null
+                            }
+                            onChange={(selectedOption) => {
+                              setGuestBillingProvinceId(
+                                selectedOption?.value || ""
+                              );
+                              setGuestBillingDistrictId("");
+                            }}
+                            placeholder={
+                              isProvincesLoading
+                                ? t("checkoutPage.loading")
+                                : t("checkoutPage.provincePlaceholder")
+                            }
+                            isClearable
+                            isDisabled={isProvincesLoading}
+                            styles={{
+                              option: (provided) => ({
+                                ...provided,
+                                color: "#333",
+                                backgroundColor: "#fff",
+                                "&:hover": {
+                                  backgroundColor: "#f5f5f5",
+                                },
+                              }),
+                              menu: (provided) => ({
+                                ...provided,
+                                backgroundColor: "#f8f8f8",
+                              }),
+                              control: (provided, state) => ({
+                                ...provided,
+                                backgroundColor: "#f8f8f8",
+                                outline: "none",
+                                boxShadow: "none",
+                                borderColor: state.isFocused
+                                  ? "#ced4da"
+                                  : provided.borderColor,
+                                "&:hover": {
+                                  borderColor: "#ced4da",
+                                  boxShadow: "none",
+                                },
+                              }),
+                            }}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <Select
+                            className="mb-3"
+                            options={
+                              guestBillingDistricts?.map((d: District) => ({
+                                value: d.id,
+                                label: d.name,
+                              })) || []
+                            }
+                            value={
+                              guestBillingDistrictId
+                                ? {
+                                    value: guestBillingDistrictId,
+                                    label:
+                                      guestBillingDistricts?.find(
+                                        (option) =>
+                                          option.id === guestBillingDistrictId
+                                      )?.name || "",
+                                  }
+                                : null
+                            }
+                            onChange={(selectedOption) =>
+                              setGuestBillingDistrictId(
+                                selectedOption?.value || ""
+                              )
+                            }
+                            placeholder={
+                              guestBillingProvinceId
+                                ? isGuestBillingDistrictsLoading
+                                  ? t("checkoutPage.loading")
+                                  : t("checkoutPage.districtPlaceholder")
+                                : t("checkoutPage.districtPlaceholder")
+                            }
+                            isClearable
+                            isDisabled={
+                              !guestBillingProvinceId ||
+                              isGuestBillingDistrictsLoading
+                            }
+                            styles={{
+                              option: (provided) => ({
+                                ...provided,
+                                color: "#333",
+                                backgroundColor: "#fff",
+                                "&:hover": {
+                                  backgroundColor: "#f5f5f5",
+                                },
+                              }),
+                              menu: (provided) => ({
+                                ...provided,
+                                backgroundColor: "#f8f8f8",
+                              }),
+                              control: (provided, state) => ({
+                                ...provided,
+                                backgroundColor: "#f8f8f8",
+                                outline: "none",
+                                boxShadow: "none",
+                                borderColor: state.isFocused
+                                  ? "#ced4da"
+                                  : provided.borderColor,
+                                "&:hover": {
+                                  borderColor: "#ced4da",
+                                  boxShadow: "none",
+                                },
+                              }),
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t(
+                              "checkoutPage.neighbourhoodPlaceholder"
+                            )}
+                            value={guestBillingAddress.neighbourhood}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "neighbourhood",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t("checkoutPage.streetPlaceholder")}
+                            value={guestBillingAddress.street}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "street",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-8">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t(
+                              "checkoutPage.fullAddressPlaceholder"
+                            )}
+                            value={guestBillingAddress.fullAddress}
+                            onChange={(e) =>
+                              handleGuestAddressChange(
+                                "billing",
+                                "fullAddress",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <input
+                            type="text"
+                            className="form-control mb-3 shadow-none"
+                            placeholder={t(
+                              "checkoutPage.postalCodePlaceholder"
+                            )}
+                            value={guestBillingAddress.postalCode || ""}
+                            onChange={(e) => {
+                              const numericValue = e.target.value.replace(
+                                /\D/g,
+                                ""
+                              );
+                              if (numericValue.length <= 5) {
+                                handleGuestAddressChange(
+                                  "billing",
+                                  "postalCode",
+                                  numericValue
+                                );
+                              }
+                            }}
+                            maxLength={5}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {addresses.length > 0 && (
+                        <div className="row mb-3">
+                          {addresses.map((address) => (
+                            <div className="col-md-6 mb-2" key={address.id}>
+                              <div
+                                className={`border rounded p-3 cursor-pointer ${
+                                  selectedBillingAddressId === address.id
+                                    ? "border-primary bg-light"
+                                    : "border-light"
+                                }`}
+                                onClick={() =>
+                                  handleBillingAddressSelection(address.id)
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                <div className="fw-medium mb-1">
+                                  {address.title}
+                                </div>
+                                <div className="small text-muted">
+                                  {address.firstName} {address.lastName}
+                                </div>
+                                <div className="small text-muted">
+                                  {address.city} / {address.district}
+                                </div>
+                                <div className="small text-muted">
+                                  {address.fullAddress}
+                                </div>
+                                <div className="small text-muted">Türkiye</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mb-3">
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary"
+                          onClick={() => $("#addAddressModal").modal("show")}
+                        >
+                          {t("checkoutPage.addAddressButton")}
+                        </button>
+                      </div>
+                    </>
                   )}
-                  <div className="mb-3">
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary"
-                      onClick={() => $("#addAddressModal").modal("show")}
-                    >
-                      {t("checkoutPage.addAddressButton")}
-                    </button>
-                  </div>
                 </div>
               )}
             </div>
@@ -580,15 +1398,7 @@ function CheckoutPage() {
                       ))
                     )}
                   </ul>
-                  <div className="coupon-box">
-                    <input type="text" placeholder="İndirim Kodu" />
-                    <a
-                      href="#"
-                      className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
-                    >
-                      {t("checkoutPage.applyButton")}
-                    </a>
-                  </div>
+
                   <div className="d-flex justify-content-between line pb_20">
                     <h6 className="fw-5">{t("checkoutPage.total")}</h6>
                     <h6 className="total fw-5">{total.toFixed(2)}₺</h6>
@@ -629,9 +1439,9 @@ function CheckoutPage() {
                     </p>
                   </div>
                   <button
-                    type="submit"
+                    type="button"
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
-                    onClick={handleSubmit}
+                    onClick={() => router.push("/payment")}
                   >
                     {t("checkoutPage.placeOrderButton")}
                   </button>
@@ -648,11 +1458,6 @@ function CheckoutPage() {
         title={t("checkoutPage.addAddressModalTitle")}
         showFooter
         approveButtonText={t("checkoutPage.saveButton")}
-        approveButtonStyle={{
-          backgroundColor: "#000",
-          color: "#fff",
-          border: "1px solid #000",
-        }}
         isLoading={isAddingAddress}
         formId="addAddressForm"
       >

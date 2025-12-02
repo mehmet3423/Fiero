@@ -31,6 +31,7 @@ export const useUpdateProduct = () => {
         Refundable: product.refundable,
         ContentImageUrls: product.contentImageUrls,
         Banner: product.banner,
+        ProductInfos: product.productInfos,
       };
 
       await mutateAsync(

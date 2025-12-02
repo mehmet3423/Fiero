@@ -82,7 +82,8 @@
     "manageProducts": "Manage Products",
     "adminPanel": "Admin Panel",
     "logOut": "Log Out",
-    "content": "CONTENT"
+    "content": "CONTENT",
+    "blog": "Blog"
   },
   "searchBar": {
     "searchSite": "Search Our Site",
@@ -129,6 +130,7 @@
     "stores": "Our Stores",
     "contact": "Contact",
     "account": "My Account",
+    "createAccount": "Create Account",
     "investorRelations": "Investor Relations",
     "aboutUs": "About Us",
     "supportTicket": "Support Ticket",

@@ -179,6 +179,7 @@ export interface ProductWithDiscountDTO extends BaseEntity {
   discountResponse?: Discount;
   buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
   freeProductDiscountResponse?: FreeProductDiscountBasicResponse;
+  productInfos?: ProductInfoDTO[];
 }
 
 // API response type for GetProductById
@@ -328,6 +329,7 @@ export interface ProductDetailResponse {
 
 // ProductInfo interface for ProductBasicDTO
 export interface ProductInfoDTO {
+  id?: string;
   title: string;
   description: string;
   icon?: string;

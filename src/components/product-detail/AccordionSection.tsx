@@ -102,23 +102,45 @@ const AccordionSection: React.FC = () => {
                       }`}
                   >
                     <div className="product-description-section" style={{ fontSize: "14px", color: "#666" }}>
-                      <p style={{ margin: 0 }}>{product?.description}</p>
+                      <p style={{ margin: 0, whiteSpace: "pre-line" }}>
+                        {product?.description?.replace(/<br\s*\/?>/gi, '\n')}
+                      </p>
                     </div>
                     <br></br>
                     <div className="tf-product-des-demo">
                       <div className="right">
-                        <h3 className="fs-16 fw-5">{t("accordionSection.titles.features")}</h3>
-                        <ul>
-                          <li>Front button placket</li>
-                          <li> Adjustable sleeve tabs</li>
-                          <li>Babaton embroidered crest at placket and hem</li>
-                        </ul>
-                        <h3 className="fs-16 fw-5">Materials Care</h3>
-                        <ul className="mb-0">
-                          <li>Content: 100% LENZING™ ECOVERO™ Viscose</li>
-                          <li>Care: Hand wash</li>
-                          <li>Imported</li>
-                        </ul>
+                        {product?.productInfos && product.productInfos.length > 0 ? (
+                          product.productInfos.map((info, index) => (
+                            <div key={info.id || index} className="mb-4">
+                              <h3 className="fs-16 fw-5">{info.title}</h3>
+                              <div className="d-flex align-items-start gap-2">
+                                {info.icon && (
+                                  <div className="icon mt-1">
+                                    <i className={info.icon}></i>
+                                  </div>
+                                )}
+                                <div style={{ whiteSpace: "pre-line", color: "#666" }}>
+                                  {info.description}
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <>
+                            <h3 className="fs-16 fw-5">{t("accordionSection.titles.features")}</h3>
+                            <ul>
+                              <li>Front button placket</li>
+                              <li> Adjustable sleeve tabs</li>
+                              <li>Babaton embroidered crest at placket and hem</li>
+                            </ul>
+                            <h3 className="fs-16 fw-5">Materials Care</h3>
+                            <ul className="mb-0">
+                              <li>Content: 100% LENZING™ ECOVERO™ Viscose</li>
+                              <li>Care: Hand wash</li>
+                              <li>Imported</li>
+                            </ul>
+                          </>
+                        )}
                       </div>
                       <div className="left">
                         <h3 className="fs-16 fw-5">{t("accordionSection.titles.materialsCare")}</h3>
