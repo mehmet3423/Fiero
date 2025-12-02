@@ -10,7 +10,7 @@ Bu proje Next.js ile geliştirilmiş bir e-ticaret frontend uygulamasıdır.
 - **Kullanıcı Yönetimi**: Kayıt, giriş, profil yönetimi
 - **Admin Paneli**: Ürün ve kategori yönetimi
 
-## Lokalizasyon (Çok Dilli Destek)
+## Lokalizasyon (Çok Dill i Destek)
 
 Proje `next-intl` kütüphanesi kullanılarak çok dilli destek sağlanmıştır.
 
