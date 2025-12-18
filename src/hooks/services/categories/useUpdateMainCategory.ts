@@ -12,6 +12,7 @@ export const useUpdateMainCategory = () => {
   const updateMainCategory = async (
     id: string,
     name: string,
+    nameEn?: string,
     displayIndex: number,
     imageUrl?: string
   ) => {
@@ -19,6 +20,11 @@ export const useUpdateMainCategory = () => {
       const params = new URLSearchParams();
       params.append("Id", id);
       params.append("Name", name);
+
+      if (nameEn) {
+        params.append("NameEn", nameEn);
+      }
+
       params.append("DisplayIndex", displayIndex.toString());
 
       if (imageUrl) {

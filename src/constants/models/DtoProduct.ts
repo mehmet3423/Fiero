@@ -5,13 +5,19 @@ export interface DtoProduct {
   barcodeNumber: string;
   stockCode: string;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
   subCategoryId: string;
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   isOutlet: boolean;
   banner?: string[];
+  bannerEn?: string[] | null;
   videoUrl?: string;
+  videoUrlEn?: string | null;
   refundable: boolean;
   createSEORequest?: {
     Slug?: string;
@@ -45,7 +51,9 @@ export interface DtoProduct {
   }[];
   productInfos?: {
     title: string;
+    titleEn?: string | null;
     description: string;
+    descriptionEn?: string | null;
     icon?: string;
   }[];
 }
@@ -56,21 +64,29 @@ export interface UpdateDtoProduct {
   barcodeNumber: string;
   stockCode: string;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
   subCategoryId: string;
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   banner?: string[];
+  bannerEn?: string[] | null;
   subCategorySpecificationIds?: string[];
   subCategorySpecificationOptions?: string[];
   specificationOptionIds?: string[];
   videoUrl?: string;
+  videoUrlEn?: string | null;
   isAvailable: boolean;
   refundable: boolean;
   isOutlet: boolean;
   productInfos?: {
     title: string;
+    titleEn?: string | null;
     description: string;
+    descriptionEn?: string | null;
     icon?: string;
   }[];
 }

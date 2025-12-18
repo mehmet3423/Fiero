@@ -152,7 +152,9 @@ export interface ProductWithDiscountDTO extends BaseEntity {
   baseProduct?: BaseProductResponse;
   externalId: number;
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
   sellableQuantity: number;
   barcodeNumber: string;
   price: number;
@@ -163,9 +165,13 @@ export interface ProductWithDiscountDTO extends BaseEntity {
   isOutlet: boolean;
   refundable: boolean;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   banner: string[];
+  bannerEn?: string[] | null;
   videoUrl?: string;
+  videoUrlEn?: string | null;
   currencyType: string;
   seoId: string;
   seo: SEOResponse;
@@ -198,6 +204,7 @@ export interface Product {
   $id: string;
   id: string;
   title: string;
+  titleEn?: string | null;
   baseProductId: string;
   baseProduct: any | null;
   sellableQuantity: number;
@@ -207,7 +214,9 @@ export interface Product {
   refundable: boolean;
   imageUrl: string;
   banner: string[];
+  bannerEn?: string[] | null;
   videoUrl: string;
+  videoUrlEn?: string | null;
   effectedDiscountId: string;
   subCategoryId: string;
   subCategory: any | null;
@@ -216,11 +225,14 @@ export interface Product {
   subCategorySpecificationOptions: string[];
   comments: Comment[];
   description: string;
+  descriptionEn?: string | null;
   stockCode: string;
   price: number;
   discountedPrice: number;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   isAvailable: boolean;
   barcodeNumber: string;
   seo: any | null;
@@ -237,7 +249,9 @@ export interface Product {
   productInfos?: {
     id?: string;
     title: string;
+    titleEn?: string | null;
     description: string;
+    descriptionEn?: string | null;
     icon: string;
   }[];
 }
@@ -301,28 +315,36 @@ export interface ProductDetailResponse {
   reviews: any;
   id: string;
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
   effectedDiscountId: string;
   price: number;
   discountedPrice: number;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   category: string;
   barcodeNumber: string;
   sellableQuantity: number;
   isAvailable: boolean;
   productOnlySpecifications: ProductOnlySpecification[];
   banner: string[];
+  bannerEn?: string[] | null;
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   productDiscounts: Discount[];
   subCategoryDiscounts: SubCategoryDiscount[];
   videoUrl: string;
+  videoUrlEn?: string | null;
   seo: any | null; // Added for SEO support
   seoId: string; // Added for SEO support
 
   productInfos?: {
     id?: string;
     title: string;
+    titleEn?: string | null;
     description: string;
+    descriptionEn?: string | null;
     icon: string;
   }[];
 }
@@ -331,7 +353,9 @@ export interface ProductDetailResponse {
 export interface ProductInfoDTO {
   id?: string;
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
   icon?: string;
 }
 
@@ -340,6 +364,7 @@ export interface ProductBasicDTO extends BaseEntity {
   baseProductId?: string;
   baseProduct?: BaseProductResponse;
   title: string;
+  titleEn?: string | null;
   barcodeNumber: string;
   sellableQuantity: number;
   price: number;
@@ -350,8 +375,10 @@ export interface ProductBasicDTO extends BaseEntity {
   averageRating: number;
   ratingCount: number;
   baseImageUrl: string;
+  baseImageUrlEn?: string | null;
   productInfos: ProductInfoDTO[];
   contentImageUrls: string[];
+  contentImageUrlsEn?: string[] | null;
   currencyType: string;
   discountResponse?: Discount;
   buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;

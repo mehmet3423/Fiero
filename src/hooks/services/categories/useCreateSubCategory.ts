@@ -12,6 +12,7 @@ export const useCreateSubCategory = () => {
   const createSubCategory = async (
     name: string,
     mainCategoryId: string,
+    nameEn?: string,
     imageUrl?: string
   ) => {
     try {
@@ -21,6 +22,7 @@ export const useCreateSubCategory = () => {
           data: {
             mainCategoryId: mainCategoryId,
             name: name,
+            nameEn: nameEn || null,
             imageUrl: imageUrl || "",
             createSEORequest: {
               slug: "string",

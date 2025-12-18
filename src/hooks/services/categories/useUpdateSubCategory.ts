@@ -13,6 +13,7 @@ export const useUpdateSubCategory = () => {
     id: string,
     name: string,
     displayIndex: number,
+    nameEn?: string,
     imageUrl?: string
   ) => {
     try {
@@ -20,6 +21,7 @@ export const useUpdateSubCategory = () => {
       const requestBody: {
         id: string;
         name: string;
+        nameEn?: string | null;
         displayIndex: number;
         imageUrl?: string;
       } = {
@@ -27,6 +29,10 @@ export const useUpdateSubCategory = () => {
         name: name,
         displayIndex: displayIndex,
       };
+
+      if (nameEn) {
+        requestBody.nameEn = nameEn;
+      }
 
       if (imageUrl) {
         requestBody.imageUrl = imageUrl;

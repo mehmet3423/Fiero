@@ -45,7 +45,9 @@ function CategoryManagementPage() {
   const [mainCategories, setMainCategories] = useState<Category[]>([]);
 
   const [newMainCategoryName, setNewMainCategoryName] = useState("");
+  const [newMainCategoryNameEn, setNewMainCategoryNameEn] = useState("");
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
+  const [newSubCategoryNameEn, setNewSubCategoryNameEn] = useState("");
   const [mainCategoryError, setMainCategoryError] = useState<string | null>(
     null
   );
@@ -57,6 +59,7 @@ function CategoryManagementPage() {
   const [editingSubCategory, setEditingSubCategory] = useState<{
     id: string;
     name: string;
+    nameEn?: string | null;
     mainCategoryId: string;
     displayIndex: number;
     imageUrl?: string;
@@ -101,7 +104,7 @@ function CategoryManagementPage() {
       setMainCategories(updated);
 
       updated.forEach((cat) => {
-        updateMainCategory(cat.id, cat.name, cat.index);
+        updateMainCategory(cat.id, cat.name, cat.nameEn || undefined, cat.index);
       });
     }
     if (source.droppableId === "subCategories" && selectedMainCategory) {
@@ -116,7 +119,7 @@ function CategoryManagementPage() {
       });
 
       updated.forEach((sub) => {
-        updateSubCategory(sub.id, sub.name, sub.index);
+        updateSubCategory(sub.id, sub.name, sub.index, sub.nameEn || undefined);
       });
     }
   };
@@ -184,8 +187,9 @@ function CategoryManagementPage() {
     }
 
     const index = mainCategories.length;
-    await createMainCategory(newMainCategoryName, index, imageUrl || "");
+    await createMainCategory(newMainCategoryName, newMainCategoryNameEn || undefined, index, imageUrl || "");
     setNewMainCategoryName("");
+    setNewMainCategoryNameEn("");
     setNewMainCategoryImageUrl("");
     mainImageUpload.setSelectedFile(null);
     mainImageUpload.setImageUrl("");
@@ -208,9 +212,11 @@ function CategoryManagementPage() {
     await createSubCategory(
       newSubCategoryName,
       selectedMainCategory.id,
+      newSubCategoryNameEn || undefined,
       imageUrl
     );
     setNewSubCategoryName("");
+    setNewSubCategoryNameEn("");
     setNewSubCategoryImageUrl("");
     subImageUpload.setSelectedFile(null);
     subImageUpload.setImageUrl("");
@@ -236,6 +242,7 @@ function CategoryManagementPage() {
     await updateMainCategory(
       editingMainCategory.id,
       editingMainCategory.name,
+      editingMainCategory.nameEn || undefined,
       editingMainCategory.displayIndex,
       imageUrl
     );
@@ -260,6 +267,7 @@ function CategoryManagementPage() {
       editingSubCategory.id,
       editingSubCategory.name,
       editingSubCategory.displayIndex,
+      editingSubCategory.nameEn || undefined,
       imageUrl
     );
     setEditingSubCategory(null);
@@ -586,6 +594,7 @@ function CategoryManagementPage() {
                                               setEditingSubCategory({
                                                 id: subCategory.id,
                                                 name: subCategory.name,
+                                                nameEn: subCategory.nameEn || null,
                                                 mainCategoryId:
                                                   selectedMainCategory.id,
                                                 displayIndex:
@@ -648,6 +657,7 @@ function CategoryManagementPage() {
         title="Yeni Ana Kategori"
         onClose={() => {
           setNewMainCategoryName("");
+          setNewMainCategoryNameEn("");
           setNewMainCategoryImageUrl("");
           mainImageUpload.setSelectedFile(null);
           mainImageUpload.setImageUrl("");
@@ -675,6 +685,19 @@ function CategoryManagementPage() {
           {mainCategoryError && (
             <div className="invalid-feedback">{mainCategoryError}</div>
           )}
+        </div>
+        <div className="mt-3">
+          <label htmlFor="defaultFormControlInputEn" className="form-label">
+            Kategori Adı (İngilizce)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="defaultFormControlInputEn"
+            placeholder="Kategori Adı (İngilizce)"
+            value={newMainCategoryNameEn}
+            onChange={(e) => setNewMainCategoryNameEn(e.target.value)}
+          />
         </div>
         <div className="mt-3">
           <label className="form-label">Kategori Görseli (Opsiyonel)</label>
@@ -778,6 +801,23 @@ function CategoryManagementPage() {
           />
         </div>
         <div className="mt-3">
+          <label htmlFor="editMainCategoryInputEn" className="form-label">
+            Kategori Adı (İngilizce)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="editMainCategoryInputEn"
+            placeholder="Kategori Adı (İngilizce)"
+            value={editingMainCategory?.nameEn || ""}
+            onChange={(e) =>
+              setEditingMainCategory((prev) =>
+                prev ? { ...prev, nameEn: e.target.value } : null
+              )
+            }
+          />
+        </div>
+        <div className="mt-3">
           <label className="form-label">Kategori Görseli (Opsiyonel)</label>
           <div className="row">
             <div className="col-md-8">
@@ -854,6 +894,7 @@ function CategoryManagementPage() {
         title="Yeni Alt Kategori"
         onClose={() => {
           setNewSubCategoryName("");
+          setNewSubCategoryNameEn("");
           setNewSubCategoryImageUrl("");
           subImageUpload.setSelectedFile(null);
           subImageUpload.setImageUrl("");
@@ -881,6 +922,19 @@ function CategoryManagementPage() {
           {subCategoryError && (
             <div className="invalid-feedback">{subCategoryError}</div>
           )}
+        </div>
+        <div className="mt-3">
+          <label htmlFor="newSubCategoryInputEn" className="form-label">
+            Alt Kategori Adı (İngilizce)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="newSubCategoryInputEn"
+            placeholder="Alt Kategori Adı (İngilizce)"
+            value={newSubCategoryNameEn}
+            onChange={(e) => setNewSubCategoryNameEn(e.target.value)}
+          />
         </div>
         <div className="mt-3">
           <label className="form-label">Alt Kategori Görseli (Opsiyonel)</label>
@@ -981,6 +1035,23 @@ function CategoryManagementPage() {
               )
             }
             required
+          />
+        </div>
+        <div className="mt-3">
+          <label htmlFor="editSubCategoryInputEn" className="form-label">
+            Alt Kategori Adı (İngilizce)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="editSubCategoryInputEn"
+            placeholder="Alt Kategori Adı (İngilizce)"
+            value={editingSubCategory?.nameEn || ""}
+            onChange={(e) =>
+              setEditingSubCategory((prev) =>
+                prev ? { ...prev, nameEn: e.target.value } : null
+              )
+            }
           />
         </div>
         <div className="mt-3">

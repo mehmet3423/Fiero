@@ -44,16 +44,22 @@ const AddProductPage: React.FC = () => {
 
   const [product, setProduct] = useState<ExtendedDtoProduct>({
     title: "",
+    titleEn: "",
     description: "",
+    descriptionEn: "",
     price: 0,
     stockCode: "",
     sellableQuantity: 0,
     barcodeNumber: "",
     baseImageUrl: "",
+    baseImageUrlEn: "",
     subCategoryId: "",
     contentImageUrls: [],
+    contentImageUrlsEn: [],
     banner: [],
+    bannerEn: [],
     videoUrl: "",
+    videoUrlEn: "",
     isAvailable: true,
     isOutlet: false,
     createSEORequest: {
@@ -607,6 +613,23 @@ const AddProductPage: React.FC = () => {
 
                   <div className="col-md-6 mb-2">
                     <div className="form-group">
+                      <label className="form-label small">Başlık (İngilizce)</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        value={product.titleEn || ""}
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            titleEn: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 mb-2">
+                    <div className="form-group">
                       <label className="form-label small">
                         Barkod Numarası
                       </label>
@@ -668,7 +691,7 @@ const AddProductPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="col-12 mb-2">
+                  <div className="col-md-6 mb-2">
                     <div className="form-group">
                       <label className="form-label small">Açıklama</label>
                       <textarea
@@ -679,6 +702,24 @@ const AddProductPage: React.FC = () => {
                           setProduct({
                             ...product,
                             description: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="col-md-6 mb-2">
+                    <div className="form-group">
+                      <label className="form-label small">Açıklama (İngilizce)</label>
+                      <textarea
+                        className="form-control form-control-sm"
+                        rows={3}
+                        value={product.descriptionEn || ""}
+                        onChange={(e) =>
+                          setProduct({
+                            ...product,
+                            descriptionEn: e.target.value,
                           })
                         }
                         required
@@ -778,7 +819,7 @@ const AddProductPage: React.FC = () => {
                               ...prev,
                               productInfos: [
                                 ...(prev.productInfos || []),
-                                { title: "", description: "", icon: "icon-info" },
+                                { title: "", titleEn: "", description: "", descriptionEn: "", icon: "icon-info" },
                               ],
                             }));
                           }}
@@ -807,6 +848,20 @@ const AddProductPage: React.FC = () => {
                                     />
                                   </div>
                                   <div className="col-md-3">
+                                    <label className="form-label small">Başlık (İngilizce)</label>
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      placeholder="Örn: Material"
+                                      value={info.titleEn || ""}
+                                      onChange={(e) => {
+                                        const newInfos = [...(product.productInfos || [])];
+                                        newInfos[index].titleEn = e.target.value;
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col-md-2">
                                     <label className="form-label small">İkon (Class)</label>
                                     <input
                                       type="text"
@@ -820,7 +875,7 @@ const AddProductPage: React.FC = () => {
                                       }}
                                     />
                                   </div>
-                                  <div className="col-md-5">
+                                  <div className="col-md-2">
                                     <label className="form-label small">Açıklama</label>
                                     <input
                                       type="text"
@@ -830,6 +885,20 @@ const AddProductPage: React.FC = () => {
                                       onChange={(e) => {
                                         const newInfos = [...(product.productInfos || [])];
                                         newInfos[index].description = e.target.value;
+                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="col-md-2">
+                                    <label className="form-label small">Açıklama (İngilizce)</label>
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      placeholder="Örn: 100% Cotton"
+                                      value={info.descriptionEn || ""}
+                                      onChange={(e) => {
+                                        const newInfos = [...(product.productInfos || [])];
+                                        newInfos[index].descriptionEn = e.target.value;
                                         setProduct((prev) => ({ ...prev, productInfos: newInfos }));
                                       }}
                                     />

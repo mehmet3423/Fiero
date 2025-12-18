@@ -23,18 +23,25 @@ export default function EditProductForm({
 }: EditProductFormProps) {
   const [formData, setFormData] = useState<UpdateDtoProduct>({
     title: product.title,
+    titleEn: (product as any).titleEn || null,
     description: product.description,
+    descriptionEn: (product as any).descriptionEn || null,
     price: product.price,
     stockCode: product.stockCode,
     sellableQuantity: product.sellableQuantity,
     barcodeNumber: product.barcodeNumber,
     baseImageUrl: product.baseImageUrl,
+    baseImageUrlEn: (product as any).baseImageUrlEn || null,
     contentImageUrls: product.contentImageUrls,
+    contentImageUrlsEn: (product as any).contentImageUrlsEn || null,
     banner: product.banner,
+    bannerEn: (product as any).bannerEn || null,
     subCategoryId: product.subCategoryId,
     isAvailable: product.isAvailable,
     refundable: product.refundable,
     isOutlet: product.isOutlet,
+    videoUrl: (product as any).videoUrl || "",
+    videoUrlEn: (product as any).videoUrlEn || null,
     productInfos: product.productInfos || [],
   });
 
@@ -442,6 +449,22 @@ export default function EditProductForm({
         </div>
         <div className="col-md-6">
           <div className="form-group">
+            <label>Başlık (İngilizce):</label>
+            <input
+              type="text"
+              className="form-control"
+              value={formData.titleEn || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, titleEn: e.target.value || null })
+              }
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-6">
+          <div className="form-group">
             <label>Fiyat:</label>
             <input
               type="number"
@@ -456,17 +479,34 @@ export default function EditProductForm({
         </div>
       </div>
 
-      <div className="form-group">
-        <label>Açıklama:</label>
-        <textarea
-          className="form-control"
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          rows={3}
-          required
-        />
+      <div className="row">
+        <div className="col-md-6">
+          <div className="form-group">
+            <label>Açıklama:</label>
+            <textarea
+              className="form-control"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              rows={3}
+              required
+            />
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="form-group">
+            <label>Açıklama (İngilizce):</label>
+            <textarea
+              className="form-control"
+              value={formData.descriptionEn || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, descriptionEn: e.target.value || null })
+              }
+              rows={3}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="row">
@@ -740,7 +780,7 @@ export default function EditProductForm({
               {formData.productInfos.map((info, index) => (
                 <div key={index} className="card p-2 border bg-white">
                   <div className="row g-2 align-items-end">
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                       <label className="form-label small">Başlık</label>
                       <input
                         type="text"
@@ -754,7 +794,21 @@ export default function EditProductForm({
                         }}
                       />
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-2">
+                      <label className="form-label small">Başlık (İngilizce)</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Örn: Material"
+                        value={info.titleEn || ""}
+                        onChange={(e) => {
+                          const newInfos = [...(formData.productInfos || [])];
+                          newInfos[index].titleEn = e.target.value || null;
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-2">
                       <label className="form-label small">İkon (Class)</label>
                       <input
                         type="text"
@@ -768,7 +822,7 @@ export default function EditProductForm({
                         }}
                       />
                     </div>
-                    <div className="col-md-5">
+                    <div className="col-md-3">
                       <label className="form-label small">Açıklama</label>
                       <input
                         type="text"
@@ -778,6 +832,20 @@ export default function EditProductForm({
                         onChange={(e) => {
                           const newInfos = [...(formData.productInfos || [])];
                           newInfos[index].description = e.target.value;
+                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
+                        }}
+                      />
+                    </div>
+                    <div className="col-md-2">
+                      <label className="form-label small">Açıklama (İngilizce)</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Örn: 100% Cotton"
+                        value={info.descriptionEn || ""}
+                        onChange={(e) => {
+                          const newInfos = [...(formData.productInfos || [])];
+                          newInfos[index].descriptionEn = e.target.value || null;
                           setFormData((prev) => ({ ...prev, productInfos: newInfos }));
                         }}
                       />

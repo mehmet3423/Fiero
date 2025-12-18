@@ -11,7 +11,7 @@ import { useAddReview } from "@/hooks/services/reviews/useAddReview";
 import { useLanguage } from "@/context/LanguageContext";
 
 const AccordionSection: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState("description");
   const router = useRouter();
   const { productId } = router.query;
@@ -110,21 +110,31 @@ const AccordionSection: React.FC = () => {
                     <div className="tf-product-des-demo">
                       <div className="right">
                         {product?.productInfos && product.productInfos.length > 0 ? (
-                          product.productInfos.map((info, index) => (
-                            <div key={info.id || index} className="mb-4">
-                              <h3 className="fs-16 fw-5">{info.title}</h3>
-                              <div className="d-flex align-items-start gap-2">
-                                {info.icon && (
-                                  <div className="icon mt-1">
-                                    <i className={info.icon}></i>
+                          product.productInfos.map((info, index) => {
+                            const titleToShow =
+                              language === "en" && info.titleEn
+                                ? info.titleEn
+                                : info.title;
+                            const descriptionToShow =
+                              language === "en" && info.descriptionEn
+                                ? info.descriptionEn
+                                : info.description;
+                            return (
+                              <div key={info.id || index} className="mb-4">
+                                <h3 className="fs-16 fw-5">{titleToShow}</h3>
+                                <div className="d-flex align-items-start gap-2">
+                                  {info.icon && (
+                                    <div className="icon mt-1">
+                                      <i className={info.icon}></i>
+                                    </div>
+                                  )}
+                                  <div style={{ whiteSpace: "pre-line", color: "#666" }}>
+                                    {descriptionToShow}
                                   </div>
-                                )}
-                                <div style={{ whiteSpace: "pre-line", color: "#666" }}>
-                                  {info.description}
                                 </div>
                               </div>
-                            </div>
-                          ))
+                            );
+                          })
                         ) : (
                           <>
                             <h3 className="fs-16 fw-5">{t("accordionSection.titles.features")}</h3>

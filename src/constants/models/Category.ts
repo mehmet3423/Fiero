@@ -10,6 +10,7 @@ export interface Category {
   $id: string;
   id: string;
   name: string;
+  nameEn?: string | null;
   subCategories: SubCategory[];
   displayIndex: number;
   imageUrl?: string;
@@ -19,6 +20,7 @@ export interface SubCategory {
   $id: string;
   id: string;
   name: string;
+  nameEn?: string | null;
   products: Product[];
   displayIndex: number;
   imageUrl?: string;
