@@ -16,29 +16,42 @@ export const useUpdateProduct = () => {
   ) => {
     try {
       // Body olarak gönderilecek veri
-      const body = {
+      const body: any = {
         Id: productId,
         Price: product.price,
         SellableQuantity: product.sellableQuantity,
         BarcodeNumber: product.barcodeNumber,
         StockCode: product.stockCode,
         BaseImageUrl: product.baseImageUrl,
-        BaseImageUrlEn: product.baseImageUrlEn || null,
         Title: product.title,
-        TitleEn: product.titleEn || null,
         Description: product.description,
-        DescriptionEn: product.descriptionEn || null,
         VideoUrl: product.videoUrl || "",
-        VideoUrlEn: product.videoUrlEn || null,
         IsAvailable: product.isAvailable,
         IsOutlet: product.isOutlet,
         Refundable: product.refundable,
         ContentImageUrls: product.contentImageUrls,
-        ContentImageUrlsEn: product.contentImageUrlsEn || null,
-        Banner: product.banner,
-        BannerEn: product.bannerEn || null,
-        ProductInfos: product.productInfos,
+        Banner: product.banner || [],
       };
+
+      // -En alanlarını ekle (varsa)
+      if (product.titleEn) {
+        body.TitleEn = product.titleEn;
+      }
+      if (product.descriptionEn) {
+        body.DescriptionEn = product.descriptionEn;
+      }
+      if (product.baseImageUrlEn) {
+        body.BaseImageUrlEn = product.baseImageUrlEn;
+      }
+      if (product.contentImageUrlsEn) {
+        body.ContentImageUrlsEn = product.contentImageUrlsEn;
+      }
+      if (product.bannerEn) {
+        body.BannerEn = product.bannerEn;
+      }
+      if (product.videoUrlEn) {
+        body.VideoUrlEn = product.videoUrlEn;
+      }
 
       await mutateAsync(
         {

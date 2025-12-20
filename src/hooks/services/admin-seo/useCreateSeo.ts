@@ -1,6 +1,5 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { CREATE_SEO } from "@/constants/links";
-import { CommandResult } from "@/constants/models/CommandResult";
 import useMyMutation from "@/hooks/useMyMutation";
 import toast from "react-hot-toast";
 
@@ -27,11 +26,11 @@ interface CreateSeoParams {
 }
 
 export const useCreateSeo = () => {
-  const { mutateAsync, isPending } = useMyMutation<CommandResult>();
+  const { mutateAsync, isPending } = useMyMutation<string>();
 
   const createSeo = async (params: CreateSeoParams) => {
     try {
-      const response = await mutateAsync(
+      await mutateAsync(
         {
           url: CREATE_SEO,
           method: HttpMethod.POST,
@@ -39,15 +38,13 @@ export const useCreateSeo = () => {
           headers: {
             "Content-Type": "application/json",
           },
+        },
+        {
+          onSuccess: () => {
+            toast.success("SEO başarıyla oluşturuldu");
+          },
         }
       );
-
-      // Check if the response is successful according to CommandResult structure
-      if (response.data.isSucceed) {
-        toast.success(response.data.message || "SEO başarıyla oluşturuldu");
-      } else {
-        toast.error(response.data.message || "SEO oluşturulurken bir hata oluştu");
-      }
     } catch (error) {
       toast.error("SEO oluşturulurken bir hata oluştu");
     }

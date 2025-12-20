@@ -30,10 +30,6 @@ function ProductsAdminPage() {
       page: currentPage - 1, // API 0 tabanlı, UI 1 tabanlı
       pageSize: itemsPerPage,
       searchTerm: searchTerm, // Arama terimini API'ye gönder
-      mainCategoryId:
-        selectedMainCategoryId && !selectedSubCategoryId
-          ? selectedMainCategoryId
-          : undefined, // Ana kategori seçiliyse ve alt kategori seçili değilse filtrele
     });
 
   const { categories, isLoading: categoriesLoading } = useCategories();
@@ -107,7 +103,7 @@ function ProductsAdminPage() {
     }
   };
 
-  // Yükleniyor durumu - alt kategori seçiliyse productsLoading, değilse allProductsLoading
+  // Yükleniyor durumu
   const isLoading = selectedSubCategoryId
     ? productsLoading
     : allProductsLoading;
@@ -161,7 +157,7 @@ function ProductsAdminPage() {
             <div className="row g-3">
               <div className="col-md-4">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
-                  Ürün Ara
+                  Arama
                 </label>
                 <div className="input-group input-group-sm">
                   <input
@@ -279,12 +275,8 @@ function ProductsAdminPage() {
                         }
                         alt={product.title}
                         className="card-img-top"
-                        style={{
-                          height: "200px",
-                          objectFit: "contain",
-                          width: "100%",
-                          marginLeft: "60%",
-                        }}
+                        style={{ height: "200px", objectFit: "contain" }}
+                        unoptimized={true}
                       />
                     </Link>
                     <div

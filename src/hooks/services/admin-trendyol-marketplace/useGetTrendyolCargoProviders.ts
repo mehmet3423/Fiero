@@ -2,10 +2,11 @@ import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_TRENDYOL_CARGO_PROVIDERS } from "@/constants/links";
 import { CargoProvidersResponse } from "@/constants/models/trendyol/CargoProvidersResponse";
+import { CommandResultWithData } from "@/constants/models/CommandResult";
 import useGetData from "@/hooks/useGetData";
 
 export const useGetTrendyolCargoProviders = () => {
-  const { data, isLoading, error } = useGetData<CargoProvidersResponse>({
+  const { data, isLoading, error } = useGetData<CommandResultWithData<CargoProvidersResponse>>({
     url: GET_TRENDYOL_CARGO_PROVIDERS,
     queryKey: QueryKeys.TRENDYOL_CARGO_PROVIDERS,
     method: HttpMethod.GET,
@@ -15,7 +16,7 @@ export const useGetTrendyolCargoProviders = () => {
   });
 
   return {
-    cargoProviders: data || [],
+    cargoProviders: data || null,
     isLoading,
     error,
   };

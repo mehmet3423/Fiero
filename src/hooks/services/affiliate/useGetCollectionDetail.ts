@@ -4,20 +4,27 @@ import { GET_AFFILIATE_COLLECTION_BY_ID } from "@/constants/links";
 import { AffiliateCollection } from "@/constants/models/affiliate/Collection";
 import useGetData from "@/hooks/useGetData";
 
+interface CollectionDetailResponse {
+  data: AffiliateCollection;
+  isSucceed: boolean;
+  message: string;
+}
+
 export const useGetCollectionDetail = (collectionId: string) => {
-  const { data, isLoading, error, refetch } = useGetData<AffiliateCollection>({
-    url: `${GET_AFFILIATE_COLLECTION_BY_ID}/${collectionId}`,
-    queryKey: [QueryKeys.AFFILIATE_COLLECTIONS, collectionId],
-    method: HttpMethod.GET,
-    onError: (err: any) => {
-      // 400 veya 404 hatası normal durumlar (koleksiyon bulunamadı)
-      if (err?.response?.status !== 400 && err?.response?.status !== 404) {
-      }
-    },
-  });
+  const { data, isLoading, error, refetch } =
+    useGetData<CollectionDetailResponse>({
+      url: `${GET_AFFILIATE_COLLECTION_BY_ID}/${collectionId}`,
+      queryKey: [QueryKeys.AFFILIATE_COLLECTIONS, collectionId],
+      method: HttpMethod.GET,
+      onError: (err: any) => {
+        // 400 veya 404 hatası normal durumlar (koleksiyon bulunamadı)
+        if (err?.response?.status !== 400 && err?.response?.status !== 404) {
+        }
+      },
+    });
 
   return {
-    collectionDetail: data,
+    collectionDetail: data?.data,
     isLoading,
     error,
     refetchCollectionDetail: refetch,

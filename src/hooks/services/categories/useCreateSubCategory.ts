@@ -22,7 +22,7 @@ export const useCreateSubCategory = () => {
           data: {
             mainCategoryId: mainCategoryId,
             name: name,
-            nameEn: nameEn || null,
+            nameEn: nameEn,
             imageUrl: imageUrl || "",
             createSEORequest: {
               slug: "string",
@@ -30,7 +30,7 @@ export const useCreateSubCategory = () => {
               metaDescription: "string",
               robotsMetaTag: "string",
             },
-            createSubCategorySpecificationDTO: [],
+            createSubCategorySpecificationDTO: [], // Array içindeki objelerde nameEn desteği var: { name: string, nameEn?: string, options: string[] }
           },
           method: HttpMethod.POST,
         },
@@ -39,6 +39,9 @@ export const useCreateSubCategory = () => {
             toast.success("Alt kategori başarıyla oluşturuldu");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
+            });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],
             });
           },
         }

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { formatDate } from "@/utils/dateFormatter";
 
 const BuyXPayYDiscountPage = () => {
   const router = useRouter();
@@ -65,11 +66,6 @@ const BuyXPayYDiscountPage = () => {
     setPage(0);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR");
-  };
-
   const buyXPayYDiscounts = (discounts as unknown as BuyYPayXDiscount[]) || [];
   const getProductIds = (discount: BuyYPayXDiscount): string[] => {
     if (!discount.buyXPayYProducts) return [];
@@ -82,6 +78,7 @@ const BuyXPayYDiscountPage = () => {
     }
     return [];
   };
+  console.log("buyXPayYDiscounts", buyXPayYDiscounts);
 
   return (
     <div className="container-fluid">
@@ -182,7 +179,8 @@ const BuyXPayYDiscountPage = () => {
                     </td>
                     <td>
                       <span className="badge bg-info">
-                        {discount.buyXCount} Al {discount.payYCount} Öde
+                        {discount.buyXPayYDiscount?.buyXCount ?? "-"} Al{" "}
+                        {discount.buyXPayYDiscount?.payYCount ?? "-"} Öde
                       </span>
                       {discount.buyXPayYProducts &&
                         discount.buyXPayYProducts.length > 0 && (

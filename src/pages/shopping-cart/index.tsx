@@ -664,12 +664,12 @@ function ShoppingCartPage() {
                                     return (
                                       <div className="position-relative">
                                         <span
-                                          className="text-decoration-line-through position-absolute text-muted fs-6"
+                                          className="text-decoration-line-through  text-muted fs-6"
                                           style={{ top: "-20px" }}
                                         >
                                           {(item.price || 0).toFixed(2)} ₺
                                         </span>
-                                        <span className="fs-4 text-success fw-medium d-block">
+                                        <span className="fs-5 text-success fw-medium d-block">
                                           {Number(
                                             item.discountedPrice || 0
                                           ).toFixed(2)}{" "}
@@ -820,7 +820,7 @@ function ShoppingCartPage() {
                                     return (
                                       <div className="position-relative">
                                         <span
-                                          className="position-absolute  text-muted"
+                                          className="  text-muted"
                                           style={{
                                             fontSize: "1.4rem",
                                             top: "-20px",
@@ -856,7 +856,7 @@ function ShoppingCartPage() {
                                     return (
                                       <div className="position-relative">
                                         <span
-                                          className="  position-absolute fs-6 text-muted"
+                                          className="  fs-6 text-muted"
                                           style={{
                                             top: "-20px",
                                             textDecoration: "line-through",
@@ -867,7 +867,7 @@ function ShoppingCartPage() {
                                           ).toFixed(2)}{" "}
                                           ₺
                                         </span>
-                                        <span className="fs-4 text-success fw-medium d-block">
+                                        <span className="fs-5 text-success fw-medium d-block">
                                           {discountedTotal.toFixed(2)} ₺
                                         </span>
                                       </div>
@@ -1279,7 +1279,7 @@ function ShoppingCartPage() {
                   </div>
                   <table className="table table-summary">
                     <tbody>
-                      <tr className="summary-original-total text-dark">
+                      <tr className="summary-original-total text-dark ">
                         <td style={{ fontSize: "1.7rem" }}>Sepet Tutarı:</td>
                         <td>
                           <span className="text-decoration-line-through text-dark">

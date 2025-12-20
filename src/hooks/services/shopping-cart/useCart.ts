@@ -89,7 +89,7 @@ export const useAddToCart = (
           },
         }
       );
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return { addItem, isLoading: isPending };
@@ -172,7 +172,7 @@ export const useUpdateCartQuantity = (
           },
         }
       );
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return { updateQuantity, isLoading: isPending };
@@ -205,7 +205,7 @@ export const useRemoveFromCart = (
           },
         }
       );
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return { removeItem, isLoading: isPending };
@@ -234,7 +234,7 @@ export const useClearCart = (
           },
         }
       );
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return { clearCart, isLoading: isPending };

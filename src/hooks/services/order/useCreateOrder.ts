@@ -3,7 +3,6 @@ import { CREATE_ORDER } from "@/constants/links";
 import { CreateOrderRequest, Order } from "@/constants/models/Order";
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
 
 interface OrderItem {
   productId: string;
@@ -15,14 +14,18 @@ interface OrderItem {
 interface CreateOrderWithItemsRequest extends CreateOrderRequest {
   orderItems: OrderItem[];
   totalAmount: number;
+  affiliateCollectionId?: string;
 }
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<{ data: Order }>();
 
-  const createOrder = async (orderRequest: CreateOrderWithItemsRequest) => {
+  const createOrder = async (
+    orderRequest: CreateOrderWithItemsRequest
+  ): Promise<{ orderId: string; orderNumber: string } | null> => {
     const params = new URLSearchParams({
+      Email: orderRequest.email,
       RecipientName: orderRequest.recipientName,
       RecipientSurname: orderRequest.recipientSurname,
       RecipientPhoneNumber: orderRequest.recipientPhoneNumber,
@@ -36,6 +39,8 @@ export const useCreateOrder = () => {
       CargoPrice: orderRequest.cargoPrice.toString(),
       CouponCode: orderRequest.couponCode || "",
       PaymentCardId: orderRequest.paymentCardId,
+      AffiliateCollectionId: orderRequest.affiliateCollectionId || "",
+      GiftWrapPrice: (orderRequest.giftWrapPrice || 0).toString(),
       // OrderItems: orderRequest.orderItems.map(item =>
       //   `${item.productId}:${item.quantity}:${item.price}:${item.discountedPrice}`
       // ).join(','),
@@ -54,7 +59,14 @@ export const useCreateOrder = () => {
       }
     );
     // API'den dönen response: { data: { ...order }, ... }
-    return response.data?.data;
+    const orderData = response.data?.data;
+    if (!orderData) return null;
+
+    // Backend id döndürüyor, biz orderId olarak map ediyoruz
+    return {
+      orderId: orderData.id,
+      orderNumber: orderData.orderNumber,
+    };
   };
 
   return { createOrder, isPending };

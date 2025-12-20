@@ -111,7 +111,8 @@ function SubCategorySpecifications() {
       setNewSpecOptions([""]);
       toast.success("Özellik başarıyla eklendi");
     } catch (error) {
-      toast.error("Farklı isimde bir özellik eklemeyi deneyin");
+      console.error("Error adding specification:", error);
+      toast.error("Özellik eklenirken bir hata oluştu");
     }
   };
 
@@ -194,6 +195,7 @@ function SubCategorySpecifications() {
       setEditSpecOptions([""]);
       toast.success("Özellik başarıyla güncellendi");
     } catch (error) {
+      console.error("Error updating specification:", error);
       toast.error("Özellik güncellenirken bir hata oluştu");
     }
   };
@@ -219,6 +221,7 @@ function SubCategorySpecifications() {
         // Gecikme ile refetch dene, hata olursa yerel state zaten boş dizi olarak ayarlandı
         setTimeout(() => {
           refetchSubCategorySpecifications().catch(() => {
+            console.log("Refetch failed, but UI is already updated");
           });
         }, 300);
       }
@@ -227,6 +230,7 @@ function SubCategorySpecifications() {
       $("#deleteSpecificationModal").modal("hide");
       toast.success("Özellik başarıyla silindi");
     } catch (error) {
+      console.error("Error deleting specification:", error);
       toast.error("Özellik silinirken bir hata oluştu");
       setDeletingSpecificationId(null);
       $("#deleteSpecificationModal").modal("hide");
@@ -266,7 +270,7 @@ function SubCategorySpecifications() {
                       }}
                     >
                       <option value="">Ana Kategori Seçin</option>
-                      {categories?.items?.map((category) => (
+                      {categories?.items.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>

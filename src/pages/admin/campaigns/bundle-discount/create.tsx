@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useCreateBundleDiscount } from "@/hooks/services/discounts/bundle-discount/useCreateBundleDiscount";
 import { DiscountType } from "@/constants/enums/DiscountType";
-import Link from "next/link";
 import ProductSelector from "@/components/ProductSelector";
-import NotificationSettings from "@/components/shared/NotificationSettings";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
 import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 const CreateBundleDiscountPage = () => {
@@ -41,8 +40,7 @@ const CreateBundleDiscountPage = () => {
     try {
       await createBundleDiscount(formData);
       router.push("/admin/campaigns/bundle-discount");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleChange = (
@@ -79,193 +77,88 @@ const CreateBundleDiscountPage = () => {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/bundle-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Bundle İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            Yeni İndirim
-          </h4>
-          <Link
-            href="/admin/campaigns/bundle-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
-          >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+    <CampaignFormWrapper
+      campaignType="bundle-discount"
+      campaignTypeLabel="Bundle İndirimleri"
+      action="create"
+      name={formData.name}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      notificationSettings={formData.notificationSettings}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onNotificationSettingsChange={handleNotificationSettingsChange}
+      onSubmit={handleSubmit}
+      isSubmitting={isPending}
+      submitDisabled={formData.productIds.length < 2}
+      nameLabel="Paket İndirim Adı"
+    >
+      {/* Ürün seçimi */}
+      <ProductSelector
+        selectedProductIds={formData.productIds}
+        onProductSelect={handleProductSelect}
+        multiSelect={true}
+        title="Ürünler"
+        height="400px"
+        onTotalPriceChange={setTotalOriginalPrice}
+        discountType="bundle"
+      />
+
+      {/* İndirim detayları */}
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <label className="form-label">Paket Fiyatı</label>
+          <input
+            type="number"
+            className="form-control"
+            name="bundlePrice"
+            value={formData.bundlePrice}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
+          {formData.bundlePrice > 0 && totalOriginalPrice > 0 && (
+            <small className="text-muted d-block mt-1">
+              Toplam indirim: %
+              {(
+                ((totalOriginalPrice - formData.bundlePrice) /
+                  totalOriginalPrice) *
+                100
+              ).toFixed(2)}
+            </small>
+          )}
+        </div>
+        <div className="col-md-6">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
         </div>
       </div>
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            {/* Temel bilgiler */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">Paket İndirim Adı</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Açıklama</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            {/* Ürün seçimi */}
-            <ProductSelector
-              selectedProductIds={formData.productIds}
-              onProductSelect={handleProductSelect}
-              multiSelect={true}
-              title="Ürünler"
-              height="400px"
-              onTotalPriceChange={setTotalOriginalPrice}
-              discountType="bundle"
-            />
-
-            {/* İndirim detayları */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">Paket Fiyatı</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="bundlePrice"
-                  value={formData.bundlePrice}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-                {formData.bundlePrice > 0 && totalOriginalPrice > 0 && (
-                  <small className="text-muted d-block mt-1">
-                    Toplam indirim: %
-                    {(
-                      ((totalOriginalPrice - formData.bundlePrice) /
-                        totalOriginalPrice) *
-                      100
-                    ).toFixed(2)}
-                  </small>
-                )}
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Tarih aralığı */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">Başlangıç Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  min={new Date().toISOString().slice(0, 16)}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Bitiş Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  min={
-                    formData.startDate || new Date().toISOString().slice(0, 16)
-                  }
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Durum */}
-            <div className="form-check mb-3">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                name="isActive"
-                checked={formData.isActive}
-                onChange={handleChange}
-              />
-              <label className="form-check-label">
-                {formData.isActive ? "Aktif" : "Pasif"}
-              </label>
-            </div>
-
-            {/* Notification Settings */}
-            <NotificationSettings
-              value={formData.notificationSettings}
-              onChange={handleNotificationSettingsChange}
-            />
-
-            <button
-              type="submit"
-              className={`btn ${
-                isPending || formData.productIds.length < 2
-                  ? "btn-light text-muted"
-                  : "btn-primary"
-              }`}
-              disabled={isPending || formData.productIds.length < 2}
-              style={{
-                filter:
-                  isPending || formData.productIds.length < 2
-                    ? "grayscale(50%)"
-                    : "none",
-                opacity: isPending || formData.productIds.length < 2 ? 0.7 : 1,
-              }}
-            >
-              {isPending ? "Kaydediliyor..." : "Kaydet"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    </CampaignFormWrapper>
   );
 };
 

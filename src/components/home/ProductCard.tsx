@@ -72,9 +72,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
-  const hasDiscount = product.discountDTO !== null;
+  const hasDiscount = product.discountResponse !== null && product.discountResponse !== undefined;
   const isPercentageDiscount =
-    hasDiscount && (product.discountDTO as any)?.discountValueType === 1;
+    hasDiscount && (product.discountResponse as any)?.discountValueType === 1;
 
   const imageSrc =
     !product.baseImageUrl || product.baseImageUrl === "no_url"
@@ -111,14 +111,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               title={titleToShow}
             />
             {contentImageUrl && (
-              <img
-                className="lazyload img-hover"
+                <img
+                  className="lazyload img-hover"
                 data-src={contentImageUrl}
                 src={contentImageUrl}
                 alt={titleToShow}
                 title={titleToShow}
-              />
-            )}
+                />
+              )}
           </Link>
 
           <div className="list-product-btn">
@@ -202,7 +202,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
 
           <span className="price">
-            {hasDiscount && product.price !== product.discountedPrice ? (
+            {hasDiscount && 
+             product.price > 0 && 
+             product.discountedPrice > 0 && 
+             product.price > product.discountedPrice ? (
               <>
                 <span className="old-price">
                   {product.price.toLocaleString("tr-TR", {
@@ -218,7 +221,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
               </>
             ) : (
-              product.price.toLocaleString("tr-TR", {
+              (product.discountedPrice > 0 ? product.discountedPrice : product.price || 0).toLocaleString("tr-TR", {
                 style: "currency",
                 currency: "TRY",
               })

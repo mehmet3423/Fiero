@@ -23,11 +23,10 @@ export const useChangeCargoProvider = () => {
         toast.success(response.data.message || "Kargo sağlayıcısı başarıyla değiştirildi");
         return response.data;
       } else {
+        // Backend'den gelen hata mesajını göster
         toast.error(response.data.message || "Kargo sağlayıcısı değiştirilirken bir hata oluştu");
-        throw new Error(response.data.message);
       }
     } catch (error) {
-      toast.error("Kargo sağlayıcısı değiştirilirken bir hata oluştu");
       throw error;
     }
   };

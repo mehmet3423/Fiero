@@ -137,9 +137,7 @@ function ReviewsPage() {
 
           {isLoading ? (
             <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="sr-only">{t("loading")}</span>
-              </div>
+              <div className="spinner-border text-primary" role="status"></div>
             </div>
           ) : reviews && reviews.length > 0 ? (
             <div className="reviews-list">
@@ -243,9 +241,11 @@ function ReviewsPage() {
                         cursor: "pointer",
                         textDecoration: "underline",
                       }}
-                      onClick={() => router.push(`/products/${review.productId}`)}
+                      onClick={() =>
+                        router.push(`/products/${review.productId}`)
+                      }
                     >
-                     {t("myReviews.productIdLabel")}: {review.productId}
+                      {t("myReviews.productIdLabel")}: {review.productId}
                     </small>
                   </div>
                 </div>
@@ -351,9 +351,7 @@ function ReviewsPage() {
             style={{ fontSize: "3rem", color: "#dc3545" }}
           ></i>
           <h4 className="mt-3">{t("myReviews.deleteConfirmTitle")}</h4>
-          <p className="text-muted">
-            {t("myReviews.deleteConfirmMessage")}
-          </p>
+          <p className="text-muted">{t("myReviews.deleteConfirmMessage")}</p>
         </div>
       </GeneralModal>
 
@@ -397,4 +395,3 @@ function ReviewsPage() {
 }
 
 export default withProfileLayout(ReviewsPage);
-

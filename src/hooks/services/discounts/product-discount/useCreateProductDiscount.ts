@@ -18,6 +18,7 @@ export const useCreateProductDiscount = () => {
         Object.entries({
           ProductId: data.productId || "",
           Name: data.name,
+          NameEn: (data as any).nameEn || "",
           Description: data.description,
           DiscountValue: data.discountValue.toString(),
           DiscountValueType: data.discountValueType.toString(),

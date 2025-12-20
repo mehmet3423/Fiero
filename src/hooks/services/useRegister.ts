@@ -13,8 +13,6 @@ interface RegisterData {
   phoneNumber: string;
   birthDate: string;
   gender: number;
-  IsSMSNotificationEnabled?: boolean;
-  IsEmailNotificationEnabled?: boolean;
   companyName?: string;
   companyAddress?: {
     country: number;
@@ -60,55 +58,37 @@ export const useRegister = () => {
     onSuccess?: () => void
   ) => {
     try {
-      // Validate required fields
-      if (!data.email || !data.password || !data.firstName || !data.lastName || !data.phoneNumber) {
-        toast.error("Lütfen tüm zorunlu alanları doldurun");
+      if (!data.email || !data.password) {
+        toast.error("Lütfen tüm alanları doldurun");
         return;
       }
 
-      const baseParams: Record<string, string | boolean> = {
+      const baseParams = {
         FirstName: data.firstName,
         LastName: data.lastName,
         Password: data.password,
         Email: data.email,
         PhoneNumber: data.phoneNumber,
+        BirthDate: data.birthDate,
         Gender: data.gender.toString(),
-        IsSMSNotificationEnabled: data.IsSMSNotificationEnabled ?? false,
-        IsEmailNotificationEnabled: data.IsEmailNotificationEnabled ?? false,
       };
-
-      // Only add BirthDate if it's not empty
-      if (data.birthDate && data.birthDate.trim() !== "") {
-        baseParams.BirthDate = data.birthDate;
-      }
 
       const sellerParams =
         userRole === UserRole.SELLER
           ? {
-            CompanyName: data.companyName,
-            "CompanyAddress.Country": data.companyAddress?.country,
-            "CompanyAddress.State": data.companyAddress?.state,
-            "CompanyAddress.City": data.companyAddress?.city,
-            "CompanyAddress.FullAddress": data.companyAddress?.fullAddress,
-          }
+              CompanyName: data.companyName,
+              "CompanyAddress.Country": data.companyAddress?.country,
+              "CompanyAddress.State": data.companyAddress?.state,
+              "CompanyAddress.City": data.companyAddress?.city,
+              "CompanyAddress.FullAddress": data.companyAddress?.fullAddress,
+            }
           : {};
 
       const params = new URLSearchParams();
 
       // Base params
       Object.entries(baseParams).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          // Skip empty strings
-          if (typeof value === "string" && value.trim() === "") {
-            return;
-          }
-          // Handle boolean values properly - convert to "true"/"false" strings
-          if (typeof value === "boolean") {
-            params.append(key, value ? "true" : "false");
-          } else {
-            params.append(key, value.toString());
-          }
-        }
+        params.append(key, value.toString());
       });
 
       // Seller params
@@ -127,35 +107,36 @@ export const useRegister = () => {
         {
           url: `${registerUrl}?${params.toString()}`,
           method: HttpMethod.POST,
-          showErrorToast: false,
         },
         {
           onSuccess: (res) => {
-            // Backend'den gelen mesajı göster
-            const backendMessage = res.data?.message || "Kayıt başarılı!";
-            
+            console.log("Register response:", res.data);
+
             if (res.data && res.data.data.accessToken) {
               // Save token to localStorage for automatic login
               setToken(res.data.data.accessToken);
-              toast.success(backendMessage);
+              toast.success("Kayıt başarılı! Oturum açılıyor...");
 
               // Reload page to update AuthContext and userProfile
               setTimeout(() => {
                 window.location.reload();
-              }, 1000); // 1 saniye bekle, toast'ın görünmesi için
+              }, 1000); // 1.5 saniye bekle, toast'ın görünmesi için
 
               onSuccess?.();
             } else {
-              toast.success(backendMessage);
+              toast.success("Kayıt başarılı!");
               onSuccess?.();
             }
           },
           onError: (error) => {
-            toast.error(error.response?.data?.message || "Kayıt başarısız!");
+            console.error("Register error:", error);
+            toast.error(error.response?.data?.detail || "Kayıt başarısız!");
           },
         }
       );
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Register error:", error);
+      toast.error("Kayıt başarısız!");
     }
   };
 

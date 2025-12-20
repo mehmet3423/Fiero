@@ -1,8 +1,8 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods"; // HTTP metodu
 import { QueryKeys } from "@/constants/enums/QueryKeys"; // Query keys
 import { GET_REVIEWS } from "@/constants/links"; // API endpoint
-import { DtoReview } from "@/constants/models/Review"; // Yorum tipi
 import { CommandResultWithData } from "@/constants/models/CommandResult";
+import { DtoReview } from "@/constants/models/Review"; // Yorum tipi
 import useGetData from "@/hooks/useGetData"; // useGetData hook'u
 import { useEffect, useState } from "react";
 
@@ -84,8 +84,11 @@ export const useGetReviews = (params: UseGetReviewsParams = {}) => {
 
   // Data değiştiğinde reviews state'ini güncelle
   useEffect(() => {
-    if (data?.isSucceed && data?.data?.items) {
-      let filteredReviews = data.data.items.map((review: DtoReview) => ({
+    if (data?.isSucceed) {
+      // items varsa işle, yoksa boş array olarak kabul et
+      const items = data.data?.items || [];
+
+      let filteredReviews = items.map((review: DtoReview) => ({
         ...review,
         writerName: review.customerName || "Anonim",
       }));
@@ -101,8 +104,13 @@ export const useGetReviews = (params: UseGetReviewsParams = {}) => {
     } else if (data && !data.isSucceed && data.message) {
       // Yorum listesi alınamadığında toast error mesajı gösterilmez
       // toast.error(data.message);
+      // Hata durumunda reviews'ı temizle
+      setReviews([]);
+    } else if (!dataLoading && !data) {
+      // Data yoksa ve yüklenme tamamlandıysa reviews'ı temizle
+      setReviews([]);
     }
-  }, [data, params.targetRatings]);
+  }, [data, params.targetRatings, dataLoading]);
 
   // useGetData hook'unun yükleniyor ve hata durumlarını kullanarak yükleniyor ve hata durumlarını güncelle
   useEffect(() => {

@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { CommandResultWithData } from "@/constants/models/CommandResult";
 import { EnumOption } from "@/constants/models/EnumOption";
-import axios from "axios";
 import { getToken } from "@/helpers/tokenUtils";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface UseEnumOptionsConfig {
   url: string;

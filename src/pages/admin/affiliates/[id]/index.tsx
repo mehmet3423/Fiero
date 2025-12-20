@@ -1,7 +1,8 @@
-import GeneralModal from "@/components/shared/GeneralModal";
 import BackButton from "@/components/shared/BackButton";
+import GeneralModal from "@/components/shared/GeneralModal";
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateCollectionType";
 import { AffiliateStatus } from "@/constants/enums/AffiliateStatus";
+import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { AffiliateCollection } from "@/constants/models/affiliate/Collection";
 import { useGetAffiliateUserByAffiliateUserId } from "@/hooks/services/admin-affiliate/useGetAffiliateUserByAffiliateUserId";
 import { useGetCollectionsByAffiliateUserId } from "@/hooks/services/admin-affiliate/useGetCollectionsByAffiliateUserId";
@@ -11,11 +12,10 @@ import {
   useUpdateCombinationBasedCollection,
   useUpdateProductBasedCollection,
 } from "@/hooks/services/admin-affiliate/useUpdateAffiliateCollection";
-import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { QueryKeys } from "@/constants/enums/QueryKeys";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 function AffiliateUserDetailPage() {
   const { id } = useParams();
@@ -100,7 +100,7 @@ function AffiliateUserDetailPage() {
 
     setEditForm({
       isActive: collection.isActive,
-      collectionCommissionRate: commissionRate,
+      collectionCommissionRate: commissionRate * 100,
       startDate: collection.startDate,
       expirationDate: collection.expirationDate,
       salesCountLimit: collection.salesCountLimit ?? 0,
@@ -122,6 +122,20 @@ function AffiliateUserDetailPage() {
       if (editForm.totalSalesAmountLimit < 1) {
         toast.error("Toplam satış tutarı limiti 1'den küçük olamaz");
         return;
+      }
+
+      // Başlangıç tarihi kontrolü
+      if (editForm.startDate) {
+        const selectedDate = new Date(editForm.startDate).getTime();
+        const now = Date.now();
+        const minTime = now + 1 * 60 * 1000; // 1 dakika sonrası
+
+        if (selectedDate < minTime) {
+          toast.error(
+            "Başlangıç tarihi şu anki tarihten en az 1-2 dakika sonrasında olmalıdır"
+          );
+          return;
+        }
       }
 
       const basePayload = {
@@ -150,7 +164,7 @@ function AffiliateUserDetailPage() {
       } else if (editCollection.collectionBasedAffiliateItems?.length > 0) {
         await updateCollectionBasedCollection({
           ...basePayload,
-          collectionCommissionRate: editForm.collectionCommissionRate,
+          collectionCommissionRate: editForm.collectionCommissionRate / 100,
           collectionItems: editCollection.collectionBasedAffiliateItems.map(
             (item) => ({
               id: item.id,
@@ -162,7 +176,7 @@ function AffiliateUserDetailPage() {
       } else if (editCollection.combinationBasedAffiliateItems?.length > 0) {
         await updateCombinationBasedCollection({
           ...basePayload,
-          collectionCommissionRate: editForm.collectionCommissionRate,
+          collectionCommissionRate: editForm.collectionCommissionRate / 100,
           collectionItems: editCollection.combinationBasedAffiliateItems.map(
             (item) => ({
               id: item.id,
@@ -196,8 +210,7 @@ function AffiliateUserDetailPage() {
         salesCountLimit: 0,
         totalSalesAmountLimit: 0,
       });
-    } catch (e) {
-    }
+    } catch (e) { }
   };
 
   const handleItemCommissionChange = (
@@ -207,10 +220,16 @@ function AffiliateUserDetailPage() {
   ) => {
     if (!editCollection) return;
 
+    // Negatif değer kontrolü
+    const safeValue = value >= 0 ? value : 0;
+    const normalizedValue = Number.isFinite(safeValue) ? safeValue / 100 : 0;
+
     if (type === AffiliateCollectionType.ProductBased) {
       const updatedItems = editCollection.productBasedAffiliateItems.map(
         (item) =>
-          item.id === itemId ? { ...item, commissionRate: value } : item
+          item.id === itemId
+            ? { ...item, commissionRate: normalizedValue }
+            : item
       );
       setEditCollection({
         ...editCollection,
@@ -219,7 +238,9 @@ function AffiliateUserDetailPage() {
     } else if (type === AffiliateCollectionType.CategoryBased) {
       const updatedItems = editCollection.categoryBasedAffiliateItems.map(
         (item) =>
-          item.id === itemId ? { ...item, commissionRate: value } : item
+          item.id === itemId
+            ? { ...item, commissionRate: normalizedValue }
+            : item
       );
       setEditCollection({
         ...editCollection,
@@ -487,18 +508,21 @@ function AffiliateUserDetailPage() {
                           type="number"
                           className="form-control"
                           min={0}
-                          max={1}
+                          max={100}
                           step={0.01}
                           value={editForm.collectionCommissionRate}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            const value = Number(e.target.value);
                             setEditForm((f) => ({
                               ...f,
-                              collectionCommissionRate: Number(e.target.value),
-                            }))
-                          }
+                              collectionCommissionRate: value >= 0 ? value : 0,
+                            }));
+                          }}
                         />
                         <small className="form-text text-muted">
-                          0 ile 1 arasında bir değer girin (örn: 0.1, 0.2, 0.5)
+                          0 ile 100 arasında bir değer girin (örn: 10, 20, 50)
                         </small>
                       </div>
                     </div>
@@ -520,12 +544,13 @@ function AffiliateUserDetailPage() {
                       className="form-control"
                       min={0}
                       value={editForm.salesCountLimit}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value = Number(e.target.value);
                         setEditForm((f) => ({
                           ...f,
-                          salesCountLimit: Number(e.target.value),
-                        }))
-                      }
+                          salesCountLimit: value >= 0 ? value : 0,
+                        }));
+                      }}
                     />
                     <small className="form-text text-muted">
                       Koleksiyon için maksimum satış adedi
@@ -544,12 +569,13 @@ function AffiliateUserDetailPage() {
                       className="form-control"
                       min={0}
                       value={editForm.totalSalesAmountLimit}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value = Number(e.target.value);
                         setEditForm((f) => ({
                           ...f,
-                          totalSalesAmountLimit: Number(e.target.value),
-                        }))
-                      }
+                          totalSalesAmountLimit: value >= 0 ? value : 0,
+                        }));
+                      }}
                     />
                     <small className="form-text text-muted">
                       Koleksiyon için maksimum satış tutarı
@@ -572,6 +598,11 @@ function AffiliateUserDetailPage() {
                       }
                       required
                     />
+                    <small className="form-text text-muted text-warning">
+                      <i className="fas fa-exclamation-triangle me-1"></i>
+                      Başlangıç tarihi şu anki tarihten en az 1-2 dakika
+                      sonrasında olmalıdır
+                    </small>
                   </div>
                 </div>
               </div>
@@ -602,11 +633,16 @@ function AffiliateUserDetailPage() {
                         type="checkbox"
                         id="isActive"
                         checked={editForm.isActive}
+                        style={{ cursor: "pointer" }}
                         onChange={() =>
                           setEditForm((f) => ({ ...f, isActive: !f.isActive }))
                         }
                       />
-                      <label className="form-check-label" htmlFor="isActive">
+                      <label
+                        className="form-check-label text-muted"
+                        htmlFor="isActive"
+                        style={{ cursor: "pointer" }}
+                      >
                         {editForm.isActive ? "Aktif" : "Pasif"}
                       </label>
                     </div>
@@ -677,16 +713,17 @@ function AffiliateUserDetailPage() {
                                       type="number"
                                       className="form-control"
                                       min={0}
-                                      max={1}
+                                      max={100}
                                       step={0.01}
-                                      value={item.commissionRate ?? 0}
-                                      onChange={(e) =>
+                                      value={(item.commissionRate ?? 0) * 100}
+                                      onChange={(e) => {
+                                        const value = Number(e.target.value);
                                         handleItemCommissionChange(
                                           item.id,
-                                          Number(e.target.value),
+                                          value >= 0 ? value : 0,
                                           AffiliateCollectionType.ProductBased
-                                        )
-                                      }
+                                        );
+                                      }}
                                     />
                                     <span className="input-group-text">%</span>
                                   </div>
@@ -712,16 +749,17 @@ function AffiliateUserDetailPage() {
                                       type="number"
                                       className="form-control"
                                       min={0}
-                                      max={1}
+                                      max={100}
                                       step={0.01}
-                                      value={item.commissionRate ?? 0}
-                                      onChange={(e) =>
+                                      value={(item.commissionRate ?? 0) * 100}
+                                      onChange={(e) => {
+                                        const value = Number(e.target.value);
                                         handleItemCommissionChange(
                                           item.id,
-                                          Number(e.target.value),
+                                          value >= 0 ? value : 0,
                                           AffiliateCollectionType.CategoryBased
-                                        )
-                                      }
+                                        );
+                                      }}
                                     />
                                     <span className="input-group-text">%</span>
                                   </div>

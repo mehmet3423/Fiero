@@ -2,9 +2,10 @@ import { DiscountType } from "@/constants/enums/DiscountType";
 import { Discount, ShippingDiscount } from "@/constants/models/Discount";
 import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
 import { useUpdateShippingDiscount } from "@/hooks/services/discounts/shipping-discount/useUpdateShippingDiscount";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 function EditShippingDiscount() {
   const router = useRouter();
@@ -17,7 +18,9 @@ function EditShippingDiscount() {
   );
 
   const [formData, setFormData] = useState<
-    Discount & { minimumCargoAmount: number }
+    Discount & {
+      minimumCargoAmount: number;
+    }
   >({
     name: "",
     description: "",
@@ -79,8 +82,7 @@ function EditShippingDiscount() {
 
       await updateDiscount(shippingDiscountData);
       router.push("/admin/campaigns/shipping-discount");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleChange = (
@@ -93,228 +95,92 @@ function EditShippingDiscount() {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "discountValueType"
-            ? Number(value)
-            : type === "number"
-              ? parseFloat(value)
-              : value,
+          ? Number(value)
+          : type === "number"
+          ? parseFloat(value)
+          : value,
     }));
   };
 
   if (isLoadingDiscount) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "400px" }}
-      >
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
-      </div>
-    );
+    return <div>Yükleniyor...</div>;
   }
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/shipping-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kargo İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            İndirim Düzenle
-          </h4>
-          <Link
-            href="/admin/campaigns/shipping-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
+    <CampaignFormWrapper
+      campaignType="shipping-discount"
+      campaignTypeLabel="Kargo İndirimleri"
+      action="edit"
+      name={formData.name}
+      description={formData.description || ""}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onSubmit={handleSubmit}
+      isSubmitting={isUpdating}
+    >
+      {/* İndirim Değer ve Tip Ayarları */}
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <label className="form-label">İndirim Değeri *</label>
+          <input
+            type="number"
+            className="form-control"
+            name="discountValue"
+            value={formData.discountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label">İndirim Tipi *</label>
+          <select
+            className="form-select"
+            name="discountValueType"
+            value={formData.discountValueType}
+            onChange={handleChange}
+            required
           >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+            <option value="1">Yüzde (%)</option>
+            <option value="2">Tutar (₺)</option>
+          </select>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Adı *</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Kargo indirimi adı"
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Açıklaması</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="İndirim açıklaması (isteğe bağlı)"
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-3 mb-3">
-                <label className="form-label">İndirim Değeri *</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="discountValue"
-                  value={formData.discountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                  placeholder="İndirim değeri"
-                />
-              </div>
-              <div className="col-md-3 mb-3">
-                <label className="form-label">İndirim Tipi *</label>
-                <select
-                  className="form-select"
-                  name="discountValueType"
-                  value={formData.discountValueType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="1">Yüzde (%)</option>
-                  <option value="2">Tutar (₺)</option>
-                </select>
-              </div>
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                  placeholder="Maksimum indirim değeri"
-                />
-              </div>
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Minimum Sepet Tutarı *</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="minimumCargoAmount"
-                  value={formData.minimumCargoAmount}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                  placeholder="Minimum sepet tutarı"
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Başlangıç Tarihi *</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Bitiş Tarihi *</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="row mb-4">
-              <div className="col-md-6">
-                <label className="form-label">Durum</label>
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input form-check-input-sm"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleChange}
-                    style={{ transform: "scale(0.7)" }}
-                  />
-                  <label
-                    className="form-check-label"
-                    style={{ fontSize: "0.875rem" }}
-                  >
-                    İndirim aktif
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="d-flex gap-3">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isUpdating}
-              >
-                {isUpdating ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
-                    Güncelleniyor...
-                  </>
-                ) : (
-                  "İndirim Güncelle"
-                )}
-              </button>
-              <Link
-                href="/admin/campaigns/shipping-discount"
-                className="btn btn-outline-secondary"
-              >
-                İptal
-              </Link>
-            </div>
-          </form>
+      {/* Minimum Sipariş Tutarı */}
+      <div className="row mb-3">
+        <div className="col-md-12">
+          <label className="form-label">MİNİMUM SİPARİŞ TUTARI *</label>
+          <input
+            type="number"
+            className="form-control"
+            name="minimumCargoAmount"
+            value={formData.minimumCargoAmount}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
         </div>
       </div>
-    </div>
+    </CampaignFormWrapper>
   );
 }
 

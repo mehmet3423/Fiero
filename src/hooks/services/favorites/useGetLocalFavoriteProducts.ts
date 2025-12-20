@@ -21,12 +21,13 @@ export const useGetLocalFavoriteProducts = (
               favoriteIds.map(async (id) => {
                 const response = await fetch(`${GET_PRODUCT_BY_ID}?id=${id}`);
                 const data = await response.json();
-                // Backend response yapısı değişmiş: data içinde geliyor
-                return data?.data || data;
+                // API response'u data property'si içinde geliyorsa onu çıkar
+                return data.data || data;
               })
             );
             setFavoriteProducts(products);
           } catch (error) {
+            console.error("Favori ürünler getirilirken hata oluştu:", error);
           }
         }
         setIsLoading(false);

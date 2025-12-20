@@ -14,6 +14,7 @@ export const useUpdateProductDiscount = () => {
     const requestBody = {
       id: data.id,
       name: data.name,
+      nameEn: (data as any).nameEn || "",
       description: data.description,
       discountValue: data.discountValue,
       discountValueType: data.discountValueType,

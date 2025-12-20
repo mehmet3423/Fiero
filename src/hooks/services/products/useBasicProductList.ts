@@ -1,6 +1,7 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_BASIC_PRODUCT_LIST } from "@/constants/links";
+import { BaseProductResponse } from "@/constants/models/Product";
 import useGetData from "@/hooks/useGetData";
 
 export interface ProductResponse {
@@ -25,6 +26,8 @@ export interface ProductResponse {
   sellerName?: string;
   createdOnValue: string;
   updatedOnValue?: string;
+  baseProductId?: string;
+  baseProduct?: BaseProductResponse | null;
 }
 
 export const useBasicProductList = () => {
@@ -34,8 +37,7 @@ export const useBasicProductList = () => {
     url: GET_BASIC_PRODUCT_LIST,
     method: HttpMethod.GET,
     queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
-    onError: () => {
-    },
+    onError: () => {},
   });
 
   return {

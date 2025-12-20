@@ -2,56 +2,49 @@ import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_GENERAL_CONTENTS_LIST } from "@/constants/links";
 import {
-  GeneralContentListResponse,
-  GeneralContentType,
   GeneralContentModel,
-  GeneralContentApiResponse,
+  GeneralContentType,
 } from "@/constants/models/GeneralContent";
 import useGetData from "@/hooks/useGetData";
-import { useMemo } from "react";
 
 export const useGeneralContents = (type: GeneralContentType | null) => {
-  const { data, isLoading, error, refetch } = useGetData<
-    | GeneralContentApiResponse
-    | GeneralContentModel[]
-    | GeneralContentListResponse
-  >({
+  const { data, isLoading, error, refetch } = useGetData<any>({
     url:
       type !== null
         ? `${GET_GENERAL_CONTENTS_LIST}?GeneralContentType=${type}`
         : undefined,
     queryKey: [QueryKeys.GENERAL_CONTENTS_LIST, type?.toString()],
     method: HttpMethod.GET,
+    onError: () => {
+      return [];
+    },
   });
 
-  // Handle different response formats
-  const normalizeData = useMemo(() => {
-    if (!data) return { $id: "0", items: [] };
+  // Handle nested API response structure
+  // API can return: { data: [items] } or { data: [{ data: [items] }] }
+  let contents: GeneralContentModel[] = [];
 
-    // If response is the new API format with data, isSucceed, message
-    if ("data" in data && "isSucceed" in data && "message" in data) {
-      return {
-        $id: "0",
-        items: data.data,
-      };
+  if (data?.data) {
+    if (Array.isArray(data.data)) {
+      // Check if first element has nested data structure
+      const firstElement = data.data[0];
+      if (
+        firstElement &&
+        typeof firstElement === "object" &&
+        "data" in firstElement &&
+        Array.isArray(firstElement.data)
+      ) {
+        // Nested structure: { data: [{ data: [items] }] }
+        contents = firstElement.data as GeneralContentModel[];
+      } else {
+        // Direct structure: { data: [items] }
+        contents = data.data as GeneralContentModel[];
+      }
     }
-
-    // If response is a direct array (legacy format)
-    if (Array.isArray(data)) {
-      return {
-        $id: "0",
-        items: data,
-      };
-    }
-
-    // If response is the old wrapped format
-    return data;
-  }, [data]);
-
-  const normalizedData = normalizeData;
+  }
 
   return {
-    contents: normalizedData,
+    contents,
     isLoading,
     error,
     refetchContents: refetch,

@@ -1,8 +1,14 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_CURRENT_USER_AFFILIATE_USER } from "@/constants/links";
-import { AffiliateUserResponse } from "@/constants/models/Affiliate";
+import { AffiliateUser } from "@/constants/models/Affiliate";
 import useGetData from "@/hooks/useGetData";
+
+interface AffiliateUserResponse {
+  data: AffiliateUser;
+  isSucceed: boolean;
+  message: string;
+}
 
 export const useGetMyAffiliateUser = () => {
   const { data, isLoading, error, refetch } = useGetData<AffiliateUserResponse>(

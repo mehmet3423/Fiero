@@ -18,6 +18,7 @@ export const useCreateCartDiscount = () => {
       const params = new URLSearchParams(
         Object.entries({
           Name: data.name,
+          NameEn: (data as any).nameEn || "",
           Description: data.description,
           DiscountValue: data.discountValue.toString(),
           DiscountValueType: data.discountValueType.toString(),

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { CHECK_CANONICAL_EXISTS } from "@/constants/links";
-import { CommandResultWithData } from "@/constants/models/CommandResult";
-import toast from "react-hot-toast";
 
 export interface SeoCheckResponse {
   exists: boolean;
@@ -33,41 +32,14 @@ export const useFetchHtmlContentByCanonical = (
       return;
     }
     setIsLoading(true);
-
-    const fetchData = async () => {
-      try {
-        // Backend logic: canonical her zaman "/" ile başlamalı
-        let canonicalPath = canonicalUrl.trim();
-        if (!canonicalPath.startsWith("/")) {
-          canonicalPath = "/" + canonicalPath;
-        }
-        const response = await fetch(`${CHECK_CANONICAL_EXISTS}?canonicalUrl=${encodeURIComponent(canonicalPath)}&baseUrl=${encodeURIComponent(baseUrl)}`);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result: CommandResultWithData<SeoCheckResponse> = await response.json();
-
-        // Check if the response is successful according to CommandResult structure
-        if (result.isSucceed && result.data) {
-          setData(result.data);
-          setError(null);
-        } else {
-          setError(result.message || "HTML içeriği alınamadı.");
-          setData(null);
-          toast.error(result.message || "HTML içeriği alınamadı.");
-        }
-      } catch (err) {
-        setError("HTML içeriği alınamadı.");
-        setData(null);
-        toast.error("HTML içeriği alınamadı.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+    axios
+      .get(CHECK_CANONICAL_EXISTS, { params: { canonicalUrl, baseUrl } })
+      .then((res) => {
+        setData(res.data?.data || res.data);
+        setError(null);
+      })
+      .catch((err) => setError("HTML içeriği alınamadı."))
+      .finally(() => setIsLoading(false));
   }, [canonicalUrl, baseUrl]);
 
   return { ...data, isLoading, error };

@@ -116,12 +116,12 @@ function ReportsPage() {
       icon: faUndo,
       path: "/admin/reports/product-return-report",
     },
-    {
-      title: "İade Nedeni Raporu",
-      description: "İade nedenlerinin analizi",
-      icon: faChartBar,
-      path: "/admin/reports/return-reason-report",
-    },
+    // {
+    //   title: "İade Nedeni Raporu",
+    //   description: "İade nedenlerinin analizi",
+    //   icon: faChartBar,
+    //   path: "/admin/reports/return-reason-report",
+    // },
     {
       title: "Ürün Sepet Raporu",
       description: "Sepete eklenen ürünlerin analizi",
@@ -144,9 +144,16 @@ function ReportsPage() {
 
   return (
     <div>
-      <h4 className="fw-bold py-3" style={{ marginLeft: "15px" }}>
-        Ürün Raporları
-      </h4>
+      <div className="card bg-transparent border-0 mb-3">
+        <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div>
+            <h4 className="mb-1 fw-bold">Ürün Raporları</h4>
+            <p className="mb-0 text-muted" style={{ fontSize: "0.875rem" }}>
+              Ürünler ile ilgili raporları görüntüleyin ve analiz edin.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="row g-3 m-2">
         {reports.map((report, index) => (

@@ -1,5 +1,21 @@
 import { PaginationModel } from "./Pagination";
 
+export enum ContentLanguage {
+  TR = 0,
+  EN = 1,
+}
+
+export const getContentLanguageName = (language: ContentLanguage): string => {
+  switch (language) {
+    case ContentLanguage.TR:
+      return "Türkçe";
+    case ContentLanguage.EN:
+      return "İngilizce";
+    default:
+      return "Bilinmeyen";
+  }
+};
+
 export enum GeneralContentType {
   // Index_MainCarouselBanner = 1,
   // Index_ShortInfo = 2,
@@ -104,6 +120,7 @@ export interface GeneralContentModel {
   imageUrl?: string; // nullable: true
   willRender: boolean;
   generalContentType: GeneralContentType; // Enum
+  language?: ContentLanguage; // nullable: true
 }
 
 export interface GeneralContentListResponse extends PaginationModel {

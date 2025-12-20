@@ -17,11 +17,21 @@ export default function AdminSupportTicketsPage() {
         {/* Kompakt Başlık ve Tab Navigation */}
         <div className="row mb-3">
           <div className="col-12">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0">
-                <i className="bx bx-support me-2"></i>
-                Destek Talepleri
-              </h5>
+            <div className="card bg-transparent border-0 mb-3">
+              <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <div>
+                  <h4 className="mb-1 fw-bold">
+                    <i className="bx bx-support me-2"></i>
+                    Destek Talepleri
+                  </h4>
+                  <p
+                    className="mb-0 text-muted"
+                    style={{ fontSize: "0.875rem" }}
+                  >
+                    Kullanıcı destek taleplerini yönetin ve inceleyin.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Kompakt Tab Navigation */}

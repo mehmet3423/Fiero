@@ -9,25 +9,20 @@ export const useDeleteSystemSetting = () => {
   const { mutateAsync, isPending } = useMyMutation<void>();
 
   const deleteSystemSetting = async (id: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: DELETE_SYSTEM_SETTING,
-          method: HttpMethod.DELETE,
-          data: { id },
+    await mutateAsync(
+      {
+        url: DELETE_SYSTEM_SETTING,
+        method: HttpMethod.DELETE,
+        data: { id },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.SYSTEM_SETTINGS],
+          });
         },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.SYSTEM_SETTINGS],
-            });
-          },
-        }
-      );
-    } catch (error) {
-      // Error'ı yeniden throw et ki page component yakalayabilsin
-      throw error;
-    }
+      }
+    );
   };
 
   return { deleteSystemSetting, isPending };

@@ -21,7 +21,7 @@ export const useGetUserReviews = (customerId: string) => {
   });
 
   return {
-    reviews: data?.data?.items,
+    reviews: data?.items,
     isLoading,
     error,
     refetchReviews: refetch,

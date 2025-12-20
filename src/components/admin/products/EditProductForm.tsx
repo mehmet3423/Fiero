@@ -1,11 +1,6 @@
 import { UpdateDtoProduct } from "@/constants/models/DtoProduct";
 import { Product } from "@/constants/models/Product";
-import { ProductSpecification } from "@/constants/models/ProductSpecification";
 import { uploadImageToCloudinary } from "@/helpers/imageUpload";
-import { useGetProductSpecifications } from "@/hooks/services/product-specifications/useGetProductSpecifications";
-import { useAddProductSpecification } from "@/hooks/services/product-specifications/useAddProductSpecification";
-import { useUpdateProductSpecification } from "@/hooks/services/product-specifications/useUpdateProductSpecification";
-import { useDeleteProductSpecification } from "@/hooks/services/product-specifications/useDeleteProductSpecification";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
@@ -23,26 +18,25 @@ export default function EditProductForm({
 }: EditProductFormProps) {
   const [formData, setFormData] = useState<UpdateDtoProduct>({
     title: product.title,
-    titleEn: (product as any).titleEn || null,
+    titleEn: product.titleEn || "",
     description: product.description,
-    descriptionEn: (product as any).descriptionEn || null,
+    descriptionEn: product.descriptionEn || "",
     price: product.price,
     stockCode: product.stockCode,
     sellableQuantity: product.sellableQuantity,
     barcodeNumber: product.barcodeNumber,
     baseImageUrl: product.baseImageUrl,
-    baseImageUrlEn: (product as any).baseImageUrlEn || null,
+    baseImageUrlEn: product.baseImageUrlEn || "",
     contentImageUrls: product.contentImageUrls,
-    contentImageUrlsEn: (product as any).contentImageUrlsEn || null,
+    contentImageUrlsEn: product.contentImageUrlsEn || [],
     banner: product.banner,
-    bannerEn: (product as any).bannerEn || null,
+    bannerEn: product.bannerEn || [],
+    videoUrl: product.videoUrl,
+    videoUrlEn: product.videoUrlEn || "",
     subCategoryId: product.subCategoryId,
     isAvailable: product.isAvailable,
     refundable: product.refundable,
     isOutlet: product.isOutlet,
-    videoUrl: (product as any).videoUrl || "",
-    videoUrlEn: (product as any).videoUrlEn || null,
-    productInfos: product.productInfos || [],
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -54,63 +48,17 @@ export default function EditProductForm({
   const [contentPreviewUrls, setContentPreviewUrls] = useState<string[]>([]);
   const [bannerPreviewUrls, setBannerPreviewUrls] = useState<string[]>([]);
 
-  // Product specifications state
-  const {
-    productSpecifications: apiSpecifications,
-    isLoading: specificationsLoading,
-  } = useGetProductSpecifications(product.id);
-
-  // Local state for managing specifications
-  const [localProductSpecifications, setLocalProductSpecifications] = useState<
-    ProductSpecification[]
+  // Product info state
+  const [productInfos, setProductInfos] = useState<
+    Array<{
+      id?: string;
+      title: string;
+      titleEn?: string;
+      description: string;
+      descriptionEn?: string;
+      icon: string;
+    }>
   >([]);
-
-  // Initialize local specifications when data is available
-  useEffect(() => {
-    // Check if product has productOnlySpecifications property
-    const productSpecs = (product as any).productOnlySpecifications;
-    if (
-      productSpecs &&
-      Array.isArray(productSpecs) &&
-      productSpecs.length > 0
-    ) {
-      // Use data from product prop
-      const convertedSpecs = productSpecs.map((spec: any) => ({
-        $id: spec.$id,
-        id: spec.id,
-        name: spec.name,
-        value: spec.value,
-      }));
-      setLocalProductSpecifications(convertedSpecs);
-    } else if (
-      apiSpecifications &&
-      Array.isArray(apiSpecifications) &&
-      apiSpecifications.length > 0
-    ) {
-      // Use data from API call
-      setLocalProductSpecifications(apiSpecifications);
-    }
-  }, [(product as any).productOnlySpecifications, apiSpecifications]);
-
-  const { addProductSpecification, isPending: addingSpecification } =
-    useAddProductSpecification();
-  const { updateProductSpecification, isPending: updatingSpecification } =
-    useUpdateProductSpecification();
-  const { deleteProductSpecification, isPending: deletingSpecification } =
-    useDeleteProductSpecification();
-
-  // Modal states for specifications
-  const [showAddSpecModal, setShowAddSpecModal] = useState(false);
-  const [showEditSpecModal, setShowEditSpecModal] = useState(false);
-  const [showDeleteSpecModal, setShowDeleteSpecModal] = useState(false);
-  const [newSpecName, setNewSpecName] = useState("");
-  const [newSpecValue, setNewSpecValue] = useState("");
-  const [editingSpec, setEditingSpec] = useState<ProductSpecification | null>(
-    null
-  );
-  const [editSpecName, setEditSpecName] = useState("");
-  const [editSpecValue, setEditSpecValue] = useState("");
-  const [deletingSpecId, setDeletingSpecId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -159,23 +107,56 @@ export default function EditProductForm({
         setPreviewUrl(product.baseImageUrl);
       }
 
+      // Handle productInfos
+      let productInfosData: Array<{
+        id?: string;
+        title: string;
+        titleEn?: string;
+        description: string;
+        descriptionEn?: string;
+        icon: string;
+      }> = [];
+
+      if (product.productInfos && Array.isArray(product.productInfos)) {
+        productInfosData = product.productInfos;
+      } else if (
+        product.productInfos &&
+        typeof product.productInfos === "object" &&
+        "$values" in (product.productInfos as any)
+      ) {
+        const values = (product.productInfos as any).$values;
+        if (Array.isArray(values)) {
+          productInfosData = values;
+        }
+      }
+
+      setProductInfos(productInfosData);
+
       setFormData({
         title: product.title,
+        titleEn: product.titleEn || "",
         description: product.description,
+        descriptionEn: product.descriptionEn || "",
         price: product.price,
         stockCode: product.stockCode,
         sellableQuantity: product.sellableQuantity,
         barcodeNumber: product.barcodeNumber,
         baseImageUrl: product.baseImageUrl,
+        baseImageUrlEn: product.baseImageUrlEn || "",
         contentImageUrls: contentUrls,
+        contentImageUrlsEn: product.contentImageUrlsEn || [],
         banner: bannerUrls,
+        bannerEn: product.bannerEn || [],
+        videoUrl: product.videoUrl,
+        videoUrlEn: product.videoUrlEn || "",
         subCategoryId: product.subCategoryId,
         isAvailable: product.isAvailable,
         refundable: product.refundable,
         isOutlet: product.isOutlet,
-        productInfos: product.productInfos || [],
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Resim verilerini işlerken hata oluştu:", error);
+    }
   }, [product]);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,8 +166,12 @@ export default function EditProductForm({
         toast.error("Dosya boyutu çok büyük (max 10MB)");
         return;
       }
-      if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-        toast.error("Sadece JPG, JPEG ve PNG formatları desteklenir");
+      if (
+        !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+          file.type
+        )
+      ) {
+        toast.error("Sadece JPG, JPEG, PNG ve WebP formatları desteklenir");
         return;
       }
       setSelectedImage(file);
@@ -204,8 +189,14 @@ export default function EditProductForm({
           if (file.size > 10000000) {
             throw new Error("Dosya boyutu çok büyük (max 10MB)");
           }
-          if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-            throw new Error("Sadece JPG, JPEG ve PNG formatları desteklenir");
+          if (
+            !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+              file.type
+            )
+          ) {
+            throw new Error(
+              "Sadece JPG, JPEG, PNG ve WebP formatları desteklenir"
+            );
           }
         });
 
@@ -234,8 +225,14 @@ export default function EditProductForm({
           if (file.size > 10000000) {
             throw new Error("Dosya boyutu çok büyük (max 10MB)");
           }
-          if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-            throw new Error("Sadece JPG, JPEG ve PNG formatları desteklenir");
+          if (
+            !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+              file.type
+            )
+          ) {
+            throw new Error(
+              "Sadece JPG, JPEG, PNG ve WebP formatları desteklenir"
+            );
           }
         });
 
@@ -272,104 +269,25 @@ export default function EditProductForm({
     }));
   };
 
-  // Product specification handlers
-  const handleAddSpecification = async () => {
-    if (!newSpecName.trim() || !newSpecValue.trim()) {
-      toast.error("Lütfen özellik adı ve değerini giriniz");
-      return;
-    }
-
-    try {
-      await addProductSpecification(
-        product.id,
-        newSpecName.trim(),
-        newSpecValue.trim()
-      );
-
-      // Add to local state immediately for UI update
-      const newSpec: ProductSpecification = {
-        $id: `temp_${Date.now()}`,
-        id: `temp_${Date.now()}`,
-        name: newSpecName.trim(),
-        value: newSpecValue.trim(),
-      };
-      setLocalProductSpecifications((prev) => [...prev, newSpec]);
-
-      setNewSpecName("");
-      setNewSpecValue("");
-      setShowAddSpecModal(false);
-      toast.success("Özellik başarıyla eklendi");
-    } catch (error) {
-      toast.error("Özellik eklenirken bir hata oluştu");
-    }
+  // Product info handlers
+  const addProductInfo = () => {
+    const newInfo = { title: "", titleEn: "", description: "", descriptionEn: "", icon: "" };
+    setProductInfos([...productInfos, newInfo]);
   };
 
-  const handleEditSpecification = async () => {
-    if (!editingSpec || !editSpecName.trim() || !editSpecValue.trim()) {
-      toast.error("Lütfen özellik adı ve değerini giriniz");
-      return;
-    }
-
-    try {
-      await updateProductSpecification(
-        editingSpec.id,
-        editSpecName.trim(),
-        editSpecValue.trim(),
-        product.id
-      );
-
-      // Update local state immediately for UI update
-      setLocalProductSpecifications((prev) =>
-        prev.map((spec) =>
-          spec.id === editingSpec.id
-            ? {
-                ...spec,
-                name: editSpecName.trim(),
-                value: editSpecValue.trim(),
-              }
-            : spec
-        )
-      );
-
-      setEditingSpec(null);
-      setEditSpecName("");
-      setEditSpecValue("");
-      setShowEditSpecModal(false);
-      toast.success("Özellik başarıyla güncellendi");
-    } catch (error) {
-      toast.error("Özellik güncellenirken bir hata oluştu");
-    }
+  const removeProductInfo = (index: number) => {
+    const updatedInfos = productInfos.filter((_, i) => i !== index);
+    setProductInfos(updatedInfos);
   };
 
-  const handleDeleteSpecification = async () => {
-    if (!deletingSpecId) return;
-
-    try {
-      await deleteProductSpecification(deletingSpecId, product.id);
-
-      // Remove from local state immediately for UI update
-      setLocalProductSpecifications((prev) =>
-        prev.filter((spec) => spec.id !== deletingSpecId)
-      );
-
-      setDeletingSpecId(null);
-      setShowDeleteSpecModal(false);
-      toast.success("Özellik başarıyla silindi");
-    } catch (error) {
-      toast.error("Özellik silinirken bir hata oluştu");
-    }
-  };
-
-  const openEditSpecModal = (spec: ProductSpecification) => {
-    setEditingSpec(spec);
-    setEditSpecName(spec.name);
-    setEditSpecValue(spec.value);
-    setShowEditSpecModal(true);
-  };
-
-  const openDeleteSpecModal = (specId: string) => {
-    setDeletingSpecId(specId);
-    setShowDeleteSpecModal(true);
+  const updateProductInfo = (
+    index: number,
+    field: "title" | "titleEn" | "description" | "descriptionEn" | "icon",
+    value: string
+  ) => {
+    const updatedInfos = [...productInfos];
+    updatedInfos[index] = { ...updatedInfos[index], [field]: value };
+    setProductInfos(updatedInfos);
   };
 
   return (
@@ -417,11 +335,28 @@ export default function EditProductForm({
             bannerUrls = [...existingUrls, ...results.map((r) => r.secure_url)];
           }
 
+          // productInfos'u update ve create olarak ayır
+          const updateProductInfos = productInfos.filter(
+            (info) => info.id
+          ) as Array<{
+            id: string;
+            title: string;
+            titleEn?: string;
+            description: string;
+            descriptionEn?: string;
+            icon: string;
+          }>;
+          const createProductInfos = productInfos
+            .filter((info) => !info.id)
+            .map(({ id, ...rest }) => rest);
+
           await onSubmit(product.id, {
             ...formData,
             baseImageUrl,
             contentImageUrls,
             banner: bannerUrls,
+            updateProductInfos,
+            createProductInfos,
           });
         } catch (error) {
           if (error instanceof Error) {
@@ -449,31 +384,16 @@ export default function EditProductForm({
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label>Başlık (İngilizce):</label>
+            <label>
+              Başlık (İngilizce) <span className="text-muted">(Opsiyonel)</span>
+            </label>
             <input
               type="text"
               className="form-control"
               value={formData.titleEn || ""}
               onChange={(e) =>
-                setFormData({ ...formData, titleEn: e.target.value || null })
+                setFormData({ ...formData, titleEn: e.target.value })
               }
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-md-6">
-          <div className="form-group">
-            <label>Fiyat:</label>
-            <input
-              type="number"
-              className="form-control"
-              value={formData.price}
-              onChange={(e) =>
-                setFormData({ ...formData, price: Number(e.target.value) })
-              }
-              required
             />
           </div>
         </div>
@@ -496,12 +416,14 @@ export default function EditProductForm({
         </div>
         <div className="col-md-6">
           <div className="form-group">
-            <label>Açıklama (İngilizce):</label>
+            <label>
+              Açıklama (İngilizce) <span className="text-muted">(Opsiyonel)</span>
+            </label>
             <textarea
               className="form-control"
               value={formData.descriptionEn || ""}
               onChange={(e) =>
-                setFormData({ ...formData, descriptionEn: e.target.value || null })
+                setFormData({ ...formData, descriptionEn: e.target.value })
               }
               rows={3}
             />
@@ -510,6 +432,20 @@ export default function EditProductForm({
       </div>
 
       <div className="row">
+        <div className="col-md-4">
+          <div className="form-group">
+            <label>Fiyat:</label>
+            <input
+              type="number"
+              className="form-control"
+              value={formData.price}
+              onChange={(e) =>
+                setFormData({ ...formData, price: Number(e.target.value) })
+              }
+              required
+            />
+          </div>
+        </div>
         <div className="col-md-4">
           <div className="form-group">
             <label>Stok Miktarı:</label>
@@ -550,76 +486,145 @@ export default function EditProductForm({
         </div>
       </div>
       <div className="row">
-        <div className="col-md-4 mb-3 small">
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="isAvailableCheckbox"
-              style={{ cursor: "pointer", width: "1em", height: "1em" }}
-              checked={formData.isAvailable}
-              onChange={(e) =>
-                setFormData({ ...formData, isAvailable: e.target.checked })
-              }
-            />
-            <label
-              className="form-check-label fw-bold ml-3"
-              htmlFor="isAvailableCheckbox"
-            >
-              Ürün Mevcut
-            </label>
+        <div className="col-md-3">
+          <div className="form-group">
+            <label className="form-label">Ürün Durumu:</label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="refundableCheckbox"
+                style={{ cursor: "pointer" }}
+                checked={formData.refundable}
+                onChange={(e) =>
+                  setFormData({ ...formData, refundable: e.target.checked })
+                }
+              />
+              <label className="form-check-label" htmlFor="refundableCheckbox">
+                İade Edilebilir
+              </label>
+            </div>
           </div>
-          <small className="text-muted">
-            Ürünün satışa açık olup olmadığını belirler
-          </small>
         </div>
-
-        <div className="col-md-4 mb-3 small">
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="isOutletCheckbox"
-              style={{ cursor: "pointer", width: "1em", height: "1em" }}
-              checked={formData.isOutlet}
-              onChange={(e) =>
-                setFormData({ ...formData, isOutlet: e.target.checked })
-              }
-            />
-            <label
-              className="form-check-label fw-bold ml-3"
-              htmlFor="isOutletCheckbox"
-            >
-              Outlet Ürünü
-            </label>
+        <div className="col-md-3">
+          <div className="form-group">
+            <label className="form-label">Ürün Durumu:</label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="isAvailableCheckbox"
+                style={{ cursor: "pointer" }}
+                checked={formData.isAvailable}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAvailable: e.target.checked })
+                }
+              />
+              <label className="form-check-label" htmlFor="isAvailableCheckbox">
+                Satışa Açık
+              </label>
+            </div>
           </div>
-          <small className="text-muted">
-            Ürünün outlet kategorisinde gösterilip gösterilmeyeceğini belirler
-          </small>
         </div>
-
-        <div className="col-md-4 mb-3 small">
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="refundableCheckbox"
-              style={{ cursor: "pointer", width: "1em", height: "1em" }}
-              checked={formData.refundable}
-              onChange={(e) =>
-                setFormData({ ...formData, refundable: e.target.checked })
-              }
-            />
-            <label
-              className="form-check-label fw-bold ml-3"
-              htmlFor="refundableCheckbox"
-            >
-              İade Edilebilir
-            </label>
+        <div className="col-md-3">
+          <div className="form-group">
+            <label className="form-label">Ürün Durumu:</label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="isOutletCheckbox"
+                style={{ cursor: "pointer" }}
+                checked={formData.isOutlet}
+                onChange={(e) =>
+                  setFormData({ ...formData, isOutlet: e.target.checked })
+                }
+              />
+              <label className="form-check-label" htmlFor="isOutletCheckbox">
+                Outlet Ürün
+              </label>
+            </div>
           </div>
-          <small className="text-muted">
-            Ürünün iade edilip edilemeyeceğini belirler
-          </small>
+        </div>
+      </div>
+
+      {/* Product Info Section */}
+      <div className="form-group">
+        <label className="mt-3">Ürün Bilgileri:</label>
+        <div className="card border p-3">
+          {productInfos.map((info, index) => (
+            <div key={index} className="row g-2 mb-3 p-3 border rounded">
+              <div className="col-md-3">
+                <label className="form-label small">Başlık</label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  value={info.title}
+                  onChange={(e) =>
+                    updateProductInfo(index, "title", e.target.value)
+                  }
+                  placeholder="Örn: Garanti"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small">
+                  Başlık (EN) <span className="text-muted">(Opsiyonel)</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  value={info.titleEn || ""}
+                  onChange={(e) =>
+                    updateProductInfo(index, "titleEn", e.target.value)
+                  }
+                  placeholder="e.g. Warranty"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small">Açıklama</label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  value={info.description}
+                  onChange={(e) =>
+                    updateProductInfo(index, "description", e.target.value)
+                  }
+                  placeholder="Örn: 2 yıl garanti"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small">
+                  Açıklama (EN) <span className="text-muted">(Opsiyonel)</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  value={info.descriptionEn || ""}
+                  onChange={(e) =>
+                    updateProductInfo(index, "descriptionEn", e.target.value)
+                  }
+                  placeholder="e.g. 2 years warranty"
+                />
+              </div>
+              <div className="col-md-1 d-flex align-items-end">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger"
+                  onClick={() => removeProductInfo(index)}
+                >
+                  <i className="bx bx-trash"></i>
+                </button>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm"
+            onClick={addProductInfo}
+          >
+            <i className="bx bx-plus me-1"></i>
+            Bilgi Ekle
+          </button>
         </div>
       </div>
 
@@ -628,7 +633,7 @@ export default function EditProductForm({
         <div className="d-flex align-items-center gap-3">
           <input
             type="file"
-            accept="image/png,image/jpeg,image/jpg"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
             className="form-control"
             onChange={handleImageSelect}
             disabled={isLoading}
@@ -665,7 +670,7 @@ export default function EditProductForm({
         <div className="d-flex align-items-center gap-3 flex-wrap">
           <input
             type="file"
-            accept="image/png,image/jpeg,image/jpg"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
             className="form-control"
             onChange={handleContentImagesSelect}
             multiple
@@ -713,7 +718,7 @@ export default function EditProductForm({
         <div className="d-flex align-items-center gap-3 flex-wrap">
           <input
             type="file"
-            accept="image/png,image/jpeg,image/jpg"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
             className="form-control"
             onChange={handleBannerImagesSelect}
             disabled={isLoading || bannerPreviewUrls.length >= 1}
@@ -752,432 +757,6 @@ export default function EditProductForm({
           Sadece 1 banner resmi ekleyebilirsiniz. ({bannerPreviewUrls.length}/1)
         </small>
       </div>
-
-      {/* Ürün Bilgileri (Materyal & Bakım vb.) */}
-      <div className="form-group">
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <label className="mb-0">Ürün Bilgileri (Materyal, Bakım vb.):</label>
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => {
-              setFormData((prev) => ({
-                ...prev,
-                productInfos: [
-                  ...(prev.productInfos || []),
-                  { title: "", description: "", icon: "icon-info" },
-                ],
-              }));
-            }}
-          >
-            <i className="bx bx-plus me-1"></i> Bilgi Ekle
-          </button>
-        </div>
-        
-        <div className="card border p-3 bg-light">
-          {formData.productInfos && formData.productInfos.length > 0 ? (
-            <div className="d-flex flex-column gap-2">
-              {formData.productInfos.map((info, index) => (
-                <div key={index} className="card p-2 border bg-white">
-                  <div className="row g-2 align-items-end">
-                    <div className="col-md-2">
-                      <label className="form-label small">Başlık</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        placeholder="Örn: Materyal"
-                        value={info.title}
-                        onChange={(e) => {
-                          const newInfos = [...(formData.productInfos || [])];
-                          newInfos[index].title = e.target.value;
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-2">
-                      <label className="form-label small">Başlık (İngilizce)</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        placeholder="Örn: Material"
-                        value={info.titleEn || ""}
-                        onChange={(e) => {
-                          const newInfos = [...(formData.productInfos || [])];
-                          newInfos[index].titleEn = e.target.value || null;
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-2">
-                      <label className="form-label small">İkon (Class)</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        placeholder="Örn: icon-machine"
-                        value={info.icon}
-                        onChange={(e) => {
-                          const newInfos = [...(formData.productInfos || [])];
-                          newInfos[index].icon = e.target.value;
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-3">
-                      <label className="form-label small">Açıklama</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        placeholder="Örn: %100 Pamuk"
-                        value={info.description}
-                        onChange={(e) => {
-                          const newInfos = [...(formData.productInfos || [])];
-                          newInfos[index].description = e.target.value;
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-2">
-                      <label className="form-label small">Açıklama (İngilizce)</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        placeholder="Örn: 100% Cotton"
-                        value={info.descriptionEn || ""}
-                        onChange={(e) => {
-                          const newInfos = [...(formData.productInfos || [])];
-                          newInfos[index].descriptionEn = e.target.value || null;
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-1 text-end">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-danger"
-                        onClick={() => {
-                          const newInfos = (formData.productInfos || []).filter((_, i) => i !== index);
-                          setFormData((prev) => ({ ...prev, productInfos: newInfos }));
-                        }}
-                      >
-                        <i className="bx bx-trash"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-muted small py-2">
-              Henüz eklenmiş ürün bilgisi yok.
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Product Specifications Section */}
-      <div className="form-group">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <label className="mb-0">Ürün Özellikleri:</label>
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => setShowAddSpecModal(true)}
-            disabled={addingSpecification}
-          >
-            <i className="bx bx-plus me-1"></i>
-            Özellik Ekle
-          </button>
-        </div>
-
-        {specificationsLoading ? (
-          <div className="text-center py-3">
-            <div className="spinner-border spinner-border-sm" role="status">
-              <span className="visually-hidden">Yükleniyor...</span>
-            </div>
-          </div>
-        ) : localProductSpecifications &&
-          localProductSpecifications.length > 0 ? (
-          <div className="table-responsive">
-            <table className="table table-sm table-bordered">
-              <thead>
-                <tr style={{ textAlign: "center" }}>
-                  <th>Özellik Adı</th>
-                  <th>Değer</th>
-                  <th style={{ width: "100px" }}>İşlemler</th>
-                </tr>
-              </thead>
-              <tbody>
-                {localProductSpecifications.map((spec: any) => (
-                  <tr key={spec.id} style={{ textAlign: "center" }}>
-                    <td style={{ fontSize: "0.85rem" }}>{spec.name}</td>
-                    <td style={{ fontSize: "0.85rem" }}>{spec.value}</td>
-                    <td>
-                      <div className="d-flex">
-                        <button
-                          type="button"
-                          className="ml-3 bg-dark text-white"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            border: "none",
-                          }}
-                          onClick={() => openEditSpecModal(spec)}
-                          disabled={updatingSpecification}
-                          title="Düzenle"
-                        >
-                          <i className="bx bx-edit"></i>
-                        </button>
-                        <button
-                          type="button"
-                          className="ml-1 bg-danger text-white"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            border: "none",
-                          }}
-                          onClick={() => openDeleteSpecModal(spec.id)}
-                          disabled={deletingSpecification}
-                          title="Sil"
-                        >
-                          <i className="bx bx-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-3 text-muted">
-            <i className="bx bx-info-circle me-1"></i>
-            Bu ürün için henüz özellik eklenmemiş
-          </div>
-        )}
-      </div>
-
-      {/* Add Specification Modal */}
-      {showAddSpecModal && (
-        <div
-          className="modal show d-block"
-          tabIndex={-1}
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Yeni Özellik Ekle</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => {
-                    setShowAddSpecModal(false);
-                    setNewSpecName("");
-                    setNewSpecValue("");
-                  }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label">Özellik Adı</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={newSpecName}
-                    onChange={(e) => setNewSpecName(e.target.value)}
-                    placeholder="Örn: Renk, Boyut, Materyal"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Değer</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={newSpecValue}
-                    onChange={(e) => setNewSpecValue(e.target.value)}
-                    placeholder="Örn: Kırmızı, Large, Pamuk"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowAddSpecModal(false);
-                    setNewSpecName("");
-                    setNewSpecValue("");
-                  }}
-                >
-                  İptal
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={addingSpecification}
-                  onClick={handleAddSpecification}
-                >
-                  {addingSpecification ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-1"
-                        role="status"
-                      ></span>
-                      Ekleniyor...
-                    </>
-                  ) : (
-                    "Ekle"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Specification Modal */}
-      {showEditSpecModal && editingSpec && (
-        <div
-          className="modal show d-block"
-          tabIndex={-1}
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Özellik Düzenle</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => {
-                    setShowEditSpecModal(false);
-                    setEditingSpec(null);
-                    setEditSpecName("");
-                    setEditSpecValue("");
-                  }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label">Özellik Adı</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={editSpecName}
-                    onChange={(e) => setEditSpecName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Değer</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={editSpecValue}
-                    onChange={(e) => setEditSpecValue(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowEditSpecModal(false);
-                    setEditingSpec(null);
-                    setEditSpecName("");
-                    setEditSpecValue("");
-                  }}
-                >
-                  İptal
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={updatingSpecification}
-                  onClick={handleEditSpecification}
-                >
-                  {updatingSpecification ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-1"
-                        role="status"
-                      ></span>
-                      Güncelleniyor...
-                    </>
-                  ) : (
-                    "Güncelle"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Specification Modal */}
-      {showDeleteSpecModal && (
-        <div
-          className="modal show d-block"
-          tabIndex={-1}
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Özellik Sil</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => {
-                    setShowDeleteSpecModal(false);
-                    setDeletingSpecId(null);
-                  }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>
-                  Bu özelliği silmek istediğinizden emin misiniz? Bu işlem geri
-                  alınamaz.
-                </p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowDeleteSpecModal(false);
-                    setDeletingSpecId(null);
-                  }}
-                >
-                  İptal
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={handleDeleteSpecification}
-                  disabled={deletingSpecification}
-                >
-                  {deletingSpecification ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-1"
-                        role="status"
-                      ></span>
-                      Siliniyor...
-                    </>
-                  ) : (
-                    "Sil"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </form>
   );
 }

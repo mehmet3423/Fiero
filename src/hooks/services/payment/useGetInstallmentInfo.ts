@@ -18,9 +18,10 @@ export const useGetInstallmentInfo = () => {
     try {
       const params = new URLSearchParams({
         price: installmentData.price,
-        userPaymentCardId: installmentData.userPaymentCardId,
+        cardToken: installmentData.cardToken,
         conversationId: installmentData.conversationId,
         locale: "0",
+        binNumber: installmentData.binNumber,
       });
 
       const response = await mutateAsync({
@@ -30,11 +31,10 @@ export const useGetInstallmentInfo = () => {
 
       // Check if the response is successful according to CommandResult structure
       if (!response.data.isSucceed || !response.data.data) {
-        toast.error(response.data.message || "Failed to get installment info");
-        throw new Error(response.data.message || "Failed to get installment info");
+        toast.error(response.data.message || "Taksit bilgileri alınamadı");
+        throw new Error(response.data.message || "Taksit bilgileri alınamadı");
       }
 
-      toast.success("Installment info retrieved successfully");
       return response.data;
     } catch (error) {
       throw error;

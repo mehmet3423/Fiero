@@ -10,7 +10,9 @@ export const useUpdateBuyXPayYDiscount = () => {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMyMutation<BuyYPayXDiscount>();
 
-  const updateDiscount = async (data: BuyYPayXDiscount) => {
+  const updateDiscount = async (
+    data: BuyYPayXDiscount & { productIds?: string[] }
+  ) => {
     const requestBody = {
       id: data.id,
       buyXCount: data.buyXCount,
@@ -25,7 +27,7 @@ export const useUpdateBuyXPayYDiscount = () => {
       isActive: data.isActive,
       isRepeatable: data.isRepeatable,
       maxRepeatPerOrder: data.maxFreeProductPerOrder,
-      productIds: data.buyXPayYProducts,
+      productIds: data.productIds || data.buyXPayYProducts,
     };
 
     await mutateAsync(

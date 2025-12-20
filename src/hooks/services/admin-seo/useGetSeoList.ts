@@ -1,10 +1,8 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_SEO_LIST } from "@/constants/links";
-import { CommandResultWithData } from "@/constants/models/CommandResult";
 import { PaginationModel } from "@/constants/models/Pagination";
 import useGetData from "@/hooks/useGetData";
-import toast from "react-hot-toast";
 
 interface SeoListItem {
   id: string;
@@ -59,29 +57,18 @@ export const useGetSeoList = (params: SeoListParams = {}, enabled = true) => {
   if (params.subCategoryId)
     queryParams.append("SubCategoryId", params.subCategoryId);
 
-  const { data, isLoading, error, refetch } = useGetData<CommandResultWithData<SeoListResponse>>({
+  const { data, isLoading, error, refetch } = useGetData<SeoListResponse>({
     url: `${GET_SEO_LIST}?${queryParams.toString()}`,
     queryKey: [QueryKeys.SEO, "list", JSON.stringify(params)],
     method: HttpMethod.GET,
     enabled,
-    onError: (err) => {
-      toast.error("SEO listesi alınırken bir hata oluştu");
-    },
   });
 
-  // Check if the response is successful according to CommandResult structure
-  const seoListData = data?.isSucceed && data?.data ? data.data : null;
-
-  // Show error toast if the response indicates failure
-  if (data && !data.isSucceed && data.message) {
-    toast.error(data.message);
-  }
-
   return {
-    seoList: seoListData?.items || [],
-    totalCount: seoListData?.count || 0,
-    pageCount: seoListData?.pages || 0,
-    currentPage: seoListData?.index ? seoListData.index + 1 : 1, // API 0-based, UI 1-based
+    seoList: data?.items || [],
+    totalCount: data?.count || 0,
+    pageCount: data?.pages || 0,
+    currentPage: data?.index ? data.index + 1 : 1, // API 0-based, UI 1-based
     isLoading,
     error,
     refetch,

@@ -23,6 +23,7 @@ export const useLogout = () => {
         }
       );
     } catch (error) {
+      console.error("Logout error:", error);
     }
   };
 

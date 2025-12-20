@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
 import { DiscountType } from "@/constants/enums/DiscountType";
-import { WeekdayDiscount } from "@/constants/models/Discount";
-import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
+import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
 import { useUpdateWeekdayDiscount } from "@/hooks/services/discounts/weekday-dicount/useUpdateWeekdayDiscount";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface WeekdayDiscountForm {
   name: string;
+  nameEn: string;
   description: string;
   discountValue: number;
   discountValueType: number;
@@ -20,79 +20,59 @@ interface WeekdayDiscountForm {
   isWithinActiveDateRange: boolean;
 }
 
-function EditWeekdayDiscount() {
+export default function EditWeekdayDiscount() {
   const router = useRouter();
   const { id } = router.query;
+  const { updateDiscount, isPending: isUpdating } = useUpdateWeekdayDiscount();
+  const { discount, isLoading: discountLoading } = useGetDiscountById(
+    id as string
+  );
 
-  // Fetch discount data for edit mode
-  const { discounts: allDiscounts, isLoading: isLoadingDiscounts } =
-    useGetDiscountList({
-      discountType: DiscountType.WeekdayDiscount,
-    });
-
-
-  const { updateDiscount, isPending } = useUpdateWeekdayDiscount();
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-  useEffect(() => {
-    if (id && allDiscounts.length > 0 && !isDataLoaded) {
-      // ID'yi string olarak karşılaştır (router.query string döner)
-      const discount = allDiscounts.find(
-        (d) => d.id === String(id)
-      ) as WeekdayDiscount;
-      if (discount) {
-        const dayOfWeek = Number(discount.weekdayDiscount?.dayOfWeek ?? 1);
-
-        setFormData({
-          name: discount.name,
-          description: discount.description || "",
-          discountValue: discount.discountValue,
-          discountValueType: discount.discountValueType,
-          maxDiscountValue: discount.maxDiscountValue ?? 0,
-          startDate: discount.startDate.includes("T")
-            ? discount.startDate.slice(0, 16)
-            : new Date(discount.startDate).toISOString().slice(0, 16),
-          endDate: discount.endDate.includes("T")
-            ? discount.endDate.slice(0, 16)
-            : new Date(discount.endDate).toISOString().slice(0, 16),
-          dayOfWeek: dayOfWeek,
-          isActive: discount.isActive,
-          type: DiscountType.WeekdayDiscount,
-          isWithinActiveDateRange: discount.isWithinActiveDateRange ?? false,
-        });
-        setIsDataLoaded(true);
-
-      } else {
-      }
-    }
-  }, [id, allDiscounts, isDataLoaded]);
   const [formData, setFormData] = useState<WeekdayDiscountForm>({
     name: "",
+    nameEn: "",
     description: "",
     discountValue: 0,
     discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
-    dayOfWeek: 1, // Default: Pazartesi
+    dayOfWeek: 1,
     isActive: true,
     type: DiscountType.WeekdayDiscount,
     isWithinActiveDateRange: false,
   });
 
+  useEffect(() => {
+    if (discount) {
+      setFormData({
+        name: discount.name || "",
+        nameEn: (discount as any).nameEn || "",
+        description: discount.description || "",
+        discountValue: discount.discountValue || 0,
+        discountValueType: discount.discountValueType || 1,
+        maxDiscountValue: discount.maxDiscountValue || 0,
+        startDate: discount.startDate || "",
+        endDate: discount.endDate || "",
+        isActive: discount.isActive ?? true,
+        type: DiscountType.WeekdayDiscount,
+        isWithinActiveDateRange: false,
+        dayOfWeek: discount.weekdayDiscount?.dayOfWeek ?? 1,
+      });
+    }
+  }, [discount]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const apiData: WeekdayDiscount = {
-        id: String(id),
+      await updateDiscount({
+        id: id as string,
         ...formData,
-        createdOn: 0, // API dolduracaksa 0 bırak
-        createdOnValue: "", // API dolduracaksa boş bırak
-      };
-      await updateDiscount(apiData);
+        createdOn: Date.now(),
+        createdOnValue: new Date().toISOString(),
+      });
       router.push("/admin/campaigns/weekday-discount");
-    } catch (error) {
-    }
+    } catch (error) { }
   };
 
   const handleChange = (
@@ -104,7 +84,7 @@ function EditWeekdayDiscount() {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : name === "dayOfWeek" || name === "discountValueType"
+          : name === "discountValueType" || name === "dayOfWeek"
             ? Number(value)
             : type === "number"
               ? parseFloat(value)
@@ -112,243 +92,106 @@ function EditWeekdayDiscount() {
     }));
   };
 
-  const weekdays = [
-    { value: 0, label: "Pazar", description: "Hafta sonu" },
-    { value: 1, label: "Pazartesi", description: "Hafta içi" },
-    { value: 2, label: "Salı", description: "Hafta içi" },
-    { value: 3, label: "Çarşamba", description: "Hafta içi" },
-    { value: 4, label: "Perşembe", description: "Hafta içi" },
-    { value: 5, label: "Cuma", description: "Hafta içi" },
-    { value: 6, label: "Cumartesi", description: "Hafta sonu" },
-  ];
-
-  if (isLoadingDiscounts || !isDataLoaded) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "400px" }}
-      >
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Yükleniyor...</span>
-        </div>
-      </div>
-    );
+  if (discountLoading) {
+    return <div>Yükleniyor...</div>;
   }
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/weekday-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Haftanın Günleri İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            İndirim Düzenle
-          </h4>
-          <Link
-            href="/admin/campaigns/weekday-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
+    <CampaignFormWrapper
+      campaignType="weekday-discount"
+      campaignTypeLabel="Haftanın Günü İndirimleri"
+      action="edit"
+      name={formData.name}
+      nameEn={formData.nameEn}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onNameEnChange={(value) =>
+        setFormData((prev) => ({ ...prev, nameEn: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onSubmit={handleSubmit}
+      isSubmitting={isUpdating}
+    >
+      {/* İndirim Değerleri */}
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <label className="form-label">İndirim Değeri *</label>
+          <input
+            type="number"
+            className="form-control"
+            name="discountValue"
+            value={formData.discountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">İndirim Tipi *</label>
+          <select
+            className="form-select"
+            name="discountValueType"
+            value={formData.discountValueType}
+            onChange={handleChange}
+            required
           >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+            <option value="1">Yüzde (%)</option>
+            <option value="2">Tutar (₺)</option>
+          </select>
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Adı *</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Haftanın günü indirimi adı"
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Açıklaması</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="İndirim açıklaması (isteğe bağlı)"
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-4 mb-3">
-                <label className="form-label">İndirim Değeri *</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="discountValue"
-                  value={formData.discountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                  placeholder="İndirim değeri"
-                />
-              </div>
-              <div className="col-md-4 mb-3">
-                <label className="form-label">İndirim Tipi *</label>
-                <select
-                  className="form-select"
-                  name="discountValueType"
-                  value={formData.discountValueType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value={1}>Yüzde (%)</option>
-                  <option value={2}>Tutar (₺)</option>
-                </select>
-              </div>
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Başlangıç Tarihi *</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Bitiş Tarihi *</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Haftanın Günü *</label>
-                <select
-                  className="form-select"
-                  name="dayOfWeek"
-                  value={Number(formData.dayOfWeek)}
-                  onChange={handleChange}
-                  required
-                >
-                  {weekdays.map((day) => (
-                    <option key={day.value} value={day.value}>
-                      {day.label} ({day.description})
-                    </option>
-                  ))}
-                </select>
-                <small className="form-text text-muted">
-                  İndirimin hangi gün geçerli olacağını seçin
-                </small>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Durum</label>
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input form-check-input-sm"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleChange}
-                    style={{ transform: "scale(0.7)" }}
-                  />
-                  <label
-                    className="form-check-label"
-                    style={{ fontSize: "0.875rem" }}
-                  >
-                    İndirim aktif
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-12">
-                <div className="d-flex gap-3">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      <>
-                        <span
-                          className="spinner-border spinner-border-sm me-2"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        Güncelleniyor...
-                      </>
-                    ) : (
-                      "İndirimi Güncelle"
-                    )}
-                  </button>
-                  <Link
-                    href="/admin/campaigns/weekday-discount"
-                    className="btn btn-outline-secondary"
-                  >
-                    İptal
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </form>
+      {/* Haftanın Günü */}
+      <div className="row mb-3">
+        <div className="col-md-12">
+          <label className="form-label">Haftanın Günü *</label>
+          <select
+            className="form-select"
+            name="dayOfWeek"
+            value={formData.dayOfWeek}
+            onChange={handleChange}
+            required
+          >
+            <option value={1}>Pazartesi</option>
+            <option value={2}>Salı</option>
+            <option value={3}>Çarşamba</option>
+            <option value={4}>Perşembe</option>
+            <option value={5}>Cuma</option>
+            <option value={6}>Cumartesi</option>
+            <option value={0}>Pazar</option>
+          </select>
         </div>
       </div>
-    </div>
+    </CampaignFormWrapper>
   );
 }
-
-export default EditWeekdayDiscount;

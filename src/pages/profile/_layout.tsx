@@ -27,13 +27,16 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
     { href: "/profile", label: t("profile.myAccount") },
     { href: "/profile/orders", label: t("orders.myOrders") },
     { href: "/profile/addresses", label: t("myAddresses.myAddress") },
-    { href: "/profile/cards", label: t("myCards.myCards") },
+    // { href: "/profile/cards", label: t("myCards.myCards") },
     { href: "/profile/reviews", label: t("myReviews.myReviewsTitle") },
     { href: "/shopping-cart", label: t("shoppingCart.myShoppingCart") },
     { href: "/favorites", label: t("favorites.myFavorites") },
     { href: "/profile/affiliate", label: "Affiliate" },
     { href: "/profile/returns", label: t("returnsPage.myReturns") },
-    { href: "/profile/support-tickets", label: t("supportTicketsPage.myTickets") },
+    {
+      href: "/profile/support-tickets",
+      label: t("supportTicketsPage.myTickets"),
+    },
     { href: "/logout", label: t("logOut") },
   ];
 
@@ -59,16 +62,18 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
                       <button
                         onClick={handleLogout}
                         disabled={isPending}
-                        className={`my-account-nav-item ${isPending ? "disabled" : ""
-                          }`}
+                        className={`my-account-nav-item ${
+                          isPending ? "disabled" : ""
+                        }`}
                       >
                         {isPending ? "Çıkış Yapılıyor..." : item.label}
                       </button>
                     ) : (
                       <Link
                         href={item.href}
-                        className={`my-account-nav-item ${router.pathname === item.href ? "active" : ""
-                          }`}
+                        className={`my-account-nav-item ${
+                          router.pathname === item.href ? "active" : ""
+                        }`}
                       >
                         {item.label}
                       </Link>
@@ -104,4 +109,3 @@ export function withProfileLayout<P extends object>(
 }
 
 export default ProfileLayout;
-               

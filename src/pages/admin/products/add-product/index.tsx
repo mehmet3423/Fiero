@@ -7,12 +7,12 @@ import {
 import { useCategories } from "@/hooks/services/categories/useCategories";
 import { useAddProduct } from "@/hooks/services/products/useAddProduct";
 import { useSubCategorySpecifications } from "@/hooks/services/sub-category-specifications/useSubCategorySpecifications";
+import { useCloudinaryImageUpload } from "@/hooks/useCloudinaryImageUpload";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-
-import BackButton from "@/components/shared/BackButton";
 
 const AddProductPage: React.FC = () => {
   const { addProduct, isPending } = useAddProduct();
@@ -28,6 +28,7 @@ const AddProductPage: React.FC = () => {
   );
   const [selectedBannerImages, setSelectedBannerImages] = useState<File[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+
   const { subCategorySpecifications, isLoading: specificationsLoading } =
     useSubCategorySpecifications(selectedSubCategoryId || null);
 
@@ -35,11 +36,6 @@ const AddProductPage: React.FC = () => {
   interface ExtendedDtoProduct extends DtoProduct {
     specificationOptionIds?: string[];
     banner?: string[];
-    productInfos?: {
-      title: string;
-      description: string;
-      icon?: string;
-    }[];
   }
 
   const [product, setProduct] = useState<ExtendedDtoProduct>({
@@ -71,8 +67,8 @@ const AddProductPage: React.FC = () => {
       Keywords: "",
       Canonical: "",
       RobotsMetaTag: "index,follow",
-      Author: "Nors",
-      Publisher: "Nors",
+      Author: "Fiero",
+      Publisher: "Fiero",
       Language: "tr",
       OgTitle: "",
       OgDescription: "",
@@ -98,6 +94,17 @@ const AddProductPage: React.FC = () => {
   // Add barcode validation state
   const [barcodeError, setBarcodeError] = useState<string | null>(null);
 
+  // Product info state
+  const [productInfos, setProductInfos] = useState<
+    Array<{
+      title: string;
+      titleEn?: string;
+      description: string;
+      descriptionEn?: string;
+      icon: string;
+    }>
+  >([]);
+
   // Slug oluşturma fonksiyonu
   const generateSlug = (title: string): string => {
     return title
@@ -120,21 +127,21 @@ const AddProductPage: React.FC = () => {
         Description: newTitle
           ? `${newTitle} ürün detayları, özellikleri ve fiyat bilgileri.`
           : "",
-        MetaTitle: newTitle ? `${newTitle} - Nors` : "",
+        MetaTitle: newTitle ? `${newTitle} - Fiero` : "",
         MetaDescription: newTitle
-          ? `${newTitle} ürününü Nors'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`
+          ? `${newTitle} ürününü Fiero'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`
           : "",
         Keywords: newTitle
-          ? `${newTitle}, ürün satın al, online alışveriş, nors`
+          ? `${newTitle}, ürün satın al, online alışveriş, Fiero`
           : "",
-        OgTitle: newTitle ? `${newTitle} - Nors` : "",
+        OgTitle: newTitle ? `${newTitle} - Fiero` : "",
         OgDescription: newTitle
-          ? `${newTitle} ürününü Nors'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`
+          ? `${newTitle} ürününü Fiero'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`
           : "",
         Canonical: `/products/${generateSlug(newTitle)}`,
         RobotsMetaTag: prev.createSEORequest?.RobotsMetaTag || "index,follow",
-        Author: "Nors",
-        Publisher: "Nors",
+        Author: "Fiero",
+        Publisher: "Fiero",
         Language: "tr",
         IsIndexed: true,
         IsFollowed: true,
@@ -166,6 +173,28 @@ const AddProductPage: React.FC = () => {
       ...product,
       barcodeNumber: numericValue,
     });
+  };
+
+  // Product info handlers
+  const addProductInfo = () => {
+    setProductInfos([
+      ...productInfos,
+      { title: "", titleEn: "", description: "", descriptionEn: "", icon: "" },
+    ]);
+  };
+
+  const removeProductInfo = (index: number) => {
+    setProductInfos(productInfos.filter((_, i) => i !== index));
+  };
+
+  const updateProductInfo = (
+    index: number,
+    field: "title" | "titleEn" | "description" | "descriptionEn" | "icon",
+    value: string
+  ) => {
+    const updatedInfos = [...productInfos];
+    updatedInfos[index] = { ...updatedInfos[index], [field]: value };
+    setProductInfos(updatedInfos);
   };
 
   // Seçili main kategoriyi bul
@@ -201,7 +230,9 @@ const AddProductPage: React.FC = () => {
     setSelectedSpecificationOptionIds([]);
   }, [selectedSubCategoryId]);
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files[0]) {
       try {
         const file = event.target.files[0];
@@ -209,71 +240,157 @@ const AddProductPage: React.FC = () => {
           toast.error("Dosya boyutu çok büyük (max 10MB)");
           return;
         }
-        if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-          toast.error("Sadece JPG, JPEG ve PNG formatları desteklenir");
+        if (
+          !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+            file.type
+          )
+        ) {
+          toast.error("Sadece JPG, JPEG, PNG ve WebP formatları desteklenir");
           return;
         }
+
         setSelectedImage(file);
+
+        // Preview için URL oluştur
         const imageUrl = URL.createObjectURL(file);
         setProduct((prev) => ({ ...prev, baseImageUrl: imageUrl }));
-      } catch (error) {}
-    }
-  };
 
-  const handleContentImagesSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files) {
-      try {
-        const files = Array.from(event.target.files);
-        files.forEach((file) => {
-          if (file.size > 10000000) {
-            throw new Error("Dosya boyutu çok büyük (max 10MB)");
-          }
-          if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-            throw new Error("Sadece JPG, JPEG ve PNG formatları desteklenir");
-          }
-        });
+        // Cloudinary'ye yükle
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
+        );
 
-        setSelectedContentImages((prev) => [...prev, ...files]);
-        const imageUrls = files.map((file) => URL.createObjectURL(file));
-        setProduct((prev) => ({
-          ...prev,
-          contentImageUrls: [...prev.contentImageUrls, ...imageUrls],
-        }));
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: formData }
+        );
+
+        if (!response.ok) throw new Error("Resim yüklenemedi");
+        const data = await response.json();
+
+        // Cloudinary URL'sini kaydet
+        setProduct((prev) => ({ ...prev, baseImageUrl: data.secure_url }));
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        }
+        console.log(error);
+        toast.error("Resim yüklenirken hata oluştu");
       }
     }
   };
 
-  const handleBannerImagesSelect = (
+  const handleContentImagesSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.files) {
+    if (event.target.files && event.target.files[0]) {
       try {
-        const files = Array.from(event.target.files);
-        files.forEach((file) => {
-          if (file.size > 10000000) {
-            throw new Error("Dosya boyutu çok büyük (max 10MB)");
-          }
-          if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-            throw new Error("Sadece JPG, JPEG ve PNG formatları desteklenir");
-          }
-        });
+        const file = event.target.files[0];
+        if (file.size > 10000000) {
+          toast.error("Dosya boyutu çok büyük (max 10MB)");
+          return;
+        }
+        if (
+          !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+            file.type
+          )
+        ) {
+          toast.error("Sadece JPG, JPEG, PNG ve WebP formatları desteklenir");
+          return;
+        }
 
-        setSelectedBannerImages((prev) => [...prev, ...files]);
-        const imageUrls = files.map((file) => URL.createObjectURL(file));
+        setSelectedContentImages((prev) => [...prev, file]);
+
+        // Preview için URL oluştur
+        const imageUrl = URL.createObjectURL(file);
         setProduct((prev) => ({
           ...prev,
-          banner: [...(prev.banner || []), ...imageUrls],
+          contentImageUrls: [...prev.contentImageUrls, imageUrl],
+        }));
+
+        // Cloudinary'ye yükle
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
+        );
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: formData }
+        );
+
+        if (!response.ok) throw new Error("Resim yüklenemedi");
+        const data = await response.json();
+
+        // Cloudinary URL'sini kaydet (son eklenen URL'yi güncelle)
+        setProduct((prev) => ({
+          ...prev,
+          contentImageUrls: [
+            ...prev.contentImageUrls.slice(0, -1),
+            data.secure_url,
+          ],
         }));
       } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
+        console.log(error);
+        toast.error("Resim yüklenirken hata oluştu");
+      }
+    }
+  };
+
+  const handleBannerImagesSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      try {
+        const file = event.target.files[0];
+        if (file.size > 10000000) {
+          toast.error("Dosya boyutu çok büyük (max 10MB)");
+          return;
         }
+        if (
+          !["image/jpeg", "image/png", "image/jpg", "image/webp"].includes(
+            file.type
+          )
+        ) {
+          toast.error("Sadece JPG, JPEG, PNG ve WebP formatları desteklenir");
+          return;
+        }
+
+        setSelectedBannerImages((prev) => [...prev, file]);
+
+        // Preview için URL oluştur
+        const imageUrl = URL.createObjectURL(file);
+        setProduct((prev) => ({
+          ...prev,
+          banner: [...(prev.banner || []), imageUrl],
+        }));
+
+        // Cloudinary'ye yükle
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
+        );
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: formData }
+        );
+
+        if (!response.ok) throw new Error("Resim yüklenemedi");
+        const data = await response.json();
+
+        // Cloudinary URL'sini kaydet (son eklenen URL'yi güncelle)
+        setProduct((prev) => ({
+          ...prev,
+          banner: [...(prev.banner || []).slice(0, -1), data.secure_url],
+        }));
+      } catch (error) {
+        console.log(error);
+        toast.error("Resim yüklenirken hata oluştu");
       }
     }
   };
@@ -347,17 +464,11 @@ const AddProductPage: React.FC = () => {
     setSelectedSpecificationOptionIds([...updatedOptionIds, optionId]);
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (isSubmitting) return; // Çift tıklamayı engelle
-    setIsSubmitting(true);
-
     if (!selectedImage) {
       toast.error("Lütfen bir ana resim seçin");
-      setIsSubmitting(false);
       return;
     }
 
@@ -372,79 +483,18 @@ const AddProductPage: React.FC = () => {
     }
 
     try {
-      // Ana resmi yükle
-      const formData = new FormData();
-      formData.append("file", selectedImage);
-      formData.append(
-        "upload_preset",
-        process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
-      );
-
-      const mainImageResponse = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!mainImageResponse.ok) {
-        throw new Error("Ana resim yüklenemedi");
+      // Ana resim URL'sini kullan (zaten Cloudinary'den yüklenmiş)
+      const finalMainImageUrl = product.baseImageUrl;
+      if (!finalMainImageUrl) {
+        toast.error("Lütfen ana resim yükleyin");
+        return;
       }
 
-      const mainImageData = await mainImageResponse.json();
+      // İçerik resimlerini kullan (zaten Cloudinary'den yüklenmiş)
+      const contentImageUrls = product.contentImageUrls || [];
 
-      // İçerik resimlerini yükle
-      const contentImageUrls = await Promise.all(
-        selectedContentImages.map(async (file) => {
-          const contentFormData = new FormData();
-          contentFormData.append("file", file);
-          contentFormData.append(
-            "upload_preset",
-            process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
-          );
-
-          const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-            {
-              method: "POST",
-              body: contentFormData,
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error("İçerik resmi yüklenemedi");
-          }
-
-          const data = await response.json();
-          return data.secure_url;
-        })
-      );
-      const bannerImageUrls = await Promise.all(
-        selectedBannerImages.map(async (file) => {
-          const bannerFormData = new FormData();
-          bannerFormData.append("file", file);
-          bannerFormData.append(
-            "upload_preset",
-            process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME || ""
-          );
-
-          const response = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-            {
-              method: "POST",
-              body: bannerFormData,
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error("Banner resmi yüklenemedi");
-          }
-
-          const data = await response.json();
-          return data.secure_url;
-        })
-      );
+      // Banner resimlerini kullan (zaten Cloudinary'den yüklenmiş)
+      const bannerImageUrls = product.banner || [];
       let uploadedVideoUrl = "";
       if (selectedVideo) {
         const videoFormData = new FormData();
@@ -475,27 +525,28 @@ const AddProductPage: React.FC = () => {
           product.createSEORequest?.Description ||
           `${product.title} ürün detayları, özellikleri ve fiyat bilgileri.`,
         MetaTitle:
-          product.createSEORequest?.MetaTitle || `${product.title} - Nors`,
+          product.createSEORequest?.MetaTitle || `${product.title} - Fiero`,
         MetaDescription:
           product.createSEORequest?.MetaDescription ||
-          `${product.title} ürününü Nors'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`,
+          `${product.title} ürününü Fiero'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`,
         Keywords:
           product.createSEORequest?.Keywords ||
-          `${product.title}, ürün satın al, online alışveriş, nors`,
+          `${product.title}, ürün satın al, online alışveriş, Fiero`,
         Canonical:
           product.createSEORequest?.Canonical ||
-          `https://nors.com/products/${generateSlug(product.title)}`,
+          `https://Fiero.com/products/${generateSlug(product.title)}`,
         RobotsMetaTag:
           product.createSEORequest?.RobotsMetaTag || "index,follow",
-        Author: product.createSEORequest?.Author || "Nors",
-        Publisher: product.createSEORequest?.Publisher || "Nors",
+        Author: product.createSEORequest?.Author || "Fiero",
+        Publisher: product.createSEORequest?.Publisher || "Fiero",
         Language: product.createSEORequest?.Language || "tr",
-        OgTitle: product.createSEORequest?.OgTitle || `${product.title} - Nors`,
+        OgTitle:
+          product.createSEORequest?.OgTitle || `${product.title} - Fiero`,
         OgDescription:
           product.createSEORequest?.OgDescription ||
-          `${product.title} ürününü Nors'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`,
+          `${product.title} ürününü Fiero'tan satın alın. Kaliteli ürün, uygun fiyat ve hızlı teslimat.`,
         OgImageUrl:
-          product.createSEORequest?.OgImageUrl || mainImageData.secure_url,
+          product.createSEORequest?.OgImageUrl || finalMainImageUrl || "",
         StructuredDataJson: product.createSEORequest?.StructuredDataJson || "",
         IsIndexed: product.createSEORequest?.IsIndexed ?? true,
         IsFollowed: product.createSEORequest?.IsFollowed ?? true,
@@ -507,7 +558,7 @@ const AddProductPage: React.FC = () => {
       // Ürünü ekle
       await addProduct({
         ...product,
-        baseImageUrl: mainImageData.secure_url,
+        baseImageUrl: finalMainImageUrl,
         contentImageUrls: contentImageUrls,
         banner: bannerImageUrls,
         videoUrl: uploadedVideoUrl,
@@ -519,716 +570,1083 @@ const AddProductPage: React.FC = () => {
           value: optionValue,
         })),
         specificationOptionIds: selectedSpecificationOptionIds,
+        productInfos: productInfos,
       });
       router.push("/admin/products");
     } catch (error) {
+      console.error("Upload error:", error);
       toast.error("Resimler yüklenirken bir hata oluştu");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="">
-      <BackButton className="mb-3 mt-3 col-1" href="/admin/products" />
-
-      <div className="row">
-        <div className="col-12">
-          <div className="card shadow-sm p-3">
-            <div className="card-header py-2">
-              <h5
-                className="card-title mb-0"
+    <div className="content-wrapper">
+      <div className="container-l flex-grow-1 container-p-y">
+        {/* Header */}
+        <div
+          className="card bg-transparent border-0 mb-3"
+          style={{ boxShadow: "none" }}
+        >
+          <div className="card-body pb-0" style={{ boxShadow: "none" }}>
+            <Link
+              href="/admin/products"
+              className="btn btn-outline-secondary btn-sm mb-3"
+              style={{
+                fontSize: "0.75rem",
+                border: "0",
+                marginLeft: "-25px",
+              }}
+            >
+              <i className="bx bx-arrow-back me-1"></i>
+              Listeye Dön
+            </Link>
+            <div className="d-flex justify-content-between align-items-center">
+              <h6
+                className="card-header"
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.1rem",
+                  fontSize: "1.3rem",
+                  fontWeight: "bold",
+                  color: "#566a7f",
+                  marginLeft: "-10px",
+                  boxShadow: "none",
                 }}
               >
                 Yeni Ürün Ekle
-              </h5>
+              </h6>
             </div>
-            <div className="card-body p-3">
-              <form onSubmit={handleSubmit}>
-                <div className="row g-2">
-                  {/* Kategoriler */}
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Ana Kategori</label>
-                      <select
-                        className="form-select form-select-sm"
-                        value={selectedMainCategoryId}
-                        onChange={(e) =>
-                          setSelectedMainCategoryId(e.target.value)
-                        }
-                        disabled={categoriesLoading}
-                        required
-                      >
-                        <option value="">Ana Kategori Seçin</option>
-                        {categories?.items &&
-                          categories.items.map((category) => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-12">
+            <div className="card shadow-sm p-3">
+              <div className="card-header py-2">
+                <h5
+                  className="card-title mb-0"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  Ürün Bilgileri
+                </h5>
+              </div>
+              <div className="card-body p-3">
+                <form onSubmit={handleSubmit}>
+                  <div className="row g-2">
+                    {/* Kategoriler */}
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Ana Kategori</label>
+                        <select
+                          className="form-select form-select-sm"
+                          value={selectedMainCategoryId}
+                          onChange={(e) =>
+                            setSelectedMainCategoryId(e.target.value)
+                          }
+                          disabled={categoriesLoading}
+                          required
+                        >
+                          <option value="">Ana Kategori Seçin</option>
+                          {categories?.items &&
+                            categories.items.map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Alt Kategori</label>
+                        <select
+                          className="form-select form-select-sm"
+                          value={selectedSubCategoryId}
+                          onChange={(e) =>
+                            setSelectedSubCategoryId(e.target.value)
+                          }
+                          disabled={!selectedMainCategoryId}
+                          required
+                        >
+                          <option value="">Alt Kategori Seçin</option>
+                          {subCategories.map((subCategory) => (
+                            <option key={subCategory.id} value={subCategory.id}>
+                              {subCategory.name}
                             </option>
                           ))}
-                      </select>
+                        </select>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Alt Kategori</label>
-                      <select
-                        className="form-select form-select-sm"
-                        value={selectedSubCategoryId}
-                        onChange={(e) =>
-                          setSelectedSubCategoryId(e.target.value)
-                        }
-                        disabled={!selectedMainCategoryId}
-                        required
-                      >
-                        <option value="">Alt Kategori Seçin</option>
-                        {subCategories.map((subCategory) => (
-                          <option key={subCategory.id} value={subCategory.id}>
-                            {subCategory.name}
-                          </option>
-                        ))}
-                      </select>
+                    {/* Temel Bilgiler */}
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Başlık</label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          value={product.title}
+                          onChange={(e) => handleTitleChange(e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Temel Bilgiler */}
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Başlık</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        value={product.title}
-                        onChange={(e) => handleTitleChange(e.target.value)}
-                        required
-                      />
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">
+                          Başlık (İngilizce){" "}
+                          <span className="text-muted">(Opsiyonel)</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          value={product.titleEn || ""}
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              titleEn: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Başlık (İngilizce)</label>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        value={product.titleEn || ""}
-                        onChange={(e) =>
-                          setProduct({
-                            ...product,
-                            titleEn: e.target.value,
-                          })
-                        }
-                      />
+                    <div className="col-md-4 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">
+                          Barkod Numarası
+                        </label>
+                        <input
+                          type="text"
+                          className={`form-control form-control-sm ${
+                            barcodeError ? "is-invalid" : ""
+                          }`}
+                          value={product.barcodeNumber}
+                          onChange={handleBarcodeChange}
+                          maxLength={13}
+                          pattern="[0-9]{13}"
+                          inputMode="numeric"
+                          placeholder="13 haneli barkod numarası"
+                          required
+                        />
+                        {barcodeError && (
+                          <div className="invalid-feedback">{barcodeError}</div>
+                        )}
+                        <small className="form-text text-muted">
+                          13 haneli rakam olmalıdır
+                        </small>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">
-                        Barkod Numarası
-                      </label>
-                      <input
-                        type="text"
-                        className={`form-control form-control-sm ${
-                          barcodeError ? "is-invalid" : ""
-                        }`}
-                        value={product.barcodeNumber}
-                        onChange={handleBarcodeChange}
-                        maxLength={13}
-                        pattern="[0-9]{13}"
-                        inputMode="numeric"
-                        placeholder="13 haneli barkod numarası"
-                        required
-                      />
-                      {barcodeError && (
-                        <div className="invalid-feedback">{barcodeError}</div>
-                      )}
-                      <small className="form-text text-muted">
-                        13 haneli rakam olmalıdır
-                      </small>
+                    <div className="col-md-4 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Fiyat</label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          value={product.price}
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              price: Number(e.target.value),
+                            })
+                          }
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Fiyat</label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm"
-                        value={product.price}
-                        onChange={(e) =>
-                          setProduct({
-                            ...product,
-                            price: Number(e.target.value),
-                          })
-                        }
-                        required
-                      />
+                    <div className="col-md-4 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Stok Miktarı</label>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          value={product.sellableQuantity}
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              sellableQuantity: Number(e.target.value),
+                            })
+                          }
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Stok Miktarı</label>
-                      <input
-                        type="number"
-                        className="form-control form-control-sm"
-                        value={product.sellableQuantity}
-                        onChange={(e) =>
-                          setProduct({
-                            ...product,
-                            sellableQuantity: Number(e.target.value),
-                          })
-                        }
-                        required
-                      />
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">Açıklama</label>
+                        <textarea
+                          className="form-control form-control-sm"
+                          rows={3}
+                          value={product.description}
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              description: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Açıklama</label>
-                      <textarea
-                        className="form-control form-control-sm"
-                        rows={3}
-                        value={product.description}
-                        onChange={(e) =>
-                          setProduct({
-                            ...product,
-                            description: e.target.value,
-                          })
-                        }
-                        required
-                      />
+                    <div className="col-md-6 mb-2">
+                      <div className="form-group">
+                        <label className="form-label small">
+                          Açıklama (İngilizce){" "}
+                          <span className="text-muted">(Opsiyonel)</span>
+                        </label>
+                        <textarea
+                          className="form-control form-control-sm"
+                          rows={3}
+                          value={product.descriptionEn || ""}
+                          onChange={(e) =>
+                            setProduct({
+                              ...product,
+                              descriptionEn: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-md-6 mb-2">
-                    <div className="form-group">
-                      <label className="form-label small">Açıklama (İngilizce)</label>
-                      <textarea
-                        className="form-control form-control-sm"
-                        rows={3}
-                        value={product.descriptionEn || ""}
-                        onChange={(e) =>
-                          setProduct({
-                            ...product,
-                            descriptionEn: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Alt Kategori Özellikleri */}
-                  {selectedSubCategoryId &&
-                    subCategorySpecifications &&
-                    subCategorySpecifications.length > 0 && (
-                      <div className="col-12 mb-3">
-                        <div className="card border p-4">
-                          <div className="card-header bg-light">
-                            <h6 className="mb-0">Ürün Özellikleri</h6>
+                    {/* SEO Bilgileri */}
+                    {/* <div className="col-12 mb-3">
+                    <div className="card border p-4">
+                      <div className="card-header bg-light">
+                        <h6 className="mb-0">SEO Bilgileri</h6>
+                        <small className="text-muted">
+                          Ürün için arama motoru optimizasyonu ayarları
+                        </small>
+                      </div>
+                      <div className="card-body">
+                        <div className="row g-2">
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">SEO Slug</label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={product.createSEORequest?.Slug || ""}
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    Slug: e.target.value,
+                                    MetaTitle:
+                                      product.createSEORequest?.MetaTitle || "",
+                                    MetaDescription:
+                                      product.createSEORequest
+                                        ?.MetaDescription || "",
+                                    RobotsMetaTag:
+                                      product.createSEORequest?.RobotsMetaTag ||
+                                      "index,follow",
+                                  },
+                                })
+                              }
+                              placeholder="/products/urun-adi"
+                            />
+                            <small className="text-muted">
+                              Ürün başlığından otomatik oluşturulur
+                            </small>
                           </div>
-                          <div className="card-body">
-                            {specificationsLoading ? (
-                              <div className="text-center py-3">
-                                <div
-                                  className="spinner-border spinner-border-sm text-primary"
-                                  role="status"
-                                >
-                                  <span className="visually-hidden">
-                                    Yükleniyor...
-                                  </span>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              Meta Başlık
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={product.createSEORequest?.MetaTitle || ""}
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    Slug: product.createSEORequest?.Slug || "",
+                                    MetaTitle: e.target.value,
+                                    MetaDescription:
+                                      product.createSEORequest
+                                        ?.MetaDescription || "",
+                                    RobotsMetaTag:
+                                      product.createSEORequest?.RobotsMetaTag ||
+                                      "index,follow",
+                                  },
+                                })
+                              }
+                              placeholder="Ürün Adı - Fiero"
+                              maxLength={60}
+                            />
+                            <small className="text-muted">
+                              Max 60 karakter (Google için optimal)
+                            </small>
+                          </div>
+
+                          <div className="col-12 mb-2">
+                            <label className="form-label small">
+                              Meta Açıklama
+                            </label>
+                            <textarea
+                              className="form-control form-control-sm"
+                              rows={2}
+                              value={
+                                product.createSEORequest?.MetaDescription || ""
+                              }
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    Slug: product.createSEORequest?.Slug || "",
+                                    MetaTitle:
+                                      product.createSEORequest?.MetaTitle || "",
+                                    MetaDescription: e.target.value,
+                                    RobotsMetaTag:
+                                      product.createSEORequest?.RobotsMetaTag ||
+                                      "index,follow",
+                                  },
+                                })
+                              }
+                              placeholder="Ürün açıklaması - kaliteli, uygun fiyat ve hızlı teslimat"
+                              maxLength={160}
+                            />
+                            <small className="text-muted">
+                              Max 160 karakter (Google için optimal)
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              Anahtar Kelimeler
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={product.createSEORequest?.Keywords || ""}
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    ...product.createSEORequest,
+                                    Keywords: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="kelime1, kelime2, kelime3"
+                            />
+                            <small className="text-muted">
+                              Virgülle ayırın (SEO için)
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              Canonical URL
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={product.createSEORequest?.Canonical || ""}
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    ...product.createSEORequest,
+                                    Canonical: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="https://Fiero.com/products/urun-adi"
+                            />
+                            <small className="text-muted">
+                              Sayfa için canonical URL
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              OG Başlık (Facebook/Twitter)
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              value={product.createSEORequest?.OgTitle || ""}
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    ...product.createSEORequest,
+                                    OgTitle: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="Sosyal medya başlığı"
+                            />
+                            <small className="text-muted">
+                              Open Graph başlığı
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              OG Açıklama (Facebook/Twitter)
+                            </label>
+                            <textarea
+                              className="form-control form-control-sm"
+                              rows={2}
+                              value={
+                                product.createSEORequest?.OgDescription || ""
+                              }
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    ...product.createSEORequest,
+                                    OgDescription: e.target.value,
+                                  },
+                                })
+                              }
+                              placeholder="Sosyal medya açıklaması"
+                              maxLength={160}
+                            />
+                            <small className="text-muted">
+                              Open Graph açıklaması
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <label className="form-label small">
+                              Robots Meta Tag
+                            </label>
+                            <select
+                              className="form-select form-select-sm"
+                              value={
+                                product.createSEORequest?.RobotsMetaTag ||
+                                "index,follow"
+                              }
+                              onChange={(e) =>
+                                setProduct({
+                                  ...product,
+                                  createSEORequest: {
+                                    ...product.createSEORequest,
+                                    RobotsMetaTag: e.target.value,
+                                  },
+                                })
+                              }
+                            >
+                              <option value="index,follow">
+                                Index, Follow
+                              </option>
+                              <option value="noindex,follow">
+                                No Index, Follow
+                              </option>
+                              <option value="index,nofollow">
+                                Index, No Follow
+                              </option>
+                              <option value="noindex,nofollow">
+                                No Index, No Follow
+                              </option>
+                            </select>
+                            <small className="text-muted">
+                              Arama motorları için tarama ayarları
+                            </small>
+                          </div>
+
+                          <div className="col-md-6 mb-2">
+                            <div className="row g-2">
+                              <div className="col-6">
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="isIndexed"
+                                    checked={
+                                      product.createSEORequest?.IsIndexed ??
+                                      true
+                                    }
+                                    onChange={(e) =>
+                                      setProduct({
+                                        ...product,
+                                        createSEORequest: {
+                                          ...product.createSEORequest,
+                                          IsIndexed: e.target.checked,
+                                        },
+                                      })
+                                    }
+                                  />
+                                  <label
+                                    className="form-check-label small"
+                                    htmlFor="isIndexed"
+                                  >
+                                    İndekslenebilir
+                                  </label>
                                 </div>
-                                <p className="mt-2 small">
-                                  Özellikler yükleniyor...
-                                </p>
                               </div>
-                            ) : (
-                              <div className="row g-2">
-                                {subCategorySpecifications.map(
-                                  (spec: SubCategorySpecification) => (
-                                    <div
-                                      key={spec.id}
-                                      className="col-md-6 mb-2"
-                                    >
-                                      <label className="form-label small fw-bold">
-                                        {spec.name}
-                                      </label>
-                                      <div className="d-flex flex-wrap gap-1 mt-1">
-                                        {spec.specificationOptions.map(
-                                          (option: SpecificationOption) => (
-                                            <button
-                                              key={option.id}
-                                              type="button"
-                                              className={`btn btn-sm ${
-                                                selectedSpecifications[
-                                                  spec.id
-                                                ] === option.value
-                                                  ? "btn-secondary"
-                                                  : "btn-outline-secondary"
-                                              }`}
-                                              onClick={() =>
-                                                handleSpecificationChange(
-                                                  spec.id,
-                                                  option.value,
-                                                  option.id
-                                                )
-                                              }
-                                            >
-                                              {option.value}
-                                            </button>
-                                          )
-                                        )}
-                                      </div>
-                                    </div>
-                                  )
-                                )}
-                                <div className="col-12 mt-2">
-                                  <div className="alert alert-warning fs-6 py-2 d-flex align-items-center">
-                                    <i className="bx bx-info-circle me-1"></i>
-                                    Özellik seçilmediği takdirde ürününüz, o
-                                    özelliğin filtrelemesinde
-                                    görüntülenmeyecektir.
+                              <div className="col-6">
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="isFollowed"
+                                    checked={
+                                      product.createSEORequest?.IsFollowed ??
+                                      true
+                                    }
+                                    onChange={(e) =>
+                                      setProduct({
+                                        ...product,
+                                        createSEORequest: {
+                                          ...product.createSEORequest,
+                                          IsFollowed: e.target.checked,
+                                        },
+                                      })
+                                    }
+                                  />
+                                  <label
+                                    className="form-check-label small"
+                                    htmlFor="isFollowed"
+                                  >
+                                    Takip Edilebilir
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="col-12">
+                            <div className="alert alert-info fs-6 py-2 d-flex align-items-center">
+                              <i className="bx bx-info-circle me-1"></i>
+                              SEO bilgileri ürün başlığından otomatik
+                              oluşturulur, istediğiniz zaman
+                              düzenleyebilirsiniz.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div> */}
+
+                    {/* Alt Kategori Özellikleri */}
+                    {selectedSubCategoryId &&
+                      subCategorySpecifications &&
+                      subCategorySpecifications.length > 0 && (
+                        <div className="col-12 mb-3">
+                          <div className="card border p-4">
+                            <div className="card-header bg-light">
+                              <h6 className="mb-0">Ürün Özellikleri</h6>
+                            </div>
+                            <div className="card-body">
+                              {specificationsLoading ? (
+                                <div className="text-center py-3">
+                                  <div
+                                    className="spinner-border spinner-border-sm text-primary"
+                                    role="status"
+                                  >
+                                    <span className="visually-hidden">
+                                      Yükleniyor...
+                                    </span>
                                   </div>
+                                  <p className="mt-2 small">
+                                    Özellikler yükleniyor...
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="row g-2">
+                                  {subCategorySpecifications.map(
+                                    (spec: SubCategorySpecification) => (
+                                      <div
+                                        key={spec.id}
+                                        className="col-md-6 mb-2"
+                                      >
+                                        <label className="form-label small fw-bold">
+                                          {spec.name}
+                                        </label>
+                                        <div className="d-flex flex-wrap gap-1 mt-1">
+                                          {spec.specificationOptions.map(
+                                            (option: SpecificationOption) => (
+                                              <button
+                                                key={option.id}
+                                                type="button"
+                                                className={`btn btn-sm ${
+                                                  selectedSpecifications[
+                                                    spec.id
+                                                  ] === option.value
+                                                    ? "btn-secondary"
+                                                    : "btn-outline-secondary"
+                                                }`}
+                                                onClick={() =>
+                                                  handleSpecificationChange(
+                                                    spec.id,
+                                                    option.value,
+                                                    option.id
+                                                  )
+                                                }
+                                              >
+                                                {option.value}
+                                              </button>
+                                            )
+                                          )}
+                                        </div>
+                                      </div>
+                                    )
+                                  )}
+                                  <div className="col-12 mt-2">
+                                    <div className="alert alert-warning fs-6 py-2 d-flex align-items-center">
+                                      <i className="bx bx-info-circle me-1"></i>
+                                      Özellik seçilmediği takdirde ürününüz, o
+                                      özelliğin filtrelemesinde
+                                      görüntülenmeyecektir.
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Ürün Bilgileri */}
+                    <div className="col-12 mb-3">
+                      <div className="card border p-4">
+                        <div className="card-header bg-light">
+                          <h6 className="mb-0">Ürün Bilgileri</h6>
+                          <small className="text-muted">
+                            Ürün için ek bilgiler ekleyebilirsiniz
+                          </small>
+                        </div>
+                        <div className="card-body">
+                          {productInfos.map((info, index) => (
+                            <div
+                              key={index}
+                              className="row g-2 mb-3 p-3 border rounded"
+                            >
+                              <div className="col-md-3">
+                                <label className="form-label small">
+                                  Başlık
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={info.title}
+                                  onChange={(e) =>
+                                    updateProductInfo(
+                                      index,
+                                      "title",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Örn: Garanti"
+                                />
+                              </div>
+                              <div className="col-md-3">
+                                <label className="form-label small">
+                                  Başlık (EN){" "}
+                                  <span className="text-muted">
+                                    (Opsiyonel)
+                                  </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={info.titleEn || ""}
+                                  onChange={(e) =>
+                                    updateProductInfo(
+                                      index,
+                                      "titleEn",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="e.g. Warranty"
+                                />
+                              </div>
+                              <div className="col-md-3">
+                                <label className="form-label small">
+                                  Açıklama
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={info.description}
+                                  onChange={(e) =>
+                                    updateProductInfo(
+                                      index,
+                                      "description",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Örn: 2 yıl garanti"
+                                />
+                              </div>
+                              <div className="col-md-3">
+                                <label className="form-label small">
+                                  Açıklama (EN){" "}
+                                  <span className="text-muted">
+                                    (Opsiyonel)
+                                  </span>
+                                </label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={info.descriptionEn || ""}
+                                  onChange={(e) =>
+                                    updateProductInfo(
+                                      index,
+                                      "descriptionEn",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="e.g. 2 years warranty"
+                                />
+                              </div>
+                              {/* <div className="col-md-2">
+                                <label className="form-label small">İkon</label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={info.icon}
+                                  onChange={(e) =>
+                                    updateProductInfo(
+                                      index,
+                                      "icon",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Örn: bx-shield"
+                                />
+                              </div> */}
+                              <div className="col-md-1 d-flex align-items-end">
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => removeProductInfo(index)}
+                                >
+                                  <i className="bx bx-trash"></i>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={addProductInfo}
+                          >
+                            <i className="bx bx-plus me-1"></i>
+                            Bilgi Ekle
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Resimler */}
+                    <div className="col-12">
+                      <div className="row g-2">
+                        <div className="col-md-4 mb-2">
+                          <div className="form-group">
+                            <label className="form-label small">
+                              Ana Resim
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control form-control-sm"
+                              accept="image/png,image/jpeg,image/jpg,image/webp"
+                              onChange={handleImageSelect}
+                            />
+
+                            {product.baseImageUrl && (
+                              <div className="image-preview mt-1">
+                                <div className="position-relative d-inline-block">
+                                  <Image
+                                    width={80}
+                                    height={80}
+                                    src={product.baseImageUrl}
+                                    alt="Product"
+                                    style={{ objectFit: "cover" }}
+                                    className="rounded"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      fontSize: "10px",
+                                    }}
+                                    onClick={() => {
+                                      setSelectedImage(null);
+                                      setProduct((prev) => ({
+                                        ...prev,
+                                        baseImageUrl: "",
+                                      }));
+                                    }}
+                                  >
+                                    <i className="bx bx-x"></i>
+                                  </button>
                                 </div>
                               </div>
                             )}
                           </div>
                         </div>
-                      </div>
-                    )}
 
-                  {/* Ürün Bilgileri (Materyal & Bakım vb.) */}
-                  <div className="col-12 mb-3">
-                    <div className="card border p-3">
-                      <div className="card-header bg-light d-flex justify-content-between align-items-center py-2">
-                        <h6 className="mb-0">Ürün Bilgileri (Materyal, Bakım vb.)</h6>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-primary"
-                          onClick={() => {
-                            setProduct((prev) => ({
-                              ...prev,
-                              productInfos: [
-                                ...(prev.productInfos || []),
-                                { title: "", titleEn: "", description: "", descriptionEn: "", icon: "icon-info" },
-                              ],
-                            }));
-                          }}
-                        >
-                          <i className="bx bx-plus me-1"></i> Bilgi Ekle
-                        </button>
-                      </div>
-                      <div className="card-body p-2">
-                        {product.productInfos && product.productInfos.length > 0 ? (
-                          <div className="row g-2">
-                            {product.productInfos.map((info, index) => (
-                              <div key={index} className="col-12 border rounded p-2 mb-2 bg-white">
-                                <div className="row g-2 align-items-end">
-                                  <div className="col-md-3">
-                                    <label className="form-label small">Başlık</label>
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      placeholder="Örn: Materyal"
-                                      value={info.title}
-                                      onChange={(e) => {
-                                        const newInfos = [...(product.productInfos || [])];
-                                        newInfos[index].title = e.target.value;
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="col-md-3">
-                                    <label className="form-label small">Başlık (İngilizce)</label>
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      placeholder="Örn: Material"
-                                      value={info.titleEn || ""}
-                                      onChange={(e) => {
-                                        const newInfos = [...(product.productInfos || [])];
-                                        newInfos[index].titleEn = e.target.value;
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="col-md-2">
-                                    <label className="form-label small">İkon (Class)</label>
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      placeholder="Örn: icon-machine"
-                                      value={info.icon}
-                                      onChange={(e) => {
-                                        const newInfos = [...(product.productInfos || [])];
-                                        newInfos[index].icon = e.target.value;
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="col-md-2">
-                                    <label className="form-label small">Açıklama</label>
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      placeholder="Örn: %100 Pamuk"
-                                      value={info.description}
-                                      onChange={(e) => {
-                                        const newInfos = [...(product.productInfos || [])];
-                                        newInfos[index].description = e.target.value;
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="col-md-2">
-                                    <label className="form-label small">Açıklama (İngilizce)</label>
-                                    <input
-                                      type="text"
-                                      className="form-control form-control-sm"
-                                      placeholder="Örn: 100% Cotton"
-                                      value={info.descriptionEn || ""}
-                                      onChange={(e) => {
-                                        const newInfos = [...(product.productInfos || [])];
-                                        newInfos[index].descriptionEn = e.target.value;
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="col-md-1 text-end">
-                                    <button
-                                      type="button"
-                                      className="btn btn-sm btn-danger"
-                                      onClick={() => {
-                                        const newInfos = (product.productInfos || []).filter((_, i) => i !== index);
-                                        setProduct((prev) => ({ ...prev, productInfos: newInfos }));
-                                      }}
-                                    >
-                                      <i className="bx bx-trash"></i>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center text-muted small py-3">
-                            Henüz eklenmiş ürün bilgisi yok.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                        <div className="col-md-4 mb-2">
+                          <div className="form-group">
+                            <label className="form-label small">
+                              İçerik Resimleri
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control form-control-sm"
+                              accept="image/png,image/jpeg,image/jpg,image/webp"
+                              onChange={handleContentImagesSelect}
+                            />
 
-                  {/* Resimler */}
-                  <div className="col-12">
-                    <div className="row g-2">
-                      <div className="col-md-4 mb-2">
-                        <div className="form-group">
-                          <label className="form-label small">Ana Resim</label>
-                          <input
-                            type="file"
-                            className="form-control form-control-sm"
-                            accept="image/png,image/jpeg,image/jpg"
-                            onChange={handleImageSelect}
-                          />
-                          {product.baseImageUrl && (
-                            <div className="image-preview mt-1">
-                              <div className="position-relative d-inline-block">
-                                <Image
-                                  width={80}
-                                  height={80}
-                                  src={product.baseImageUrl}
-                                  alt="Product"
-                                  style={{ objectFit: "cover" }}
-                                  className="rounded"
-                                />
-                                <button
-                                  type="button"
-                                  className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
-                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    fontSize: "10px",
-                                  }}
-                                  onClick={() => {
-                                    setSelectedImage(null);
-                                    setProduct((prev) => ({
-                                      ...prev,
-                                      baseImageUrl: "",
-                                    }));
-                                  }}
+                            <div className="d-flex gap-1 flex-wrap mt-1">
+                              {product.contentImageUrls.map((url, index) => (
+                                <div
+                                  key={index}
+                                  className="position-relative d-inline-block"
                                 >
-                                  <i className="bx bx-x"></i>
-                                </button>
+                                  <Image
+                                    width={80}
+                                    height={80}
+                                    src={url}
+                                    alt={`Content ${index + 1}`}
+                                    style={{ objectFit: "cover" }}
+                                    className="rounded"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      fontSize: "10px",
+                                    }}
+                                    onClick={() => removeContentImage(index)}
+                                  >
+                                    <i className="bx bx-x"></i>
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-md-4 mb-2">
+                          <div className="form-group">
+                            <label className="form-label small">
+                              Banner Resimleri
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control form-control-sm"
+                              accept="image/png,image/jpeg,image/jpg,image/webp"
+                              onChange={handleBannerImagesSelect}
+                            />
+
+                            <div className="d-flex gap-1 flex-wrap mt-1">
+                              {product.banner?.map((url, index) => (
+                                <div
+                                  key={index}
+                                  className="position-relative d-inline-block"
+                                >
+                                  <Image
+                                    width={80}
+                                    height={80}
+                                    src={url}
+                                    alt={`Banner ${index + 1}`}
+                                    style={{ objectFit: "cover" }}
+                                    className="rounded"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      fontSize: "10px",
+                                    }}
+                                    onClick={() => removeBannerImage(index)}
+                                  >
+                                    <i className="bx bx-x"></i>
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-4 mb-2 ">
+                          <div className="form-group">
+                            <label className="form-label small">
+                              Video Yükle
+                            </label>
+                            <input
+                              type="file"
+                              className="form-control form-control-sm"
+                              accept="video/mp4,video/webm,video/ogg"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                if (file.size > 100_000_000) {
+                                  toast.error(
+                                    "Video dosyası çok büyük (max 100MB)"
+                                  );
+                                  return;
+                                }
+                                setSelectedVideo(file);
+                              }}
+                            />
+                            <small className="form-text text-muted">
+                              MP4, WebM veya OGG formatında
+                            </small>
+                          </div>
+
+                          {/* Video önizleme */}
+                          {product.videoUrl && (
+                            <div className="mt-2">
+                              <label className="form-label small mb-1">
+                                Video Önizleme
+                              </label>
+                              <div className="border rounded p-2">
+                                <video
+                                  src={product.videoUrl}
+                                  controls
+                                  className="w-100"
+                                  style={{
+                                    maxHeight: "200px",
+                                    borderRadius: "4px",
+                                  }}
+                                />
                               </div>
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      <div className="col-md-4 mb-2">
-                        <div className="form-group">
-                          <label className="form-label small">
-                            İçerik Resimleri
-                          </label>
-                          <input
-                            type="file"
-                            className="form-control form-control-sm"
-                            accept="image/png,image/jpeg,image/jpg"
-                            onChange={handleContentImagesSelect}
-                            multiple
-                          />
-                          <div className="d-flex gap-1 flex-wrap mt-1">
-                            {product.contentImageUrls.map((url, index) => (
-                              <div
-                                key={index}
-                                className="position-relative d-inline-block"
-                              >
-                                <Image
-                                  width={80}
-                                  height={80}
-                                  src={url}
-                                  alt={`Content ${index + 1}`}
-                                  style={{ objectFit: "cover" }}
-                                  className="rounded"
-                                />
-                                <button
-                                  type="button"
-                                  className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
-                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    fontSize: "10px",
-                                  }}
-                                  onClick={() => removeContentImage(index)}
-                                >
-                                  <i className="bx bx-x"></i>
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="col-md-4 mb-2">
-                        <div className="form-group">
-                          <label className="form-label small">
-                            Banner Resimleri
-                          </label>
-                          <input
-                            type="file"
-                            className="form-control form-control-sm"
-                            accept="image/png,image/jpeg,image/jpg"
-                            onChange={handleBannerImagesSelect}
-                            multiple
-                          />
-                          <div className="d-flex gap-1 flex-wrap mt-1">
-                            {product.banner?.map((url, index) => (
-                              <div
-                                key={index}
-                                className="position-relative d-inline-block"
-                              >
-                                <Image
-                                  width={80}
-                                  height={80}
-                                  src={url}
-                                  alt={`Banner ${index + 1}`}
-                                  style={{ objectFit: "cover" }}
-                                  className="rounded"
-                                />
-                                <button
-                                  type="button"
-                                  className="btn btn-sm btn-danger position-absolute top-0 end-0 p-0"
-                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    fontSize: "10px",
-                                  }}
-                                  onClick={() => removeBannerImage(index)}
-                                >
-                                  <i className="bx bx-x"></i>
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4 mb-2 ">
-                        <div className="form-group">
-                          <label className="form-label small">
-                            Ürün Videosu
-                          </label>
-                          <input
-                            type="file"
-                            className="form-control form-control-sm"
-                            accept="video/mp4,video/webm,video/ogg"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (!file) return;
-                              if (file.size > 100_000_000) {
-                                toast.error(
-                                  "Video dosyası çok büyük (max 100MB)"
-                                );
-                                return;
-                              }
-                              setSelectedVideo(file);
-                            }}
-                          />
-                          <small className="form-text text-muted">
-                            MP4, WebM veya OGG formatında
-                          </small>
-                        </div>
-
-                        {/* Video önizleme */}
-                        {product.videoUrl && (
-                          <div className="mt-2">
-                            <label className="form-label small mb-1">
-                              Video Önizleme
-                            </label>
-                            <div className="border rounded p-2">
-                              <video
-                                src={product.videoUrl}
-                                controls
-                                className="w-100"
-                                style={{
-                                  maxHeight: "200px",
-                                  borderRadius: "4px",
-                                }}
+                        {/* İade Edilebilir Seçeneği */}
+                        <div
+                          className="col-md-3 mb-2 small "
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <div className="form-group">
+                            <div className="form-check">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="refundable"
+                                checked={product.refundable}
+                                onChange={(e) =>
+                                  setProduct({
+                                    ...product,
+                                    refundable: e.target.checked,
+                                  })
+                                }
                               />
+                              <label
+                                className="form-check-label small"
+                                htmlFor="refundable"
+                              >
+                                İade Edilebilir
+                              </label>
                             </div>
+                            <small className="form-text text-muted">
+                              Bu ürünün iade edilebilir olup olmadığını belirler
+                            </small>
                           </div>
-                        )}
-                      </div>
-                      {/* İade Edilebilir Seçeneği */}
-                      <div
-                        className="col-md-3 mb-2 small "
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <div className="form-group">
-                          <div className="form-check">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              id="refundable"
-                              checked={product.refundable}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  refundable: e.target.checked,
-                                })
-                              }
-                            />
-                            <label
-                              className="form-check-label small"
-                              htmlFor="refundable"
-                            >
-                              İade Edilebilir
-                            </label>
-                          </div>
-                          <small className="form-text text-muted">
-                            Bu ürünün iade edilebilir olup olmadığını belirler
-                          </small>
                         </div>
-                      </div>
 
-                      {/* Mevcut Durumu */}
-                      <div
-                        className="col-md-3 mb-2 small"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <div className="form-group">
-                          <div className="form-check">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              id="isAvailable"
-                              checked={product.isAvailable}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  isAvailable: e.target.checked,
-                                })
-                              }
-                            />
-                            <label
-                              className="form-check-label small"
-                              htmlFor="isAvailable"
-                            >
-                              Satışa Uygun
-                            </label>
+                        {/* Mevcut Durumu */}
+                        <div
+                          className="col-md-3 mb-2 small"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <div className="form-group">
+                            <div className="form-check">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="isAvailable"
+                                checked={product.isAvailable}
+                                onChange={(e) =>
+                                  setProduct({
+                                    ...product,
+                                    isAvailable: e.target.checked,
+                                  })
+                                }
+                              />
+                              <label
+                                className="form-check-label small"
+                                htmlFor="isAvailable"
+                              >
+                                Satışa Uygun
+                              </label>
+                            </div>
+                            <small className="form-text text-muted">
+                              Ürünün satışa uygun olup olmadığını belirler
+                            </small>
                           </div>
-                          <small className="form-text text-muted">
-                            Ürünün satışa uygun olup olmadığını belirler
-                          </small>
                         </div>
-                      </div>
 
-                      {/* Outlet Seçeneği */}
-                      <div
-                        className="col-md-2 mb-2 small"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <div className="form-group">
-                          <div className="form-check">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              id="isOutlet"
-                              checked={product.isOutlet}
-                              onChange={(e) =>
-                                setProduct({
-                                  ...product,
-                                  isOutlet: e.target.checked,
-                                })
-                              }
-                            />
-                            <label
-                              className="form-check-label small"
-                              htmlFor="isOutlet"
-                            >
-                              Outlet Ürün
-                            </label>
+                        {/* Outlet Seçeneği */}
+                        <div
+                          className="col-md-2 mb-2 small"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <div className="form-group">
+                            <div className="form-check">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="isOutlet"
+                                checked={product.isOutlet}
+                                onChange={(e) =>
+                                  setProduct({
+                                    ...product,
+                                    isOutlet: e.target.checked,
+                                  })
+                                }
+                              />
+                              <label
+                                className="form-check-label small"
+                                htmlFor="isOutlet"
+                              >
+                                Outlet Ürün
+                              </label>
+                            </div>
+                            <small className="form-text text-muted">
+                              Ürünün outlet olup olmadığını belirler
+                            </small>
                           </div>
-                          <small className="form-text text-muted">
-                            Ürünün outlet olup olmadığını belirler
-                          </small>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="text-end mt-3">
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-sm"
-                    disabled={isPending || isSubmitting}
-                  >
-                    {isPending || isSubmitting ? "Ekleniyor..." : "Ürün Ekle"}
-                  </button>
-                </div>
-              </form>
+                  <div className="text-end mt-3">
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-sm"
+                      disabled={isPending}
+                    >
+                      {isPending ? "Ekleniyor..." : "Ürün Ekle"}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>

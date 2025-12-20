@@ -1,30 +1,34 @@
 "use client";
+import ChangeShippingOptionModal from "@/components/admin/trendyol-marketplace/ChangeShippingOptionModal";
+import DeleteInvoiceModal from "@/components/admin/trendyol-marketplace/DeleteInvoiceModal";
+import InvoiceInfoModal from "@/components/admin/trendyol-marketplace/InvoiceInfoModal";
+import SplitConfirmationModal from "@/components/admin/trendyol-marketplace/SplitConfirmationModal";
+import SplitPackageModal from "@/components/admin/trendyol-marketplace/SplitPackageModal";
+import UnsuppliedItemsModal from "@/components/admin/trendyol-marketplace/UnsuppliedItemsModal";
+import UploadInvoiceModal from "@/components/admin/trendyol-marketplace/UploadInvoiceModal";
 import GeneralModal from "@/components/shared/GeneralModal";
+import { ChangeCargoProviderRequest } from "@/constants/models/trendyol/ChangeCargoProviderRequest";
 import {
   GetShipmentPackagesRequest,
   ShipmentPackage,
 } from "@/constants/models/trendyol/GetShipmentPackagesRequest";
-import { useGetShipmentPackages } from "@/hooks/services/admin-trendyol-marketplace/useGetShipmentPackages";
-import { useUpdateShipmentPackageStatus } from "@/hooks/services/admin-trendyol-marketplace/useUpdateShipmentPackageStatus";
-import { useUpdateTrackingNumber } from "@/hooks/services/admin-trendyol-marketplace/useUpdateTrackingNumber";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { ProcessAlternativeDeliveryRequest } from "@/constants/models/trendyol/ProcessAlternativeDeliveryRequest";
 import { useAuth } from "@/hooks/context/useAuth";
+import { useChangeCargoProvider } from "@/hooks/services/admin-trendyol-marketplace/useChangeCargoProvider";
+import { useDeleteInvoiceLink } from "@/hooks/services/admin-trendyol-marketplace/useDeleteInvoiceLink";
+import { useGetShipmentPackages } from "@/hooks/services/admin-trendyol-marketplace/useGetShipmentPackages";
+import { useGetTrendyolCargoProviders } from "@/hooks/services/admin-trendyol-marketplace/useGetTrendyolCargoProviders";
 import { useGetTrendyolCountries } from "@/hooks/services/admin-trendyol-marketplace/useGetTrendyolCountries";
-import InvoiceInfoModal from "@/components/admin/trendyol-marketplace/InvoiceInfoModal";
-import UploadInvoiceModal from "@/components/admin/trendyol-marketplace/UploadInvoiceModal";
-import DeleteInvoiceModal from "@/components/admin/trendyol-marketplace/DeleteInvoiceModal";
-import SplitPackageModal from "@/components/admin/trendyol-marketplace/SplitPackageModal";
-import SplitConfirmationModal from "@/components/admin/trendyol-marketplace/SplitConfirmationModal";
-import UnsuppliedItemsModal from "@/components/admin/trendyol-marketplace/UnsuppliedItemsModal";
+import { useProcessAlternativeDelivery } from "@/hooks/services/admin-trendyol-marketplace/useProcessAlternativeDelivery";
 import { useSplitMultiPackageByQuantity } from "@/hooks/services/admin-trendyol-marketplace/useSplitMultiPackageByQuantity";
 import { useSplitShipmentPackage } from "@/hooks/services/admin-trendyol-marketplace/useSplitShipmentPackage";
 import { useSplitShipmentPackageByQuantity } from "@/hooks/services/admin-trendyol-marketplace/useSplitShipmentPackageByQuantity";
 import { useSplitShipmentPackageMultiGroup } from "@/hooks/services/admin-trendyol-marketplace/useSplitShipmentPackageMultiGroup";
-import { SplitShipmentPackageRequest } from "@/constants/models/trendyol/SplitShipmentPackageRequest";
-import { SplitShipmentPackageByQuantityRequest } from "@/constants/models/trendyol/SplitShipmentPackageByQuantityRequest";
-import { SplitMultiPackageByQuantityRequest } from "@/constants/models/trendyol/SplitMultiPackageByQuantityRequest";
-import { useDeleteInvoiceLink } from "@/hooks/services/admin-trendyol-marketplace/useDeleteInvoiceLink";
+import { useUpdateShipmentPackageStatus } from "@/hooks/services/admin-trendyol-marketplace/useUpdateShipmentPackageStatus";
+import { useUpdateTrackingNumber } from "@/hooks/services/admin-trendyol-marketplace/useUpdateTrackingNumber";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import XLSX from "xlsx";
 
 interface FrontendFilters {
@@ -60,6 +64,7 @@ const statusTabs = [
 ];
 
 function TrendyolMarketplaceCargoStagePage() {
+  const router = useRouter();
   // States
   const [filters, setFilters] = useState<FrontendFilters>({
     page: 0,
@@ -79,9 +84,6 @@ function TrendyolMarketplaceCargoStagePage() {
   const [newTrackingNumber, setNewTrackingNumber] = useState("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const [selectedPackages, setSelectedPackages] = useState<Set<number>>(
-    new Set()
-  );
   const [showUploadInvoiceModal, setShowUploadInvoiceModal] = useState(false);
   const [showInvoiceInfoModal, setShowInvoiceInfoModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -98,16 +100,31 @@ function TrendyolMarketplaceCargoStagePage() {
     [lineId: number]: number;
   }>({});
 
-  // Toplu paket bölme states
-  const [showBulkSplitModal, setShowBulkSplitModal] = useState(false);
-  const [selectedPackagesForBulkSplit, setSelectedPackagesForBulkSplit] =
-    useState<ShipmentPackage[]>([]);
-
   // Unsupplied items states
   const [showUnsuppliedItemsModal, setShowUnsuppliedItemsModal] =
     useState(false);
   const [selectedPackageForUnsupplied, setSelectedPackageForUnsupplied] =
     useState<ShipmentPackage | null>(null);
+
+  // Change shipping option modal states
+  const [showChangeShippingOptionModal, setShowChangeShippingOptionModal] =
+    useState(false);
+  const [
+    selectedPackageForShippingChange,
+    setSelectedPackageForShippingChange,
+  ] = useState<ShipmentPackage | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [pendingShippingData, setPendingShippingData] = useState<{
+    shippingOption: string;
+    cargoProviderId?: number;
+    alternativeData?: {
+      option: string;
+      trackingUrl?: string;
+      contactInfo?: string;
+      desi?: number;
+      koli?: number;
+    };
+  } | null>(null);
 
   // Delete invoice states
   const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false);
@@ -150,6 +167,21 @@ function TrendyolMarketplaceCargoStagePage() {
     useSplitShipmentPackageMultiGroup();
   const { deleteInvoiceLink, isPending: isDeletingInvoice } =
     useDeleteInvoiceLink();
+  const {
+    processAlternativeDelivery,
+    isPending: isProcessingAlternativeDelivery,
+  } = useProcessAlternativeDelivery();
+  const { changeCargoProvider, isPending: isChangingCargoProvider } =
+    useChangeCargoProvider();
+  const { cargoProviders } = useGetTrendyolCargoProviders();
+
+  // Kargo firması ID'sini koda çeviren fonksiyon
+  const getCargoProviderCodeById = (providerId: number): string | null => {
+    const providers = cargoProviders?.data?.providers || [];
+    const provider = providers.find((p) => p.id === providerId);
+
+    return provider?.code || null;
+  };
 
   // Excel export state
   const [isExporting, setIsExporting] = useState(false);
@@ -191,6 +223,12 @@ function TrendyolMarketplaceCargoStagePage() {
         shipmentPackageIds: filters.shipmentPackageIds,
       };
 
+      // Eğer orderNumber ile spesifik sipariş aranıyorsa tarih kısıtlarını kaldır
+      if (orderNumber && orderNumber.trim().length > 0) {
+        delete (requestParams as any).startDate;
+        delete (requestParams as any).endDate;
+      }
+
       // Ülke filtresi ekle (eğer seçilmişse)
       if (selectedCountry) {
         // Burada ülke filtresi için gerekli API parametresi eklenebilir
@@ -210,11 +248,12 @@ function TrendyolMarketplaceCargoStagePage() {
       }
 
       // Dokümana göre: Tarih parametresi verilmezse son 1 hafta, verilirse maksimum 2 hafta
-      if (!startDate && !endDate) {
+      // Order number varsa tarih zorunluluğu yok; o durumda tarih set etmeyelim
+      if (!orderNumber && !startDate && !endDate) {
         const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
         requestParams.startDate = oneWeekAgo;
         requestParams.endDate = Date.now();
-      } else if (startDate && endDate) {
+      } else if (!orderNumber && startDate && endDate) {
         const startTime = new Date(startDate).getTime();
         const endTime = new Date(endDate).getTime();
         const diffDays = (endTime - startTime) / (1000 * 60 * 60 * 24);
@@ -237,8 +276,8 @@ function TrendyolMarketplaceCargoStagePage() {
         requestParams.supplierId = 1;
       }
 
-      // Dokümana göre: Status parametresi doğru kullanım
-      if (selectedStatus !== "All") {
+      // Status parametresi: orderNumber ile spesifik arama yapılıyorsa GÖNDERME
+      if (!orderNumber && selectedStatus !== "All") {
         requestParams.status = selectedStatus;
       }
 
@@ -258,9 +297,28 @@ function TrendyolMarketplaceCargoStagePage() {
     fetchCountries();
   }, []);
 
+  // Prefill orderNumber from query (wait until router is ready)
   useEffect(() => {
+    if (!router.isReady) return;
+    const queryOrder = (router.query?.orderNumber as string) || "";
+    if (queryOrder && queryOrder !== orderNumber) {
+      setOrderNumber(queryOrder);
+      // URL'den orderNumber geliyorsa, varsayılan olarak "All" (Tüm Siparişler) sekmesini seç
+      setSelectedStatus("All");
+    }
+  }, [router.isReady, router.query]);
+
+  // Query'den gelen orderNumber varsa, bu değer state'e işlenmeden önce
+  // boş orderNumber ile istek atmayı engelle
+  const isOrderNumberInQuery = !!(router.query && router.query.orderNumber);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (isOrderNumberInQuery && !orderNumber) return; // query orderNumber henüz state'e taşınmadı
     fetchPackages();
   }, [
+    router.isReady,
+    isOrderNumberInQuery,
     currentPage,
     selectedStatus,
     orderNumber,
@@ -400,13 +458,6 @@ function TrendyolMarketplaceCargoStagePage() {
       setFilters((prev) => ({ ...prev, status }));
     }
     setCurrentPage(1);
-
-    // Status değiştiğinde toplu işlem seçimlerini resetle
-    // Çünkü farklı status'taki paketler için farklı işlemler yapılabilir
-    if (selectedPackages.size > 0) {
-      setSelectedPackages(new Set());
-      toast.success("Status değiştiği için toplu işlem seçimleri temizlendi");
-    }
   };
 
   const handleSearch = (value: string) => {
@@ -428,8 +479,6 @@ function TrendyolMarketplaceCargoStagePage() {
     setSelectedCountry("");
     setCountrySearchTerm("");
     setItemsPerPage(20);
-    // Filtreler temizlendiğinde seçimleri de temizle
-    setSelectedPackages(new Set());
     setFilters({
       page: 0,
       size: 20,
@@ -439,45 +488,7 @@ function TrendyolMarketplaceCargoStagePage() {
     setCurrentPage(1);
   };
 
-  // Checkbox handlers
-  const handleSelectPackage = (packageId: number) => {
-    const newSelected = new Set(selectedPackages);
-    if (newSelected.has(packageId)) {
-      newSelected.delete(packageId);
-    } else {
-      newSelected.add(packageId);
-    }
-    setSelectedPackages(newSelected);
-  };
-
-  const handleSelectAll = () => {
-    // displayPackages kullanarak mevcut görüntülenen paketleri al
-    const packages = displayPackages || [];
-
-    // Eğer tüm görüntülenen paketler zaten seçiliyse, seçimi kaldır
-    if (selectedPackages.size === packages.length && packages.length > 0) {
-      setSelectedPackages(new Set());
-    } else {
-      // Eğer tüm paketler seçili değilse, tümünü seç
-      const allPackageIds = packages.map((pkg: ShipmentPackage) => pkg.id);
-      setSelectedPackages(new Set(allPackageIds));
-    }
-  };
-
   // Modal handlers
-  const openStatusModal = (pkg: ShipmentPackage) => {
-    setSelectedPackage(pkg);
-    setNewStatus(pkg.status);
-    setModalType("status");
-    $("#statusModal").modal("show");
-  };
-
-  const openTrackingModal = (pkg: ShipmentPackage) => {
-    setSelectedPackage(pkg);
-    setNewTrackingNumber(pkg.cargoTrackingNumber || "");
-    setModalType("tracking");
-    $("#trackingModal").modal("show");
-  };
 
   const handleUpdateStatus = async () => {
     if (!selectedPackage || !newStatus) return;
@@ -557,56 +568,6 @@ function TrendyolMarketplaceCargoStagePage() {
     }, 100);
   };
 
-  // Toplu paket bölme işlemi
-  const handleBulkSplitPackages = () => {
-    if (selectedPackages.size === 0) {
-      toast.error("Lütfen bölünecek paketleri seçin");
-      return;
-    }
-
-    // Seçili paketleri al
-    const selectedPackageList = Array.from(selectedPackages)
-      .map((packageId) =>
-        displayPackages.find((pkg: ShipmentPackage) => pkg.id === packageId)
-      )
-      .filter(Boolean) as ShipmentPackage[];
-
-    if (selectedPackageList.length === 0) {
-      toast.error("Seçili paketler bulunamadı");
-      return;
-    }
-
-    // Her paket için bölme kontrolü yap
-    const validPackages = selectedPackageList.filter((pkg) => {
-      const packageLines = pkg.lines || [];
-      const totalQuantity =
-        packageLines.reduce((sum, line) => sum + line.quantity, 0) || 1;
-
-      if (packageLines.length === 0) {
-        toast.error(`Paket #${pkg.id}: Bu pakette ürün bulunmuyor`);
-        return false;
-      }
-
-      if (totalQuantity <= 1) {
-        toast.error(
-          `Paket #${pkg.id}: Bu paket bölünecek kadar ürün içermiyor`
-        );
-        return false;
-      }
-
-      return true;
-    });
-
-    if (validPackages.length === 0) {
-      toast.error("Bölünebilecek paket bulunamadı");
-      return;
-    }
-
-    // Toplu bölme onay modal'ını aç
-    setSelectedPackagesForBulkSplit(validPackages);
-    setShowBulkSplitModal(true);
-  };
-
   // Paket için hangi split API'sini kullanacağını belirleyen yardımcı fonksiyon
   const getOptimalSplitStrategy = (pkg: ShipmentPackage) => {
     const packageLines = pkg.lines || [];
@@ -679,61 +640,6 @@ function TrendyolMarketplaceCargoStagePage() {
     }
   };
 
-  // Toplu bölme işlemi - Akıllı strateji kullanarak
-  const handleBulkSplitOperation = async (packages: ShipmentPackage[]) => {
-    try {
-      // Her paket için optimal strateji belirle ve uygula
-      const splitPromises = packages.map(async (pkg) => {
-        const strategy = getOptimalSplitStrategy(pkg);
-
-        if (!strategy) {
-          return null;
-        }
-
-        // Strateji'ye göre uygun API'yi çağır
-        switch (strategy.api) {
-          case "splitShipmentPackageByQuantity":
-            return await splitShipmentPackageByQuantity(
-              pkg.id,
-              strategy.data as SplitShipmentPackageByQuantityRequest
-            );
-
-          case "splitShipmentPackage":
-            return await splitShipmentPackage(
-              pkg.id,
-              strategy.data as SplitShipmentPackageRequest
-            );
-
-          case "splitMultiPackageByQuantity":
-            return await splitMultiPackageByQuantity(
-              pkg.id,
-              strategy.data as SplitMultiPackageByQuantityRequest
-            );
-
-          default:
-            return null;
-        }
-      });
-
-      // Tüm bölme işlemlerini paralel olarak yap
-      const results = await Promise.all(splitPromises);
-      const successfulSplits = results.filter(
-        (result) => result !== null
-      ).length;
-
-      if (successfulSplits > 0) {
-        toast.success(`${successfulSplits} paket başarıyla bölündü`);
-        // Seçimleri temizle ve verileri yenile
-        setSelectedPackages(new Set());
-        fetchPackages();
-      } else {
-        toast.error("Hiçbir paket bölünemedi");
-      }
-    } catch (error) {
-      toast.error("Toplu paket bölme işlemi sırasında hata oluştu");
-    }
-  };
-
   const handleSplitPackage = (quantities: { [lineId: number]: number }) => {
     setSplitQuantities(quantities);
     setShowSplitPackageModal(false);
@@ -761,7 +667,9 @@ function TrendyolMarketplaceCargoStagePage() {
     try {
       // Validate date range
       if (!startDate || !endDate) {
-        toast.error("Excel indirmek için tarih aralığı belirtmelisiniz!");
+        toast.error(
+          "Excel indirmek için başlangıç ve bitiş tarihlerini seçmelisiniz!"
+        );
         return;
       }
 
@@ -1156,25 +1064,8 @@ function TrendyolMarketplaceCargoStagePage() {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-
-    // Eğer frontend filtreleme aktifse ve sayfa değişiyorsa, filtreleri temizle
-    // Çünkü frontend filtreleme sadece mevcut sayfa verilerinde çalışır
-    if (isFrontendFilteringActive && pageNumber !== currentPage) {
-      // Filtreleri temizle ve API'den yeni veri çek
-      handleClearFilters();
-      return;
-    }
-
     // Sayfa değiştiğinde otomatik olarak veriler yüklenir (useEffect sayesinde)
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-      minimumFractionDigits: 2,
-    }).format(amount);
   };
 
   const formatDate = (timestamp: number) => {
@@ -1375,6 +1266,121 @@ function TrendyolMarketplaceCargoStagePage() {
     setSelectedPackageForDelete(null);
   };
 
+  // Change shipping option handlers
+  const openChangeShippingOptionModal = (pkg: ShipmentPackage) => {
+    setSelectedPackageForShippingChange(pkg);
+    setShowChangeShippingOptionModal(true);
+  };
+
+  const handleCloseChangeShippingOptionModal = () => {
+    setShowChangeShippingOptionModal(false);
+    setSelectedPackageForShippingChange(null);
+  };
+
+  const handleUpdateShippingOption = async (
+    shippingOption: string,
+    cargoProviderId?: number
+  ) => {
+    if (!selectedPackageForShippingChange) return;
+
+    try {
+      if (shippingOption === "trendyol_contracted" && cargoProviderId) {
+        // Trendyol anlaşmalı kargo firması değiştirme
+        // cargoProviderId'yi kargo firması koduna çevir
+        const cargoProviderCode = getCargoProviderCodeById(cargoProviderId);
+
+        if (!cargoProviderCode) {
+          toast.error("Geçersiz kargo firması seçimi");
+          return;
+        }
+
+        const request: ChangeCargoProviderRequest = {
+          cargoProvider: cargoProviderCode,
+        };
+
+        await changeCargoProvider(selectedPackageForShippingChange.id, request);
+      } else {
+        // Diğer seçenekler için başarı mesajı
+        toast.success("Gönderi seçeneği başarıyla güncellendi");
+      }
+
+      // Refresh the packages list
+      await fetchPackages();
+    } catch (error) { }
+  };
+
+  const handleShowConfirmationModal = (
+    shippingOption: string,
+    cargoProviderId?: number,
+    alternativeData?: any
+  ) => {
+    setPendingShippingData({
+      shippingOption,
+      cargoProviderId,
+      alternativeData,
+    });
+    setShowChangeShippingOptionModal(false);
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmShippingUpdate = async () => {
+    if (!pendingShippingData || !selectedPackageForShippingChange) return;
+
+    try {
+      if (
+        pendingShippingData.shippingOption === "alternative_delivery" &&
+        pendingShippingData.alternativeData
+      ) {
+        // Alternatif teslimat için API çağrısı
+        const request: ProcessAlternativeDeliveryRequest = {
+          isPhoneNumber:
+            pendingShippingData.alternativeData.option !==
+            "non_contracted_cargo",
+          trackingInfo:
+            pendingShippingData.alternativeData.trackingUrl ||
+            pendingShippingData.alternativeData.contactInfo ||
+            "",
+          params: {},
+        };
+
+        // Telefon numarası ile gönderim ise boxQuantity ve deci ekle
+        if (
+          pendingShippingData.alternativeData.option !== "non_contracted_cargo"
+        ) {
+          request.boxQuantity = pendingShippingData.alternativeData.koli || 1;
+          request.deci = pendingShippingData.alternativeData.desi || 1;
+        }
+
+        await processAlternativeDelivery(
+          selectedPackageForShippingChange.id,
+          request
+        );
+      } else {
+        // Diğer seçenekler için normal güncelleme
+        await handleUpdateShippingOption(
+          pendingShippingData.shippingOption,
+          pendingShippingData.cargoProviderId
+        );
+      }
+
+      // İşlem başarılı olduğunda popup'ları kapat
+      setShowConfirmationModal(false);
+      setPendingShippingData(null);
+      setSelectedPackageForShippingChange(null);
+
+      // Paket listesini yenile
+      await fetchPackages();
+    } catch (error) {
+      console.error("Error processing shipping update:", error);
+    }
+  };
+
+  const handleCancelConfirmation = () => {
+    setShowConfirmationModal(false);
+    setPendingShippingData(null);
+    setShowChangeShippingOptionModal(true);
+  };
+
   return (
     <div className="content-wrapper">
       <div className="container-l flex-grow-1 container-p-y">
@@ -1519,68 +1525,29 @@ function TrendyolMarketplaceCargoStagePage() {
                 <option value="acil">Acil</option>
               </select>
             </div>
-            <div className="col-md-2 position-relative">
+            <div className="col-md-2">
               <input
                 type="date"
-                className={`form-control form-control-sm ${!startDate ? "border-warning" : ""
-                  }`}
+                className="form-control form-control-sm"
                 placeholder="Sipariş Başlangıç Tarihi"
                 value={startDate}
                 onChange={(e) => {
                   setStartDate(e.target.value);
                   setCurrentPage(1);
                 }}
-                title="Excel indirmek için bu alan zorunludur"
               />
-              {!startDate && (
-                <small
-                  className="text-warning position-absolute"
-                  style={{ fontSize: "0.7rem", bottom: "-18px", left: "0" }}
-                >
-                  <i className="bx bx-info-circle me-1"></i>Excel için gerekli
-                </small>
-              )}
             </div>
-            <div className="col-md-2 position-relative">
+            <div className="col-md-2">
               <input
                 type="date"
-                className={`form-control form-control-sm ${!endDate ? "border-warning" : ""
-                  }`}
+                className="form-control form-control-sm"
                 placeholder="Sipariş Bitiş Tarihi"
                 value={endDate}
                 onChange={(e) => {
                   setEndDate(e.target.value);
                   setCurrentPage(1);
                 }}
-                title="Excel indirmek için bu alan zorunludur"
               />
-              {!endDate && (
-                <small
-                  className="text-warning position-absolute"
-                  style={{ fontSize: "0.7rem", bottom: "-18px", left: "0" }}
-                >
-                  <i className="bx bx-info-circle me-1"></i>Excel için gerekli
-                </small>
-              )}
-            </div>
-            <div className="col-md-2">
-              <select
-                className="form-select form-select-sm"
-                value={filters.orderByDirection || ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setFilters((prev) => ({
-                    ...prev,
-                    orderByDirection:
-                      value === "" ? null : (value as "ASC" | "DESC"),
-                  }));
-                  setCurrentPage(1);
-                }}
-              >
-                <option value="">Sıralama Yok</option>
-                <option value="ASC">Küçükten Büyüğe</option>
-                <option value="DESC">Büyükten Küçüğe</option>
-              </select>
             </div>
             <div className="col-md-2">
               <button
@@ -1616,149 +1583,6 @@ function TrendyolMarketplaceCargoStagePage() {
 
                 {/* Dropdown'lar başlığın altında */}
                 <div className="d-flex gap-2 mt-2">
-                  {/* Toplu İşlemler - Sadece 'Yeni' ve 'İşleme Alınanlar' durumlarında görünür */}
-                  {(selectedStatus === "Created" ||
-                    selectedStatus === "Picking") && (
-                      <div className="dropdown">
-                        <button
-                          className={`btn btn-sm dropdown-toggle ${selectedPackages.size > 0
-                              ? "btn-warning"
-                              : "btn-secondary"
-                            }`}
-                          type="button"
-                          data-bs-toggle={
-                            selectedPackages.size > 0 ? "dropdown" : ""
-                          }
-                          disabled={selectedPackages.size === 0}
-                          style={{ minWidth: "160px" }}
-                          title={
-                            selectedPackages.size === 0
-                              ? "Toplu işlem için önce tablodan eleman seçin"
-                              : "Toplu işlemler"
-                          }
-                        >
-                          <i className="bx bx-layer me-1"></i>
-                          Toplu İşlemler
-                          {selectedPackages.size > 0 && (
-                            <span className="badge bg-danger text-white ms-2 fw-bold">
-                              {selectedPackages.size}
-                            </span>
-                          )}
-                        </button>
-                        {selectedPackages.size > 0 && (
-                          <ul className="dropdown-menu">
-                            <li>
-                              <a className="dropdown-item" href="#">
-                                <i className="bx bx-printer me-2"></i>A4 Etiketi
-                                Yazdır
-                              </a>
-                            </li>
-                            <li>
-                              <a className="dropdown-item" href="#">
-                                <i className="bx bx-sticker me-2"></i>Sticker
-                                Etiketi Yazdır
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                className="dropdown-item"
-                                href="#"
-                                onClick={async (e) => {
-                                  e.preventDefault();
-                                  if (selectedPackages.size === 0) {
-                                    toast.error(
-                                      "Lütfen işleme alınacak paketleri seçin"
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    // Get selected packages
-                                    const selectedPackageList = Array.from(
-                                      selectedPackages
-                                    )
-                                      .map((packageId) =>
-                                        displayPackages.find(
-                                          (pkg: ShipmentPackage) =>
-                                            pkg.id === packageId
-                                        )
-                                      )
-                                      .filter(Boolean) as ShipmentPackage[];
-
-                                    // Process each package
-                                    for (const pkg of selectedPackageList) {
-                                      // Prepare lines data according to Trendyol API documentation
-                                      const lines =
-                                        pkg.lines?.map((line) => ({
-                                          lineId: line.id,
-                                          quantity: line.quantity,
-                                        })) || [];
-
-                                      await updateShipmentPackageStatus(pkg.id, {
-                                        status: "Picking",
-                                        lines: lines,
-                                        params: {},
-                                      });
-                                    }
-
-                                    setSelectedPackages(new Set());
-                                    fetchPackages();
-                                  } catch (error) {
-                                    // Error handling is already done in the hook
-                                  }
-                                }}
-                              >
-                                <i className="bx bx-play me-2"></i>İşleme Al
-                              </a>
-                            </li>
-                            <li>
-                              <a className="dropdown-item" href="#">
-                                <i className="bx bx-package me-2"></i>Desi/Koli
-                                Bilgisi Gir
-                              </a>
-                            </li>
-                            <li>
-                              <a className="dropdown-item" href="#">
-                                <i className="bx bx-truck me-2"></i>Başka Kargo
-                                Firması ile Gönder
-                              </a>
-                            </li>
-                            <li>
-                              <hr className="dropdown-divider" />
-                            </li>
-                            <li>
-                              <a
-                                className="dropdown-item"
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  handleBulkSplitPackages();
-                                }}
-                              >
-                                <i className="bx bx-cut me-2"></i>Toplu Paket Böl
-                              </a>
-                            </li>
-                            <li>
-                              <hr className="dropdown-divider" />
-                            </li>
-                            <li>
-                              <a
-                                className="dropdown-item"
-                                href="#"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  // For bulk operations, we could show a modal to select which packages to cancel
-                                  // For now, let's handle single package cancellation in the dropdown below
-                                }}
-                              >
-                                <i className="bx bx-x me-2"></i>İptal Et
-                              </a>
-                            </li>
-                          </ul>
-                        )}
-                      </div>
-                    )}
-
                   {/* Ülke Seçimi */}
                   <div className="dropdown">
                     <button
@@ -1940,12 +1764,6 @@ function TrendyolMarketplaceCargoStagePage() {
                     <div>
                       Filtreleme Sonuçları: Toplam {totalCount} sipariş bilgisi
                       ({displayCount} görüntüleniyor)
-                      {isFrontendFilteringActive && (
-                        <span className="text-warning ms-2">
-                          <i className="bx bx-info-circle me-1"></i>
-                          Frontend Filtreleme Aktif
-                        </span>
-                      )}
                     </div>
                     <div>
                       Son Güncelleme:{" "}
@@ -1969,11 +1787,7 @@ function TrendyolMarketplaceCargoStagePage() {
                     onClick={handleExcelExport}
                     disabled={isExporting}
                     style={{ minWidth: "160px", border: "1px solid #d9dee3" }}
-                    title={
-                      !startDate || !endDate
-                        ? "Excel indirmek için tarih aralığı belirtmelisiniz"
-                        : "Mevcut filtrelerdeki tüm verileri Excel olarak indir"
-                    }
+                    title="Mevcut filtrelerdeki tüm verileri Excel olarak indir"
                   >
                     {isExporting ? (
                       <>
@@ -2018,15 +1832,8 @@ function TrendyolMarketplaceCargoStagePage() {
                           href="#"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isFrontendFilteringActive) {
-                              toast.error(
-                                "Sayfa boyutu değiştiğinde frontend filtreleri temizlendi"
-                              );
-                              handleClearFilters();
-                            } else {
-                              setItemsPerPage(10);
-                              setCurrentPage(1);
-                            }
+                            setItemsPerPage(10);
+                            setCurrentPage(1);
                           }}
                           style={
                             itemsPerPage === 10 ? { color: "#ff6600" } : {}
@@ -2045,15 +1852,8 @@ function TrendyolMarketplaceCargoStagePage() {
                           href="#"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isFrontendFilteringActive) {
-                              toast.error(
-                                "Sayfa boyutu değiştiğinde frontend filtreleri temizlendi"
-                              );
-                              handleClearFilters();
-                            } else {
-                              setItemsPerPage(20);
-                              setCurrentPage(1);
-                            }
+                            setItemsPerPage(20);
+                            setCurrentPage(1);
                           }}
                           style={
                             itemsPerPage === 20 ? { color: "#ff6600" } : {}
@@ -2072,15 +1872,8 @@ function TrendyolMarketplaceCargoStagePage() {
                           href="#"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isFrontendFilteringActive) {
-                              toast.error(
-                                "Sayfa boyutu değiştiğinde frontend filtreleri temizlendi"
-                              );
-                              handleClearFilters();
-                            } else {
-                              setItemsPerPage(50);
-                              setCurrentPage(1);
-                            }
+                            setItemsPerPage(50);
+                            setCurrentPage(1);
                           }}
                           style={
                             itemsPerPage === 50 ? { color: "#ff6600" } : {}
@@ -2099,15 +1892,8 @@ function TrendyolMarketplaceCargoStagePage() {
                           href="#"
                           onClick={(e) => {
                             e.preventDefault();
-                            if (isFrontendFilteringActive) {
-                              toast.error(
-                                "Sayfa boyutu değiştiğinde frontend filtreleri temizlendi"
-                              );
-                              handleClearFilters();
-                            } else {
-                              setItemsPerPage(100);
-                              setCurrentPage(1);
-                            }
+                            setItemsPerPage(100);
+                            setCurrentPage(1);
                           }}
                           style={
                             itemsPerPage === 100 ? { color: "#ff6600" } : {}
@@ -2116,23 +1902,6 @@ function TrendyolMarketplaceCargoStagePage() {
                           100 Ürün
                         </a>
                       </li>
-                      {isFrontendFilteringActive && (
-                        <>
-                          <li>
-                            <hr className="dropdown-divider" />
-                          </li>
-                          <li>
-                            <div
-                              className="dropdown-item text-warning"
-                              style={{ fontSize: "0.75rem" }}
-                            >
-                              <i className="bx bx-exclamation-triangle me-1"></i>
-                              Frontend filtreleme aktif - sayfa boyutu
-                              değiştiğinde filtreler temizlenir
-                            </div>
-                          </li>
-                        </>
-                      )}
                     </ul>
                   </div>
 
@@ -2260,33 +2029,6 @@ function TrendyolMarketplaceCargoStagePage() {
                 <table className="table table-hover mb-0">
                   <thead className="table-light">
                     <tr>
-                      <th style={{ width: "1%" }}>
-                        {/* Checkbox sadece 'Yeni' ve 'İşleme Alınanlar' durumlarında görünür */}
-                        {(selectedStatus === "Created" ||
-                          selectedStatus === "Picking") && (
-                            <div className="d-flex align-items-center">
-                              <input
-                                type="checkbox"
-                                className="form-check-input me-2"
-                                checked={
-                                  selectedPackages.size ===
-                                  displayPackages.length &&
-                                  displayPackages.length > 0
-                                }
-                                ref={(input) => {
-                                  if (input) {
-                                    // indeterminate durumu: bazı paketler seçili ama hepsi değil
-                                    input.indeterminate =
-                                      selectedPackages.size > 0 &&
-                                      selectedPackages.size <
-                                      displayPackages.length;
-                                  }
-                                }}
-                                onChange={handleSelectAll}
-                              />
-                            </div>
-                          )}
-                      </th>
                       <th style={{ width: "15%" }}>
                         Sipariş Bilgileri
                         <i className="bx bx-filter ms-1"></i>
@@ -2325,26 +2067,6 @@ function TrendyolMarketplaceCargoStagePage() {
 
                       return (
                         <tr key={`${row.packageId}-${row.lineIndex}`}>
-                          {/* Checkbox - Sadece paket grubunun ilk satırında gösterilir ve rowspan kullanır */}
-                          {row.isFirstRowInPackage && (
-                            <td rowSpan={row.packageRowSpan}>
-                              {(selectedStatus === "Created" ||
-                                selectedStatus === "Picking") && (
-                                  <div className="d-flex justify-content-center">
-                                    <input
-                                      type="checkbox"
-                                      className="form-check-input"
-                                      checked={selectedPackages.has(
-                                        row.packageId
-                                      )}
-                                      onChange={() =>
-                                        handleSelectPackage(row.packageId)
-                                      }
-                                    />
-                                  </div>
-                                )}
-                            </td>
-                          )}
                           {/* Sipariş Bilgileri - Paket grubunun ilk satırında gösterilir */}
                           {row.isFirstRowInPackage && (
                             <td rowSpan={row.packageRowSpan}>
@@ -3180,53 +2902,9 @@ function TrendyolMarketplaceCargoStagePage() {
                           {row.isFirstRowInPackage && (
                             <td rowSpan={row.packageRowSpan}>
                               <div>
-                                {/* Created (Yeni) - Turuncu etiket butonları */}
+                                {/* Created (Yeni) */}
                                 {row.package.status === "Created" && (
                                   <>
-                                    <div className="d-flex flex-column gap-1">
-                                      <button
-                                        className="btn btn-sm"
-                                        onClick={() =>
-                                          openStatusModal(row.package)
-                                        }
-                                        style={{
-                                          fontSize: "0.7rem",
-                                          backgroundColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          borderColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          color: "white",
-                                        }}
-                                      >
-                                        {hasInvoiceIssue && (
-                                          <i className="bx bx-error-circle me-1"></i>
-                                        )}
-                                        Etiketi A4 Yazdır
-                                      </button>
-                                      <button
-                                        className="btn btn-sm"
-                                        onClick={() =>
-                                          openTrackingModal(row.package)
-                                        }
-                                        style={{
-                                          fontSize: "0.7rem",
-                                          backgroundColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          borderColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          color: "white",
-                                        }}
-                                      >
-                                        {hasInvoiceIssue && (
-                                          <i className="bx bx-error-circle me-1"></i>
-                                        )}
-                                        Etiketi Sticker Yazdır
-                                      </button>
-                                    </div>
                                     <div className="dropdown mt-2">
                                       <button
                                         className="btn btn-outline-secondary btn-sm dropdown-toggle w-100"
@@ -3250,8 +2928,17 @@ function TrendyolMarketplaceCargoStagePage() {
                                           </a>
                                         </li>
                                         <li>
-                                          <a className="dropdown-item" href="#">
-                                            Gönderı Seçeneğini Değiştir
+                                          <a
+                                            className="dropdown-item"
+                                            href="#"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              openChangeShippingOptionModal(
+                                                row.package
+                                              );
+                                            }}
+                                          >
+                                            Gönderi Seçeneğini Değiştir
                                           </a>
                                         </li>
                                         {/* Only show Paketi Böl if package can be split */}
@@ -3293,76 +2980,14 @@ function TrendyolMarketplaceCargoStagePage() {
                                             İptal Et
                                           </a>
                                         </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mağaza Kartı Yazdır
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <hr className="dropdown-divider" />
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mesafeli Satış Sözleşmesi
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Ön Bilgilendirme Formu
-                                          </a>
-                                        </li>
                                       </ul>
                                     </div>
                                   </>
                                 )}
 
-                                {/* Picking (İşleme Alınan) - Turuncu etiket butonları */}
+                                {/* Picking (İşleme Alınan) */}
                                 {row.package.status === "Picking" && (
                                   <>
-                                    <div className="d-flex flex-column gap-1">
-                                      <button
-                                        className="btn btn-sm"
-                                        onClick={() =>
-                                          openStatusModal(row.package)
-                                        }
-                                        style={{
-                                          fontSize: "0.7rem",
-                                          backgroundColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          borderColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          color: "white",
-                                        }}
-                                      >
-                                        {hasInvoiceIssue && (
-                                          <i className="bx bx-error-circle me-1"></i>
-                                        )}
-                                        Etiketi A4 Yazdır
-                                      </button>
-                                      <button
-                                        className="btn btn-sm"
-                                        onClick={() =>
-                                          openTrackingModal(row.package)
-                                        }
-                                        style={{
-                                          fontSize: "0.7rem",
-                                          backgroundColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          borderColor: hasInvoiceIssue
-                                            ? "#dc3545"
-                                            : "#ff8c00",
-                                          color: "white",
-                                        }}
-                                      >
-                                        {hasInvoiceIssue && (
-                                          <i className="bx bx-error-circle me-1"></i>
-                                        )}
-                                        Etiketi Sticker Yazdır
-                                      </button>
-                                    </div>
                                     <div className="dropdown mt-2">
                                       <button
                                         className="btn btn-outline-secondary btn-sm dropdown-toggle w-100"
@@ -3374,8 +2999,17 @@ function TrendyolMarketplaceCargoStagePage() {
                                       </button>
                                       <ul className="dropdown-menu">
                                         <li>
-                                          <a className="dropdown-item" href="#">
-                                            Gönderı Seçeneğini Değiştir
+                                          <a
+                                            className="dropdown-item"
+                                            href="#"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              openChangeShippingOptionModal(
+                                                row.package
+                                              );
+                                            }}
+                                          >
+                                            Gönderi Seçeneğini Değiştir
                                           </a>
                                         </li>
                                         {/* Only show Paketi Böl if package can be split */}
@@ -3418,24 +3052,6 @@ function TrendyolMarketplaceCargoStagePage() {
                                             İptal Et
                                           </a>
                                         </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mağaza Kartı Yazdır
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <hr className="dropdown-divider" />
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mesafeli Satış Sözleşmesi
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Ön Bilgilendirme Formu
-                                          </a>
-                                        </li>
                                       </ul>
                                     </div>
                                   </>
@@ -3452,6 +3068,26 @@ function TrendyolMarketplaceCargoStagePage() {
                                         borderColor: "#ff8c00",
                                         color: "white",
                                       }}
+                                      onClick={() => {
+                                        if (row.package.cargoTrackingLink) {
+                                          // Redirect to cargo tracking page if link exists
+                                          window.open(
+                                            row.package.cargoTrackingLink,
+                                            "_blank"
+                                          );
+                                        } else if (
+                                          row.package.cargoTrackingNumber
+                                        ) {
+                                          // Show tracking number if no link but number exists
+                                          toast.success(
+                                            `Kargo Takip No: ${row.package.cargoTrackingNumber}`
+                                          );
+                                        } else {
+                                          toast.error(
+                                            "Kargo takip bilgisi bulunamadı"
+                                          );
+                                        }
+                                      }}
                                     >
                                       Kargo Takip
                                     </button>
@@ -3464,18 +3100,7 @@ function TrendyolMarketplaceCargoStagePage() {
                                       >
                                         İşlemler
                                       </button>
-                                      <ul className="dropdown-menu">
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mesafeli Satış Sözleşmesi
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Ön Bilgilendirme Formu
-                                          </a>
-                                        </li>
-                                      </ul>
+                                      <ul className="dropdown-menu"></ul>
                                     </div>
                                   </>
                                 )}
@@ -3492,6 +3117,35 @@ function TrendyolMarketplaceCargoStagePage() {
                                           borderColor: "#28a745",
                                           color: "white",
                                         }}
+                                        onClick={async () => {
+                                          try {
+                                            const lines =
+                                              row.package.lines?.map(
+                                                (line) => ({
+                                                  lineId: line.id,
+                                                  quantity: line.quantity,
+                                                })
+                                              ) || [];
+
+                                            await updateShipmentPackageStatus(
+                                              row.package.id,
+                                              {
+                                                status: "Delivered",
+                                                lines: lines,
+                                                params: {},
+                                              }
+                                            );
+
+                                            toast.success(
+                                              "Paket teslim edildi olarak işaretlendi"
+                                            );
+                                            fetchPackages();
+                                          } catch (error) {
+                                            toast.error(
+                                              "İşlem sırasında hata oluştu"
+                                            );
+                                          }
+                                        }}
                                       >
                                         Teslim Edildi İşaretle
                                       </button>
@@ -3502,6 +3156,35 @@ function TrendyolMarketplaceCargoStagePage() {
                                           backgroundColor: "#dc3545",
                                           borderColor: "#dc3545",
                                           color: "white",
+                                        }}
+                                        onClick={async () => {
+                                          try {
+                                            const lines =
+                                              row.package.lines?.map(
+                                                (line) => ({
+                                                  lineId: line.id,
+                                                  quantity: line.quantity,
+                                                })
+                                              ) || [];
+
+                                            await updateShipmentPackageStatus(
+                                              row.package.id,
+                                              {
+                                                status: "Returned",
+                                                lines: lines,
+                                                params: {},
+                                              }
+                                            );
+
+                                            toast.success(
+                                              "Paket teslim edilemedi olarak işaretlendi"
+                                            );
+                                            fetchPackages();
+                                          } catch (error) {
+                                            toast.error(
+                                              "İşlem sırasında hata oluştu"
+                                            );
+                                          }
                                         }}
                                       >
                                         Teslim Edilemedi İşaretle
@@ -3514,31 +3197,29 @@ function TrendyolMarketplaceCargoStagePage() {
                                           borderColor: "#ff8c00",
                                           color: "white",
                                         }}
+                                        onClick={() => {
+                                          if (row.package.cargoTrackingLink) {
+                                            // Redirect to cargo tracking page if link exists
+                                            window.open(
+                                              row.package.cargoTrackingLink,
+                                              "_blank"
+                                            );
+                                          } else if (
+                                            row.package.cargoTrackingNumber
+                                          ) {
+                                            // Show tracking number if no link but number exists
+                                            toast.success(
+                                              `Kargo Takip No: ${row.package.cargoTrackingNumber}`
+                                            );
+                                          } else {
+                                            toast.error(
+                                              "Kargo takip bilgisi bulunamadı"
+                                            );
+                                          }
+                                        }}
                                       >
                                         Kargo Takip
                                       </button>
-                                    </div>
-                                    <div className="dropdown mt-2">
-                                      <button
-                                        className="btn btn-outline-secondary btn-sm dropdown-toggle w-100"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        style={{ fontSize: "0.7rem" }}
-                                      >
-                                        İşlemler
-                                      </button>
-                                      <ul className="dropdown-menu">
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Mesafeli Satış Sözleşmesi
-                                          </a>
-                                        </li>
-                                        <li>
-                                          <a className="dropdown-item" href="#">
-                                            Ön Bilgilendirme Formu
-                                          </a>
-                                        </li>
-                                      </ul>
                                     </div>
                                   </>
                                 )}
@@ -3560,19 +3241,6 @@ function TrendyolMarketplaceCargoStagePage() {
                                           İade Talebi Oluştur
                                         </a>
                                       </li>
-                                      <li>
-                                        <hr className="dropdown-divider" />
-                                      </li>
-                                      <li>
-                                        <a className="dropdown-item" href="#">
-                                          Mesafeli Satış Sözleşmesi
-                                        </a>
-                                      </li>
-                                      <li>
-                                        <a className="dropdown-item" href="#">
-                                          Ön Bilgilendirme Formu
-                                        </a>
-                                      </li>
                                     </ul>
                                   </div>
                                 )}
@@ -3586,38 +3254,6 @@ function TrendyolMarketplaceCargoStagePage() {
                                   "Returned",
                                 ].includes(row.package.status) && (
                                     <>
-                                      <div className="d-flex flex-column gap-1">
-                                        <button
-                                          className={`btn btn-sm ${hasInvoiceIssue
-                                              ? "btn-danger"
-                                              : "btn-warning"
-                                            }`}
-                                          onClick={() =>
-                                            openStatusModal(row.package)
-                                          }
-                                          style={{ fontSize: "0.7rem" }}
-                                        >
-                                          {hasInvoiceIssue && (
-                                            <i className="bx bx-error-circle me-1"></i>
-                                          )}
-                                          Etiketi A4 Yazdır
-                                        </button>
-                                        <button
-                                          className={`btn btn-sm ${hasInvoiceIssue
-                                              ? "btn-danger"
-                                              : "btn-warning"
-                                            }`}
-                                          onClick={() =>
-                                            openTrackingModal(row.package)
-                                          }
-                                          style={{ fontSize: "0.7rem" }}
-                                        >
-                                          {hasInvoiceIssue && (
-                                            <i className="bx bx-error-circle me-1"></i>
-                                          )}
-                                          Etiketi Sticker Yazdır
-                                        </button>
-                                      </div>
                                       <div className="dropdown mt-2">
                                         <button
                                           className="btn btn-outline-secondary btn-sm dropdown-toggle w-100"
@@ -3627,18 +3263,7 @@ function TrendyolMarketplaceCargoStagePage() {
                                         >
                                           İşlemler
                                         </button>
-                                        <ul className="dropdown-menu">
-                                          <li>
-                                            <a className="dropdown-item" href="#">
-                                              Mesafeli Satış Sözleşmesi
-                                            </a>
-                                          </li>
-                                          <li>
-                                            <a className="dropdown-item" href="#">
-                                              Ön Bilgilendirme Formu
-                                            </a>
-                                          </li>
-                                        </ul>
+                                        <ul className="dropdown-menu"></ul>
                                       </div>
                                     </>
                                   )}
@@ -3664,6 +3289,111 @@ function TrendyolMarketplaceCargoStagePage() {
               <p className="text-muted mb-3" style={{ fontSize: "0.8rem" }}>
                 Seçilen kriterlere uygun sipariş bulunmamaktadır.
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Pagination */}
+        {displayPackages.length > 0 && (
+          <div className="d-flex justify-content-center mt-4 mb-3">
+            <div className="d-flex gap-1">
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <i className="bx bx-chevron-left"></i>
+              </button>
+              <div className="d-flex gap-1">
+                {(() => {
+                  const maxVisiblePages = 5;
+                  const startPage = Math.max(
+                    1,
+                    currentPage - Math.floor(maxVisiblePages / 2)
+                  );
+                  const endPage = Math.min(
+                    paginationTotalPages,
+                    startPage + maxVisiblePages - 1
+                  );
+                  const adjustedStartPage = Math.max(
+                    1,
+                    endPage - maxVisiblePages + 1
+                  );
+
+                  const pages = [];
+
+                  // Show first page if not in range
+                  if (adjustedStartPage > 1) {
+                    pages.push(
+                      <button
+                        key={1}
+                        className={`btn btn-sm ${currentPage === 1
+                            ? "btn-dark"
+                            : "btn-outline-secondary"
+                          }`}
+                        onClick={() => handlePageChange(1)}
+                      >
+                        1
+                      </button>
+                    );
+                    if (adjustedStartPage > 2) {
+                      pages.push(
+                        <span key="start-ellipsis" className="btn btn-sm">
+                          ...
+                        </span>
+                      );
+                    }
+                  }
+
+                  // Show page range
+                  for (let i = adjustedStartPage; i <= endPage; i++) {
+                    pages.push(
+                      <button
+                        key={i}
+                        className={`btn btn-sm ${currentPage === i
+                            ? "btn-dark"
+                            : "btn-outline-secondary"
+                          }`}
+                        onClick={() => handlePageChange(i)}
+                      >
+                        {i}
+                      </button>
+                    );
+                  }
+
+                  // Show last page if not in range
+                  if (endPage < paginationTotalPages) {
+                    if (endPage < paginationTotalPages - 1) {
+                      pages.push(
+                        <span key="end-ellipsis" className="btn btn-sm">
+                          ...
+                        </span>
+                      );
+                    }
+                    pages.push(
+                      <button
+                        key={paginationTotalPages}
+                        className={`btn btn-sm ${currentPage === paginationTotalPages
+                            ? "btn-dark"
+                            : "btn-outline-secondary"
+                          }`}
+                        onClick={() => handlePageChange(paginationTotalPages)}
+                      >
+                        {paginationTotalPages}
+                      </button>
+                    );
+                  }
+
+                  return pages;
+                })()}
+              </div>
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                disabled={currentPage >= paginationTotalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <i className="bx bx-chevron-right"></i>
+              </button>
             </div>
           </div>
         )}
@@ -3796,113 +3526,136 @@ function TrendyolMarketplaceCargoStagePage() {
         isLoading={isDeletingInvoice}
       />
 
-      {/* Toplu Paket Bölme Onay Modal */}
-      {showBulkSplitModal && (
+      {/* Change Shipping Option Modal */}
+      <ChangeShippingOptionModal
+        isOpen={showChangeShippingOptionModal}
+        onClose={handleCloseChangeShippingOptionModal}
+        onOpen={() => setShowChangeShippingOptionModal(true)}
+        package={selectedPackageForShippingChange}
+        onUpdate={handleUpdateShippingOption}
+        onShowConfirmation={handleShowConfirmationModal}
+      />
+
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
         <div
-          className="modal fade show"
-          style={{ display: "block" }}
-          id="bulkSplitModal"
+          className="modal fade show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
         >
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  <i className="bx bx-cut me-2 text-warning"></i>
-                  Toplu Paket Bölme Onayı
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ borderRadius: "8px" }}>
+              <div
+                className="modal-header"
+                style={{ borderBottom: "1px solid #e9ecef", padding: "1.5rem" }}
+              >
+                <h5
+                  className="modal-title"
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: "600",
+                    margin: 0,
+                    color: "#000",
+                  }}
+                >
+                  Paketi hangi seçenek ile göndermek istiyorsunuz?
                 </h5>
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowBulkSplitModal(false)}
+                  onClick={handleCancelConfirmation}
+                  aria-label="Close"
+                  style={{ fontSize: "1.2rem" }}
                 ></button>
               </div>
-              <div className="modal-body">
-                <div className="alert alert-info">
-                  <i className="bx bx-info-circle me-2"></i>
-                  <strong>
-                    {selectedPackagesForBulkSplit.length} paket
-                  </strong>{" "}
-                  seçildi. Bu paketler otomatik olarak bölünecektir.
-                </div>
 
-                <div className="table-responsive">
-                  <table className="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Paket No</th>
-                        <th>Ürün Sayısı</th>
-                        <th>Toplam Adet</th>
-                        <th>Bölme Sonucu</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedPackagesForBulkSplit.map((pkg) => {
-                        const packageLines = pkg.lines || [];
-                        const totalQuantity =
-                          packageLines.reduce(
-                            (sum, line) => sum + line.quantity,
-                            0
-                          ) || 1;
-
-                        let splitResult = "";
-                        if (packageLines.length === 1) {
-                          const splitQuantity = Math.floor(totalQuantity / 2);
-                          splitResult = `Yeni: ${splitQuantity} adet, Kalan: ${totalQuantity - splitQuantity
-                            } adet`;
-                        } else {
-                          const halfLines = Math.ceil(packageLines.length / 2);
-                          splitResult = `Yeni: ${halfLines} ürün, Kalan: ${packageLines.length - halfLines
-                            } ürün`;
-                        }
-
-                        return (
-                          <tr key={pkg.id}>
-                            <td>
-                              <strong>#{pkg.id}</strong>
-                            </td>
-                            <td>{packageLines.length} ürün</td>
-                            <td>{totalQuantity} adet</td>
-                            <td className="text-success">{splitResult}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="alert alert-warning mt-3">
-                  <i className="bx bx-exclamation-triangle me-2"></i>
-                  <strong>Dikkat:</strong> Bu işlem geri alınamaz. Her paket
-                  için yeni kargo barkodu oluşturulacaktır.
-                </div>
+              <div className="modal-body" style={{ padding: "1.5rem" }}>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    lineHeight: "1.5",
+                    color: "#000",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  Gönderi seçeneğini "Alternatif Teslimat" olarak
+                  güncellediğinizde, siparişiniz "taşıma durumunda" statüsüne
+                  geçecektir.
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    lineHeight: "1.5",
+                    color: "#000",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  Alternatif teslimat ile taşıma durumunda olup 216 saat (9 iş
+                  günü) içerisinde müşteriye teslim edilmeyen ve/veya teslim
+                  statüsü beslenmeyen gönderiler için gecikme bedeli
+                  yansıtılacaktır.
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.95rem",
+                    lineHeight: "1.5",
+                    color: "#000",
+                    fontWeight: "500",
+                  }}
+                >
+                  Onaylıyor musunuz?
+                </p>
               </div>
-              <div className="modal-footer">
+
+              <div
+                className="modal-footer"
+                style={{
+                  borderTop: "1px solid #e9ecef",
+                  padding: "1rem 1.5rem",
+                  justifyContent: "flex-end",
+                  gap: "0.75rem",
+                }}
+              >
                 <button
                   type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowBulkSplitModal(false)}
+                  className="btn"
+                  onClick={handleCancelConfirmation}
+                  style={{
+                    backgroundColor: "white",
+                    border: "1px solid #6c757d",
+                    color: "#6c757d",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    fontSize: "0.9rem",
+                    fontWeight: "500",
+                  }}
                 >
                   Vazgeç
                 </button>
                 <button
                   type="button"
-                  className="btn btn-warning"
-                  onClick={() => {
-                    setShowBulkSplitModal(false);
-                    handleBulkSplitOperation(selectedPackagesForBulkSplit);
+                  className="btn"
+                  onClick={handleConfirmShippingUpdate}
+                  disabled={isProcessingAlternativeDelivery}
+                  style={{
+                    backgroundColor: isProcessingAlternativeDelivery
+                      ? "#6c757d"
+                      : "#ff6b35",
+                    border: "none",
+                    color: "white",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    fontSize: "0.9rem",
+                    fontWeight: "500",
+                    opacity: isProcessingAlternativeDelivery ? 0.6 : 1,
                   }}
                 >
-                  <i className="bx bx-cut me-2"></i>
-                  Toplu Paket Böl
+                  {isProcessingAlternativeDelivery ? "İşleniyor..." : "Onayla"}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Modal backdrop */}
-      {showBulkSplitModal && <div className="modal-backdrop fade show"></div>}
 
       <style jsx>{`
         .cursor-pointer {

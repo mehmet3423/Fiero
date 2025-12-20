@@ -13,7 +13,7 @@ export const useProcessRefundItems = () => {
       // Backend'e gönderilecek veriyi hazırla
       const requestData = {
         items: refundData.items.map(item => ({
-          orderItemId: item.orderItemId,
+          paymentTransactionId: item.paymentTransactionId,
           isApproved: item.isApproved,
           rejectReason: item.rejectReason || null, // Backend'de RefundRejectReason? nullable
           description: item.description || "" // Kullanıcının girdiği açıklama metni
@@ -39,7 +39,8 @@ export const useProcessRefundItems = () => {
       }
     } catch (error) {
       // Network hatası veya diğer hatalar için genel mesaj göster
-
+      console.error("processRefundItems error:", error);
+      toast.error("Ürün iade işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.");
       return null; // Hata durumunda null döndür
     }
   };

@@ -119,7 +119,7 @@ function PassiveProductsReportPage() {
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <div className="col-md-4 d-flex align-items-end">
+            <div className="col-md-4 d-flex align-items-end mt-1">
               <button
                 className="btn btn-primary me-2"
                 onClick={handleSearch}

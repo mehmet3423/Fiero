@@ -202,7 +202,7 @@ function ProductCartReportPage() {
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <div className="col-md-3 d-flex align-items-end">
+            <div className="col-md-3 d-flex align-items-end mt-2">
               <button
                 className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}

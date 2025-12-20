@@ -392,46 +392,48 @@ function CreateSeoPage() {
       setCategoryError(null);
     }
 
-    // Alanları PascalCase'e çevir ve boş string/null/undefined olanları null yap
+    // Map to backend model with camelCase
     const mapToBackendModel = (data: SeoFormData, type: typeof seoType) => {
       const mapped: any = {
-        IsHomePage: data.isHomePage,
-        Title: data.title,
-        Description: data.description,
-        MetaTitle: data.metaTitle || null,
-        MetaDescription: data.metaDescription || null,
-        Keywords: data.keywords || null,
-        Canonical: null,
-        RobotsMetaTag: data.robotsMetaTag || null,
-        Author: data.author || null,
-        Publisher: data.publisher || null,
-        Language: data.language || "tr",
-        OgTitle: data.ogTitle || null,
-        OgDescription: data.ogDescription || null,
-        OgImageUrl: data.ogImageUrl || null,
-        StructuredDataJson: data.structuredDataJson || null,
-        ProductId: null,
-        MainCategoryId: null,
-        SubCategoryId: null,
-        BaseUrl: baseUrl,
+        isHomePage: data.isHomePage,
+        title: data.title,
+        description: data.description,
+        metaTitle: data.metaTitle || null,
+        metaDescription: data.metaDescription || null,
+        keywords: data.keywords || null,
+        canonical: null,
+        robotsMetaTag: data.robotsMetaTag || null,
+        author: data.author || null,
+        publisher: data.publisher || null,
+        language: data.language || "tr",
+        ogTitle: data.ogTitle || null,
+        ogDescription: data.ogDescription || null,
+        ogImageUrl: data.ogImageUrl || null,
+        structuredDataJson: data.structuredDataJson || null,
+        isIndexed: true,
+        isFollowed: true,
+        productId: null,
+        mainCategoryId: null,
+        subCategoryId: null,
+        baseUrl: baseUrl,
       };
 
       if (type === "general") {
         // Sadece path gönder (örn. 'about-us')
-        mapped.Canonical = data.canonical
+        mapped.canonical = data.canonical
           ? data.canonical.replace(/^\//, "")
           : null;
       }
       if (type === "product") {
-        mapped.ProductId =
+        mapped.productId =
           data.productId && data.productId !== "" ? data.productId : null;
       }
       if (type === "category") {
-        mapped.MainCategoryId =
+        mapped.mainCategoryId =
           data.mainCategoryId && data.mainCategoryId !== ""
             ? data.mainCategoryId
             : null;
-        mapped.SubCategoryId =
+        mapped.subCategoryId =
           data.subCategoryId && data.subCategoryId !== ""
             ? data.subCategoryId
             : null;
@@ -504,59 +506,99 @@ function CreateSeoPage() {
               <form onSubmit={handleSubmit}>
                 {/* SEO Type Selection */}
                 <div className="mb-4">
-                  <label className="form-label fw-bold">SEO Tipi</label>
-                  <div className="d-flex gap-3">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="seoType"
-                        id="homepage"
-                        checked={seoType === "homepage"}
-                        onChange={() => handleSeoTypeChange("homepage")}
-                      />
-                      <label className="form-check-label" htmlFor="homepage">
-                        Ana Sayfa
-                      </label>
+                  <label className="form-label fw-bold mb-3">SEO Tipi</label>
+                  <div className="row g-3">
+                    <div className="col-6 col-md-3">
+                      <div className="form-check d-flex align-items-center">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="seoType"
+                          id="homepage"
+                          checked={seoType === "homepage"}
+                          onChange={() => handleSeoTypeChange("homepage")}
+                        />
+                        <label
+                          className="form-check-label ms-2"
+                          htmlFor="homepage"
+                          style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "0.875rem",
+                            marginBottom: 0,
+                          }}
+                        >
+                          Ana Sayfa
+                        </label>
+                      </div>
                     </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="seoType"
-                        id="general"
-                        checked={seoType === "general"}
-                        onChange={() => handleSeoTypeChange("general")}
-                      />
-                      <label className="form-check-label" htmlFor="general">
-                        Genel Sayfa
-                      </label>
+                    <div className="col-6 col-md-3">
+                      <div className="form-check d-flex align-items-center">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="seoType"
+                          id="general"
+                          checked={seoType === "general"}
+                          onChange={() => handleSeoTypeChange("general")}
+                        />
+                        <label
+                          className="form-check-label ms-2"
+                          htmlFor="general"
+                          style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "0.875rem",
+                            marginBottom: 0,
+                          }}
+                        >
+                          Genel Sayfa
+                        </label>
+                      </div>
                     </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="seoType"
-                        id="product"
-                        checked={seoType === "product"}
-                        onChange={() => handleSeoTypeChange("product")}
-                      />
-                      <label className="form-check-label" htmlFor="product">
-                        Ürün Sayfası
-                      </label>
+                    <div className="col-6 col-md-3">
+                      <div className="form-check d-flex align-items-center">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="seoType"
+                          id="product"
+                          checked={seoType === "product"}
+                          onChange={() => handleSeoTypeChange("product")}
+                        />
+                        <label
+                          className="form-check-label ms-2"
+                          htmlFor="product"
+                          style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "0.875rem",
+                            marginBottom: 0,
+                          }}
+                        >
+                          Ürün Sayfası
+                        </label>
+                      </div>
                     </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="seoType"
-                        id="category"
-                        checked={seoType === "category"}
-                        onChange={() => handleSeoTypeChange("category")}
-                      />
-                      <label className="form-check-label" htmlFor="category">
-                        Kategori Sayfası
-                      </label>
+                    <div className="col-6 col-md-3">
+                      <div className="form-check d-flex align-items-center">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="seoType"
+                          id="category"
+                          checked={seoType === "category"}
+                          onChange={() => handleSeoTypeChange("category")}
+                        />
+                        <label
+                          className="form-check-label ms-2"
+                          htmlFor="category"
+                          style={{
+                            whiteSpace: "nowrap",
+                            fontSize: "0.875rem",
+                            marginBottom: 0,
+                          }}
+                        >
+                          Kategori Sayfası
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>

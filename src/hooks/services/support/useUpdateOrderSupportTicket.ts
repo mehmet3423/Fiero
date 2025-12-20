@@ -8,7 +8,6 @@ interface UpdateOrderSupportTicketData {
   supportTicketStatus?: number;
   title?: string;
   description?: string;
-  orderItemId?: string;
 }
 
 interface UpdateOrderSupportTicketResponse {
@@ -40,10 +39,6 @@ export const useUpdateOrderSupportTicket = () => {
     if (data.description) {
       params.append("Description", data.description);
     }
-    if (data.orderItemId) {
-      params.append("OrderItemId", data.orderItemId);
-    }
-
     return mutation.mutateAsync({
       url: `${UPDATE_ORDER_SUPPORT_TICKET}?${params.toString()}`,
       method: HttpMethod.PUT,

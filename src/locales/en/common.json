@@ -137,8 +137,32 @@
     "newsletter": "Newsletter",
     "newsletterDescription": "Sign up for new products, discounts, exclusive content, events, and more!",
     "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "subscribeSuccess": "Successfully subscribed!",
+    "subscribeError": "An error occurred while subscribing. Please try again.",
+    "emailRequired": "Please enter your email address.",
+    "emailInvalid": "Please enter a valid email address.",
     "copyright": "Copyright",
-    "blog": "Blogs"
+    "blog": "Blogs",
+    "unsubscribe": {
+      "title": "Unsubscribe",
+      "processing": "Processing...",
+      "processing_desc": "Please wait while we process your unsubscribe request.",
+      "success": "Successfully unsubscribed from newsletter!",
+      "success_title": "Successfully Unsubscribed",
+      "success_message": "You have been successfully unsubscribed from our newsletter.",
+      "back_to_home": "Back to Home",
+      "error_title": "Unsubscribe Failed",
+      "error_message": "We encountered an error while processing your unsubscribe request. Please try again later or contact support.",
+      "contact_support": "Contact Support",
+      "error": {
+        "email_missing": "Email parameter is missing",
+        "general": "An error occurred. Please try again."
+      }
+    }
+  },
+  "breadcrumb": {
+    "home": "Home"
   },
   "announcementSlider": {
     "announcements": [
@@ -146,5 +170,9 @@
       "Free bag for purchases over 5000TL!",
       "Free shipping!"
     ]
+  },
+  "categories": {
+    "youMightLike": "Categories you might like",
+    "category": "category"
   }
 }

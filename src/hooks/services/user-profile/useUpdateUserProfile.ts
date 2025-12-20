@@ -55,6 +55,7 @@ export const useUpdateUserProfile = () => {
         }
       );
     } catch (error) {
+      console.error("Error updating profile:", error);
       toast.error("Profil güncellenirken bir hata oluştu");
     }
   };

@@ -42,6 +42,9 @@ export const useCreateMainCategory = () => {
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
             });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],
+            });
           },
         }
       );

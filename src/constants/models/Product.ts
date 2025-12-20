@@ -1,6 +1,6 @@
+import { CommandResultWithData } from "./CommandResult";
 import { Discount, SubCategoryDiscount } from "./Discount";
 import { PaginationModel } from "./Pagination";
-import { CommandResultWithData } from "./CommandResult";
 
 // Yeni API response wrapper
 export interface ApiResponse<T> {
@@ -58,7 +58,55 @@ export interface SEOResponse extends BaseEntity {
 // Base product response interface
 export interface BaseProductResponse extends BaseEntity {
   name: string;
+  nameEn?: string | null;
+  subCategoryId?: string;
 }
+
+export interface CreateBaseProductRequest {
+  name: string;
+  nameEn?: string | null;
+  productIds: string[];
+  subCategoryId: string;
+}
+
+export interface UpdateBaseProductRequest extends CreateBaseProductRequest {
+  id: string;
+}
+
+export interface BaseProductDetailResponse
+  extends CommandResultWithData<BaseProductResponse> { }
+
+export interface BaseProductVariantDTO {
+  id: string;
+  name?: string | null;
+  baseProductId?: string;
+  baseImageUrl?: string | null;
+  barcodeNumber?: string | null;
+  sellableQuantity?: number;
+  price?: number;
+  discountedPrice?: number;
+  isAvailable?: boolean;
+  isOutlet?: boolean;
+  refundable?: boolean;
+  averageRating?: number;
+  ratingCount?: number;
+  contentImageUrls?: string[];
+  currencyType?: number | string;
+}
+
+export interface BaseProductVariantsResponse
+  extends CommandResultWithData<BaseProductVariantDTO[] | { data: BaseProductVariantDTO[] }> { }
+
+export interface BaseProductListRequest {
+  page?: number;
+  pageSize?: number;
+  from?: number;
+  subCategoryId?: string;
+  search?: string;
+}
+
+export interface BaseProductListResponse
+  extends CommandResultWithData<PaginationListResponse<BaseProductResponse>> { }
 
 // Address interface
 export interface AddressDTO extends BaseEntity {
@@ -115,7 +163,9 @@ export interface SpecificationOptionDTO extends BaseEntity {
 // Product only specification interface
 export interface ProductOnlySpecificationDTO extends BaseEntity {
   name: string;
+  nameEn?: string | null;
   value: string;
+  valueEn?: string | null;
 }
 
 // Comment interface
@@ -185,12 +235,19 @@ export interface ProductWithDiscountDTO extends BaseEntity {
   discountResponse?: Discount;
   buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
   freeProductDiscountResponse?: FreeProductDiscountBasicResponse;
-  productInfos?: ProductInfoDTO[];
+  productInfos?: {
+    id?: string;
+    title: string;
+    titleEn?: string | null;
+    description: string;
+    descriptionEn?: string | null;
+    icon: string;
+  }[];
 }
 
 // API response type for GetProductById
 export interface GetProductByIdResponse
-  extends CommandResultWithData<ProductWithDiscountDTO> {}
+  extends CommandResultWithData<ProductWithDiscountDTO> { }
 
 export interface ProductListResponse
   extends CommandResultWithData<PaginationListResponse<Product>> {
@@ -299,7 +356,9 @@ export interface TechnicalDetail {
 export interface ProductOnlySpecification {
   $id: string;
   name: string;
+  nameEn?: string | null;
   value: string;
+  valueEn?: string | null;
   productId: string;
   id: string;
   createdOn: number;
@@ -315,47 +374,36 @@ export interface ProductDetailResponse {
   reviews: any;
   id: string;
   title: string;
-  titleEn?: string | null;
   description: string;
-  descriptionEn?: string | null;
   effectedDiscountId: string;
   price: number;
   discountedPrice: number;
   baseImageUrl: string;
-  baseImageUrlEn?: string | null;
   category: string;
   barcodeNumber: string;
   sellableQuantity: number;
   isAvailable: boolean;
   productOnlySpecifications: ProductOnlySpecification[];
   banner: string[];
-  bannerEn?: string[] | null;
   contentImageUrls: string[];
-  contentImageUrlsEn?: string[] | null;
   productDiscounts: Discount[];
   subCategoryDiscounts: SubCategoryDiscount[];
   videoUrl: string;
-  videoUrlEn?: string | null;
   seo: any | null; // Added for SEO support
   seoId: string; // Added for SEO support
 
   productInfos?: {
     id?: string;
     title: string;
-    titleEn?: string | null;
     description: string;
-    descriptionEn?: string | null;
     icon: string;
   }[];
 }
 
 // ProductInfo interface for ProductBasicDTO
 export interface ProductInfoDTO {
-  id?: string;
   title: string;
-  titleEn?: string | null;
   description: string;
-  descriptionEn?: string | null;
   icon?: string;
 }
 
@@ -364,7 +412,6 @@ export interface ProductBasicDTO extends BaseEntity {
   baseProductId?: string;
   baseProduct?: BaseProductResponse;
   title: string;
-  titleEn?: string | null;
   barcodeNumber: string;
   sellableQuantity: number;
   price: number;
@@ -375,10 +422,8 @@ export interface ProductBasicDTO extends BaseEntity {
   averageRating: number;
   ratingCount: number;
   baseImageUrl: string;
-  baseImageUrlEn?: string | null;
   productInfos: ProductInfoDTO[];
   contentImageUrls: string[];
-  contentImageUrlsEn?: string[] | null;
   currencyType: string;
   discountResponse?: Discount;
   buyXPayYDiscountResponse?: BuyXPayYDiscountBasicResponse;
@@ -403,4 +448,4 @@ export interface PaginationListResponse<T> extends PaginationListResponseBase {
 
 // API response type for GetAllOutletProducts
 export interface GetAllOutletProductsResponse
-  extends CommandResultWithData<PaginationListResponse<ProductBasicDTO>> {}
+  extends CommandResultWithData<PaginationListResponse<ProductBasicDTO>> { }

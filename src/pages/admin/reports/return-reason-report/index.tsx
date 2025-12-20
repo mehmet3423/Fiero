@@ -1,9 +1,6 @@
 import React from "react";
 import { useReturnReasonReport } from "@/hooks/services/reports/useReturnReasonReport";
-import {
-  getReasonTypeInfo,
-  getPercentageColor,
-} from "@/constants/models/reports";
+import { getReasonTypeInfo } from "@/constants/models/reports";
 import Link from "next/link";
 import { useReportPagination } from "@/hooks/shared/useReportPagination";
 import { REPORT_PAGE_SIZE } from "@/constants/reportConstants";
@@ -12,6 +9,8 @@ import CirclePagination from "@/components/shared/CirclePagination";
 import { useExcelExport } from "@/hooks/services/reports/useExcelExport";
 import { GET_RETURN_REASON_REPORT_EXCEL } from "@/constants/links";
 import BackButton from "@/components/shared/BackButton";
+import { formatCurrency } from "@/utils/currencyFormatter";
+import { formatDateTime } from "@/utils/dateFormatter";
 
 interface ReturnReasonFilters {
   // Bu rapor için filter yok ama interface gerekli
@@ -28,17 +27,6 @@ function ReturnReasonReportPage() {
     getApiParams()
   );
   const { exportToExcel, isExporting } = useExcelExport();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-    }).format(amount);
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString("tr-TR");
-  };
 
   const calculateTotalReturns = () => {
     if (!data?.data?.items) return 0;
@@ -97,40 +85,30 @@ function ReturnReasonReportPage() {
           <div className="col-md-3">
             <div className="card text-center">
               <div className="card-body py-2">
-                <div className="card-title d-flex align-items-center justify-content-center small">
-                  <i className="fas fa-list text-primary me-1"></i>
+                <div className="card-title small">
                   <span style={{ fontSize: "0.8rem" }}>İade Nedeni</span>
                 </div>
-                <h5 className="card-text text-primary mb-0">
-                  {data.data.count}
-                </h5>
+                <h5 className="card-text mb-0">{data.data.count}</h5>
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="card text-center">
               <div className="card-body py-2">
-                <div className="card-title d-flex align-items-center justify-content-center small">
-                  <i className="fas fa-undo text-warning me-1"></i>
+                <div className="card-title small">
                   <span style={{ fontSize: "0.8rem" }}>İade Sayısı</span>
                 </div>
-                <h5 className="card-text text-warning mb-0">
-                  {calculateTotalReturns()}
-                </h5>
+                <h5 className="card-text mb-0">{calculateTotalReturns()}</h5>
               </div>
             </div>
           </div>
           <div className="col-md-3">
             <div className="card text-center">
               <div className="card-body py-2">
-                <div className="card-title d-flex align-items-center justify-content-center small">
-                  <i className="fas fa-money-bill text-success me-1"></i>
+                <div className="card-title small">
                   <span style={{ fontSize: "0.8rem" }}>Toplam Tutar</span>
                 </div>
-                <h6
-                  className="card-text text-success mb-0"
-                  style={{ fontSize: "1rem" }}
-                >
+                <h6 className="card-text mb-0" style={{ fontSize: "1rem" }}>
                   {formatCurrency(calculateTotalRefunds())}
                 </h6>
               </div>
@@ -139,14 +117,10 @@ function ReturnReasonReportPage() {
           <div className="col-md-3">
             <div className="card text-center">
               <div className="card-body py-2">
-                <div className="card-title d-flex align-items-center justify-content-center small">
-                  <i className="fas fa-chart-pie text-info me-1"></i>
+                <div className="card-title small">
                   <span style={{ fontSize: "0.8rem" }}>Ort. Tutar</span>
                 </div>
-                <h6
-                  className="card-text text-info mb-0"
-                  style={{ fontSize: "1rem" }}
-                >
+                <h6 className="card-text mb-0" style={{ fontSize: "1rem" }}>
                   {formatCurrency(
                     calculateTotalRefunds() / calculateTotalReturns() || 0
                   )}
@@ -163,29 +137,19 @@ function ReturnReasonReportPage() {
           <div className="col-md-6">
             <div className="card">
               <div className="card-body py-2">
-                <h6 className="card-title text-danger small mb-2">
-                  🔥 En Sık İade Nedeni
-                </h6>
+                <h6 className="card-title small mb-2">En Sık İade Nedeni</h6>
                 {getMostCommonReason() && (
-                  <div className="d-flex align-items-center">
-                    <span className="me-2">
-                      {
-                        getReasonTypeInfo(getMostCommonReason()!.reasonType)
-                          .icon
-                      }
-                    </span>
-                    <div>
-                      <h6 className="mb-1 small">
-                        {getMostCommonReason()!.reasonName}
-                      </h6>
-                      <small
-                        className="text-muted"
-                        style={{ fontSize: "0.75rem" }}
-                      >
-                        {getMostCommonReason()!.totalReturns} iade (
-                        {getMostCommonReason()!.percentage.toFixed(1)}%)
-                      </small>
-                    </div>
+                  <div>
+                    <h6 className="mb-1 small">
+                      {getMostCommonReason()!.reasonName}
+                    </h6>
+                    <small
+                      className="text-muted"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      {getMostCommonReason()!.totalReturns} iade (
+                      {getMostCommonReason()!.percentage?.toFixed(1)}%)
+                    </small>
                   </div>
                 )}
               </div>
@@ -194,31 +158,23 @@ function ReturnReasonReportPage() {
           <div className="col-md-6">
             <div className="card">
               <div className="card-body py-2">
-                <h6 className="card-title text-warning small mb-2">
-                  💰 En Yüksek Tutarlı İade
+                <h6 className="card-title small mb-2">
+                  En Yüksek Tutarlı İade
                 </h6>
                 {getHighestRefundReason() && (
-                  <div className="d-flex align-items-center">
-                    <span className="me-2">
-                      {
-                        getReasonTypeInfo(getHighestRefundReason()!.reasonType)
-                          .icon
-                      }
-                    </span>
-                    <div>
-                      <h6 className="mb-1 small">
-                        {getHighestRefundReason()!.reasonName}
-                      </h6>
-                      <small
-                        className="text-muted"
-                        style={{ fontSize: "0.75rem" }}
-                      >
-                        {formatCurrency(
-                          getHighestRefundReason()!.totalRefundAmount
-                        )}{" "}
-                        toplam iade
-                      </small>
-                    </div>
+                  <div>
+                    <h6 className="mb-1 small">
+                      {getHighestRefundReason()!.reasonName}
+                    </h6>
+                    <small
+                      className="text-muted"
+                      style={{ fontSize: "0.75rem" }}
+                    >
+                      {formatCurrency(
+                        getHighestRefundReason()!.totalRefundAmount
+                      )}{" "}
+                      toplam iade
+                    </small>
                   </div>
                 )}
               </div>
@@ -270,17 +226,10 @@ function ReturnReasonReportPage() {
 
           {data && !isLoading && (
             <>
-              <div className="mb-2 d-flex justify-content-between align-items-center">
+              <div className="mb-2">
                 <small className="text-muted" style={{ fontSize: "0.8rem" }}>
                   Toplam {data.data.count} farklı iade nedeni analiz edildi
                 </small>
-                {data.data.count > 0 && (
-                  <div className="text-end">
-                    <small className="text-info" style={{ fontSize: "0.8rem" }}>
-                      📊 İade nedeni dağılım analizi
-                    </small>
-                  </div>
-                )}
               </div>
 
               {data.data.items && data.data.items.length > 0 ? (
@@ -304,9 +253,6 @@ function ReturnReasonReportPage() {
                         .sort((a, b) => b.totalReturns - a.totalReturns) // En çok iade nedeni önce
                         .map((item, index) => {
                           const reasonInfo = getReasonTypeInfo(item.reasonType);
-                          const percentageColor = getPercentageColor(
-                            item.percentage
-                          );
 
                           return (
                             <tr key={item.id}>
@@ -323,93 +269,27 @@ function ReturnReasonReportPage() {
                                 </span>
                               </td>
                               <td className="small">
-                                <div className="d-flex align-items-center">
-                                  <span className="me-1">
-                                    {reasonInfo.icon}
-                                  </span>
-                                  <div>
-                                    <span className="fw-bold">
-                                      {item.reasonName}
-                                    </span>
-                                    {index === 0 && (
-                                      <span
-                                        className="badge bg-danger-subtle text-danger badge-sm ms-1"
-                                        style={{ fontSize: "0.65rem" }}
-                                      >
-                                        🔥 En Sık
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
+                                <span className="fw-bold">
+                                  {item.reasonName}
+                                </span>
                               </td>
                               <td className="small">
                                 <span
-                                  className={`badge ${reasonInfo.color} badge-sm`}
+                                  className="badge badge-sm"
                                   style={{ fontSize: "0.7rem" }}
                                 >
                                   {reasonInfo.priority}
                                 </span>
                               </td>
+                              <td className="small">{item.totalReturns}</td>
                               <td className="small">
-                                <div className="d-flex align-items-center">
-                                  <span
-                                    className="badge bg-warning badge-sm me-1"
-                                    style={{ fontSize: "0.7rem" }}
-                                  >
-                                    {item.totalReturns}
-                                  </span>
-                                  {item.totalReturns >= 100 && (
-                                    <span
-                                      className="badge bg-danger-subtle text-danger badge-sm"
-                                      style={{ fontSize: "0.65rem" }}
-                                    >
-                                      ⚠️ Yüksek
-                                    </span>
-                                  )}
-                                </div>
+                                {item.percentage?.toFixed(1)}%
                               </td>
                               <td className="small">
-                                <div className="d-flex align-items-center">
-                                  <div
-                                    className="progress me-1"
-                                    style={{ width: "40px", height: "6px" }}
-                                  >
-                                    <div
-                                      className={`progress-bar ${percentageColor.replace(
-                                        "text-",
-                                        "bg-"
-                                      )}`}
-                                      style={{
-                                        width: `${Math.min(
-                                          item.percentage,
-                                          100
-                                        )}%`,
-                                      }}
-                                    ></div>
-                                  </div>
-                                  <span
-                                    className={`fw-bold ${percentageColor}`}
-                                    style={{ fontSize: "0.7rem" }}
-                                  >
-                                    {item.percentage.toFixed(1)}%
-                                  </span>
-                                </div>
+                                {formatCurrency(item.totalRefundAmount)}
                               </td>
                               <td className="small">
-                                <strong
-                                  className="text-success"
-                                  style={{ fontSize: "0.8rem" }}
-                                >
-                                  {formatCurrency(item.totalRefundAmount)}
-                                </strong>
-                              </td>
-                              <td className="small">
-                                <span
-                                  className="text-info"
-                                  style={{ fontSize: "0.8rem" }}
-                                >
-                                  {formatCurrency(item.averageRefundAmount)}
-                                </span>
+                                {formatCurrency(item.averageRefundAmount)}
                               </td>
                               <td className="small">
                                 <small
@@ -435,8 +315,7 @@ function ReturnReasonReportPage() {
                 </div>
               ) : (
                 <div className="text-center py-3">
-                  <div className="text-info">
-                    <i className="fas fa-chart-bar fa-2x mb-2"></i>
+                  <div>
                     <h6 className="small mb-1">
                       İade nedeni verisi bulunmuyor.
                     </h6>

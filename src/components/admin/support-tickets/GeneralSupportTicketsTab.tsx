@@ -7,6 +7,7 @@ import { getAllGeneralRequestTypes } from "@/helpers/enum/generalRequestType";
 import { useDeleteSupportTicket } from "@/hooks/services/support/useDeleteSupportTicket";
 import { useGetSupportTickets } from "@/hooks/services/support/useGetSupportTicket";
 import { useUpdateGeneralSupportTicket } from "@/hooks/services/support/useUpdateGeneralSupportTicket";
+import StatusBadge from "@/components/shared/StatusBadge";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -57,6 +58,7 @@ export default function GeneralSupportTicketsTab() {
       requestType,
       title: debouncedTitle,
       from,
+      supportTicketStatus,
     });
 
   const deleteMutation = useDeleteSupportTicket();
@@ -160,79 +162,111 @@ export default function GeneralSupportTicketsTab() {
     setPageSize(10);
   };
 
-  if (error) {
-    return <div className="alert alert-danger">Destek talebi bulunmadı.</div>;
-  }
-
   return (
     <div>
       {/* Minimal Filtreler */}
-      <div className="d-flex gap-2 mb-3 align-items-end">
-        <div className="flex-grow-1">
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            placeholder="Başlık ara..."
-            value={searchTitle || ""}
-            onChange={(e) => setSearchTitle(e.target.value || undefined)}
-          />
+      <div className="card mb-3">
+        <div className="card-body py-2">
+          <div className="row g-2">
+            {/* Başlık Arama */}
+            <div className="col-12 col-md-4 d-flex flex-column">
+              <label className="form-label small mb-1">Başlık Ara</label>
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                placeholder="Başlık ara..."
+                value={searchTitle || ""}
+                onChange={(e) => setSearchTitle(e.target.value || undefined)}
+              />
+            </div>
+
+            {/* Talep Türü */}
+            <div className="col-6 col-md-2 d-flex flex-column">
+              <label className="form-label small mb-1">Tür</label>
+              <select
+                className="form-select form-select-sm"
+                value={requestType ?? ""}
+                onChange={(e) =>
+                  setRequestType(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+              >
+                <option value="">Tüm Türler</option>
+                {getAllGeneralRequestTypes().map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Durum */}
+            <div className="col-6 col-md-2 d-flex flex-column">
+              <label className="form-label small mb-1">Durum</label>
+              <select
+                className="form-select form-select-sm"
+                value={supportTicketStatus ?? ""}
+                onChange={(e) =>
+                  setSupportTicketStatus(
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
+              >
+                <option value="">Tüm Durumlar</option>
+                {Object.entries(SupportTicketStatusLabels).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            {/* Tarihten */}
+            <div className="col-6 col-md-2 d-flex flex-column">
+              <label className="form-label small mb-1">Tarih</label>
+              <input
+                type="date"
+                className="form-control form-control-sm"
+                value={from || ""}
+                onChange={(e) => setFrom(e.target.value || undefined)}
+              />
+            </div>
+
+            {/* Sayfa Boyutu */}
+            <div className="col-6 col-md-1 d-flex flex-column">
+              <label className="form-label small mb-1">Sayfa</label>
+              <select
+                className="form-select form-select-sm"
+                value={pageSize}
+                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+
+            {/* Reset Button */}
+            <div className="col-12 col-md-1 d-flex flex-column">
+              <label
+                className="form-label small mb-1"
+                style={{ visibility: "hidden" }}
+              >
+                Temizle
+              </label>
+              <button
+                type="button"
+                className="btn btn-outline-secondary btn-sm w-100"
+                onClick={handleResetFilters}
+              >
+                <i className="bx bx-refresh"></i>
+              </button>
+            </div>
+          </div>
         </div>
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "120px" }}
-          value={requestType ?? ""}
-          onChange={(e) =>
-            setRequestType(e.target.value ? Number(e.target.value) : undefined)
-          }
-        >
-          <option value="">Tüm Türler</option>
-          {getAllGeneralRequestTypes().map((type) => (
-            <option key={type.value} value={type.value}>
-              {type.title}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "140px" }}
-          value={supportTicketStatus ?? ""}
-          onChange={(e) =>
-            setSupportTicketStatus(
-              e.target.value ? Number(e.target.value) : undefined
-            )
-          }
-        >
-          <option value="">Tüm Durumlar</option>
-          {Object.entries(SupportTicketStatusLabels).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-        <input
-          type="date"
-          className="form-control form-control-sm"
-          style={{ width: "140px" }}
-          value={from || ""}
-          onChange={(e) => setFrom(e.target.value || undefined)}
-        />
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "80px" }}
-          value={pageSize}
-          onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-        >
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-        </select>
-        <button
-          type="button"
-          className="btn btn-outline-secondary btn-sm"
-          onClick={handleResetFilters}
-        >
-          <i className="bx bx-refresh"></i>
-        </button>
       </div>
 
       {/* Sonuçlar */}
@@ -304,17 +338,10 @@ export default function GeneralSupportTicketsTab() {
                           </span>
                         </td>
                         <td>
-                          <span
-                            className={`badge bg-${
-                              SupportTicketStatusColors[
-                                ticket.supportTicketStatus as keyof typeof SupportTicketStatusColors
-                              ] || "secondary"
-                            }`}
-                          >
-                            {SupportTicketStatusLabels[
-                              ticket.supportTicketStatus as keyof typeof SupportTicketStatusLabels
-                            ] || "Bilinmiyor"}
-                          </span>
+                          <StatusBadge
+                            status={ticket.supportTicketStatus || 0}
+                            type="ticket"
+                          />
                         </td>
                         <td>
                           {new Date(ticket.createdOnValue).toLocaleDateString(
@@ -347,7 +374,9 @@ export default function GeneralSupportTicketsTab() {
                             <button
                               type="button"
                               className="btn btn-outline-danger btn-sm"
-                              onClick={() => handleDeleteClick(ticket.$id)}
+                              onClick={() =>
+                                handleDeleteClick(String(ticket.id))
+                              }
                               title="Sil"
                             >
                               <i className="bx bx-trash"></i>
@@ -391,9 +420,11 @@ export default function GeneralSupportTicketsTab() {
               </div>
               <div className="modal-body">
                 <div className="text-center">
-                  <i className="bx bx-error-circle display-4 text-danger mb-3"></i>
-                  <p>Bu destek talebini silmek istediğinizden emin misiniz?</p>
-                  <p className="text-muted">Bu işlem geri alınamaz.</p>
+                  <i className="bx bx-error-circle display-4 text-dark mb-3"></i>
+                  <p className="text-dark">
+                    Bu destek talebini silmek istediğinizden emin misiniz?
+                  </p>
+                  <p className="text-dark">Bu işlem geri alınamaz.</p>
                 </div>
               </div>
               <div className="modal-footer d-flex justify-content-center gap-2">

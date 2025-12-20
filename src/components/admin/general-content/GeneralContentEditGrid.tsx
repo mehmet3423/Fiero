@@ -40,6 +40,7 @@ function GeneralContentEditGrid({
             xs: defaultLayout,
         });
         setWidgets(contents);
+        console.log('AAAAAAAAA', contents);
     }, [contents]);
 
     const removeWidget = (contentId: string) => {
@@ -66,6 +67,7 @@ function GeneralContentEditGrid({
         }
         refetchContent();
 
+        console.log("UPDATED CONTENTS", updatedContents)
         setUpdateLoading(false);
     };
 

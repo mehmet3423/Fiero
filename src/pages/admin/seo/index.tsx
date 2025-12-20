@@ -72,6 +72,7 @@ function SeoManagementPage() {
   // Search state and hook
   const [searchValue, setSearchValue] = useState<string>("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Ana kategori değiştiğinde filtreye ekle
   const handleMainCategoryChange = (
@@ -116,10 +117,10 @@ function SeoManagementPage() {
   // Transform filters for API
   const apiParams = {
     ...getApiParams(),
-    ProductId: selectedProduct || undefined,
-    MainCategoryId: selectedMainCategory || undefined,
-    SubCategoryId: selectedSubCategory || undefined,
-    Search: filters.search || undefined,
+    productId: selectedProduct || undefined,
+    mainCategoryId: selectedMainCategory || undefined,
+    subCategoryId: selectedSubCategory || undefined,
+    search: filters.search || undefined,
   };
 
   const { seoList, totalCount, pageCount, isLoading, refetch } =
@@ -170,103 +171,134 @@ function SeoManagementPage() {
       <div className="row g-3">
         <div className="col-12">
           {/* Header */}
-          <div
-            className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
-            style={{ padding: "20px" }}
-          >
-            <h6
-              className="mb-0"
-              style={{ fontSize: "1.2rem", fontWeight: "bold" }}
-            >
-              SEO Yönetimi
-            </h6>
-            <Link href="/admin/seo/create" className="btn btn-primary btn-sm">
-              Yeni SEO Ekle
-            </Link>
-          </div>
-
-          {/* Filters */}
-          <div className="card mb-3">
-            <div className="card-body">
-              <div className="row align-items-end">
-                <div className="col-md-3">
-                  <label className="form-label">Arama</label>
-                  <div className="input-group">
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      className="form-control"
-                      placeholder="Başlık, meta başlık veya slug ile ara..."
-                      value={searchValue}
-                      onChange={(e) => setSearchValue(e.target.value)}
-                      onKeyDown={handleSearchKeyDown}
-                    />
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={handleSearch}
-                    >
-                      Ara
-                    </button>
-                  </div>
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label">Ana Kategori</label>
-                  <select
-                    className="form-select"
-                    value={selectedMainCategory}
-                    onChange={handleMainCategoryChange}
-                    disabled={mainCategoriesLoading}
-                  >
-                    <option value="">Tümü</option>
-                    {mainCategories &&
-                      mainCategories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label">Alt Kategori</label>
-                  <select
-                    className="form-select"
-                    value={selectedSubCategory}
-                    onChange={(e) => {
-                      setSelectedSubCategory(e.target.value);
-                      updateFilters({ subCategoryId: e.target.value });
-                    }}
-                    disabled={subCategoriesLoading}
-                  >
-                    <option value="">Tümü</option>
-                    {Array.isArray(subCategories) &&
-                      subCategories.map((sub) => (
-                        <option key={sub.id} value={sub.id}>
-                          {sub.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div className="col-md-3">
-                  <label className="form-label">Ürüne Göre Filtrele</label>
-                  <select
-                    className="form-select"
-                    value={selectedProduct}
-                    onChange={handleProductChange}
-                    disabled={productsLoading}
-                  >
-                    <option value="">Tümü</option>
-                    {productList &&
-                      productList?.map((product) => (
-                        <option key={product.id} value={product.id}>
-                          {product.title}
-                        </option>
-                      ))}
-                  </select>
-                </div>
+          <div className="card bg-transparent border-0 mb-3">
+            <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+              <div>
+                <h4 className="mb-1 fw-bold">SEO Yönetimi</h4>
+                <p className="mb-0 text-muted" style={{ fontSize: "0.875rem" }}>
+                  Sayfa, kategori ve ürün SEO ayarlarını yönetin.
+                </p>
+              </div>
+              <div className="d-flex gap-2 mt-3 mt-md-0">
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  onClick={() => setShowFilters((prev) => !prev)}
+                >
+                  <i className="bx bx-filter me-1"></i>
+                  {showFilters ? "Filtreleri Gizle" : "Filtreleri Göster"}
+                </button>
+                <Link href="/admin/seo/create" className="btn btn-primary btn-sm">
+                  <i className="bx bx-plus me-1"></i>
+                  Yeni SEO Ekle
+                </Link>
               </div>
             </div>
           </div>
+
+          {/* Filters */}
+          {showFilters && (
+            <div className="card mb-3">
+              <div className="card-body">
+                <div className="row align-items-end">
+                  <div className="col-md-3">
+                    <label className="form-label">Arama</label>
+                    <div className="input-group">
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        className="form-control"
+                        placeholder="Başlık, meta başlık veya slug ile ara..."
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        onKeyDown={handleSearchKeyDown}
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={handleSearch}
+                      >
+                        Ara
+                      </button>
+                    </div>
+                  </div>
+                  <div className="col-md-2">
+                    <label className="form-label">Ana Kategori</label>
+                    <select
+                      className="form-select"
+                      value={selectedMainCategory}
+                      onChange={handleMainCategoryChange}
+                      disabled={mainCategoriesLoading}
+                    >
+                      <option value="">Tümü</option>
+                      {mainCategories &&
+                        mainCategories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <div className="col-md-2">
+                    <label className="form-label">Alt Kategori</label>
+                    <select
+                      className="form-select"
+                      value={selectedSubCategory}
+                      onChange={(e) => {
+                        setSelectedSubCategory(e.target.value);
+                        updateFilters({ subCategoryId: e.target.value });
+                      }}
+                      disabled={subCategoriesLoading}
+                    >
+                      <option value="">Tümü</option>
+                      {Array.isArray(subCategories) &&
+                        subCategories.map((sub) => (
+                          <option key={sub.id} value={sub.id}>
+                            {sub.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <div className="col-md-3">
+                    <label className="form-label">Ürüne Göre Filtrele</label>
+                    <select
+                      className="form-select"
+                      value={selectedProduct}
+                      onChange={handleProductChange}
+                      disabled={productsLoading}
+                    >
+                      <option value="">Tümü</option>
+                      {productList &&
+                        productList?.map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.title}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <div className="col-md-2 mt-2">
+                    <button
+                      className="btn btn-outline-danger w-100"
+                      type="button"
+                      onClick={() => {
+                        // Tüm local state'leri temizle
+                        setSearchValue("");
+                        setSelectedMainCategory("");
+                        setSelectedSubCategory("");
+                        setSelectedProduct("");
+                        setLocalFilterType("all");
+                        // Filtreleri temizle (sadece pageSize kalır)
+                        clearFilters();
+                      }}
+                    >
+                      <i className="bx bx-refresh me-1"></i>
+                      Temizle
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* SEO List */}
           <div className="card">

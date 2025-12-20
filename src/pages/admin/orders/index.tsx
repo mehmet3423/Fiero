@@ -1,7 +1,11 @@
 import { useGetAllOrders } from "@/hooks/services/order/useGetAllOrders";
+import OrdersTable from "@/components/admin/orders/OrdersTable";
+import OrdersFilters from "@/components/admin/orders/OrdersFilters";
 import Link from "next/link";
 import { useState } from "react";
 import CirclePagination from "@/components/shared/CirclePagination";
+import { formatDate } from "@/utils/dateFormatter";
+import { formatCurrency } from "@/utils/currencyFormatter";
 
 interface OrderFilters {
   search?: string;
@@ -28,39 +32,6 @@ function OrdersPage() {
     totalPages: apiTotalPages,
   } = useGetAllOrders(currentPage, pageSize, appliedFilters);
 
-  // Helper function to format date
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) {
-        return "Geçersiz Tarih";
-      }
-
-      // Türkçe ay isimleri
-      const months = [
-        "Oca",
-        "Şub",
-        "Mar",
-        "Nis",
-        "May",
-        "Haz",
-        "Tem",
-        "Ağu",
-        "Eyl",
-        "Eki",
-        "Kas",
-        "Ara",
-      ];
-
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      return `${day} ${month} ${year}`;
-    } catch (error) {
-      return "Geçersiz Tarih";
-    }
-  };
   // Calculate total amount for an order
   const calculateTotalAmount = (order: any) => {
     // API'den gelen totalPrice'ı kullan
@@ -77,14 +48,6 @@ function OrdersPage() {
       const quantity = typeof item.quantity === "number" ? item.quantity : 0;
       return sum + price * quantity;
     }, 0);
-  };
-
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-    }).format(amount);
   };
 
   // API'den gelen veriler zaten paginated, client-side pagination gerekmez
@@ -130,37 +93,6 @@ function OrdersPage() {
     setCurrentPage(1);
   };
 
-  // Cargo status helper functions
-  const getCargoStatusText = (status: number) => {
-    switch (status) {
-      case 0:
-        return "Hazırlanıyor";
-      case 1:
-        return "Kargoya Verildi";
-      case 2:
-        return "Teslim Edildi";
-      case 3:
-        return "İptal Edildi";
-      default:
-        return "Bilinmeyen";
-    }
-  };
-
-  const getStatusBadgeClass = (status: number) => {
-    switch (status) {
-      case 0:
-        return "bg-warning";
-      case 1:
-        return "bg-info";
-      case 2:
-        return "bg-success";
-      case 3:
-        return "bg-danger";
-      default:
-        return "bg-secondary";
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="card">
@@ -199,170 +131,45 @@ function OrdersPage() {
   // API'den gelen orders zaten doğru sayfa verileri
 
   return (
-    <div>
-      <div className="card-header mb-4 m-3">
-        <div className="d-flex justify-content-between align-items-center">
-          <h6
-            style={{
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              color: "#566a7f",
-              margin: 0,
-            }}
-          >
-            Siparişler
-          </h6>
-          <button
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <i
-              className={`bx ${
-                showFilters ? "bx-chevron-up" : "bx-filter"
-              } me-1`}
-            ></i>
-            {showFilters ? "Filtreleri Gizle" : "Filtrele"}
-          </button>
+    <div className="admin-compact-list">
+      <div className="card bg-transparent border-0 mb-3">
+        <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div>
+            <h4 className="mb-1 fw-bold">Sipariş Yönetimi</h4>
+            <p className="mb-0 text-muted" style={{ fontSize: "0.875rem" }}>
+              Siparişleri görüntüleyin, filtreleyin ve yönetin.
+            </p>
+          </div>
+          <div className="mt-3 mt-md-0">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <i
+                className={`bx ${
+                  showFilters ? "bx-chevron-up" : "bx-filter"
+                } me-1`}
+              ></i>
+              {showFilters ? "Filtreleri Gizle" : "Filtrele"}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Filtreleme Paneli */}
       {showFilters && (
-        <div className="card mb-4">
-          <div className="card-header">
-            <h6 className="m-3">Filtreleme Seçenekleri</h6>
-          </div>
-          <div className="card-body">
-            <div className="row">
-              {/* Arama */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Arama</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Sipariş numarası, müşteri adı..."
-                  value={filters.search || ""}
-                  onChange={(e) => handleFilterChange("search", e.target.value)}
-                />
-              </div>
-
-              {/* Başlangıç Tarihi */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Başlangıç Tarihi</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={filters.startDate || ""}
-                  onChange={(e) =>
-                    handleFilterChange("startDate", e.target.value)
-                  }
-                />
-              </div>
-
-              {/* Bitiş Tarihi */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Bitiş Tarihi</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={filters.endDate || ""}
-                  onChange={(e) =>
-                    handleFilterChange("endDate", e.target.value)
-                  }
-                />
-              </div>
-
-              {/* Kargo Durumu */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Kargo Durumu</label>
-                <select
-                  className="form-control"
-                  value={filters.cargoStatus || ""}
-                  onChange={(e) =>
-                    handleFilterChange(
-                      "cargoStatus",
-                      e.target.value ? Number(e.target.value) : undefined
-                    )
-                  }
-                >
-                  <option value="">Tümü</option>
-                  <option value="0">Hazırlanıyor</option>
-                  <option value="1">Kargoya Verildi</option>
-                  <option value="2">Teslim Edildi</option>
-                  <option value="3">İptal Edildi</option>
-                </select>
-              </div>
-
-              {/* Min Fiyat */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Min Fiyat (₺)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="0"
-                  value={filters.minPrice || ""}
-                  onChange={(e) =>
-                    handleFilterChange(
-                      "minPrice",
-                      e.target.value ? Number(e.target.value) : undefined
-                    )
-                  }
-                />
-              </div>
-
-              {/* Max Fiyat */}
-              <div className="col-md-3 mb-3">
-                <label className="form-label">Max Fiyat (₺)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="1000"
-                  value={filters.maxPrice || ""}
-                  onChange={(e) =>
-                    handleFilterChange(
-                      "maxPrice",
-                      e.target.value ? Number(e.target.value) : undefined
-                    )
-                  }
-                />
-              </div>
-
-              {/* Butonlar */}
-              <div className="col-md-6 mb-3 d-flex align-items-end gap-2">
-                <button
-                  className="btn btn-primary"
-                  onClick={handleSearch}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                      ></span>
-                      Aranıyor...
-                    </>
-                  ) : (
-                    <>
-                      <i className="bx bx-search me-1"></i>
-                      Ara
-                    </>
-                  )}
-                </button>
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={clearFilters}
-                >
-                  <i className="bx bx-x me-1"></i>
-                  Temizle
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <OrdersFilters
+          filters={filters}
+          showFilters={showFilters}
+          onFilterChange={handleFilterChange}
+          onSearch={handleSearch}
+          onClearFilters={clearFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+        />
       )}
 
-      <div className="card">
+      <div className="card shadow-sm">
         {orders.length === 0 ? (
           <div className="text-center p-5">
             <i className="bx bx-shopping-bag fs-1 text-muted mb-3"></i>
@@ -370,69 +177,19 @@ function OrdersPage() {
           </div>
         ) : (
           <>
-            <div className="table-responsive text-nowrap ">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>SİPARİŞ NO</th>
-                    <th>MÜŞTERİ</th>
-                    <th>TUTAR</th>
-                    <th>TARİH</th>
-                    <th>DURUM</th>
-                    <th>İŞLEMLER</th>
-                  </tr>
-                </thead>
-                <tbody className="table-border-bottom-0">
-                  {orders.map((order) => (
-                    <tr key={order.id}>
-                      <td>
-                        <strong>{order.orderNumber}</strong>
-                      </td>
-                      <td>
-                        {order.shippingAddress?.firstName}{" "}
-                        {order.shippingAddress?.lastName}
-                      </td>
-
-                      <td>{formatCurrency(calculateTotalAmount(order))}</td>
-                      <td>{formatDate(order.createdOnValue)}</td>
-                      <td>
-                        <span
-                          className={`badge ${getStatusBadgeClass(
-                            order.cargoStatus
-                          )}`}
-                        >
-                          {getCargoStatusText(order.cargoStatus)}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <Link
-                            className="btn btn-sm btn-outline-primary"
-                            href={`/admin/orders/${order.id}`}
-                            title="Siparişi Görüntüle"
-                          >
-                            <i className="bx bx-show-alt"></i>
-                          </Link>
-                          <Link
-                            className="btn btn-sm btn-outline-success"
-                            href={`/admin/cargo/create?orderId=${order.id}`}
-                            title="Kargo Oluştur"
-                          >
-                            <i className="bx bx-package"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <OrdersTable
+              orders={orders}
+              calculateTotalAmount={calculateTotalAmount}
+              currentPage={currentPage}
+              pageSize={pageSize}
+            />
             {apiTotalPages > 1 && (
               <CirclePagination
                 totalCount={apiTotalCount}
                 currentPage={currentPage}
                 pageSize={pageSize}
                 onPageChange={handlePageChange}
+                variant="compact"
               />
             )}
           </>

@@ -1,96 +1,118 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useUpdateBuyXPayYDiscount } from "@/hooks/services/discounts/buyX-payY/useUpdateBuyXPayYDiscount";
-import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
 import { DiscountType } from "@/constants/enums/DiscountType";
-import { DiscountValueType } from "@/constants/enums/DiscountValueType";
-import Link from "next/link";
+import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
 import ProductSelector from "@/components/ProductSelector";
-import { BuyYPayXDiscount } from "@/constants/models/Discount";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
-const EditBuyXPayYDiscountPage = () => {
+interface BuyXPayYDiscountForm {
+  name: string;
+  description: string;
+  discountValue: number;
+  discountValueType: number;
+  maxDiscountValue: number;
+  startDate: string;
+  endDate: string;
+  productIds: string[];
+  selectedProductsData: any[];
+  isActive: boolean;
+  type: DiscountType;
+  isWithinActiveDateRange: boolean;
+  buyXCount: number;
+  payYCount: number;
+  maxFreeProductPerOrder: number;
+  isRepeatable: boolean;
+}
+
+export default function EditBuyXPayYDiscount() {
   const router = useRouter();
   const { id } = router.query;
-  const { updateDiscount, isPending } = useUpdateBuyXPayYDiscount();
+  const { updateDiscount, isPending: isUpdating } = useUpdateBuyXPayYDiscount();
   const { discount, isLoading: discountLoading } = useGetDiscountById(
-    id && id !== "undefined" ? (id as string) : ""
+    id as string
   );
 
-  const [formData, setFormData] = useState({
-    buyXPayYProducts: [] as string[],
+  const [formData, setFormData] = useState<BuyXPayYDiscountForm>({
     name: "",
     description: "",
     discountValue: 0,
-    discountValueType: DiscountValueType.FixedAmount,
+    discountValueType: 1,
     maxDiscountValue: 0,
     startDate: "",
     endDate: "",
+    productIds: [],
+    selectedProductsData: [],
     isActive: true,
+    type: DiscountType.BuyXPayY,
+    isWithinActiveDateRange: false,
     buyXCount: 0,
     payYCount: 0,
-    isRepeatable: false,
     maxFreeProductPerOrder: 0,
-    type: DiscountType.BuyXPayY,
+    isRepeatable: false,
   });
 
   useEffect(() => {
     if (discount) {
-      const buyXPayYDiscount = (discount as any).buyXPayYDiscount || discount;
+      // buyXPayYProducts, buyXPayYDiscount object'inin içinde!
+      const buyXPayYProducts = (discount as any).buyXPayYDiscount?.buyXPayYProducts || [];
 
-      const formattedStartDate = discount.startDate
-        ? new Date(discount.startDate).toISOString().slice(0, 16)
-        : "";
-      const formattedEndDate = discount.endDate
-        ? new Date(discount.endDate).toISOString().slice(0, 16)
-        : "";
+      const productIds = buyXPayYProducts.map((product: any) => {
+        return product.productId || product.id;
+      });
 
-      const newFormData = {
-        buyXPayYProducts:
-          buyXPayYDiscount.buyXPayYProducts?.map(
-            (item: any) => item.productId
-          ) || [],
+      // Seçili ürünlerin tam detaylarını extract et
+      const selectedProductsData = buyXPayYProducts
+        .map((item: any) => {
+          // Eğer product object'i varsa onu kullan
+          if (item.product) {
+            return item.product;
+          }
+          // Yoksa sadece ID ile minimal bir object oluştur
+          return {
+            id: item.productId || item.id,
+            title: `Ürün ID: ${item.productId || item.id}`,
+            price: 0,
+            baseImageUrl: null,
+          };
+        })
+        .filter(Boolean);
+
+      setFormData({
         name: discount.name || "",
         description: discount.description || "",
         discountValue: discount.discountValue || 0,
-        discountValueType:
-          discount.discountValueType || DiscountValueType.FixedAmount,
+        discountValueType: discount.discountValueType || 1,
         maxDiscountValue: discount.maxDiscountValue || 0,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        isActive: discount.isActive !== undefined ? discount.isActive : true,
-        buyXCount: buyXPayYDiscount.buyXCount || 0,
-        payYCount: buyXPayYDiscount.payYCount || 0,
-        isRepeatable: buyXPayYDiscount.isRepeatable || false,
-        maxFreeProductPerOrder: buyXPayYDiscount.maxFreeProductPerOrder || 0,
+        startDate: discount.startDate || "",
+        endDate: discount.endDate || "",
+        isActive: discount.isActive ?? true,
         type: DiscountType.BuyXPayY,
-      };
-
-      setFormData(newFormData);
+        isWithinActiveDateRange: false,
+        productIds: productIds,
+        selectedProductsData: selectedProductsData,
+        buyXCount: (discount as any).buyXPayYDiscount?.buyXCount || 0,
+        payYCount: (discount as any).buyXPayYDiscount?.payYCount || 0,
+        maxFreeProductPerOrder:
+          (discount as any).buyXPayYDiscount?.maxRepeatPerOrder || 0,
+        isRepeatable: (discount as any).buyXPayYDiscount?.isRepeatable || false,
+      });
     }
   }, [discount]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!id || id === "undefined") {
-      return;
-    }
-
     try {
-      // Format dates to remove seconds (keep only YYYY-MM-DDTHH:MM format)
-      const formattedData = {
-        ...formData,
-        startDate: formData.startDate ? formData.startDate.slice(0, 16) : "",
-        endDate: formData.endDate ? formData.endDate.slice(0, 16) : "",
-      };
-
       await updateDiscount({
         id: id as string,
-        ...formattedData,
-      } as unknown as BuyYPayXDiscount);
+        ...formData,
+        createdOn: Date.now(),
+        createdOnValue: new Date().toISOString(),
+        isRepeatable: formData.isRepeatable,
+      });
       router.push("/admin/campaigns/buyX-payY");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleChange = (
@@ -102,255 +124,128 @@ const EditBuyXPayYDiscountPage = () => {
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
+          : name === "discountValueType" ||
+            name === "buyXCount" ||
+            name === "payYCount" ||
+            name === "maxFreeProductPerOrder"
+          ? Number(value)
           : type === "number"
-            ? parseFloat(value) || 0
-            : value,
+          ? parseFloat(value)
+          : value,
     }));
   };
 
   const handleProductSelect = (productId: string) => {
     setFormData((prev) => ({
       ...prev,
-      buyXPayYProducts: prev.buyXPayYProducts.includes(productId)
-        ? prev.buyXPayYProducts.filter((id) => id !== productId)
-        : [...prev.buyXPayYProducts, productId],
+      productIds: prev.productIds.includes(productId)
+        ? prev.productIds.filter((id) => id !== productId)
+        : [...prev.productIds, productId],
     }));
   };
 
   if (discountLoading) {
-    return (
-      <div className="container-fluid">
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "400px" }}
-        >
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Yükleniyor...</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <div>Yükleniyor...</div>;
   }
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/buyX-payY"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Al X Öde Y İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            İndirim Düzenle
-          </h4>
-          <Link
-            href="/admin/campaigns/buyX-payY"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
-          >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+    <CampaignFormWrapper
+      campaignType="buyX-payY"
+      campaignTypeLabel="X Al Y Öde İndirimleri"
+      action="edit"
+      name={formData.name}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onSubmit={handleSubmit}
+      isSubmitting={isUpdating}
+      submitDisabled={formData.productIds.length === 0}
+    >
+      {/* X Al Y Öde Ayarları */}
+      <div className="row mb-3">
+        <div className="col-md-3">
+          <label className="form-label">Kaç Adet Al (X)</label>
+          <input
+            type="number"
+            className="form-control"
+            name="buyXCount"
+            value={formData.buyXCount || ""}
+            onChange={handleChange}
+            min={1}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            placeholder="Örn: 3"
+            required
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Kaç Adet Öde (Y)</label>
+          <input
+            type="number"
+            className="form-control"
+            name="payYCount"
+            value={formData.payYCount || ""}
+            onChange={handleChange}
+            min={1}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            placeholder="Örn: 2"
+            required
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={1}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">
+            Maksimum Ücretsiz Ürün Sipariş Başına
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxFreeProductPerOrder"
+            value={formData.maxFreeProductPerOrder}
+            onChange={handleChange}
+            min={1}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            {/* İndirim Temel Bilgileri */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">İndirim Adı</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Örn: 3 Al 2 Öde Kampanyası"
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Açıklama</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="İndirim açıklaması"
-                />
-              </div>
-            </div>
-
-            {/* BuyX-PayY Özellikleri */}
-            <div className="row mb-3">
-              <div className="col-md-3">
-                <label className="form-label">Alınan Adet (X)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="buyXCount"
-                  value={formData.buyXCount}
-                  onChange={handleChange}
-                  min={1}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Ödenen Adet (Y)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="payYCount"
-                  value={formData.payYCount}
-                  onChange={handleChange}
-                  min={1}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={1}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">
-                  Sipariş Başına Maksimum Ücretsiz Ürün
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxFreeProductPerOrder"
-                  value={formData.maxFreeProductPerOrder}
-                  onChange={handleChange}
-                  min={1}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                />
-              </div>
-            </div>
-
-            {/* Ürün seçimi */}
-            <div className="mb-3">
-              <ProductSelector
-                selectedProductIds={formData.buyXPayYProducts}
-                onProductSelect={handleProductSelect}
-                multiSelect={true}
-                title="Kampanya Ürünleri"
-                height="400px"
-              />
-            </div>
-
-            {/* Tarih aralığı */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">Başlangıç Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="startDate"
-                  value={
-                    formData.startDate ? formData.startDate.slice(0, 16) : ""
-                  }
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Bitiş Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate ? formData.endDate.slice(0, 16) : ""}
-                  onChange={handleChange}
-                  min={
-                    formData.startDate
-                      ? formData.startDate.slice(0, 16)
-                      : new Date().toISOString().slice(0, 16)
-                  }
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Durum ayarları */}
-            <div className="row mb-4">
-              <div className="col-md-6">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleChange}
-                    style={{ cursor: "pointer" }}
-                  />
-                  <label className="form-check-label">İndirim aktif</label>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    name="isRepeatable"
-                    checked={formData.isRepeatable}
-                    style={{ cursor: "pointer" }}
-                    onChange={handleChange}
-                  />
-                  <label className="form-check-label">Tekrarlanabilir</label>
-                </div>
-              </div>
-            </div>
-
-            {/* Submit buttons */}
-            <div className="d-flex gap-2">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isPending}
-              >
-                {isPending ? "Güncelleniyor..." : "İndirim Güncelle"}
-              </button>
-              <Link
-                href="/admin/campaigns/buyX-payY"
-                className="btn btn-secondary"
-              >
-                İptal
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      {/* Ürün Seçimi */}
+      <ProductSelector
+        selectedProductIds={formData.productIds}
+        selectedProductsData={formData.selectedProductsData}
+        onProductSelect={handleProductSelect}
+        multiSelect={true}
+        title="Ürün Seçimi"
+        height="300px"
+        restrictCampaignType="buyX-payY"
+        excludeProductIds={formData.productIds}
+      />
+    </CampaignFormWrapper>
   );
-};
-
-export default EditBuyXPayYDiscountPage;
+}

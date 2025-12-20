@@ -103,7 +103,9 @@ const AccordionSection: React.FC = () => {
                   >
                     <div className="product-description-section" style={{ fontSize: "14px", color: "#666" }}>
                       <p style={{ margin: 0, whiteSpace: "pre-line" }}>
-                        {product?.description?.replace(/<br\s*\/?>/gi, '\n')}
+                        {(language === "en" && product?.descriptionEn
+                          ? product.descriptionEn
+                          : product?.description)?.replace(/<br\s*\/?>/gi, '\n')}
                       </p>
                     </div>
                     <br></br>
@@ -120,15 +122,15 @@ const AccordionSection: React.FC = () => {
                                 ? info.descriptionEn
                                 : info.description;
                             return (
-                              <div key={info.id || index} className="mb-4">
+                            <div key={info.id || index} className="mb-4">
                                 <h3 className="fs-16 fw-5">{titleToShow}</h3>
-                                <div className="d-flex align-items-start gap-2">
-                                  {info.icon && (
-                                    <div className="icon mt-1">
-                                      <i className={info.icon}></i>
-                                    </div>
-                                  )}
-                                  <div style={{ whiteSpace: "pre-line", color: "#666" }}>
+                              <div className="d-flex align-items-start gap-2">
+                                {info.icon && (
+                                  <div className="icon mt-1">
+                                    <i className={info.icon}></i>
+                                  </div>
+                                )}
+                                <div style={{ whiteSpace: "pre-line", color: "#666" }}>
                                     {descriptionToShow}
                                   </div>
                                 </div>
