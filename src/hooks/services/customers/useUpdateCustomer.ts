@@ -24,6 +24,7 @@ export const useUpdateCustomer = () => {
     };
 
     try {
+      console.log("Customer Update Request:", requestBody);
       await mutateAsync(
         {
           url: UPDATE_CUSTOMER,
@@ -43,6 +44,7 @@ export const useUpdateCustomer = () => {
         }
       );
     } catch (error) {
+      console.error("Error updating customer:", error);
       toast.error("Müşteri güncellenirken bir hata oluştu");
     }
   };

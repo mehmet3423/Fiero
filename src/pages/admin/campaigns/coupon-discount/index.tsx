@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { formatDate } from "@/utils/dateFormatter";
 
 const CouponDiscountPage = () => {
   const router = useRouter();
@@ -69,13 +70,8 @@ const CouponDiscountPage = () => {
     setPage(0);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR");
-  };
-
   const formatDiscountValue = (discount: CouponDiscount) => {
-    return discount.discountValueType === 0
+    return discount.discountValueType === 1
       ? `%${discount.discountValue}`
       : `${discount.discountValue} ₺`;
   };
@@ -263,7 +259,7 @@ const CouponDiscountPage = () => {
         currentPage={page + 1}
         totalCount={totalCount}
         pageSize={pageSize}
-        onPageChange={setPage}
+        onPageChange={(newPage) => setPage(newPage - 1)}
       />
     </div>
   );

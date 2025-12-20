@@ -45,6 +45,18 @@ export const GET_ALL_OUTLET_PRODUCTS = `${BASE_URL}api/Product/GetAllOutletProdu
 export const GET_PRODUCT_LIST_BY_IDS = `${BASE_URL}api/Product/GetProductsByIds`;
 export const GET_BASIC_PRODUCT_LIST = `${BASE_URL}api/Product/GetBasicProductList`;
 
+// Base Product endpoints
+export const CREATE_BASE_PRODUCT = `${BASE_URL}api/BaseProduct/CreateBaseProduct`;
+export const GET_BASE_PRODUCT_BY_ID = (id: string | number) =>
+  `${BASE_URL}api/BaseProduct/${id}`;
+export const GET_BASE_PRODUCT_VARIANTS = (id: string | number) =>
+  `${BASE_URL}api/BaseProduct/variants/${id}`;
+export const GET_PRODUCT_VARIANTS_BY_BASE_PRODUCT_ID = (id: string | number) =>
+  `${BASE_URL}api/BaseProduct/GetProductVariantsByBaseProductId?id=${id}`;
+export const GET_BASE_PRODUCTS_LIST = `${BASE_URL}api/BaseProduct/GetBaseProductsList`;
+export const UPDATE_BASE_PRODUCT = `${BASE_URL}api/BaseProduct/UpdateBaseProduct`;
+export const DELETE_BASE_PRODUCT = `${BASE_URL}api/BaseProduct/DeleteBaseProduct`;
+
 // Category endpoints
 export const GET_MAIN_CATEGORY_LIST = `${BASE_URL}api/MainCategory/GetMainCategoriesList`;
 export const GET_MAIN_CATEGORY_LOOKUP_LIST = `${BASE_URL}api/MainCategory/GetMainCategoryLookupList`;
@@ -82,6 +94,7 @@ export const APPROVE_COMMENT = `${BASE_URL}api/Comment/ApproveComment`;
 
 // Order endpoints
 export const CREATE_ORDER = `${BASE_URL}api/Order/CreateOrder`;
+export const CREATE_ORDER_GUEST = `${BASE_URL}api/Order/CreateOrderGuest`;
 export const GET_ORDER_BY_ID = `${BASE_URL}api/Order/GetOrderById`;
 export const GET_ORDER_LIST_FROM_TOKEN = `${BASE_URL}api/Order/GetOrderListFromToken`;
 export const GET_USER_ORDERS = `${BASE_URL}api/Order/GetUsersOrderList`;
@@ -91,6 +104,10 @@ export const COMPLETE_ORDER = `${BASE_URL}api/Order/CompleteOrder`;
 export const PAYMENT_SUCCESS_COMPLETE_ORDER = `${BASE_URL}api/Order/PaymentSuccessfulCompleteOrder`;
 export const PAYMENT_FAILED_ABORT_ORDER = `${BASE_URL}api/Order/PaymentFailedAbortOrder`;
 export const GET_ALL_ORDERS = `${BASE_URL}api/Order/GetAllOrderList`;
+export const INITIATE_REFUND_REQUEST = `${BASE_URL}api/Order/InitiateRefundRequest`;
+export const INITIATE_REFUND_REQUEST_FOR_ORDER = `${BASE_URL}api/Order/InitiateRefundRequestForOrder`;
+export const GET_REFUND_REQUESTED_ORDER_ITEMS = `${BASE_URL}api/Order/GetRefundRequestedOrders`;
+export const GET_REFUND_REQUESTED_ORDERS_BY_CURRENT_USER = `${BASE_URL}api/Order/GetRefundRequestedOrdersByCurrentUser`;
 
 // User Card endpoints
 export const GET_USER_CARD_LIST = `${BASE_URL}api/UserPaymentCards/GetCurrentUsersCards`;
@@ -108,8 +125,8 @@ export const CHECK_BIN = `${BASE_URL}api/Payments/CheckBin`;
 export const PROCESS_REFUND_ITEMS = `${BASE_URL}api/Payments/ProcessRefundItems`;
 export const PROCESS_REFUND_ITEMS_BY_ORDER = `${BASE_URL}api/Payments/ProcessRefundItemsByOrder`;
 export const PAYMENT_THREE_D_SECURE_INITIALIZE = `${BASE_URL}api/Payments/PaymentThreeDSecureInitialize`;
-export const COMPLETE_THREE_D_SECURE_PAYMENT = `${BASE_URL}api/Payments/CompleteThreeDSecurePayment`;
 export const GUEST_PAYMENT_THREE_D_SECURE_INITIALIZE = `${BASE_URL}api/Payments/GuestPaymentThreeDSecureInitialize`;
+export const COMPLETE_THREE_D_SECURE_PAYMENT = `${BASE_URL}api/Payments/CompleteThreeDSecurePayment`;
 
 // User Address endpoints
 export const GET_USER_ADDRESS_LIST = `${BASE_URL}api/Address/GetUsersAddressList`;
@@ -133,10 +150,13 @@ export const DELETE_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/Genera
 // Support Ticket endpoints
 export const CREATE_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/General/CreateGeneralSupportTicket`;
 export const GET_SUPPORT_TICKETS = `${BASE_URL}api/GeneralSupportTicket/General/GetAllGeneralSupportTickets`;
-export const GET_SUPPORT_TICKET_BY_ID = `${BASE_URL}api/GeneralSupportTicket/General/GetGeneralSupportById`;
+export const GET_SUPPORT_TICKETS_BY_CUSTOMER_ID = `${BASE_URL}api/GeneralSupportTicket/General/GetGeneralSupportTicketsByCustomerId`;
+export const GET_SUPPORT_TICKET_BY_ID = `${BASE_URL}api/GeneralSupportTicket/General/GetGeneralSupportTicketById`;
 export const UPDATE_GENERAL_SUPPORT_TICKET = `${BASE_URL}api/GeneralSupportTicket/General/UpdateGeneralSupportTicket`;
 export const CREATE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/CreateOrderSupportTicket`;
 export const GET_ORDER_SUPPORT_TICKETS = `${BASE_URL}api/OrderSupportTicket/Order/GetAllOrderSupportTickets`;
+export const GET_CURRENT_USER_ORDER_SUPPORT_TICKETS = `${BASE_URL}api/OrderSupportTicket/Order/GetCurrentUsersOrderSupportTickets`;
+export const GET_ORDER_SUPPORT_TICKET_BY_ID = `${BASE_URL}api/OrderSupportTicket/Order/GetOrderSupportTicketById`;
 export const UPDATE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/UpdateOrderSupportTicket`;
 export const DELETE_ORDER_SUPPORT_TICKET = `${BASE_URL}api/OrderSupportTicket/Order/DeleteOrderSupportTicket`;
 export const LOCATION_BASE_URL = process.env.NEXT_PUBLIC_LOCATION_BASE_URL;
@@ -181,7 +201,7 @@ export const UPDATE_COMBINATION_BASED_COLLECTION = `${BASE_URL}api/AffiliateColl
 export const UPDATE_CATEGORY_BASED_COLLECTION = `${BASE_URL}api/AffiliateCollections/UpdateCategoryBasedCollectionForAdmin`;
 export const GET_AFFILIATE_USER_BY_AFFILIATE_USER_ID = `${BASE_URL}api/AffiliateUsers`;
 // Affiliate Collections endpoints
-export const GET_CURRENT_USERS_COLLECTIONS = `${BASE_URL}api/AffiliateCollections/GetCurrentUsersCollections`;
+export const GET_CURRENT_USERS_COLLECTIONS = `${BASE_URL}api/AffiliateCollections/GetCurrentUsersCollectionsWithPagination`;
 export const CREATE_AFFILIATE_COLLECTION = `${BASE_URL}api/AffiliateCollections/Create`;
 export const CREATE_COMBINATION_BASED_COLLECTION = `${BASE_URL}api/AffiliateCollections/CreateCombinationBasedCollection`;
 export const CREATE_CATEGORY_BASED_COLLECTION = `${BASE_URL}api/AffiliateCollections/CreateCategoryBasedCollection`;
@@ -340,6 +360,16 @@ export const GET_DOMESTIC_TR_NEIGHBORHOODS = (
   `${BASE_URL}api/TrendyolMarketplace/GetDomesticTRNeighborhoods/${cityId}/${districtId}`;
 export const SET_LABOR_COST = (packageId: number) =>
   `${BASE_URL}api/TrendyolMarketplace/SetLaborCost/${packageId}`;
+// Trendyol Returns endpoints
+export const GET_CLAIMS = `${BASE_URL}api/TrendyolMarketplace/GetClaims`;
+export const APPROVE_CLAIM_LINE_ITEMS = (claimId: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/ApproveClaimLineItems/${claimId}`;
+export const CREATE_CLAIM_ISSUE = (claimId: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/CreateClaimIssue/${claimId}`;
+export const GET_CLAIM_ISSUE_REASONS = `${BASE_URL}api/TrendyolMarketplace/GetClaimIssueReasons`;
+export const GET_CLAIM_AUDITS = (claimItemId: string) =>
+  `${BASE_URL}api/TrendyolMarketplace/GetClaimAudits/${claimItemId}`;
+export const CREATE_CLAIM = `${BASE_URL}api/TrendyolMarketplace/CreateClaim`;
 
 //Cargo endpoints
 export const GET_CARGO_BY_INTEGRATION_CODES = `${BASE_URL}api/Logistics/GetCargoByIntegrationCodes`;
@@ -347,6 +377,7 @@ export const CANCEL_CARGO_BY_INTEGRATION_CODE = `${BASE_URL}api/Logistics/Cancel
 export const GET_CREATED_CARGO_WITH_INTEGRATION_CODE = `${BASE_URL}api/Logistics/GetCreatedCargoWithIntegrationCode`;
 export const SET_CARGO = `${BASE_URL}api/Logistics/SetCargo`;
 export const CREATE_CARGO = `${BASE_URL}api/Order/CreateCargo`;
+export const GET_CARGO_PRICING_DATA = `${BASE_URL}api/Order/GetCargoPricingData`;
 
 // Enum Options endpoints
 export const GET_TRENDYOL_PRODUCT_STATUS_OPTIONS = `${BASE_URL}api/EnumOptions/GetTrendyolProductStatus`;
@@ -367,7 +398,14 @@ export const GET_LIKE_COUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetLikeCoun
 export const GET_SALES_COUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetSalesCountSortTypes`;
 export const GET_RATING_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetRatingSortTypes`;
 export const GET_DISCOUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountSortTypes`;
+
+// Mail endpoints
+export const SEND_MAIL = `${BASE_URL}api/Mail/SendMail`;
 export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptions/GetSystemSettingTypes`;
+
+// Notification Subscription endpoints
+export const SUBSCRIBE_TO_NOTIFICATIONS = `${BASE_URL}api/NotificationSubscription/SubscribeToNotifications`;
+export const UNSUBSCRIBE_FROM_NOTIFICATIONS = `${BASE_URL}api/NotificationSubscription/UnsubscribeFromNotifications`;
 export const GET_DISCOUNT_VALUE_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountValueTypes`;
 export const GET_PAYMENT_SOURCE_TYPES = `${BASE_URL}api/EnumOptions/GetPaymentSourceTypes`;
 export const GET_CARGO_STATUSES = `${BASE_URL}api/EnumOptions/GetCargoStatuses`;

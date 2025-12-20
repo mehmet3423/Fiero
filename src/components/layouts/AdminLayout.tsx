@@ -41,6 +41,11 @@ const menuItems: MenuItem[] = [
     icon: "bx bx-list-ul",
     label: "Alt Kategori Özellikleri",
   },
+  {
+    path: "/admin/products/base-products",
+    icon: "bx bx-category-alt",
+    label: "Base Product Yönetimi",
+  },
 
   {
     path: "/admin/products",
@@ -57,6 +62,11 @@ const menuItems: MenuItem[] = [
     path: "/admin/orders",
     icon: "bx bx-shopping-bag",
     label: "Sipariş Yönetimi",
+  },
+  {
+    path: "/admin/refunds",
+    icon: "bx bx-undo",
+    label: "İade Yönetimi",
   },
   {
     path: "/admin/campaigns",
@@ -96,6 +106,10 @@ const menuItems: MenuItem[] = [
         path: "/admin/trendyol-marketplace/cargo-stage",
         label: "Sipariş & Kargo Aşaması",
       },
+      {
+        path: "/admin/trendyol-marketplace/claims",
+        label: "İade İşlemleri",
+      },
     ],
   },
   {
@@ -118,11 +132,11 @@ const menuItems: MenuItem[] = [
     icon: "bx bx-support",
     label: "Destek Talepleri",
   },
-  {
-    path: "/admin/cargo",
-    icon: "bx bx-package",
-    label: "Kargo Yönetimi",
-  },
+  // {
+  //   path: "/admin/cargo",
+  //   icon: "bx bx-package",
+  //   label: "Kargo Yönetimi",
+  // },
   {
     path: "/admin/settings",
     icon: "bx bx-cog",
@@ -136,55 +150,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [openMenus, setOpenMenus] = useState<string[]>([]);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [cssLoaded, setCssLoaded] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Initialize open menus based on current route
-  useEffect(() => {
-    const currentPath = router.pathname;
-    const menusToOpen: string[] = [];
-
-    menuItems.forEach((item) => {
-      if (item.subItems) {
-        const hasActiveSubItem = item.subItems.some(
-          (subItem) => currentPath === subItem.path
-        );
-        if (hasActiveSubItem) {
-          menusToOpen.push(item.path);
-        }
-      }
-    });
-
-    setOpenMenus(menusToOpen);
-  }, [router.pathname]);
-
-  // Handle click outside for user dropdown
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement;
-      if (!target.closest(".user-dropdown-wrapper")) {
-        setIsUserDropdownOpen(false);
-      }
-    }
-
-    if (isUserDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isUserDropdownOpen]);
-
-  const toggleMenu = (itemPath: string) => {
-    setOpenMenus((prev) =>
-      prev.includes(itemPath)
-        ? prev.filter((path) => path !== itemPath)
-        : [...prev, itemPath]
-    );
-  };
+  // CSS hazır; yükleme ekranına gerek yok
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -195,11 +167,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           className="layout-menu menu-vertical menu bg-menu-theme"
           style={{ width: "260px", flexShrink: 0 }}
         >
+          üzen
           <div
             className="app-brand demo d-flex align-items-center justify-content-center"
             style={{ height: "60px" }}
           >
-            <Link href="/admin" className="app-brand-link">
+            <Link href="/admin" className="app-brand-link m-4">
               <span
                 className="app-brand-logo demo"
                 style={{
@@ -209,7 +182,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               >
                 <Image
                   src={"/assets/admin/img/logo/happncodelogo.png"}
-                  alt="Nors Admin"
+                  alt="Fiero Admin"
                   width={0}
                   height={0}
                   style={{ width: "100%", height: "100%" }}
@@ -222,53 +195,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <li
                 key={item.path}
                 className={`menu-item ${
-                  item.subItems
-                    ? item.subItems.some(
-                        (subItem) => router.pathname === subItem.path
-                      )
-                      ? "active open"
-                      : openMenus.includes(item.path)
-                      ? "open"
-                      : ""
-                    : router.pathname === item.path
-                    ? "active open"
-                    : ""
+                  router.pathname === item.path ? "active open" : ""
                 }`}
               >
-                {item.subItems ? (
-                  <>
-                    <a
-                      href="#"
-                      className="menu-link menu-toggle"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        toggleMenu(item.path);
-                      }}
-                    >
-                      <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                      <div data-i18n={item.label}>{item.label}</div>
-                    </a>
-                    <ul className="menu-sub">
-                      {item.subItems.map((subItem) => (
-                        <li
-                          key={subItem.path}
-                          className={`menu-item ${
-                            router.pathname === subItem.path ? "active" : ""
-                          }`}
-                        >
-                          <Link href={subItem.path} className="menu-link">
-                            <div data-i18n={subItem.label}>{subItem.label}</div>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : (
-                  <Link href={item.path} className="menu-link">
-                    <i className={`menu-icon tf-icons ${item.icon}`}></i>
-                    <div data-i18n={item.label}>{item.label}</div>
-                  </Link>
-                )}
+                <Link href={item.path} className="menu-link">
+                  <i className={`menu-icon tf-icons ${item.icon}`}></i>
+                  <div data-i18n={item.label}>{item.label}</div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -293,7 +226,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
 
             <div className="navbar-nav align-items-center flex-grow-1">
-              <div className="nav-item d-flex align-items-center w-px-400">
+              <div className="nav-item d-flex align-items-center search-wrapper">
                 <i className="bx bx-search fs-4 lh-0 me-2"></i>
                 <input
                   type="text"
@@ -368,77 +301,65 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </li>
                 {/* User */}
                 <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                  <div className="user-dropdown-wrapper">
-                    <a
-                      className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsUserDropdownOpen(!isUserDropdownOpen);
-                      }}
-                    >
-                      <div className="avatar avatar-online me-2">
-                        <Image
-                          src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                          alt="User Avatar"
-                          className="rounded-circle"
-                          width={40}
-                          height={40}
-                        />
-                      </div>
-                      <div className="flex-grow-1">
-                        <span className="fw-semibold d-block">
-                          {userProfile?.applicationUser?.firstName ||
-                            "Admin Kullanıcı"}
-                        </span>
-                        <small className="text-muted">Admin</small>
-                      </div>
-                    </a>
-                    <ul
-                      className={`dropdown-menu dropdown-menu-end ${
-                        isUserDropdownOpen ? "show" : ""
-                      }`}
-                    >
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          <div className="d-flex">
-                            <div className="avatar avatar-online me-2">
-                              <Image
-                                src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                                alt="User Avatar"
-                                className="rounded-circle"
-                                width={40}
-                                height={40}
-                              />
-                            </div>
-                            <div className="flex-grow-1">
-                              <span className="fw-semibold d-block">
-                                {userProfile?.applicationUser?.firstName ||
-                                  "Admin Kullanıcı"}
-                              </span>
-                              <small className="text-muted">Admin</small>
-                            </div>
+                  <a
+                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
+                    href="javascript:void(0);"
+                    data-bs-toggle="dropdown"
+                  >
+                    <div className="avatar avatar-online me-2">
+                      <Image
+                        src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                        alt="User Avatar"
+                        className="rounded-circle"
+                        width={40}
+                        height={40}
+                      />
+                    </div>
+                    <div className="flex-grow-1">
+                      <span className="fw-semibold d-block">
+                        {userProfile?.applicationUser?.firstName ||
+                          "Admin Kullanıcı"}
+                      </span>
+                      <small className="text-muted">Admin</small>
+                    </div>
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        <div className="d-flex">
+                          <div className="avatar avatar-online me-2">
+                            <Image
+                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                              alt="User Avatar"
+                              className="rounded-circle"
+                              width={40}
+                              height={40}
+                            />
                           </div>
-                        </a>
-                      </li>
-                      <li>
-                        <div className="dropdown-divider"></div>
-                      </li>
-                      <li>
-                        <a
-                          className="dropdown-item text-danger"
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleLogout();
-                          }}
-                        >
-                          <i className="bx bx-power-off me-2"></i>
-                          <span className="align-middle">Çıkış Yap</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
+                          <div className="flex-grow-1">
+                            <span className="fw-semibold d-block">
+                              {userProfile?.applicationUser?.firstName ||
+                                "Admin Kullanıcı"}
+                            </span>
+                            <small className="text-muted">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div className="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a
+                        className="dropdown-item text-danger"
+                        href="#"
+                        onClick={handleLogout}
+                      >
+                        <i className="bx bx-power-off me-2"></i>
+                        <span className="align-middle">Çıkış Yap</span>
+                      </a>
+                    </li>
+                  </ul>
                 </li>
                 {/* /User */}
               </ul>
@@ -453,7 +374,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <footer className="content-footer footer bg-footer-theme">
               <div className="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                 <div className="mb-2 mb-md-0">
-                  © {new Date().getFullYear()}, Nors Admin Panel
+                  © {new Date().getFullYear()}, Fiero Admin Panel
                 </div>
               </div>
             </footer>
@@ -470,25 +391,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           userProfile={userProfile}
         />
       )}
-
-      {/* Dropdown Styles */}
-      <style jsx>{`
-        .user-dropdown-wrapper {
-          position: relative;
-        }
-        .user-dropdown-wrapper .dropdown-menu {
-          display: none;
-          position: absolute;
-          top: 100%;
-          right: 0;
-          min-width: 250px;
-          z-index: 1000;
-          margin-top: 0.5rem;
-        }
-        .user-dropdown-wrapper .dropdown-menu.show {
-          display: block;
-        }
-      `}</style>
     </div>
   );
 }

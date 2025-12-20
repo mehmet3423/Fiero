@@ -18,6 +18,7 @@ export const useDeleteMainCategory = () => {
                 onSuccess: () => {
                     toast.success('Ana kategori başarıyla silindi');
                     queryClient.invalidateQueries({ queryKey: [QueryKeys.MAIN_CATEGORY_LIST] });
+                    queryClient.invalidateQueries({ queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST] });
                 }
             });
         } catch (error) {

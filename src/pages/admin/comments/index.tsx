@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useGetCommentList } from "@/hooks/services/reviews/useGetCommentList";
-import { useApproveComment } from "@/hooks/services/reviews/useApproveComment";
-import { useRejectComment } from "@/hooks/services/reviews/useRejectComment";
-import { CommentItem } from "@/constants/models/Review";
 import CirclePagination from "@/components/shared/CirclePagination";
 import GeneralModal from "@/components/shared/GeneralModal";
 import { CommentStatus } from "@/constants/enums/CommentStatus";
+import { CommentItem } from "@/constants/models/Review";
+import { useApproveComment } from "@/hooks/services/reviews/useApproveComment";
+import { useGetCommentList } from "@/hooks/services/reviews/useGetCommentList";
+import { useRejectComment } from "@/hooks/services/reviews/useRejectComment";
+import { formatDate } from "@/utils/dateFormatter";
+import React, { useEffect, useState } from "react";
 
 export default function CommentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,6 +29,7 @@ export default function CommentsPage() {
   const [searchText, setSearchText] = useState("");
   const [searchTextInput, setSearchTextInput] = useState(""); // Arama input'u için ayrı state
   const [showFilters, setShowFilters] = useState(false); // Filtrelerin görünürlüğü
+  const pageSize = 20;
 
   const {
     data: commentsData,
@@ -42,7 +44,7 @@ export default function CommentsPage() {
     isDeleted: isDeleted,
     search: searchText || undefined,
     page: currentPage - 1, // Frontend 1-based, backend 0-based
-    pageSize: 20,
+    pageSize: pageSize,
     from: 0,
   });
 
@@ -128,16 +130,6 @@ export default function CommentsPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("tr-TR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const getApprovalStatusText = (approved: boolean | null) => {
     if (approved === null) {
       return "Beklemede";
@@ -168,7 +160,7 @@ export default function CommentsPage() {
 
   if (isLoading) {
     return (
-      <div className="content-wrapper">
+      <div className="content-wrapper admin-compact-list">
         <div className="container-l flex-grow-1 container-p-y">
           <div
             className="d-flex justify-content-center align-items-center"
@@ -184,37 +176,37 @@ export default function CommentsPage() {
   }
 
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper admin-compact-list">
       <div className="container-l flex-grow-1 container-p-y">
+        <div className="card bg-transparent border-0 mb-3">
+          <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+              <h4 className="mb-1 fw-bold">Yorum Yönetimi</h4>
+              <p className="mb-0 text-muted" style={{ fontSize: "0.875rem" }}>
+                Yorumları inceleyin, onaylayın ve filtreleyin.
+              </p>
+            </div>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <i className="bx bx-filter me-1"></i>
+                {showFilters ? "Filtreleri Gizle" : "Filtreleri Göster"}
+              </button>
+              <button
+                className="btn btn-outline-primary btn-sm"
+                onClick={() => refetch()}
+              >
+                <i className="bx bx-refresh"></i>
+                Yenile
+              </button>
+            </div>
+          </div>
+        </div>
         <div className="row">
           <div className="col-12">
             <div className="card">
-              <div className="card-header d-flex justify-content-between align-items-center py-2">
-                <h6 className="card-title m-3">
-                  Yorum Yönetimi
-                  {pagination && (
-                    <span className="badge bg-primary ms-2">
-                      {pagination.count}
-                    </span>
-                  )}
-                </h6>
-                <div className="d-flex gap-2 m-3">
-                  <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => setShowFilters(!showFilters)}
-                  >
-                    <i className="bx bx-filter me-1"></i>
-                    Filtreler
-                  </button>
-                  <button
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={() => refetch()}
-                  >
-                    <i className="bx bx-refresh"></i>
-                  </button>
-                </div>
-              </div>
-
               <div className="card-body p-3">
                 {/* Filtreler - Koşullu Görünüm */}
                 {showFilters && (
@@ -310,7 +302,6 @@ export default function CommentsPage() {
                           </label>
                           <select
                             className="form-select form-select-sm"
-                            style={{ fontSize: "0.75rem" }}
                             value={statusFilter || ""}
                             onChange={(e) =>
                               setStatusFilter(e.target.value || undefined)
@@ -344,16 +335,11 @@ export default function CommentsPage() {
                               <button
                                 key={rating}
                                 type="button"
-                                className={`btn btn-sm ${
-                                  targetRatings.includes(rating)
+                                className={`btn btn-sm px-2 py-1 ${targetRatings.includes(rating)
                                     ? "btn-primary"
                                     : "btn-outline-primary"
-                                }`}
+                                  }`}
                                 onClick={() => handleRatingToggle(rating)}
-                                style={{
-                                  fontSize: "0.75rem",
-                                  padding: "0.25rem 0.5rem",
-                                }}
                               >
                                 {rating}★
                               </button>
@@ -361,12 +347,8 @@ export default function CommentsPage() {
                             {targetRatings.length > 0 && (
                               <button
                                 type="button"
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary px-2 py-1"
                                 onClick={() => setTargetRatings([])}
-                                style={{
-                                  fontSize: "0.75rem",
-                                  padding: "0.25rem 0.5rem",
-                                }}
                               >
                                 Temizle
                               </button>
@@ -383,7 +365,6 @@ export default function CommentsPage() {
                           </label>
                           <select
                             className="form-select form-select-sm"
-                            style={{ fontSize: "0.75rem" }}
                             value={
                               isDeleted === undefined
                                 ? ""
@@ -433,10 +414,14 @@ export default function CommentsPage() {
                 )}
 
                 {/* Yorumlar Tablosu */}
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h6 className="mb-0 fw-bold">Yorum Listesi</h6>
+                </div>
                 <div className="table-responsive">
-                  <table className="table table-hover table-sm">
+                  <table className="table table-hover table-striped table-sm align-middle small">
                     <thead>
                       <tr>
+                        <th>Sıra</th>
                         <th>Müşteri</th>
                         <th>Başlık</th>
                         <th>İçerik</th>
@@ -448,21 +433,19 @@ export default function CommentsPage() {
                     </thead>
                     <tbody>
                       {commentsData && commentsData.length > 0 ? (
-                        commentsData.map((comment) => (
+                        commentsData.map((comment, index) => (
                           <tr
                             key={comment.id}
                             onClick={() => setSelectedComment(comment)}
                           >
+                            <td>{(currentPage - 1) * pageSize + index + 1}</td>
                             <td>
                               <div>
                                 <strong className="small">
                                   {comment.customerName}
                                 </strong>
                                 <br />
-                                <small
-                                  className="text-muted"
-                                  style={{ fontSize: "0.7rem" }}
-                                >
+                                <small className="text-muted">
                                   {comment.customerId}
                                 </small>
                               </div>
@@ -492,13 +475,12 @@ export default function CommentsPage() {
                                 className={getApprovalStatusBadgeClass(
                                   comment.approved
                                 )}
-                                style={{ fontSize: "0.8rem" }}
                               >
                                 {getApprovalStatusText(comment.approved)}
                               </span>
                             </td>
                             <td>
-                              <small style={{ fontSize: "0.7rem" }}>
+                              <small>
                                 {new Date(
                                   comment.createdOnValue || ""
                                 ).toLocaleDateString("tr-TR")}
@@ -510,7 +492,7 @@ export default function CommentsPage() {
                                 role="group"
                               >
                                 <button
-                                  className="btn  btn-sm btn-outline-primary "
+                                  className="btn btn-sm btn-outline-primary px-2 py-1 me-2"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedComment(comment);
@@ -520,16 +502,12 @@ export default function CommentsPage() {
                                         .$("#commentDetailModal")
                                         .modal("show");
                                   }}
-                                  style={{
-                                    padding: "0.25rem 0.5rem",
-                                    marginRight: "0.5rem",
-                                  }}
                                   title="Detayları Görüntüle"
                                 >
                                   <i className="bx bx-show"></i>
                                 </button>
                                 <button
-                                  className="btn btn-sm"
+                                  className="btn btn-sm px-2 py-1"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setApprovingComment(comment.id);
@@ -541,7 +519,6 @@ export default function CommentsPage() {
                                   }}
                                   disabled={isApproving}
                                   style={{
-                                    padding: "0.25rem 0.5rem",
                                     backgroundColor: "#a5f57d",
                                   }}
                                   title="Onayla"
@@ -549,7 +526,7 @@ export default function CommentsPage() {
                                   <i className="bx bx-check text-dark"></i>
                                 </button>
                                 <button
-                                  className="btn btn-sm text-dark"
+                                  className="btn btn-sm text-dark px-2 py-1"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setRejectingComment(comment.id);
@@ -561,7 +538,6 @@ export default function CommentsPage() {
                                   }}
                                   disabled={isRejecting}
                                   style={{
-                                    padding: "0.25rem 0.5rem",
                                     backgroundColor: "#f55353",
                                   }}
                                   title="Reddet"
@@ -574,7 +550,7 @@ export default function CommentsPage() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={8} className="text-center py-4">
+                          <td colSpan={9} className="text-center py-4">
                             <div className="text-muted">
                               <i className="bx bx-message-square-detail fs-1"></i>
                               <p className="mt-2">Henüz yorum bulunmuyor</p>
@@ -594,6 +570,7 @@ export default function CommentsPage() {
                       totalCount={pagination.count}
                       pageSize={pagination.size}
                       onPageChange={setCurrentPage}
+                      variant="compact"
                     />
                   </div>
                 )}
@@ -678,11 +655,10 @@ export default function CommentsPage() {
                   {Array.from({ length: 5 }, (_, index) => (
                     <i
                       key={index}
-                      className={`bx ${
-                        index < selectedComment.rating
+                      className={`bx ${index < selectedComment.rating
                           ? "bxs-star text-warning"
                           : "bx-star text-muted"
-                      } me-1`}
+                        } me-1`}
                     />
                   ))}
                   <span className="ms-2">({selectedComment.rating}/5)</span>

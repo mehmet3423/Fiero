@@ -34,6 +34,7 @@ export const useDeleteCustomer = () => {
         }
       );
     } catch (error) {
+      console.error("Error deleting customer:", error);
       toast.error("Müşteri silinirken bir hata oluştu");
     }
   };

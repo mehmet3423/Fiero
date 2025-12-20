@@ -16,7 +16,7 @@ export const useUpdateProduct = () => {
   ) => {
     try {
       // Body olarak gönderilecek veri
-      const body = {
+      const body: any = {
         Id: productId,
         Price: product.price,
         SellableQuantity: product.sellableQuantity,
@@ -30,9 +30,28 @@ export const useUpdateProduct = () => {
         IsOutlet: product.isOutlet,
         Refundable: product.refundable,
         ContentImageUrls: product.contentImageUrls,
-        Banner: product.banner,
-        ProductInfos: product.productInfos,
+        Banner: product.banner || [],
       };
+
+      // -En alanlarını ekle (varsa)
+      if (product.titleEn) {
+        body.TitleEn = product.titleEn;
+      }
+      if (product.descriptionEn) {
+        body.DescriptionEn = product.descriptionEn;
+      }
+      if (product.baseImageUrlEn) {
+        body.BaseImageUrlEn = product.baseImageUrlEn;
+      }
+      if (product.contentImageUrlsEn) {
+        body.ContentImageUrlsEn = product.contentImageUrlsEn;
+      }
+      if (product.bannerEn) {
+        body.BannerEn = product.bannerEn;
+      }
+      if (product.videoUrlEn) {
+        body.VideoUrlEn = product.videoUrlEn;
+      }
 
       await mutateAsync(
         {

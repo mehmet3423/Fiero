@@ -3,12 +3,14 @@ import { useProductsByCategory } from "@/hooks/services/products/useProductsByCa
 import { useEffect, useState } from "react";
 import PageLoadingAnimation from "../shared/PageLoadingAnimation";
 import ProductCard from "./ProductCard";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CategoryBlockProps {
   mainCategory: Category;
 }
 
 export default function CategoryBlock({ mainCategory }: CategoryBlockProps) {
+  const { language } = useLanguage();
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>();
   const [hasProducts, setHasProducts] = useState(false);
   const { products, isLoading } = useProductsByCategory(selectedSubCategory, {
@@ -46,7 +48,11 @@ export default function CategoryBlock({ mainCategory }: CategoryBlockProps) {
     <div className="container mb-5">
       <div className="heading heading-flex mb-3">
         <div className="heading-left">
-          <h2 className="title mb-0 text-dark">{mainCategory.name}</h2>
+          <h2 className="title mb-0 text-dark">
+            {language === "en" && mainCategory.nameEn
+              ? mainCategory.nameEn
+              : mainCategory.name}
+          </h2>
         </div>
 
         <div className="heading-right">
@@ -64,7 +70,9 @@ export default function CategoryBlock({ mainCategory }: CategoryBlockProps) {
                   role="tab"
                   style={{ cursor: "pointer" }}
                 >
-                  {subCategory.name}
+                  {language === "en" && subCategory.nameEn
+                    ? subCategory.nameEn
+                    : subCategory.name}
                 </a>
               </li>
             ))}

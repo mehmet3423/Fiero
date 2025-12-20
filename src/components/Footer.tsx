@@ -2,13 +2,17 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/hooks/context/useAuth";
+import { useSubscribeToNotifications } from "@/hooks/services/useSubscribeToNotifications";
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [openSection, setOpenSection] = useState<string | null>(null);
   const { userProfile } = useAuth();
+  const { subscribe, isPending } = useSubscribeToNotifications();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const [subscribeMessage, setSubscribeMessage] = useState<string>("");
 
   const isLoggedIn = !!userProfile;
   const accountLinkHref = isLoggedIn ? "/profile" : "/register";
@@ -18,6 +22,48 @@ export default function Footer() {
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubscribeMessage("");
+
+    const email = emailInputRef.current?.value?.trim();
+
+    if (!email) {
+      setSubscribeMessage(
+        t("footer.emailRequired") || "Please enter your email address."
+      );
+      return;
+    }
+
+    // Email format kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setSubscribeMessage(
+        t("footer.emailInvalid") || "Please enter a valid email address."
+      );
+      return;
+    }
+
+    try {
+      const localeType = language === "tr" ? 0 : 1;
+      await subscribe(
+        {
+          userMail: email,
+          localeType,
+        },
+        () => {
+          // Başarılı olduğunda input'u temizle
+          if (emailInputRef.current) {
+            emailInputRef.current.value = "";
+          }
+          setSubscribeMessage("");
+        }
+      );
+    } catch (error) {
+      // Error handling hook içinde yapılıyor
+    }
   };
 
   return (
@@ -285,33 +331,48 @@ export default function Footer() {
                       <form
                         className="form-newsletter subscribe-form"
                         id="subscribe-form"
-                        action="#"
-                        method="post"
+                        onSubmit={handleSubscribe}
                         acceptCharset="utf-8"
-                        data-mailchimp="true"
                       >
                         <div className="subscribe-content">
                           <fieldset className="email">
                             <input
+                              ref={emailInputRef}
                               type="email"
                               name="email-form"
                               className="subscribe-email"
                               placeholder={t("footer.email")}
                               tabIndex={0}
                               aria-required="true"
+                              disabled={isPending}
                             />
                           </fieldset>
                           <div className="button-submit">
                             <button
                               className="subscribe-button tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
-                              type="button"
+                              type="submit"
+                              disabled={isPending}
                             >
-                              {t("footer.subscribe")}
+                              {isPending
+                                ? t("footer.subscribing") || "Abone olunuyor..."
+                                : t("footer.subscribe")}
                               <i className="icon icon-arrow1-top-left"></i>
                             </button>
                           </div>
                         </div>
-                        <div className="subscribe-msg"></div>
+                        <div className="subscribe-msg">
+                          {subscribeMessage && (
+                            <div
+                              style={{
+                                color: "#dc3545",
+                                fontSize: "0.875rem",
+                                marginTop: "0.5rem",
+                              }}
+                            >
+                              {subscribeMessage}
+                            </div>
+                          )}
+                        </div>
                       </form>
                     </div>
                   </div>

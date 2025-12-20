@@ -80,8 +80,8 @@ function StockReportPage() {
           <h5 className="card-title mb-0 p-3">Filtreler</h5>
         </div>
         <div className="card-body">
-          <div className="row">
-            <div className="col-md-4">
+          <div className="row g-3">
+            <div className="col-12 col-md-4">
               <label htmlFor="categoryKeyword" className="form-label">
                 Kategori Anahtar Kelimesi
               </label>
@@ -95,11 +95,11 @@ function StockReportPage() {
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-md-4">
               <label className="form-label">Sıralama</label>
               <div className="d-flex gap-2">
                 <button
-                  className={`btn btn-sm ${
+                  className={`btn btn-sm flex-grow-1 ${
                     sortOrder === true ? "btn-primary" : "btn-outline-primary"
                   }`}
                   onClick={() => handleSortChange(true)}
@@ -109,7 +109,7 @@ function StockReportPage() {
                   Artan
                 </button>
                 <button
-                  className={`btn btn-sm ${
+                  className={`btn btn-sm flex-grow-1 ${
                     sortOrder === false ? "btn-primary" : "btn-outline-primary"
                   }`}
                   onClick={() => handleSortChange(false)}
@@ -119,7 +119,7 @@ function StockReportPage() {
                   Azalan
                 </button>
                 <button
-                  className={`btn btn-sm ${
+                  className={`btn btn-sm flex-grow-1 ${
                     sortOrder === undefined
                       ? "btn-primary"
                       : "btn-outline-secondary"
@@ -132,20 +132,25 @@ function StockReportPage() {
                 </button>
               </div>
             </div>
-            <div className="col-md-4 d-flex align-items-end">
-              <button
-                className="btn btn-primary me-2"
-                onClick={handleSearch}
-                disabled={isLoading}
-              >
-                {isLoading ? "Aranıyor..." : "Ara"}
-              </button>
-              <button
-                className="btn btn-outline-secondary"
-                onClick={handleClearFilter}
-              >
-                Temizle
-              </button>
+            <div className="col-12 col-md-4">
+              <label className="form-label" style={{ visibility: "hidden" }}>
+                İşlemler
+              </label>
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-sm btn-primary flex-grow-1"
+                  onClick={handleSearch}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Aranıyor..." : "Ara"}
+                </button>
+                <button
+                  className="btn btn-sm btn-outline-secondary flex-grow-1"
+                  onClick={handleClearFilter}
+                >
+                  Temizle
+                </button>
+              </div>
             </div>
           </div>
         </div>

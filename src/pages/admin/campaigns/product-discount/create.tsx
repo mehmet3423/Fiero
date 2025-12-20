@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useCreateProductDiscount } from "@/hooks/services/discounts/product-discount/useCreateProductDiscount";
-import { DiscountType } from "@/constants/enums/DiscountType";
 import ProductSelector from "@/components/ProductSelector";
-import NotificationSettings from "@/components/shared/NotificationSettings";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
+import { DiscountType } from "@/constants/enums/DiscountType";
 import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
+import { useCreateProductDiscount } from "@/hooks/services/discounts/product-discount/useCreateProductDiscount";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface ProductDiscountForm {
   name: string;
+  nameEn: string;
   description: string;
   discountValue: number;
   discountValueType: number;
@@ -33,6 +33,7 @@ export default function CreateProductDiscount() {
 
   const [formData, setFormData] = useState<ProductDiscountForm>({
     name: "",
+    nameEn: "",
     description: "",
     discountValue: 0,
     discountValueType: 1,
@@ -67,8 +68,7 @@ export default function CreateProductDiscount() {
     try {
       await createProductDiscount(formData);
       router.push("/admin/campaigns/product-discount");
-    } catch (error) {
-    }
+    } catch (error) { }
   };
 
   const handleChange = (
@@ -127,240 +127,121 @@ export default function CreateProductDiscount() {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/product-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Ürün İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            Yeni İndirim
-          </h4>
-          <Link
-            href="/admin/campaigns/product-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
+    <CampaignFormWrapper
+      campaignType="product-discount"
+      campaignTypeLabel="Ürün İndirimleri"
+      action="create"
+      name={formData.name}
+      nameEn={formData.nameEn}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      notificationSettings={formData.notificationSettings}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onNameEnChange={(value) =>
+        setFormData((prev) => ({ ...prev, nameEn: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onNotificationSettingsChange={handleNotificationSettingsChange}
+      onSubmit={handleSubmit}
+      isSubmitting={isPending}
+      submitDisabled={!formData.productId}
+      submitButtonText={
+        productWithDiscountWarning.show
+          ? "Mevcut İndirimi Değiştir ve Kaydet"
+          : "Kaydet"
+      }
+      submitButtonVariant={
+        productWithDiscountWarning.show ? "warning" : "primary"
+      }
+    >
+      {/* İndirim detayları */}
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <label className="form-label">İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="discountValue"
+            value={formData.discountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">İndirim Tipi</label>
+          <select
+            className="form-select"
+            name="discountValueType"
+            value={formData.discountValueType}
+            onChange={(e) => handleChange(e)}
+            required
           >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+            <option value={1}>Yüzde (%)</option>
+            <option value={2}>Tutar (₺)</option>
+          </select>
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            {/* Temel bilgiler */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">İndirim Adı</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">İndirim Açıklaması</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+      {/* Ürün seçimi */}
+      <ProductSelector
+        selectedProductIds={formData.productId ? [formData.productId] : []}
+        onProductSelect={handleProductSelect}
+        onProductWithDiscountSelected={handleProductWithDiscountSelected}
+        multiSelect={false}
+        title="Ürün Seçimi"
+        height="300px"
+        discountType="product"
+      />
 
-            {/* İndirim detayları */}
-            <div className="row mb-3">
-              <div className="col-md-4">
-                <label className="form-label">İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="discountValue"
-                  value={formData.discountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">İndirim Tipi</label>
-                <select
-                  className="form-select"
-                  name="discountValueType"
-                  value={formData.discountValueType}
-                  onChange={(e) => handleChange(e)}
-                  required
-                >
-                  <option value={1}>Yüzde (%)</option>
-                  <option value={2}>Tutar (₺)</option>
-                </select>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Ürün seçimi */}
-            <ProductSelector
-              selectedProductIds={
-                formData.productId ? [formData.productId] : []
-              }
-              onProductSelect={handleProductSelect}
-              onProductWithDiscountSelected={handleProductWithDiscountSelected}
-              multiSelect={false}
-              title="Ürün Seçimi"
-              height="300px"
-              discountType="product"
-            />
-
-            {/* Uyarı mesajı */}
-            {productWithDiscountWarning.show && (
-              <div
-                className="alert  d-flex align-items-center mb-3"
-                role="alert"
-              >
-                <i
-                  className="bx bx-error-circle me-2"
-                  style={{
-                    fontSize: "1.5rem",
-                    color: "red",
-                  }}
-                ></i>
-                <div>
-                  <small className="text-dark">
-                    Kırmızı ünlem ikonuna sahip ürünlerin indirimleri mevcut.
-                    Yeni indirim eklediğinizde, mevcut indirim otomatik olarak
-                    kaldırılacak ve yerine yeni indirim uygulanacaktır.
-                  </small>
-                </div>
-              </div>
-            )}
-
-            {/* Tarih aralığı */}
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <label className="form-label">Başlangıç Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  min={new Date().toISOString().slice(0, 16)}
-                  required
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Bitiş Tarihi</label>
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  min={
-                    formData.startDate || new Date().toISOString().slice(0, 16)
-                  }
-                  required
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
-            </div>
-
-            {/* Durum */}
-            <div className="row mb-3">
-              <div className="col-md-12">
-                <div
-                  className="form-check form-switch"
-                  style={{ fontSize: "16px" }}
-                >
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="isActive"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleChange}
-                    style={{ cursor: "pointer" }}
-                  />
-                  <label className="form-check-label" htmlFor="isActive">
-                    Aktif
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Notification Settings */}
-            <NotificationSettings
-              value={formData.notificationSettings}
-              onChange={handleNotificationSettingsChange}
-            />
-
-            {/* Submit button */}
-            <div className="d-flex gap-2">
-              <button
-                type="submit"
-                className={`btn ${isPending || !formData.productId
-                    ? "btn-light text-muted"
-                    : productWithDiscountWarning.show
-                      ? "btn-warning"
-                      : "btn-primary"
-                  }`}
-                disabled={isPending || !formData.productId}
-                style={{
-                  filter:
-                    isPending || !formData.productId
-                      ? "grayscale(50%)"
-                      : "none",
-                  opacity: isPending || !formData.productId ? 0.7 : 1,
-                }}
-              >
-                {isPending
-                  ? "Kaydediliyor..."
-                  : productWithDiscountWarning.show
-                    ? "Mevcut İndirimi Değiştir ve Kaydet"
-                    : "Kaydet"}
-              </button>
-            </div>
-          </form>
+      {/* Uyarı mesajı */}
+      {productWithDiscountWarning.show && (
+        <div className="alert d-flex align-items-center mb-3" role="alert">
+          <i
+            className="bx bx-error-circle me-2"
+            style={{
+              fontSize: "1.5rem",
+              color: "red",
+            }}
+          ></i>
+          <div>
+            <small className="text-dark">
+              Kırmızı ünlem ikonuna sahip ürünlerin indirimleri mevcut. Yeni
+              indirim eklediğinizde, mevcut indirim otomatik olarak kaldırılacak
+              ve yerine yeni indirim uygulanacaktır.
+            </small>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </CampaignFormWrapper>
   );
 }

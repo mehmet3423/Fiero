@@ -6,6 +6,7 @@ import "swiper/css/pagination";
 import Link from "next/link";
 import { useCategories } from "@/hooks/services/categories/useCategories";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 // Varsayılan kategori resimleri (kategori resmi yoksa kullanılacak)
 const defaultCategoryImages = [
@@ -17,6 +18,7 @@ const defaultCategoryImages = [
 ];
 
 function ServiceIcons() {
+  const { t, language } = useLanguage();
   const { categories, isLoading } = useCategories();
 
   const sortedCategories =
@@ -29,7 +31,7 @@ function ServiceIcons() {
       <div className="container">
         <div className="flat-title">
           <span className="title wow fadeInUp" data-wow-delay="0s">
-            Categories you might like
+            {t("categories.youMightLike")}
           </span>
         </div>
         <div className="hover-sw-nav">
@@ -73,7 +75,7 @@ function ServiceIcons() {
                         </div>
                         <div className="collection-content">
                           <div className="tf-btn collection-title hover-icon fs-15 rounded-full">
-                            <span>Yükleniyor...</span>
+                            <span>{t("buttons.loading")}</span>
                           </div>
                         </div>
                       </div>
@@ -102,7 +104,11 @@ function ServiceIcons() {
                                 index % defaultCategoryImages.length
                               ]
                             }
-                            alt={`${category.name} kategorisi`}
+                            alt={`${
+                              language === "en" && category.nameEn
+                                ? category.nameEn
+                                : category.name
+                            } ${t("categories.category")}`}
                             width={500}
                             height={500}
                             style={{
@@ -124,7 +130,11 @@ function ServiceIcons() {
                             href={`/products?categoryId=${category.id}`}
                             className="tf-btn collection-title hover-icon fs-15 rounded-full "
                           >
-                            <span>{category.name}</span>
+                            <span>
+                              {language === "en" && category.nameEn
+                                ? category.nameEn
+                                : category.name}
+                            </span>
                             <i className="icon icon-arrow1-top-left"></i>
                           </Link>
                         </div>

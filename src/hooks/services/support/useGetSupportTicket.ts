@@ -9,6 +9,7 @@ interface UseGetSupportTicketsProps {
   requestType?: number;
   title?: string;
   from?: string;
+  supportTicketStatus?: number;
 }
 
 export const useGetSupportTickets = ({
@@ -17,6 +18,7 @@ export const useGetSupportTickets = ({
   requestType,
   title,
   from,
+  supportTicketStatus,
 }: UseGetSupportTicketsProps = {}) => {
   const params = {
     Page: page,
@@ -24,23 +26,29 @@ export const useGetSupportTickets = ({
     ...(requestType !== undefined && { RequestType: requestType }),
     ...(title && { Title: title }),
     ...(from !== undefined && { From: from }),
+    ...(supportTicketStatus !== undefined && {
+      SupportTicketStatus: supportTicketStatus,
+    }),
   };
 
-  const { data, isLoading, error, refetch } = useGetData<SupportTicketResponse>(
-    {
-      url: GET_SUPPORT_TICKETS,
-      params,
-      queryKey: [
-        "supportTickets",
-        String(page),
-        String(pageSize),
-        requestType !== undefined ? String(requestType) : undefined,
-        title,
-        from,
-      ],
-      method: HttpMethod.GET,
-    }
-  );
+  const { data, isLoading, error, refetch } = useGetData<{
+    data: SupportTicketResponse;
+  }>({
+    url: GET_SUPPORT_TICKETS,
+    params,
+    queryKey: [
+      "supportTickets",
+      String(page),
+      String(pageSize),
+      requestType !== undefined ? String(requestType) : undefined,
+      title,
+      from,
+      supportTicketStatus !== undefined
+        ? String(supportTicketStatus)
+        : undefined,
+    ],
+    method: HttpMethod.GET,
+  });
 
   return {
     tickets: data?.data?.items || [],

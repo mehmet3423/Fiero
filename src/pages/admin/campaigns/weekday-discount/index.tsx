@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { formatDate } from "@/utils/dateFormatter";
 
 const WeekdayDiscountPage = () => {
   const router = useRouter();
@@ -69,13 +70,8 @@ const WeekdayDiscountPage = () => {
     setPage(0);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR");
-  };
-
   const formatDiscountValue = (discount: WeekdayDiscount) => {
-    return discount.discountValueType === 0
+    return discount.discountValueType === 1
       ? `%${discount.discountValue}`
       : `${discount.discountValue} ₺`;
   };
@@ -95,7 +91,7 @@ const WeekdayDiscountPage = () => {
 
   const getDayBadgeColor = (dayOfWeek: number) => {
     // Hafta sonları için farklı renk
-    if (dayOfWeek === 0 || dayOfWeek === 6) return "bg-warning text-dark";
+    if (dayOfWeek === 0 || dayOfWeek === 6) return "bg-primary text-white";
     return "bg-primary";
   };
 
@@ -290,7 +286,7 @@ const WeekdayDiscountPage = () => {
         currentPage={page + 1}
         totalCount={totalCount}
         pageSize={pageSize}
-        onPageChange={setPage}
+        onPageChange={(newPage) => setPage(newPage - 1)}
       />
     </div>
   );

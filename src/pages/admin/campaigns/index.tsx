@@ -146,9 +146,16 @@ function CampaignPage() {
 
   return (
     <div>
-      <h4 className="fw-bold py-3" style={{ marginLeft: "15px" }}>
-        Kampanya Yönetimi
-      </h4>
+      <div className="card bg-transparent border-0 mb-3">
+        <div className="card-body py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div>
+            <h4 className="mb-1 fw-bold">Kampanya Yönetimi</h4>
+            <p className="mb-0 text-muted" style={{ fontSize: "0.875rem" }}>
+              Kampanyaları yönetin, ekleyin ve güncelleyin.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="row g-3 m-2">
         {campaigns.map((campaign, index) => (

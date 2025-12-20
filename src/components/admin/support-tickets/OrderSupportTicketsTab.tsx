@@ -1,7 +1,4 @@
-import {
-  OrderSupportRequestType,
-  OrderSupportRequestTypeLabels,
-} from "@/constants/enums/support-ticket/OrderSupportTicket/OrderSupportRequestType";
+import { OrderSupportRequestTypeLabels } from "@/constants/enums/support-ticket/OrderSupportTicket/OrderSupportRequestType";
 import {
   OrderSupportTicketStatusLabels,
   OrderSupportTicketStatusColors,
@@ -9,6 +6,7 @@ import {
 import { useGetOrderSupportTickets } from "@/hooks/services/support/order/useGetOrderSupportTickets";
 import { useUpdateOrderSupportTicket } from "@/hooks/services/support/useUpdateOrderSupportTicket";
 import { useDeleteSupportTicket } from "@/hooks/services/support/useDeleteSupportTicket";
+import StatusBadge from "@/components/shared/StatusBadge";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -45,14 +43,15 @@ export default function OrderSupportTicketsTab() {
   const debouncedTitle = useDebounce(searchTitle, 500);
 
   // API'den destek taleplerini al
-  const { tickets, totalCount, isLoading, error, refetch } =
-    useGetOrderSupportTickets({
+  const { tickets, totalCount, isLoading, refetch } = useGetOrderSupportTickets(
+    {
       page: displayPage - 1,
       pageSize,
       requestType,
       title: debouncedTitle,
       from,
-    });
+    }
+  );
 
   const deleteMutation = useDeleteSupportTicket();
   const updateMutation = useUpdateOrderSupportTicket();
@@ -75,7 +74,6 @@ export default function OrderSupportTicketsTab() {
     supportTicketStatus: 0,
     title: "",
     description: "",
-    orderItemId: "",
   });
 
   const handleDeleteClick = (ticketId: string) => {
@@ -107,7 +105,6 @@ export default function OrderSupportTicketsTab() {
       supportTicketStatus: ticket.supportTicketStatus,
       title: ticket.title,
       description: ticket.description || "",
-      orderItemId: ticket.orderItemId || "",
     });
     setShowUpdateModal(true);
   };
@@ -153,18 +150,14 @@ export default function OrderSupportTicketsTab() {
     setPageSize(10);
   };
 
-  if (error) {
-    return <div className="alert alert-danger">Destek talebi bulunamadı. </div>;
-  }
-
   return (
     <div>
       {/* Kompakt Filtreler */}
       <div className="card mb-3">
         <div className="card-body py-2">
-          <div className="row g-2 align-items-end">
+          <div className="row g-2">
             {/* Başlık Arama */}
-            <div className="col-md-4">
+            <div className="col-md-4 d-flex flex-column">
               <label className="form-label small mb-1">Başlık Ara</label>
               <input
                 type="text"
@@ -176,7 +169,7 @@ export default function OrderSupportTicketsTab() {
             </div>
 
             {/* Talep Türü */}
-            <div className="col-md-3">
+            <div className="col-md-3 d-flex flex-column">
               <label className="form-label small mb-1">Tür</label>
               <select
                 className="form-select form-select-sm"
@@ -199,7 +192,7 @@ export default function OrderSupportTicketsTab() {
             </div>
 
             {/* Tarihten */}
-            <div className="col-md-2">
+            <div className="col-md-2 d-flex flex-column">
               <label className="form-label small mb-1">Tarih</label>
               <input
                 type="date"
@@ -210,7 +203,7 @@ export default function OrderSupportTicketsTab() {
             </div>
 
             {/* Sayfa Boyutu */}
-            <div className="col-md-1">
+            <div className="col-md-1 d-flex flex-column">
               <label className="form-label small mb-1">Sayfa</label>
               <select
                 className="form-select form-select-sm"
@@ -224,7 +217,13 @@ export default function OrderSupportTicketsTab() {
             </div>
 
             {/* Reset Button */}
-            <div className="col-md-2">
+            <div className="col-md-2 d-flex flex-column">
+              <label
+                className="form-label small mb-1"
+                style={{ visibility: "hidden" }}
+              >
+                Temizle
+              </label>
               <button
                 type="button"
                 className="btn btn-outline-secondary btn-sm w-100"
@@ -308,17 +307,10 @@ export default function OrderSupportTicketsTab() {
                           </span>
                         </td>
                         <td>
-                          <span
-                            className={`badge bg-${
-                              OrderSupportTicketStatusColors[
-                                ticket.supportTicketStatus as keyof typeof OrderSupportTicketStatusColors
-                              ] || "secondary"
-                            }`}
-                          >
-                            {OrderSupportTicketStatusLabels[
-                              ticket.supportTicketStatus as keyof typeof OrderSupportTicketStatusLabels
-                            ] || "Bilinmiyor"}
-                          </span>
+                          <StatusBadge
+                            status={ticket.supportTicketStatus || 0}
+                            type="ticket"
+                          />
                         </td>
                         <td>
                           {ticket.orderItemId ? (
@@ -404,7 +396,7 @@ export default function OrderSupportTicketsTab() {
                 <div className="text-center">
                   <i className="bx bx-error-circle display-4 text-danger mb-3"></i>
                   <p>Bu destek talebini silmek istediğinizden emin misiniz?</p>
-                  <p className="text-muted">Bu işlem geri alınamaz.</p>
+                  <p className="text-dark">Bu işlem geri alınamaz.</p>
                 </div>
               </div>
               <div className="modal-footer d-flex justify-content-center gap-2">
@@ -510,20 +502,6 @@ export default function OrderSupportTicketsTab() {
                         )
                       )}
                     </select>
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Sipariş ID</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={updateFormData.orderItemId}
-                      onChange={(e) =>
-                        setUpdateFormData({
-                          ...updateFormData,
-                          orderItemId: e.target.value,
-                        })
-                      }
-                    />
                   </div>
                   <div className="col-12 mb-3">
                     <label className="form-label">Açıklama</label>

@@ -19,65 +19,61 @@ interface UseGetAllProductsOptions {
   ratingSort?: RatingSort;
   salesCountSort?: SalesCountSort;
   likeCountSort?: LikeCountSort;
-  mainCategoryId?: string;
-  subCategoryId?: string;
   mainCategoryIds?: string[];
   subCategoryIds?: string[];
-  specificationOptionIds?: string[];
+  mainCategoryId?: string; // Tekil destek için eklendi
+  subCategoryId?: string; // Tekil destek için eklendi
   search?: string;
 }
 
 // Ürünler ile ilgili hook
+
 export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
   // Arama terimi - search parametresi öncelikli, yoksa searchTerm kullan
   const searchQuery = options.search || options.searchTerm;
 
-  const resolvedMainCategoryIds =
-    options.mainCategoryIds ??
-    (options.mainCategoryId ? [options.mainCategoryId] : undefined);
+  // Tekil category ID'leri array'e dönüştür
+  const mainCategoryIdsArray = options.mainCategoryIds
+    ? options.mainCategoryIds
+    : options.mainCategoryId
+    ? [options.mainCategoryId]
+    : [];
 
-  const resolvedSubCategoryIds =
-    options.subCategoryIds ??
-    (options.subCategoryId ? [options.subCategoryId] : undefined);
+  const subCategoryIdsArray = options.subCategoryIds
+    ? options.subCategoryIds
+    : options.subCategoryId
+    ? [options.subCategoryId]
+    : [];
 
   // Body data objesi oluştur
   const bodyData = {
+    page: options.page !== undefined ? options.page : 0,
+    pageSize: options.pageSize !== undefined ? options.pageSize : 1000,
+    from: 0,
     discountSort: options.discountSort !== undefined ? options.discountSort : 0,
     ratingSort: options.ratingSort !== undefined ? options.ratingSort : 0,
     salesCountSort:
       options.salesCountSort !== undefined ? options.salesCountSort : 0,
     likeCountSort:
       options.likeCountSort !== undefined ? options.likeCountSort : 0,
-    page: options.page !== undefined ? options.page : 0,
-    pageSize: options.pageSize !== undefined ? options.pageSize : 30,
-    ...(resolvedMainCategoryIds &&
-      resolvedMainCategoryIds.length > 0 && {
-        mainCategoryIds: resolvedMainCategoryIds,
-      }),
-    ...(resolvedSubCategoryIds &&
-      resolvedSubCategoryIds.length > 0 && {
-        subCategoryIds: resolvedSubCategoryIds,
-      }),
-    ...(options.specificationOptionIds &&
-      options.specificationOptionIds.length > 0 && {
-        specificationOptionIds: options.specificationOptionIds,
-      }),
-    ...(searchQuery && { search: searchQuery }),
+    mainCategoryIds: mainCategoryIdsArray,
+    subCategoryIds: subCategoryIdsArray,
+    search: searchQuery || "",
   };
 
   const { data, isLoading, error } = useGetData<WrappedProductListResponse>({
     url: GET_ALL_PRODUCTS,
     queryKey: [
       QueryKeys.ALL_PRODUCTS,
-      options.page?.toString(),
-      options.pageSize?.toString(),
-      options.discountSort?.toString(),
-      options.ratingSort?.toString(),
-      options.salesCountSort?.toString(),
-      options.likeCountSort?.toString(),
-      resolvedMainCategoryIds?.join(","),
-      resolvedSubCategoryIds?.join(","),
-      searchQuery, // search query'yi de key'e ekle
+      options.page?.toString() || "0",
+      options.pageSize?.toString() || "1000",
+      options.discountSort?.toString() || "0",
+      options.ratingSort?.toString() || "0",
+      options.salesCountSort?.toString() || "0",
+      options.likeCountSort?.toString() || "0",
+      JSON.stringify(mainCategoryIdsArray),
+      JSON.stringify(subCategoryIdsArray),
+      searchQuery || "",
     ],
     method: HttpMethod.POST,
     data: bodyData,

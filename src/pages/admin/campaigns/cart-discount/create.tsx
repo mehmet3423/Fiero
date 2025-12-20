@@ -1,16 +1,16 @@
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { DiscountValueType } from "@/constants/enums/DiscountValueType";
 import { CartDiscount } from "@/constants/models/Discount";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 import { useCreateCartDiscount } from "@/hooks/services/discounts/cart-discount/useCreateCartDiscount";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import NotificationSettings from "@/components/shared/NotificationSettings";
-import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
 
 interface CartDiscountForm {
   name: string;
+  nameEn: string;
   description: string;
   discountValue: string;
   discountValueType: DiscountValueType;
@@ -33,6 +33,7 @@ const CreateCartDiscountPage = () => {
 
   const [formData, setFormData] = useState<CartDiscountForm>({
     name: "",
+    nameEn: "",
     description: "",
     discountValue: "",
     discountValueType: DiscountValueType.Percentage,
@@ -98,245 +99,134 @@ const CreateCartDiscountPage = () => {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/cart-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Sepet İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            Yeni İndirim
-          </h4>
-          <Link
-            href="/admin/campaigns/cart-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
+    <CampaignFormWrapper
+      campaignType="cart-discount"
+      campaignTypeLabel="Sepet İndirimleri"
+      action="create"
+      name={formData.name}
+      nameEn={formData.nameEn}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      notificationSettings={formData.notificationSettings}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onNameEnChange={(value) =>
+        setFormData((prev) => ({ ...prev, nameEn: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onNotificationSettingsChange={handleNotificationSettingsChange}
+      onSubmit={handleSubmit}
+      isSubmitting={isPending}
+    >
+      {/* İndirim Değer ve Tip Ayarları */}
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <label className="form-label">İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="discountValue"
+            value={formData.discountValue}
+            onChange={handleChange}
+            min={0}
+            required
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">İndirim Tipi</label>
+          <select
+            className="form-select"
+            name="discountValueType"
+            value={formData.discountValueType}
+            onChange={handleChange}
+            required
           >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+            <option value={1}>Yüzde (%)</option>
+            <option value={2}>Sabit Tutar (₺)</option>
+          </select>
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
         </div>
       </div>
 
-      <div className="row">
-        <div className="col-md-12">
-          <div className="card mb-4">
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">İndirim Adı</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Açıklama</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-4">
-                    <label className="form-label">İndirim Değeri</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="discountValue"
-                      value={formData.discountValue}
-                      onChange={handleChange}
-                      min={0}
-                      required
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <label className="form-label">İndirim Tipi</label>
-                    <select
-                      className="form-select"
-                      name="discountValueType"
-                      value={formData.discountValueType}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value={1}>Yüzde (%)</option>
-                      <option value={2}>Sabit Tutar (₺)</option>
-                    </select>
-                  </div>
-                  <div className="col-md-4">
-                    <label className="form-label">
-                      Maksimum İndirim Değeri
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="maxDiscountValue"
-                      value={formData.maxDiscountValue}
-                      onChange={handleChange}
-                      min={0}
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-3">
-                    <label className="form-label">Minimum Sepet Tutarı</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="minimumCartAmount"
-                      value={formData.minimumCartAmount}
-                      onChange={handleChange}
-                      min={0}
-                      required
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label">Maximum Sepet Tutarı</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="maximumCartAmount"
-                      value={formData.maximumCartAmount}
-                      onChange={handleChange}
-                      min={0}
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label">Minimum Ürün Sayısı</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="minimumCartProductCount"
-                      value={formData.minimumCartProductCount}
-                      onChange={handleChange}
-                      min={0}
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label">Maximum Ürün Sayısı</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="maximumCartProductCount"
-                      value={formData.maximumCartProductCount}
-                      onChange={handleChange}
-                      min={0}
-                      onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    />
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Başlangıç Tarihi</label>
-                    <input
-                      type="datetime-local"
-                      className="form-control"
-                      name="startDate"
-                      value={formData.startDate}
-                      onChange={handleChange}
-                      min={new Date().toISOString().slice(0, 16)}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Bitiş Tarihi</label>
-                    <input
-                      type="datetime-local"
-                      className="form-control"
-                      name="endDate"
-                      value={formData.endDate}
-                      onChange={handleChange}
-                      min={
-                        formData.startDate ||
-                        new Date().toISOString().slice(0, 16)
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Durum</label>
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input form-check-input-sm"
-                        name="isActive"
-                        checked={formData.isActive}
-                        onChange={handleChange}
-                        style={{ transform: "scale(0.7)" }}
-                      />
-                      <label
-                        className="form-check-label"
-                        style={{ fontSize: "0.875rem" }}
-                      >
-                        İndirim aktif
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notification Settings */}
-                <NotificationSettings
-                  value={formData.notificationSettings}
-                  onChange={handleNotificationSettingsChange}
-                />
-
-                <div className="mt-4">
-                  <button
-                    type="submit"
-                    className="btn btn-outline-secondary"
-                    style={{
-                      backgroundColor: "#e9e9e9",
-                      color: "#000",
-                      borderColor: "#d9d9d9",
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? "Kaydediliyor..." : "Kaydet"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+      {/* Sepet Kriterleri */}
+      <div className="row mb-3">
+        <div className="col-md-3">
+          <label className="form-label">Minimum Sepet Tutarı</label>
+          <input
+            type="number"
+            className="form-control"
+            name="minimumCartAmount"
+            value={formData.minimumCartAmount}
+            onChange={handleChange}
+            min={0}
+            required
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Maximum Sepet Tutarı</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maximumCartAmount"
+            value={formData.maximumCartAmount}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Minimum Ürün Sayısı</label>
+          <input
+            type="number"
+            className="form-control"
+            name="minimumCartProductCount"
+            value={formData.minimumCartProductCount}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Maximum Ürün Sayısı</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maximumCartProductCount"
+            value={formData.maximumCartProductCount}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+          />
         </div>
       </div>
-    </div>
+    </CampaignFormWrapper>
   );
 };
 

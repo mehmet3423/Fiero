@@ -21,7 +21,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   productHeader,
   productIds,
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const { addToCart } = useCart();
@@ -111,6 +111,29 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                     !product.isAvailable ||
                     (product.sellableQuantity ?? 0) <= 0;
 
+                  // Language-aware title
+                  const titleToShow =
+                    language === "en" && product.titleEn
+                      ? product.titleEn
+                      : product.title;
+
+                  // Language-aware image URLs
+                  const baseImageSrc =
+                    !product.baseImageUrl || product.baseImageUrl === "no_url"
+                      ? "/assets/images/products/no-image.jpg"
+                      : language === "en" && product.baseImageUrlEn
+                      ? product.baseImageUrlEn
+                      : product.baseImageUrl;
+
+                  const contentImageUrl =
+                    product.contentImageUrls && product.contentImageUrls.length > 0
+                      ? language === "en" &&
+                        product.contentImageUrlsEn &&
+                        product.contentImageUrlsEn.length > 0
+                        ? product.contentImageUrlsEn[0]
+                        : product.contentImageUrls[0]
+                      : null;
+
                   return (
                     <SwiperSlide
                       key={product.id}
@@ -133,23 +156,18 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             )}
                             <img
                               className="lazyload img-product"
-                              data-src={
-                                product.baseImageUrl ||
-                                "/assets/images/products/no-image.jpg"
-                              }
-                              src={
-                                product.baseImageUrl ||
-                                "/assets/images/products/no-image.jpg"
-                              }
-                              alt="image-product"
+                              data-src={baseImageSrc}
+                              src={baseImageSrc}
+                              alt={titleToShow}
+                              title={titleToShow}
                             />
-                            {product.contentImageUrls &&
-                              product.contentImageUrls[0] && (
+                            {contentImageUrl && (
                                 <img
                                   className="lazyload img-hover"
-                                  data-src={product.contentImageUrls[0]}
-                                  src={product.contentImageUrls[0]}
-                                  alt="image-product"
+                                data-src={contentImageUrl}
+                                src={contentImageUrl}
+                                alt={titleToShow}
+                                title={titleToShow}
                                 />
                               )}
                           </Link>
@@ -261,7 +279,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                               marginBottom: "8px",
                             }}
                           >
-                            {product.title}
+                            {titleToShow}
                           </Link>
                           <span className="price">
                             {hasDiscount &&
@@ -277,15 +295,10 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                               <span className="swatch-value bg_orange-3"></span>
                               <img
                                 className="lazyload"
-                                data-src={
-                                  product.baseImageUrl ||
-                                  "/assets/images/products/no-image.jpg"
-                                }
-                                src={
-                                  product.baseImageUrl ||
-                                  "/assets/images/products/no-image.jpg"
-                                }
-                                alt="image-product"
+                                data-src={baseImageSrc}
+                                src={baseImageSrc}
+                                alt={titleToShow}
+                                title={titleToShow}
                               />
                             </li>
                           </ul>

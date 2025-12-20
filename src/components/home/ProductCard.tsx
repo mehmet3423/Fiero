@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const {
@@ -72,14 +72,26 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
-  const hasDiscount = product.discountDTO !== null;
+  const hasDiscount = product.discountResponse !== null && product.discountResponse !== undefined;
   const isPercentageDiscount =
-    hasDiscount && (product.discountDTO as any)?.discountValueType === 1;
+    hasDiscount && (product.discountResponse as any)?.discountValueType === 1;
 
   const imageSrc =
     !product.baseImageUrl || product.baseImageUrl === "no_url"
       ? "/assets/images/no-image.jpg"
+      : language === "en" && product.baseImageUrlEn
+      ? product.baseImageUrlEn
       : product.baseImageUrl;
+
+  const titleToShow =
+    language === "en" && product.titleEn ? product.titleEn : product.title;
+
+  const contentImageUrl =
+    product.contentImageUrls && product.contentImageUrls.length > 0
+      ? language === "en" && product.contentImageUrlsEn && product.contentImageUrlsEn.length > 0
+        ? product.contentImageUrlsEn[0]
+        : product.contentImageUrls[0]
+      : null;
 
   return (
     <>
@@ -95,15 +107,16 @@ export default function ProductCard({ product }: ProductCardProps) {
               className="lazyload img-product"
               data-src={imageSrc}
               src={imageSrc}
-              alt={product.title}
+              alt={titleToShow}
+              title={titleToShow}
             />
-            {product.contentImageUrls &&
-              product.contentImageUrls.length > 0 && (
+            {contentImageUrl && (
                 <img
                   className="lazyload img-hover"
-                  data-src={product.contentImageUrls[0]}
-                  src={product.contentImageUrls[0]}
-                  alt={product.title}
+                data-src={contentImageUrl}
+                src={contentImageUrl}
+                alt={titleToShow}
+                title={titleToShow}
                 />
               )}
           </Link>
@@ -185,11 +198,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           </a>
 
           <Link href={`/products/${product.id}`} className="title link">
-            {product.title}
+            {titleToShow}
           </Link>
 
           <span className="price">
-            {hasDiscount && product.price !== product.discountedPrice ? (
+            {hasDiscount && 
+             product.price > 0 && 
+             product.discountedPrice > 0 && 
+             product.price > product.discountedPrice ? (
               <>
                 <span className="old-price">
                   {product.price.toLocaleString("tr-TR", {
@@ -205,7 +221,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
               </>
             ) : (
-              product.price.toLocaleString("tr-TR", {
+              (product.discountedPrice > 0 ? product.discountedPrice : product.price || 0).toLocaleString("tr-TR", {
                 style: "currency",
                 currency: "TRY",
               })

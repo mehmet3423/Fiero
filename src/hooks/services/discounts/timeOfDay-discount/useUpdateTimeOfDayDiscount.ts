@@ -11,6 +11,16 @@ export const useUpdateTimeOfDayDiscount = () => {
   const { mutateAsync, isPending } = useMyMutation<TimeOfDayDiscount>();
 
   const updateDiscount = async (data: TimeOfDayDiscount) => {
+    // Time formatını düzelt: HH:mm -> HH:mm:ss
+    const formatTime = (time: string): string => {
+      if (!time) return "00:00:00";
+      // Eğer zaten HH:mm:ss formatındaysa olduğu gibi döndür
+      if (time.split(":").length === 3) return time;
+      // Eğer HH:mm formatındaysa :ss ekle
+      if (time.split(":").length === 2) return `${time}:00`;
+      return "00:00:00";
+    };
+
     const requestBody = {
       id: data.id,
       name: data.name,
@@ -21,8 +31,8 @@ export const useUpdateTimeOfDayDiscount = () => {
       startDate: data.startDate,
       endDate: data.endDate,
       isActive: data.isActive,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      startTime: formatTime(data.startTime),
+      endTime: formatTime(data.endTime),
     };
 
     await mutateAsync(

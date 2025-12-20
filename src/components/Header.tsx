@@ -20,7 +20,7 @@ import LanguageSwitcher from "./shared/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const {
     userRole,
@@ -459,7 +459,9 @@ export default function Header() {
                             href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
                             className="item-link"
                           >
-                            {category.name}
+                            {language === "en" && category.nameEn
+                              ? category.nameEn
+                              : category.name}
                             <i className="icon icon-arrow-down"></i>
                           </Link>
 
@@ -490,7 +492,9 @@ export default function Header() {
                                                         href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
                                                         className="menu-link-text link"
                                                       >
-                                                        {subCategory.name}
+                                                        {language === "en" && subCategory.nameEn
+                                                          ? subCategory.nameEn
+                                                          : subCategory.name}
                                                       </Link>
                                                     </li>
                                                   )

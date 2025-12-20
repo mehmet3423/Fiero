@@ -1,6 +1,5 @@
 "use client";
 import EditProductForm from "@/components/admin/products/EditProductForm";
-import BackButton from "@/components/shared/BackButton";
 import PageLoadingAnimation from "@/components/shared/PageLoadingAnimation";
 import { UpdateDtoProduct } from "@/constants/models/DtoProduct";
 import { Product, ProductDetailResponse } from "@/constants/models/Product";
@@ -74,10 +73,11 @@ export default function EditProductPage() {
           sellerId: "",
           seller: null,
           orderItems: { $id: "", $values: [] },
-          productOnlySpecifications: apiProduct.productOnlySpecifications || [],
         } as unknown as Product;
+        console.log("productData", productData.isAvailable);
         setFormattedProduct(productData);
       } catch (error) {
+        console.error("Ürün verisi formatlanırken hata oluştu:", error);
         toast.error("Ürün verisi yüklenirken bir hata oluştu");
       }
     }
@@ -91,6 +91,7 @@ export default function EditProductPage() {
       await updateProduct(productId, updatedData);
       router.push("/admin/products");
     } catch (error) {
+      console.error("Ürün güncelleme hatası:", error);
       toast.error("Ürün güncellenirken bir hata oluştu");
     }
   };
@@ -102,10 +103,7 @@ export default function EditProductPage() {
   if (error || !apiProduct) {
     return (
       <div className="content-wrapper">
-        <div
-          className="container-l flex-grow-1 container-p-y"
-          style={{ padding: 0 }}
-        >
+        <div className="container-l flex-grow-1 container-p-y">
           <div className="card">
             <div className="card-body">
               <div className="text-center py-5">
@@ -138,7 +136,18 @@ export default function EditProductPage() {
           style={{ boxShadow: "none" }}
         >
           <div className="card-body pb-0" style={{ boxShadow: "none" }}>
-            <BackButton className="mb-3 mt-3 col-1" href="/admin/products" />
+            <Link
+              href="/admin/products"
+              className="btn btn-outline-secondary btn-sm mb-3"
+              style={{
+                fontSize: "0.75rem",
+                border: "0",
+                marginLeft: "-25px",
+              }}
+            >
+              <i className="bx bx-arrow-back me-1"></i>
+              Listeye Dön
+            </Link>
             <div className="d-flex justify-content-between align-items-center">
               <h6
                 className="card-header"

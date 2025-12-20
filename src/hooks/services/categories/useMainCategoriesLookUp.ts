@@ -11,7 +11,7 @@ export const useMainCategoriesLookUp = () => {
     url: GET_MAIN_CATEGORY_LOOKUP_LIST,
     queryKey: QueryKeys.MAIN_CATEGORY_LOOKUP_LIST,
     method: HttpMethod.GET,
-    onError(err) {},
+    onError(err) { },
   });
 
   // data null veya undefined ise boş dizi dön

@@ -11,7 +11,7 @@ import { useAddReview } from "@/hooks/services/reviews/useAddReview";
 import { useLanguage } from "@/context/LanguageContext";
 
 const AccordionSection: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState("description");
   const router = useRouter();
   const { productId } = router.query;
@@ -103,16 +103,27 @@ const AccordionSection: React.FC = () => {
                   >
                     <div className="product-description-section" style={{ fontSize: "14px", color: "#666" }}>
                       <p style={{ margin: 0, whiteSpace: "pre-line" }}>
-                        {product?.description?.replace(/<br\s*\/?>/gi, '\n')}
+                        {(language === "en" && product?.descriptionEn
+                          ? product.descriptionEn
+                          : product?.description)?.replace(/<br\s*\/?>/gi, '\n')}
                       </p>
                     </div>
                     <br></br>
                     <div className="tf-product-des-demo">
                       <div className="right">
                         {product?.productInfos && product.productInfos.length > 0 ? (
-                          product.productInfos.map((info, index) => (
+                          product.productInfos.map((info, index) => {
+                            const titleToShow =
+                              language === "en" && info.titleEn
+                                ? info.titleEn
+                                : info.title;
+                            const descriptionToShow =
+                              language === "en" && info.descriptionEn
+                                ? info.descriptionEn
+                                : info.description;
+                            return (
                             <div key={info.id || index} className="mb-4">
-                              <h3 className="fs-16 fw-5">{info.title}</h3>
+                                <h3 className="fs-16 fw-5">{titleToShow}</h3>
                               <div className="d-flex align-items-start gap-2">
                                 {info.icon && (
                                   <div className="icon mt-1">
@@ -120,11 +131,12 @@ const AccordionSection: React.FC = () => {
                                   </div>
                                 )}
                                 <div style={{ whiteSpace: "pre-line", color: "#666" }}>
-                                  {info.description}
+                                    {descriptionToShow}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))
+                            );
+                          })
                         ) : (
                           <>
                             <h3 className="fs-16 fw-5">{t("accordionSection.titles.features")}</h3>

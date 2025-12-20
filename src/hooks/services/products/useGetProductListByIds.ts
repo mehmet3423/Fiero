@@ -6,19 +6,19 @@ import { CommandResultWithData } from "@/constants/models/CommandResult";
 import useGetData from "@/hooks/useGetData";
 
 export function useGetProductListByIds(productIds: string[]) {
-  // Her id için useGetData hookunu çağır - hook'lar her zaman aynı sırada çağrılmalı
-  const { data, isLoading, error } = useGetData<
-    CommandResultWithData<Product | Product[]>
-  >({
+  // Hook'lar her zaman aynı sırada çağrılmalı - koşullu return yapılamaz
+  // enabled prop'u ile kontrol et
+  const hasProductIds = productIds && productIds.length > 0;
+  
+  const { data, isLoading, error } = useGetData<CommandResultWithData<Product | Product[]>>({
     url: GET_PRODUCT_LIST_BY_IDS,
-    queryKey: [QueryKeys.PRODUCT_LIST_BY_IDS, productIds.join(",")],
+    queryKey: [QueryKeys.PRODUCT_LIST_BY_IDS, productIds?.join(",") || ""],
     method: HttpMethod.POST,
     data: {
-      productIds,
+      productIds: productIds || [],
     },
-    enabled: productIds && productIds.length > 0, // enabled ile kontrol et, erken return yapma
+    enabled: hasProductIds,
     onError: (err) => {
-      console.log("useGetProductListByIds error:", err);
       // Product ID'ler bulunamadığında sessizce devam et, hata mesajı gösterme
     },
   });
@@ -37,18 +37,10 @@ export function useGetProductListByIds(productIds: string[]) {
     }
   }
 
-  // Product ID'ler boşsa boş array döndür ama hook'ları çağırmaya devam et
-  if (!productIds || productIds.length === 0) {
-    return {
-      products: [],
-      isLoading: false,
-      error: null,
-    };
-  }
-
+  // Her zaman aynı şekilde return yap (hook sırası değişmemeli)
   return {
-    products,
-    isLoading,
-    error,
+    products: hasProductIds ? products : [],
+    isLoading: hasProductIds ? isLoading : false,
+    error: hasProductIds ? error : null,
   };
 }

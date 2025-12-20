@@ -1,12 +1,12 @@
+import { staticPages, validRobotsMetaTags } from "@/constants/seo";
+import { uploadImageToCloudinary, validateImage } from "@/helpers/imageUpload";
 import { useGetSeoById } from "@/hooks/services/admin-seo/useGetSeoById";
 import { useUpdateSeo } from "@/hooks/services/admin-seo/useUpdateSeo";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { useMainCategoriesWithSubCategories } from "@/hooks/services/categories/useMainCategoriesWithSubCategories";
 import { useBasicProductList } from "@/hooks/services/products/useBasicProductList";
-import { validRobotsMetaTags, staticPages } from "@/constants/seo";
-import { uploadImageToCloudinary, validateImage } from "@/helpers/imageUpload";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 
 interface SeoFormData {
   id: string;
@@ -71,9 +71,8 @@ function OnicalCanAutocomplete({
         <input
           ref={inputRef}
           type="text"
-          className={`form-control ${
-            !value || !allowedRegex.test(value) ? "is-invalid" : ""
-          }`}
+          className={`form-control ${!value || !allowedRegex.test(value) ? "is-invalid" : ""
+            }`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -358,47 +357,49 @@ function EditSeoPage() {
       setCategoryError(null);
     }
 
-    // Alanları PascalCase'e çevir ve boş string/null/undefined olanları null yap
+    // Map to backend model with camelCase
     const mapToBackendModel = (data: SeoFormData, type: typeof seoType) => {
       const mapped: any = {
-        Id: data.id,
-        IsHomePage: data.isHomePage,
-        Title: data.title,
-        Description: data.description,
-        MetaTitle: data.metaTitle || null,
-        MetaDescription: data.metaDescription || null,
-        Keywords: data.keywords || null,
-        Canonical: null,
-        RobotsMetaTag: data.robotsMetaTag || null,
-        Author: data.author || null,
-        Publisher: data.publisher || null,
-        Language: data.language || "tr",
-        OgTitle: data.ogTitle || null,
-        OgDescription: data.ogDescription || null,
-        OgImageUrl: data.ogImageUrl || null,
-        StructuredDataJson: data.structuredDataJson || null,
-        ProductId: null,
-        MainCategoryId: null,
-        SubCategoryId: null,
-        BaseUrl: baseUrl,
+        id: data.id,
+        isHomePage: data.isHomePage,
+        title: data.title,
+        description: data.description,
+        metaTitle: data.metaTitle || null,
+        metaDescription: data.metaDescription || null,
+        keywords: data.keywords || null,
+        canonical: null,
+        robotsMetaTag: data.robotsMetaTag || null,
+        author: data.author || null,
+        publisher: data.publisher || null,
+        language: data.language || "tr",
+        ogTitle: data.ogTitle || null,
+        ogDescription: data.ogDescription || null,
+        ogImageUrl: data.ogImageUrl || null,
+        structuredDataJson: data.structuredDataJson || null,
+        isIndexed: true,
+        isFollowed: true,
+        productId: null,
+        mainCategoryId: null,
+        subCategoryId: null,
+        baseUrl: baseUrl,
       };
       if (type === "homepage") {
-        mapped.Canonical = null;
+        mapped.canonical = null;
       } else if (type === "general") {
-        mapped.Canonical = data.canonical
+        mapped.canonical = data.canonical
           ? data.canonical.replace(/^\//, "")
           : null;
       }
       if (type === "product") {
-        mapped.ProductId =
+        mapped.productId =
           data.productId && data.productId !== "" ? data.productId : null;
       }
       if (type === "category") {
-        mapped.MainCategoryId =
+        mapped.mainCategoryId =
           data.mainCategoryId && data.mainCategoryId !== ""
             ? data.mainCategoryId
             : null;
-        mapped.SubCategoryId =
+        mapped.subCategoryId =
           data.subCategoryId && data.subCategoryId !== ""
             ? data.subCategoryId
             : null;

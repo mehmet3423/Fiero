@@ -13,13 +13,15 @@ export const useUpdateSubCategory = () => {
     id: string,
     name: string,
     displayIndex: number,
-    imageUrl?: string
+    imageUrl?: string,
+    nameEn?: string
   ) => {
     try {
       // Request body oluştur
       const requestBody: {
         id: string;
         name: string;
+        nameEn?: string;
         displayIndex: number;
         imageUrl?: string;
       } = {
@@ -27,6 +29,10 @@ export const useUpdateSubCategory = () => {
         name: name,
         displayIndex: displayIndex,
       };
+
+      if (nameEn) {
+        requestBody.nameEn = nameEn;
+      }
 
       if (imageUrl) {
         requestBody.imageUrl = imageUrl;
@@ -43,6 +49,9 @@ export const useUpdateSubCategory = () => {
             toast.success("Alt kategori başarıyla güncellendi");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
+            });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],
             });
           },
         }

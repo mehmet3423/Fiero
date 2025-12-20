@@ -22,12 +22,14 @@ export interface CreateOrderGuestRequest {
   couponCode?: string;
   isGiftWrap?: boolean;
   giftWrapMessage?: string;
+  giftWrapPrice?: number;
+  affiliateCollectionId?: string;
 }
 
 export interface CreateOrderGuestResponse {
   success: boolean;
   data: {
-    id: string;
+    id: string; // Backend'den id olarak dönüyor
     orderNumber: string;
     paymentUrl?: string;
   };
@@ -39,11 +41,7 @@ export const useCreateOrderGuest = () => {
 
   const createGuestOrder = async (
     orderData: CreateOrderGuestRequest
-  ): Promise<{
-    orderId: string;
-    orderNumber: string;
-    paymentUrl?: string;
-  } | null> => {
+  ): Promise<{ orderId: string; orderNumber: string } | null> => {
     try {
       const response = await mutateAsync({
         url: CREATE_ORDER_GUEST,
@@ -55,10 +53,10 @@ export const useCreateOrderGuest = () => {
       const backendData = response?.data?.data;
       if (!backendData) return null;
 
+      // Backend id döndürüyor, biz orderId olarak map ediyoruz
       return {
         orderId: backendData.id,
         orderNumber: backendData.orderNumber,
-        paymentUrl: backendData.paymentUrl,
       };
     } catch (error) {
       console.error("Guest order creation error:", error);

@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
 import { GET_STOCK_REPORT } from "@/constants/links";
-import { getToken } from "@/helpers/tokenUtils";
 import {
   StockReportParams,
   StockReportResponse,
 } from "@/constants/models/reports";
+import { getToken } from "@/helpers/tokenUtils";
+import { useQuery } from "@tanstack/react-query";
 
 const fetchStockReport = async (
   params?: StockReportParams

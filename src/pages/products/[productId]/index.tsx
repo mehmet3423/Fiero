@@ -28,7 +28,6 @@ import ProductGallery from "@/components/product-detail/ProductGallery";
 import ProductDetails from "@/components/product-detail/ProductDetails";
 import AccordionSection from "@/components/product-detail/AccordionSection"; // Import AccordionSection
 import PeopleAlsoBought from "@/components/product-detail/PeopleAlsoBought";
-import RecentlyViewed from "@/components/product-detail/RecentlyViewed";
 import { useLanguage } from "@/context/LanguageContext";
 
 // Removed utility imports - using simplified discount structure
@@ -455,8 +454,10 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
             })()}
             <div className="product-details-tab">
               <AccordionSection />
-              <PeopleAlsoBought />
-              <RecentlyViewed /> {/* Add this component here */}
+              <PeopleAlsoBought
+                categoryId={product?.subCategoryId}
+                currentProductId={productId as string}
+              />
               {/* <ProductTabs
                 activeTab={activeTab}
                 handleTabChange={handleTabChange}

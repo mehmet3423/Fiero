@@ -4,6 +4,7 @@ import { UPDATE_SYSTEM_SETTINGS } from "@/constants/links";
 import { UpdateSettingsRequest } from "@/constants/models/settings";
 import useMyMutation from "@/hooks/useMyMutation";
 import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export const useUpdateSystemSettings = () => {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ export const useUpdateSystemSettings = () => {
 
   const updateSystemSettings = async (data: UpdateSettingsRequest) => {
     try {
+      console.log("Sending update request:", data);
 
       await mutateAsync(
         {
@@ -24,11 +26,14 @@ export const useUpdateSystemSettings = () => {
               queryKey: [QueryKeys.SYSTEM_SETTINGS],
             });
           },
+          onError: () => {
+            toast.error("Sistem ayarları güncellenirken bir hata oluştu");
+          },
         }
       );
     } catch (error) {
-      // Error'ı yeniden throw et ki page component yakalayabilsin
-      throw error;
+      console.error("Error updating system settings:", error);
+      toast.error("Sistem ayarları güncellenirken bir hata oluştu");
     }
   };
 

@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useExcelExport } from "@/hooks/services/reports/useExcelExport";
 import { GET_PRODUCT_RETURN_REPORT_EXCEL } from "@/constants/links";
 import BackButton from "@/components/shared/BackButton";
+import { formatCurrency } from "@/utils/currencyFormatter";
+import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 
 function ProductReturnReportPage() {
   const [categoryKeyword, setCategoryKeyword] = useState<string>("");
@@ -40,21 +42,6 @@ function ProductReturnReportPage() {
     setCategoryKeyword("");
     setCancelReasonType(CancelReasonType.ALL);
     setFilterParams({});
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("tr-TR");
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString("tr-TR");
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-    }).format(amount);
   };
 
   const getReturnSeverity = (reasonType: CancelReasonType) => {
@@ -165,7 +152,7 @@ function ProductReturnReportPage() {
                 style={{ fontSize: "0.8rem" }}
               />
             </div>
-            <div className="col-md-4 d-flex align-items-end">
+            <div className="col-md-4 d-flex align-items-end mt-2">
               <button
                 className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}

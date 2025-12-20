@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useUpdateSubcategoryDiscount } from "@/hooks/services/discounts/subcategory-discount/useUpdateSubcategoryDiscount";
 import { DiscountType } from "@/constants/enums/DiscountType";
 import { useGetDiscountById } from "@/hooks/services/discounts/useGetDiscountById";
-import { useGetDiscountList } from "@/hooks/services/discounts/useGetDiscountList";
-import { useSubCategories } from "@/hooks/services/categories/useSubCategories";
 import { useCategories } from "@/hooks/services/categories/useCategories";
+import CampaignFormWrapper from "@/components/admin/campaigns/CampaignFormWrapper";
+import { NotificationSettings as NotificationSettingsType } from "@/constants/models/Notification";
+
 interface SubCategoryDiscountForm {
   name: string;
   description: string;
@@ -55,14 +55,12 @@ export default function EditCategoryDiscount() {
       (categories as any)?.items?.find(
         (c: any) => c.id === formData.categoryId
       ) ??
-      // Geriye dönük uyumluluk – $values kullanan eski response yapısı
       (categories as any)?.items?.$values?.find(
         (c: any) => c.id === formData.categoryId
       );
 
     if (!category) return [];
 
-    // subCategories hem dizi hem de { $values: [] } şeklinde gelebilir
     if (Array.isArray(category.subCategories)) {
       return category.subCategories;
     }
@@ -73,10 +71,10 @@ export default function EditCategoryDiscount() {
 
     return [];
   })();
+
   useEffect(() => {
     if (discount && categories) {
-      const subCategoryId =
-        (discount as any).subCategoryDiscount?.subCategoryId || "";
+      const subCategoryId = discount.subCategoryDiscount?.subCategoryId || "";
 
       // Alt kategori ID'sinden ana kategori ID'sini bul
       let categoryId = "";
@@ -103,7 +101,7 @@ export default function EditCategoryDiscount() {
         maxDiscountValue: discount.maxDiscountValue || 0,
         startDate: discount.startDate || "",
         endDate: discount.endDate || "",
-        isActive: discount.isActive || true,
+        isActive: discount.isActive ?? true,
         type: DiscountType.SubCategory,
         isWithinActiveDateRange: false,
         subCategoryId: subCategoryId,
@@ -118,34 +116,40 @@ export default function EditCategoryDiscount() {
       await updateDiscount({
         id: id as string,
         ...formData,
-        subCategoryId: formData.subCategoryId,
         createdOn: Date.now(),
         createdOnValue: new Date().toISOString(),
-        subCategory: {
-          id: formData.subCategoryId,
-          $id: "",
-          name: "",
-          products: [],
-          displayIndex: 0,
-        },
+        subCategoryId: formData.subCategoryId,
+        subCategory: {} as any, // Backend'den gelen response'da bu property yok
       });
       router.push("/admin/campaigns/category-discount");
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+
+    // Ana kategori değiştiğinde alt kategoriyi sıfırla
+    if (name === "categoryId") {
+      setFormData((prev) => ({
+        ...prev,
+        categoryId: value,
+        subCategoryId: "",
+      }));
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
-          : name === "discountValueType" || name === "discountValue"
-            ? Number(value)
-            : value,
+          : name === "discountValueType"
+          ? Number(value)
+          : type === "number"
+          ? parseFloat(value)
+          : value,
     }));
   };
 
@@ -154,224 +158,119 @@ export default function EditCategoryDiscount() {
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="fw-bold py-3 mb-4">
-            <span className="text-muted fw-light">
-              <Link
-                href="/admin/campaigns"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kampanyalar
-              </Link>{" "}
-              /{" "}
-              <Link
-                href="/admin/campaigns/category-discount"
-                className="text-muted fw-light hover:text-primary"
-              >
-                Kategori İndirimleri
-              </Link>{" "}
-              /
-            </span>{" "}
-            İndirim Düzenle
-          </h4>
-          <Link
-            href="/admin/campaigns/category-discount"
-            className="btn btn-outline-secondary"
-            style={{
-              backgroundColor: "#e9e9e9",
-              color: "#000",
-              borderColor: "#d9d9d9",
-            }}
+    <CampaignFormWrapper
+      campaignType="category-discount"
+      campaignTypeLabel="Kategori İndirimleri"
+      action="edit"
+      name={formData.name}
+      description={formData.description}
+      startDate={formData.startDate}
+      endDate={formData.endDate}
+      isActive={formData.isActive}
+      onNameChange={(value) =>
+        setFormData((prev) => ({ ...prev, name: value }))
+      }
+      onDescriptionChange={(value) =>
+        setFormData((prev) => ({ ...prev, description: value }))
+      }
+      onStartDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, startDate: value }))
+      }
+      onEndDateChange={(value) =>
+        setFormData((prev) => ({ ...prev, endDate: value }))
+      }
+      onActiveToggle={(value) =>
+        setFormData((prev) => ({ ...prev, isActive: value }))
+      }
+      onSubmit={handleSubmit}
+      isSubmitting={isUpdating}
+      submitDisabled={!formData.subCategoryId}
+    >
+      {/* İndirim Değerleri */}
+      <div className="row mb-3">
+        <div className="col-md-4">
+          <label className="form-label">İndirim Değeri *</label>
+          <input
+            type="number"
+            className="form-control"
+            name="discountValue"
+            value={formData.discountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">İndirim Tipi *</label>
+          <select
+            className="form-select"
+            name="discountValueType"
+            value={formData.discountValueType}
+            onChange={handleChange}
+            required
           >
-            <i className="bx bx-arrow-back me-1"></i>
-            Geri
-          </Link>
+            <option value="1">Yüzde (%)</option>
+            <option value="2">Tutar (₺)</option>
+          </select>
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">Maksimum İndirim Değeri</label>
+          <input
+            type="number"
+            className="form-control"
+            name="maxDiscountValue"
+            value={formData.maxDiscountValue}
+            onChange={handleChange}
+            min={0}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+            required
+          />
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Adı</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">İndirim Açıklaması</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-4 mb-3">
-                <label className="form-label">İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="discountValue"
-                  value={formData.discountValue}
-                  onChange={handleChange}
-                  min={0}
-                  required
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                />
-              </div>
-              <div className="col-md-4 mb-3">
-                <label className="form-label">İndirim Tipi</label>
-                <select
-                  className="form-select"
-                  name="discountValueType"
-                  value={formData.discountValueType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value={1}>Yüzde (%)</option>
-                  <option value={2}>Tutar (₺)</option>
-                </select>
-              </div>
-              <div className="col-md-4 mb-3">
-                <label className="form-label">Maksimum İndirim Değeri</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="maxDiscountValue"
-                  value={formData.maxDiscountValue}
-                  onChange={handleChange}
-                  min={0}
-                  onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Başlangıç Tarihi</label>
-                <input
-                  type="datetime-local"
-                  style={{ cursor: "pointer" }}
-                  className="form-control"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Bitiş Tarihi</label>
-                <input
-                  type="datetime-local"
-                  style={{ cursor: "pointer" }}
-                  className="form-control"
-                  name="endDate"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Ana Kategori</label>
-                <select
-                  className="form-select"
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      categoryId: e.target.value,
-                      subCategoryId: "", // Ana kategori değiştiğinde alt kategoriyi sıfırla
-                    });
-                  }}
-                  required
-                >
-                  <option value="">Ana Kategori Seçin</option>
-                  {(
-                    (categories as any)?.items ??
-                    (categories as any)?.items?.$values ??
-                    []
-                  ).map((category: any) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Alt Kategori</label>
-                <select
-                  className="form-select"
-                  name="subCategoryId"
-                  value={formData.subCategoryId}
-                  onChange={(e) => {
-                    setFormData({ ...formData, subCategoryId: e.target.value });
-                  }}
-                  required
-                  disabled={!formData.categoryId}
-                >
-                  <option value="">Alt Kategori Seçin</option>
-                  {filteredSubCategories?.map((subCategory: any) => (
-                    <option key={subCategory.id} value={subCategory.id}>
-                      {subCategory.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-12 mb-3" style={{ fontSize: "16px" }}>
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    style={{ cursor: "pointer" }}
-                    type="checkbox"
-                    id="isActive"
-                    name="isActive"
-                    checked={formData.isActive}
-                    onChange={handleChange}
-                  />
-                  <label className="form-check-label" htmlFor="isActive">
-                    Aktif
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="d-flex gap-2">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isUpdating}
-              >
-                {isUpdating ? "Kaydediliyor..." : "Kaydet"}
-              </button>
-              <Link
-                href="/admin/campaigns/category-discount"
-                className="btn btn-outline-secondary"
-              >
-                İptal
-              </Link>
-            </div>
-          </form>
+      {/* Kategori ve Alt Kategori Seçimi */}
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <label className="form-label">Ana Kategori *</label>
+          <select
+            className="form-select"
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Kategori Seçin</option>
+            {(
+              (categories as any)?.items ??
+              (categories as any)?.items?.$values ??
+              []
+            ).map((category: any) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-md-6">
+          <label className="form-label">Alt Kategori *</label>
+          <select
+            className="form-select"
+            name="subCategoryId"
+            value={formData.subCategoryId}
+            onChange={handleChange}
+            required
+            disabled={!formData.categoryId}
+          >
+            <option value="">Alt Kategori Seçin</option>
+            {filteredSubCategories.map((subCategory: any) => (
+              <option key={subCategory.id} value={subCategory.id}>
+                {subCategory.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
-    </div>
+    </CampaignFormWrapper>
   );
 }

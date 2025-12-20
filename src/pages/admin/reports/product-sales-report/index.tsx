@@ -8,6 +8,8 @@ import CirclePagination from "@/components/shared/CirclePagination";
 import { useExcelExport } from "@/hooks/services/reports/useExcelExport";
 import { GET_PRODUCT_SALES_REPORT_EXCEL } from "@/constants/links";
 import BackButton from "@/components/shared/BackButton";
+import { formatCurrency } from "@/utils/currencyFormatter";
+import { formatDate, formatDateTime } from "@/utils/dateFormatter";
 
 interface ProductSalesFilters {
   startDate?: string;
@@ -42,21 +44,6 @@ function ProductSalesReportPage() {
   );
   const { exportToExcel, isExporting } = useExcelExport();
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-    }).format(amount);
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString("tr-TR");
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("tr-TR");
-  };
-
   const handleSearch = () => {
     updateFilters(localFilters);
   };
@@ -68,12 +55,18 @@ function ProductSalesReportPage() {
 
   const calculateTotalSales = () => {
     if (!data?.data?.items) return 0;
-    return data.data.items.reduce((total, item) => total + item.totalAmount, 0);
+    return data.data.items.reduce(
+      (total, item) => total + item.totalRevenue,
+      0
+    );
   };
 
   const calculateTotalQuantity = () => {
     if (!data?.data?.items) return 0;
-    return data.data.items.reduce((total, item) => total + item.quantity, 0);
+    return data.data.items.reduce(
+      (total, item) => total + item.totalQuantity,
+      0
+    );
   };
 
   const getRegisteredCustomersCount = () => {
@@ -237,7 +230,7 @@ function ProductSalesReportPage() {
                 <option value="true">📅 Eskiden Yeniye</option>
               </select>
             </div>
-            <div className="col-md-6 d-flex align-items-end">
+            <div className="col-md-6 d-flex align-items-end mt-2">
               <button
                 className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}
@@ -375,16 +368,6 @@ function ProductSalesReportPage() {
                   Toplam {data.data.count} satış kaydı bulundu
                   {getActiveFiltersCount() > 0 && " (filtrelenmiş)"}
                 </small>
-                {data.data.count > 0 && (
-                  <div className="text-end">
-                    <small
-                      className="text-success"
-                      style={{ fontSize: "0.8rem" }}
-                    >
-                      💰 Satış performans analizi
-                    </small>
-                  </div>
-                )}
               </div>
 
               {data.data.items && data.data.items.length > 0 ? (
@@ -395,12 +378,8 @@ function ProductSalesReportPage() {
                         <th className="small">#</th>
                         <th className="small">Ürün Adı</th>
                         <th className="small">Kategori</th>
-                        <th className="small">Müşteri</th>
-                        <th className="small">Müşteri Türü</th>
                         <th className="small">Miktar</th>
-                        <th className="small">Birim Fiyat</th>
                         <th className="small">Toplam Tutar</th>
-                        <th className="small">Satış Tarihi</th>
                         <th className="small">Sipariş No</th>
                       </tr>
                     </thead>
@@ -427,76 +406,32 @@ function ProductSalesReportPage() {
                               item.subCategory?.name ||
                               "N/A"}
                           </td>
-                          <td className="small">
-                            <div>
-                              <span className="fw-bold">
-                                {item.customerName}
-                              </span>
-                              {item.customerEmail && (
-                                <small
-                                  className="text-muted d-block"
-                                  style={{ fontSize: "0.7rem" }}
-                                >
-                                  {item.customerEmail}
-                                </small>
-                              )}
-                            </div>
-                          </td>
-                          <td className="small">
-                            <span
-                              className={`badge badge-sm ${
-                                item.isRegisteredCustomer
-                                  ? "bg-success"
-                                  : "bg-secondary"
-                              }`}
-                              style={{ fontSize: "0.7rem" }}
-                            >
-                              {item.isRegisteredCustomer
-                                ? "👤 Kayıtlı"
-                                : "👥 Misafir"}
-                            </span>
-                          </td>
+
                           <td className="small">
                             <span
                               className="badge bg-info badge-sm"
                               style={{ fontSize: "0.7rem" }}
                             >
-                              {item.quantity}
+                              {item.totalQuantity}
                             </span>
                           </td>
-                          <td className="small">
-                            <strong
-                              className="text-primary"
-                              style={{ fontSize: "0.8rem" }}
-                            >
-                              {formatCurrency(item.salePrice)}
-                            </strong>
-                          </td>
+
                           <td className="small">
                             <strong
                               className="text-success"
                               style={{ fontSize: "0.8rem" }}
                             >
-                              {formatCurrency(item.totalAmount)}
+                              {formatCurrency(item.totalRevenue)}
                             </strong>
                           </td>
+
                           <td className="small">
-                            <small
-                              className="text-muted"
-                              style={{ fontSize: "0.75rem" }}
+                            <span
+                              className="badge bg-warning-subtle text-warning badge-sm"
+                              style={{ fontSize: "0.7rem" }}
                             >
-                              {formatDateTime(item.saleDate)}
-                            </small>
-                          </td>
-                          <td className="small">
-                            {item.orderNumber && (
-                              <span
-                                className="badge bg-warning-subtle text-warning badge-sm"
-                                style={{ fontSize: "0.7rem" }}
-                              >
-                                {item.orderNumber}
-                              </span>
-                            )}
+                              {item.productBarcodeNumber}
+                            </span>
                           </td>
                         </tr>
                       ))}

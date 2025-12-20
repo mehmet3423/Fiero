@@ -1,5 +1,8 @@
 import { GET_PRODUCT_BY_ID } from "@/constants/links";
-import { Product } from "@/constants/models/Product";
+import {
+  ProductDetailResponse,
+  ProductDetailApiResponse,
+} from "@/constants/models/Product";
 import { useEffect, useRef, useState } from "react";
 
 interface CartItem {
@@ -12,7 +15,7 @@ export const useGetLocalCartProducts = (
   isLoaded: boolean
 ) => {
   const [cartProducts, setCartProducts] = useState<
-    (Product & { quantity: number })[]
+    (ProductDetailResponse & { quantity: number })[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const prevItemIdsRef = useRef<string[]>([]);
@@ -38,39 +41,32 @@ export const useGetLocalCartProducts = (
                   const response = await fetch(
                     `${GET_PRODUCT_BY_ID}?id=${item.id}`
                   );
-                  const json = await response.json();
-                  // API bazı yerlerde veriyi wrapper içinde (data) döndürüyor
-                  const product: any = json?.data ?? json;
+                  const apiResponse: ProductDetailApiResponse =
+                    await response.json();
 
-                  // Sayısal alanları güvenli hale getir (NaN engelle)
-                  const price = Number(
-                    product?.price !== undefined && product?.price !== null
-                      ? product.price
-                      : 0
-                  );
-                  const discountedPrice = Number(
-                    product?.discountedPrice !== undefined &&
-                      product?.discountedPrice !== null
-                      ? product.discountedPrice
-                      : price
-                  );
-
-                  // Görsel alanı için fallback (imageUrl -> baseImageUrl)
-                  const baseImageUrl =
-                    product?.baseImageUrl || product?.imageUrl || "";
-
-                  return {
-                    ...product,
-                    price,
-                    discountedPrice,
-                    baseImageUrl,
-                    quantity: item.quantity,
-                  };
+                  if (apiResponse.isSucceed && apiResponse.data) {
+                    return { ...apiResponse.data, quantity: item.quantity };
+                  } else {
+                    console.error(
+                      `Failed to fetch product ${item.id}:`,
+                      apiResponse.message
+                    );
+                    return null;
+                  }
                 })
               );
-              setCartProducts(products);
+
+              // Filter out null products
+              const validProducts = products.filter(
+                (
+                  product
+                ): product is ProductDetailResponse & { quantity: number } =>
+                  product !== null
+              );
+              setCartProducts(validProducts);
               prevItemIdsRef.current = cartItems.map((item) => item.id);
             } catch (error) {
+              console.error("Sepet ürünleri getirilirken hata oluştu:", error);
             }
           } else {
             prevItemIdsRef.current = [];

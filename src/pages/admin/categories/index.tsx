@@ -8,17 +8,16 @@ import { useDeleteMainCategory } from "@/hooks/services/categories/useDeleteMain
 import { useDeleteSubCategory } from "@/hooks/services/categories/useDeleteSubCategory";
 import { useUpdateMainCategory } from "@/hooks/services/categories/useUpdateMainCategory";
 import { useUpdateSubCategory } from "@/hooks/services/categories/useUpdateSubCategory";
-import { useEffect, useState } from "react";
+import { useCloudinaryImageUpload } from "@/hooks/useCloudinaryImageUpload";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   DragDropContext,
-  Droppable,
   Draggable,
+  Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faFolder } from "@fortawesome/free-solid-svg-icons";
-import { useRef } from "react";
-import { useCloudinaryImageUpload } from "@/hooks/useCloudinaryImageUpload";
+import { useEffect, useRef, useState } from "react";
 
 function CategoryManagementPage() {
   const { categories, isLoading: categoriesLoading } = useCategories();
@@ -45,11 +44,19 @@ function CategoryManagementPage() {
   const [mainCategories, setMainCategories] = useState<Category[]>([]);
 
   const [newMainCategoryName, setNewMainCategoryName] = useState("");
+  const [newMainCategoryNameEn, setNewMainCategoryNameEn] = useState("");
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
+  const [newSubCategoryNameEn, setNewSubCategoryNameEn] = useState("");
   const [mainCategoryError, setMainCategoryError] = useState<string | null>(
     null
   );
+  const [mainCategoryEnError, setMainCategoryEnError] = useState<
+    string | null
+  >(null);
   const [subCategoryError, setSubCategoryError] = useState<string | null>(null);
+  const [subCategoryEnError, setSubCategoryEnError] = useState<string | null>(
+    null
+  );
   const [selectedMainCategory, setSelectedMainCategory] =
     useState<Category | null>(null);
   const [editingMainCategory, setEditingMainCategory] =
@@ -57,6 +64,7 @@ function CategoryManagementPage() {
   const [editingSubCategory, setEditingSubCategory] = useState<{
     id: string;
     name: string;
+    nameEn?: string | null;
     mainCategoryId: string;
     displayIndex: number;
     imageUrl?: string;
@@ -116,7 +124,13 @@ function CategoryManagementPage() {
       });
 
       updated.forEach((sub) => {
-        updateSubCategory(sub.id, sub.name, sub.index);
+        updateSubCategory(
+          sub.id,
+          sub.name,
+          sub.index,
+          sub.imageUrl,
+          sub.nameEn || undefined
+        );
       });
     }
   };
@@ -173,8 +187,32 @@ function CategoryManagementPage() {
     }
   };
 
+  const handleMainCategoryNameEnChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const nameEn = e.target.value;
+    setNewMainCategoryNameEn(nameEn);
+    if (nameEn.trim()) {
+      setMainCategoryEnError(null);
+    }
+  };
+
+  const handleSubCategoryNameEnChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const nameEn = e.target.value;
+    setNewSubCategoryNameEn(nameEn);
+    if (nameEn.trim()) {
+      setSubCategoryEnError(null);
+    }
+  };
+
   const handleCreateMainCategory = async () => {
     if (!newMainCategoryName.trim() || mainCategoryError) return;
+    if (!newMainCategoryNameEn.trim()) {
+      setMainCategoryEnError("Kategori adı (EN) zorunludur");
+      return;
+    }
 
     let imageUrl = newMainCategoryImageUrl;
     if (mainImageUpload.selectedFile && !imageUrl) {
@@ -184,8 +222,14 @@ function CategoryManagementPage() {
     }
 
     const index = mainCategories.length;
-    await createMainCategory(newMainCategoryName, index, imageUrl || "");
+    await createMainCategory(
+      newMainCategoryName,
+      newMainCategoryNameEn || undefined,
+      index,
+      imageUrl || ""
+    );
     setNewMainCategoryName("");
+    setNewMainCategoryNameEn("");
     setNewMainCategoryImageUrl("");
     mainImageUpload.setSelectedFile(null);
     mainImageUpload.setImageUrl("");
@@ -196,6 +240,10 @@ function CategoryManagementPage() {
   const handleCreateSubCategory = async () => {
     if (!newSubCategoryName.trim() || !selectedMainCategory || subCategoryError)
       return;
+    if (!newSubCategoryNameEn.trim()) {
+      setSubCategoryEnError("Alt kategori adı (EN) zorunludur");
+      return;
+    }
 
     let imageUrl = newSubCategoryImageUrl;
     if (subImageUpload.selectedFile && !imageUrl) {
@@ -208,9 +256,11 @@ function CategoryManagementPage() {
     await createSubCategory(
       newSubCategoryName,
       selectedMainCategory.id,
+      newSubCategoryNameEn || undefined,
       imageUrl
     );
     setNewSubCategoryName("");
+    setNewSubCategoryNameEn("");
     setNewSubCategoryImageUrl("");
     subImageUpload.setSelectedFile(null);
     subImageUpload.setImageUrl("");
@@ -237,7 +287,8 @@ function CategoryManagementPage() {
       editingMainCategory.id,
       editingMainCategory.name,
       editingMainCategory.displayIndex,
-      imageUrl
+      imageUrl ?? undefined,
+      editingMainCategory.nameEn || undefined
     );
     setEditingMainCategory(null);
     setNewMainCategoryImageUrl("");
@@ -260,7 +311,8 @@ function CategoryManagementPage() {
       editingSubCategory.id,
       editingSubCategory.name,
       editingSubCategory.displayIndex,
-      imageUrl
+      imageUrl,
+      editingSubCategory.nameEn || undefined
     );
     setEditingSubCategory(null);
     setNewSubCategoryImageUrl("");
@@ -352,11 +404,11 @@ function CategoryManagementPage() {
         {/* Ana Kategoriler */}
         <div className="col-lg-6">
           <div
-            className="card-header bg-transparent border-0 d-flex justify-content-between align-items-center"
+            className="card-header bg-transparent border-0"
             style={{ padding: "20px" }}
           >
             <h6
-              className="mb-0"
+              className="mb-1"
               style={{ fontSize: "1.2rem", fontWeight: "bold" }}
             >
               Kategoriler
@@ -421,54 +473,75 @@ function CategoryManagementPage() {
                                         cursor: "pointer",
                                         backgroundColor:
                                           selectedMainCategory?.id ===
-                                          category.id
+                                            category.id
                                             ? "#f5f7fb"
                                             : "transparent",
                                         ...provided.draggableProps.style,
                                       }}
                                     >
-                                      <td style={{ fontSize: "0.813rem" }}>
+                                      <td
+                                        style={{
+                                          fontSize: "0.813rem",
+                                          width: "70%",
+                                        }}
+                                      >
                                         <div
                                           style={{
                                             display: "flex",
                                             alignItems: "center",
                                             gap: "0.5rem",
-                                            minWidth: "330px", // zorunlu genişlik
                                           }}
                                         >
                                           <FontAwesomeIcon icon={faBars} />
                                           <span>{category.name}</span>
                                         </div>
                                       </td>
-
-                                      <td className="text-end">
-                                        <button
-                                          className="btn btn-link btn-sm text-muted"
-                                          style={{ fontSize: "0.75rem" }}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditingMainCategory(category);
-                                            $("#editMainCategoryModal").modal(
-                                              "show"
-                                            );
+                                      <td
+                                        className="text-end"
+                                        style={{ width: "30%" }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            gap: "0.25rem",
+                                            justifyContent: "flex-end",
                                           }}
                                         >
-                                          Düzenle
-                                        </button>
-                                        <button
-                                          className="btn btn-link btn-sm text-danger"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeletingMainCategory(
-                                              category.id
-                                            );
-                                            $("#deleteMainCategoryModal").modal(
-                                              "show"
-                                            );
-                                          }}
-                                        >
-                                          Sil
-                                        </button>
+                                          <button
+                                            className="btn btn-link btn-sm text-muted"
+                                            style={{
+                                              fontSize: "0.75rem",
+                                              padding: "0.25rem 0.5rem",
+                                            }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setEditingMainCategory(category);
+                                              $("#editMainCategoryModal").modal(
+                                                "show"
+                                              );
+                                            }}
+                                          >
+                                            Düzenle
+                                          </button>
+                                          <button
+                                            className="btn btn-link btn-sm text-danger"
+                                            style={{
+                                              fontSize: "0.75rem",
+                                              padding: "0.25rem 0.5rem",
+                                            }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setDeletingMainCategory(
+                                                category.id
+                                              );
+                                              $(
+                                                "#deleteMainCategoryModal"
+                                              ).modal("show");
+                                            }}
+                                          >
+                                            Sil
+                                          </button>
+                                        </div>
                                       </td>
                                     </tr>
                                   )}
@@ -586,6 +659,7 @@ function CategoryManagementPage() {
                                               setEditingSubCategory({
                                                 id: subCategory.id,
                                                 name: subCategory.name,
+                                                nameEn: subCategory.nameEn,
                                                 mainCategoryId:
                                                   selectedMainCategory.id,
                                                 displayIndex:
@@ -648,10 +722,12 @@ function CategoryManagementPage() {
         title="Yeni Ana Kategori"
         onClose={() => {
           setNewMainCategoryName("");
+          setNewMainCategoryNameEn("");
           setNewMainCategoryImageUrl("");
           mainImageUpload.setSelectedFile(null);
           mainImageUpload.setImageUrl("");
           setMainCategoryError(null);
+          setMainCategoryEnError(null);
         }}
         onApprove={handleCreateMainCategory}
         approveButtonText="Ekle"
@@ -674,6 +750,28 @@ function CategoryManagementPage() {
           />
           {mainCategoryError && (
             <div className="invalid-feedback">{mainCategoryError}</div>
+          )}
+        </div>
+        <div className="mt-3">
+          <label
+            htmlFor="defaultFormControlInputEn"
+            className="form-label"
+          >
+            Kategori Adı (EN)
+          </label>
+          <input
+            type="text"
+            className={`form-control ${mainCategoryEnError ? "is-invalid" : ""
+              }`}
+            id="defaultFormControlInputEn"
+            placeholder="Category Name (English)"
+            aria-describedby="defaultFormControlHelpEn"
+            value={newMainCategoryNameEn}
+            onChange={handleMainCategoryNameEnChange}
+            required
+          />
+          {mainCategoryEnError && (
+            <div className="invalid-feedback">{mainCategoryEnError}</div>
           )}
         </div>
         <div className="mt-3">
@@ -778,6 +876,27 @@ function CategoryManagementPage() {
           />
         </div>
         <div className="mt-3">
+          <label
+            htmlFor="editMainCategoryInputEn"
+            className="form-label"
+          >
+            Kategori Adı (EN)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="editMainCategoryInputEn"
+            placeholder="Category Name (English)"
+            aria-describedby="editMainCategoryHelpEn"
+            value={editingMainCategory?.nameEn || ""}
+            onChange={(e) =>
+              setEditingMainCategory((prev) =>
+                prev ? { ...prev, nameEn: e.target.value } : null
+              )
+            }
+          />
+        </div>
+        <div className="mt-3">
           <label className="form-label">Kategori Görseli (Opsiyonel)</label>
           <div className="row">
             <div className="col-md-8">
@@ -854,10 +973,12 @@ function CategoryManagementPage() {
         title="Yeni Alt Kategori"
         onClose={() => {
           setNewSubCategoryName("");
+          setNewSubCategoryNameEn("");
           setNewSubCategoryImageUrl("");
           subImageUpload.setSelectedFile(null);
           subImageUpload.setImageUrl("");
           setSubCategoryError(null);
+          setSubCategoryEnError(null);
         }}
         onApprove={handleCreateSubCategory}
         approveButtonText="Ekle"
@@ -880,6 +1001,25 @@ function CategoryManagementPage() {
           />
           {subCategoryError && (
             <div className="invalid-feedback">{subCategoryError}</div>
+          )}
+        </div>
+        <div className="mt-3">
+          <label htmlFor="newSubCategoryInputEn" className="form-label">
+            Alt Kategori Adı (EN)
+          </label>
+          <input
+            type="text"
+            className={`form-control ${subCategoryEnError ? "is-invalid" : ""
+              }`}
+            id="newSubCategoryInputEn"
+            placeholder="Sub Category Name (English)"
+            aria-describedby="newSubCategoryHelpEn"
+            value={newSubCategoryNameEn}
+            onChange={handleSubCategoryNameEnChange}
+            required
+          />
+          {subCategoryEnError && (
+            <div className="invalid-feedback">{subCategoryEnError}</div>
           )}
         </div>
         <div className="mt-3">
@@ -981,6 +1121,24 @@ function CategoryManagementPage() {
               )
             }
             required
+          />
+        </div>
+        <div className="mt-3">
+          <label htmlFor="editSubCategoryInputEn" className="form-label">
+            Alt Kategori Adı (EN)
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="editSubCategoryInputEn"
+            placeholder="Sub Category Name (English)"
+            aria-describedby="editSubCategoryHelpEn"
+            value={editingSubCategory?.nameEn || ""}
+            onChange={(e) =>
+              setEditingSubCategory((prev) =>
+                prev ? { ...prev, nameEn: e.target.value } : null
+              )
+            }
           />
         </div>
         <div className="mt-3">

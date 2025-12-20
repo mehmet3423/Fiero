@@ -7,6 +7,7 @@ import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductGalleryProps {
   product: any;
@@ -17,6 +18,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
   product,
   getAllProductMedia,
 }) => {
+  const { language } = useLanguage();
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [initialSlide, setInitialSlide] = useState(0);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
@@ -24,6 +26,19 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
   const [isThumbAtStart, setIsThumbAtStart] = useState(true);
   const [isThumbAtEnd, setIsThumbAtEnd] = useState(false);
   const mainSwiperRef = useRef<any>(null);
+
+  const titleToShow =
+    language === "en" && product.titleEn ? product.titleEn : product.title;
+
+  const baseImageUrl =
+    language === "en" && product.baseImageUrlEn
+      ? product.baseImageUrlEn
+      : product.baseImageUrl;
+
+  const contentImageUrls =
+    language === "en" && product.contentImageUrlsEn && product.contentImageUrlsEn.length > 0
+      ? product.contentImageUrlsEn
+      : product.contentImageUrls || [];
 
   useEffect(() => {
     const checkMobile = () => {
@@ -279,14 +294,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                       {item.type === "video" ? (
                         <VideoThumbnail
                           videoUrl={item.url}
-                          alt={`${product.title} - Video ${index + 1}`}
+                          alt={`${titleToShow} - Video ${index + 1}`}
                           width={80}
                           height={80}
                         />
                       ) : (
                         <Image
                           src={item.url || "/assets/images/no-image.jpg"}
-                          alt={`${product.title} - ${index + 1}`}
+                          alt={`${titleToShow} - ${index + 1}`}
                           width={80}
                           height={80}
                           className="lazyload"
@@ -381,8 +396,8 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                       />
                     ) : (
                       <Image
-                        src={item.url || product.baseImageUrl || "/assets/images/no-image.jpg"}
-                        alt={product.title}
+                        src={item.url || baseImageUrl || "/assets/images/no-image.jpg"}
+                        alt={titleToShow}
                         width={600}
                         height={600}
                         className="tf-image-zoom lazyload"

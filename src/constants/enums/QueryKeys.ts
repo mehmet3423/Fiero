@@ -10,6 +10,9 @@ export enum QueryKeys {
   PRODUCT_LIST = "ProductList",
   PRODUCT_LIST_BY_CATEGORY = "ProductList_ByCategory",
   ALL_PRODUCTS = "AllProducts",
+  BASE_PRODUCTS = "BaseProducts",
+  BASE_PRODUCT_BY_ID = "BaseProductById",
+  BASE_PRODUCT_VARIANTS = "BaseProductVariants",
   PRODUCT_DETAIL = "ProductDetail",
   GET_PRODUCT_BY_ID = "GetProductById",
   GENERAL_CONTENTS = "generalContents",
@@ -48,6 +51,9 @@ export enum QueryKeys {
   SYSTEM_SETTINGS = "SystemSettings",
   SYSTEM_SETTING_TYPES = "SystemSettingTypes",
   USER_SUPPORT_TICKETS = "UserSupportTickets",
+  CURRENT_USER_ORDER_SUPPORT_TICKETS = "CurrentUserOrderSupportTickets",
+  ORDER_SUPPORT_TICKET_BY_ID = "OrderSupportTicketById",
+  GENERAL_SUPPORT_TICKET_BY_ID = "GeneralSupportTicketById",
   PRODUCT_LIST_BY_IDS = "ProductListByIds",
   SEO = "SEO",
   MAIN_CATEGORIES_WITH_SUBS = "mainCategoriesWithSubs",
@@ -62,4 +68,11 @@ export enum QueryKeys {
   CUSTOMERS_LIST = "CustomersList",
   CARGO_TRACKING = "CargoTracking",
   COMMENT_LIST = "CommentList",
+  // Trendyol Returns
+  TRENDYOL_CLAIMS = "TrendyolClaims",
+  TRENDYOL_CLAIM_ISSUE_REASONS = "TrendyolClaimIssueReasons",
+  TRENDYOL_CLAIM_AUDITS = "TrendyolClaimAudits",
+  // Refund Requests
+  REFUND_REQUESTED_ORDER_ITEMS = "RefundRequestedOrderItems",
+  USER_REFUND_REQUESTS = "UserRefundRequests",
 }

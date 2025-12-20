@@ -13,7 +13,7 @@ import { blogPosts } from "@/data/blogData";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
 import { SORT_OPTIONS } from "@/constants/enums/SortOptions";
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import FeaturedProducts from "../components/home/FeaturedProducts";
 import MainSlideshow from "../components/home/MainSlideshow";
 import Newsletter from "../components/home/Newsletter";
@@ -43,17 +43,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
   const { userProfile } = useAuth();
   // Ana sayfada gösterilecek son 3 blog gönderisi
   const latestPosts = blogPosts?.slice(0, 3) || [];
-
-  const [mainSliderContents, setMainSliderContents] =
-    useState<GeneralContentModel[]>();
-  const [mainBannerContents, setMainBannerContents] =
-    useState<GeneralContentModel[]>();
-  const [mainProductList1Contents, setMainProductList1Contents] =
-    useState<GeneralContentModel[]>();
-  const [mainProductList2Contents, setMainProductList2Contents] =
-    useState<GeneralContentModel[]>();
-  const [testimonialContents, setTestimonialContents] =
-    useState<GeneralContentModel[]>();
 
   //index main slider
   const {
@@ -90,32 +79,32 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     refetchContents: refetchTestimonialContents,
   } = useGeneralContents(GeneralContentType.Explore);
 
-  //burda contents içindeki showcase bannerleri alıyoruz hepsini alamıyoruz
-  useEffect(() => {
-    const fetchGeneralContents = () => {
-      setMainSliderContents(mainSliderContentsData?.items || []);
-      setMainBannerContents(mainBannerContentsData?.items || []);
-      setMainProductList1Contents(mainProductListContentsData?.items || []);
-      setMainProductList2Contents(mainProductListContentsData?.items || []);
-      setTestimonialContents(testimonialContentsData?.items || []);
-    };
-    fetchGeneralContents();
-  }, [
-    mainSliderContentsData,
-    // secondSliderContentsData,
-    mainBannerContentsData,
-    mainProductListContentsData,
-    testimonialContentsData,
-  ]);
+  // Direkt kullanım için memoized değerler (useEffect yerine)
+  const mainSliderContents = useMemo(
+    () => mainSliderContentsData || [],
+    [mainSliderContentsData]
+  );
+  const mainBannerContents = useMemo(
+    () => mainBannerContentsData || [],
+    [mainBannerContentsData]
+  );
+  const mainProductListContents = useMemo(
+    () => mainProductListContentsData || [],
+    [mainProductListContentsData]
+  );
+  const testimonialContents = useMemo(
+    () => testimonialContentsData || [],
+    [testimonialContentsData]
+  );
 
   const homeSlides = [
-    ...(mainSliderContentsData?.items
-      ?.slice()
+    ...mainSliderContentsData
+      .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((item) => ({
         image: item.imageUrl || "",
         buttonLink: item.contentUrl || "",
-      })) || []),
+      })),
     // {
     //   image:
     //     "https://static.ticimax.cloud/cdn-cgi/image/width=1903,quality=99/61950/uploads/sayfatasarim/sayfa1/0d9b2533-6340-4eb7-ad44-67b48f628faf.jpg",
@@ -149,8 +138,8 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
   // ];
 
   const banners = [
-    ...(mainBannerContents
-      ?.slice()
+    ...mainBannerContents
+      .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((item, index) => ({
         id: item.id || index,
@@ -158,12 +147,12 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
         alt: item.title || "Banner",
         image: item.imageUrl || "",
         link: item.contentUrl || "#",
-      })) || []),
+      })),
   ];
 
   const testimonials = [
-    ...(testimonialContents
-      ?.slice()
+    ...testimonialContents
+      .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((item) => ({
         id: item.id,
@@ -171,7 +160,7 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
         text: item.content || "",
         image: item.imageUrl || "",
         link: item.contentUrl || "#",
-      })) || []),
+      })),
   ];
 
   const ProductHeader = [
@@ -182,51 +171,63 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
   ];
 
   // mainProductList1 ve mainProductList2 içeriklerinin content alanını parse et
-  let mainProductList1ProductIds: string[] = [];
-  let mainProductList2ProductIds: string[] = [];
-  let mainProductList1Title: string = "Ecomus's Favorites";
-  let mainProductList2Title: string = "Ecomus's Favorites";
-  let isMainProductListLoading = mainProductListContentsLoading;
+  const {
+    mainProductList1ProductIds,
+    mainProductList2ProductIds,
+    mainProductList1Title,
+    mainProductList2Title,
+  } = useMemo(() => {
+    let productIds1: string[] = [];
+    let productIds2: string[] = [];
+    let title1: string = "Ecomus's Favorites";
+    let title2: string = "Ecomus's Favorites";
 
-  if (
-    !mainProductListContentsLoading &&
-    mainProductListContentsData?.items &&
-    mainProductListContentsData.items.length > 0
-  ) {
-    // Order'a göre sırala
-    const sortedItems = mainProductListContentsData.items.sort(
-      (a, b) => (a.order ?? 0) - (b.order ?? 0)
-    );
-
-    // İlk eleman (order: 0) Main Product List 1
-    if (sortedItems[0]) {
-      try {
-        mainProductList1Title = sortedItems[0].title || "Ecomus's Favorites";
-        mainProductList1ProductIds = JSON.parse(sortedItems[0].content || "[]");
-      } catch (error) {
-        console.log("Parse error:", error);
-        mainProductList1ProductIds = [];
-      }
-    }
-
-    // İkinci eleman (order: 1) Main Product List 2
-    if (sortedItems[1]) {
-      try {
-        mainProductList2Title = sortedItems[1].title || "Ecomus's Favorites";
-        mainProductList2ProductIds = JSON.parse(sortedItems[1].content || "[]");
-      } catch (error) {
-        console.log("Parse error 2:", error);
-        mainProductList2ProductIds = [];
-      }
-    } else {
-      console.log(
-        "MainProductList2 not found, using MainProductList1 for both"
+    if (
+      !mainProductListContentsLoading &&
+      mainProductListContents &&
+      mainProductListContents.length > 0
+    ) {
+      // Order'a göre sırala (copy oluştur çünkü sort mutates)
+      const sortedItems = [...mainProductListContents].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
       );
-      // Eğer ikinci eleman yoksa, birinci elemanı ikinci için de kullan
-      mainProductList2Title = mainProductList1Title;
-      mainProductList2ProductIds = mainProductList1ProductIds;
+
+      // İlk eleman (order: 0) Main Product List 1
+      if (sortedItems[0]) {
+        try {
+          title1 = sortedItems[0].title || "Ecomus's Favorites";
+          productIds1 = JSON.parse(sortedItems[0].content || "[]");
+        } catch (error) {
+          console.log("Parse error:", error);
+          productIds1 = [];
+        }
+      }
+
+      // İkinci eleman (order: 1) Main Product List 2
+      if (sortedItems[1]) {
+        try {
+          title2 = sortedItems[1].title || "Ecomus's Favorites";
+          productIds2 = JSON.parse(sortedItems[1].content || "[]");
+        } catch (error) {
+          console.log("Parse error 2:", error);
+          productIds2 = [];
+        }
+      } else {
+        // Eğer ikinci eleman yoksa, birinci elemanı ikinci için de kullan
+        title2 = title1;
+        productIds2 = productIds1;
+      }
     }
-  }
+
+    return {
+      mainProductList1ProductIds: productIds1,
+      mainProductList2ProductIds: productIds2,
+      mainProductList1Title: title1,
+      mainProductList2Title: title2,
+    };
+  }, [mainProductListContents, mainProductListContentsLoading]);
+
+  const isMainProductListLoading = mainProductListContentsLoading;
 
   return (
     <>

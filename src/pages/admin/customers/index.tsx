@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   useGetCustomersList,
   useUpdateCustomer,
@@ -13,6 +13,11 @@ import ConfirmModal from "@/components/shared/ConfirmModal";
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+
+  const [registerDateInput, setRegisterDateInput] = useState("");
+  const [registerDateToInput, setRegisterDateToInput] = useState("");
+
   const [registerDate, setRegisterDate] = useState("");
   const [registerDateTo, setRegisterDateTo] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,20 +25,28 @@ export default function CustomersPage() {
     useState<CustomerListItem | null>(null);
   const [deletingCustomer, setDeletingCustomer] =
     useState<CustomerListItem | null>(null);
-  const [activeSearchTerm, setActiveSearchTerm] = useState("");
-  const [activeRegisterDate, setActiveRegisterDate] = useState("");
-  const [activeRegisterDateTo, setActiveRegisterDateTo] = useState("");
+
   const {
     data: customersData,
     isLoading,
     refetch,
   } = useGetCustomersList({
-    search: activeSearchTerm,
-    registerDate: activeRegisterDate || undefined,
-    registerDateTo: activeRegisterDateTo || undefined,
-    page: currentPage - 1, // API expects 0-based page indexing
+    search: searchTerm,
+    registerDate: registerDate || undefined,
+    registerDateTo: registerDateTo || undefined,
+    page: currentPage,
     pageSize: 20,
   });
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearchTerm(searchInput);
+      setCurrentPage(1);
+    }, 1500);
+
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
   // Eğer mevcut sayfada hiç item yoksa ve sayfa 1'den büyükse, önceki sayfaya git
   useEffect(() => {
     if (customersData?.data && currentPage > 1) {
@@ -47,30 +60,15 @@ export default function CustomersPage() {
 
   const { updateCustomer, isPending: isUpdating } = useUpdateCustomer();
   const { deleteCustomer, isPending: isDeleting } = useDeleteCustomer();
-
-  const handleSearch = () => {
-    setActiveSearchTerm(searchTerm);
-    setActiveRegisterDate(registerDate);
-    setActiveRegisterDateTo(registerDateTo);
-    setCurrentPage(1);
-  };
-
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setRegisterDate("");
-    setRegisterDateTo("");
-    setActiveSearchTerm("");
-    setActiveRegisterDate("");
-    setActiveRegisterDateTo("");
-    setCurrentPage(1);
-  };
-
+  
   const handleUpdateCustomer = async (updateData: UpdateCustomerRequest) => {
     try {
       await updateCustomer(updateData);
       setEditingCustomer(null);
       refetch();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error updating customer:", error);
+    }
   };
 
   const handleDeleteCustomer = async (customer: CustomerListItem) => {
@@ -78,21 +76,77 @@ export default function CustomersPage() {
       await deleteCustomer(customer.id);
       setDeletingCustomer(null);
       refetch();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("tr-TR");
   };
+const normalizeString = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+    const filteredCustomers = React.useMemo(() => {
+  if (!customersData?.data?.items) return [];
+
+  return customersData.data.items.filter((customer) => {
+    const user = customer.applicationUser;
+
+    const fullText = normalizeString(
+      `${user?.firstName ?? ""} ${user?.lastName ?? ""} ${user?.email ?? ""} ${user?.phoneNumber ?? ""}`
+    );
+
+    const searchMatch = searchTerm
+      ? fullText.includes(normalizeString(searchTerm))
+      : true;
+
+    const registerDateValue =
+      customer.createdOnValue || customer.registerDate;
+
+    const date = registerDateValue
+      ? new Date(registerDateValue)
+      : null;
+
+    const startMatch = registerDate
+      ? date && date >= new Date(registerDate)
+      : true;
+
+    const endMatch = registerDateTo
+      ? date && date <= new Date(registerDateTo + "T23:59:59.999")
+      : true;
+
+    return searchMatch && startMatch && endMatch;
+  });
+}, [
+  customersData,
+  searchTerm,
+  registerDate,
+  registerDateTo,
+]);
+
   const getGenderText = (gender: number) => {
     switch (gender) {
       case 0:
-        return "Kadın";
-      case 1:
         return "Erkek";
+      case 1:
+        return "Kadın";
       default:
         return "Belirtilmemiş";
     }
+  };
+
+  const handleClearFilters = () => {
+    setSearchInput("");
+    setSearchTerm("");
+    setRegisterDateInput("");
+    setRegisterDateToInput("");
+    setRegisterDate("");
+    setRegisterDateTo("");
+    setCurrentPage(1);
   };
 
   if (isLoading) {
@@ -118,51 +172,51 @@ export default function CustomersPage() {
         <h4 className="fw-bold py-3 mb-4">
           <span className="text-muted fw-light">Admin /</span> Müşteriler
         </h4>
+
         {/* Search and Filter Section */}
         <div className="card mb-4">
           <div className="card-body">
             <div className="row">
-              <div className="col-md-3 mb-3">
+              <div className="col-md-4 mb-3">
                 <label className="form-label">Ara</label>
                 <input
                   type="text"
                   className="form-control"
                   placeholder="İsim, email veya telefon ile ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearch();
-                    }
-                  }}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                 />
               </div>
-              <div className="col-md-2 mb-3">
+              <div className="col-md-3 mb-3">
                 <label className="form-label">Kayıt Tarihi (Başlangıç)</label>
                 <input
-                  type="date"
-                  className="form-control"
-                  value={registerDate}
-                  onChange={(e) => setRegisterDate(e.target.value)}
-                />
+  type="date"
+  className="form-control"
+  value={registerDateInput}
+  onChange={(e) => {
+    setRegisterDateInput(e.target.value);
+  }}
+  onBlur={() => {
+    setRegisterDate(registerDateInput);
+    setCurrentPage(1);
+  }}
+/>
+
               </div>
-              <div className="col-md-2 mb-3">
+              <div className="col-md-3 mb-3">
                 <label className="form-label">Kayıt Tarihi (Bitiş)</label>
                 <input
                   type="date"
                   className="form-control"
-                  value={registerDateTo}
-                  onChange={(e) => setRegisterDateTo(e.target.value)}
-                />
-              </div>
-              <div className="col-md-2 mb-3 d-flex align-items-end">
-                <button
-                  className="btn btn-primary w-100"
-                  onClick={handleSearch}
-                >
-                  <i className="bx bx-search me-1"></i>
-                  Ara
-                </button>
+                  value={registerDateToInput}
+                   onChange={(e) => {
+              setRegisterDateToInput(e.target.value);
+            }}
+            onBlur={() => {
+              setRegisterDateTo(registerDateInput);
+              setCurrentPage(1);
+            }}
+                          />
               </div>
               <div className="col-md-2 mb-3 d-flex align-items-end">
                 <button
@@ -176,50 +230,51 @@ export default function CustomersPage() {
             </div>
           </div>
         </div>
+
         {/* Active Filters */}
-        {(activeSearchTerm || activeRegisterDate || activeRegisterDateTo) && (
+        {(searchTerm || registerDate || registerDateTo) && (
           <div className="card mb-3">
             <div className="card-body py-2">
               <div className="d-flex align-items-center">
                 <small className="text-muted me-2">Aktif Filtreler:</small>
-                {activeSearchTerm && (
+                {searchTerm && (
                   <span className="badge bg-primary me-2">
-                    Arama: {activeSearchTerm}
+                    Arama: {searchTerm}
                     <button
                       type="button"
                       className="btn-close btn-close-white ms-1"
                       onClick={() => {
-                        setActiveSearchTerm("");
+                        setSearchInput("");
                         setSearchTerm("");
                       }}
                       style={{ fontSize: "0.5rem" }}
                     ></button>
                   </span>
                 )}
-                {activeRegisterDate && (
+                {registerDate && (
                   <span className="badge bg-info me-2">
                     Başlangıç:{" "}
-                    {new Date(activeRegisterDate).toLocaleDateString("tr-TR")}
+                    {new Date(registerDate).toLocaleDateString("tr-TR")}
                     <button
                       type="button"
                       className="btn-close btn-close-white ms-1"
                       onClick={() => {
-                        setActiveRegisterDate("");
+                        setRegisterDateInput("");
                         setRegisterDate("");
                       }}
                       style={{ fontSize: "0.5rem" }}
                     ></button>
                   </span>
                 )}
-                {activeRegisterDateTo && (
+                {registerDateTo && (
                   <span className="badge bg-info me-2">
                     Bitiş:{" "}
-                    {new Date(activeRegisterDateTo).toLocaleDateString("tr-TR")}
+                    {new Date(registerDateTo).toLocaleDateString("tr-TR")}
                     <button
                       type="button"
                       className="btn-close btn-close-white ms-1"
                       onClick={() => {
-                        setActiveRegisterDateTo("");
+                        setRegisterDateToInput("");
                         setRegisterDateTo("");
                       }}
                       style={{ fontSize: "0.5rem" }}
@@ -230,6 +285,7 @@ export default function CustomersPage() {
             </div>
           </div>
         )}
+
         {/* Customers Table */}
         <div className="card">
           <div
@@ -238,7 +294,7 @@ export default function CustomersPage() {
           >
             <h5 className="mb-0">Müşteri Listesi</h5>
             <span className="badge text-muted" style={{ fontSize: "16px" }}>
-              Toplam: {customersData?.data?.count || 0}
+             Toplam: {filteredCustomers.length || 0}
             </span>
           </div>
           <div className="table-responsive">
@@ -256,7 +312,7 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                {customersData?.data?.items?.map((customer) => (
+                {filteredCustomers.map((customer) => (
                   <tr key={customer.id}>
                     <td>
                       <div className="d-flex align-items-center">
@@ -281,7 +337,9 @@ export default function CustomersPage() {
                     </td>
                     <td>{customer.applicationUser?.email || "-"}</td>
                     <td>{customer.applicationUser?.phoneNumber || "-"}</td>
-                    <td>{getGenderText(customer?.gender || 0)}</td>
+                    <td>
+                      {getGenderText(customer.applicationUser?.gender || 0)}
+                    </td>
                     <td>
                       {customer.applicationUser?.birthDate
                         ? formatDate(customer.applicationUser.birthDate)
@@ -351,20 +409,15 @@ export default function CustomersPage() {
               </div>
             )}
         </div>
+
         {/* Edit Customer Modal */}
         {editingCustomer && (
           <div
             className="modal show d-block"
             tabIndex={-1}
-            style={{
-              backgroundColor: "rgba(0,0,0,0.5)",
-              minHeight: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           >
-            <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-dialog modal-lg">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">Müşteri Düzenle</h5>
@@ -437,30 +490,20 @@ export default function CustomersPage() {
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Telefon</label>
                         <input
-                          type="text"
+                          type="tel"
                           className="form-control"
                           name="phoneNumber"
                           defaultValue={
                             editingCustomer.applicationUser?.phoneNumber || ""
                           }
-                          maxLength={10}
-                          pattern="\d{10}"
-                          inputMode="numeric"
                           required
-                          onInput={(e) => {
-                            // Sadece rakam girilmesini ve 10 karakteri aşmamasını sağlar
-                            const input = e.target as HTMLInputElement;
-                            input.value = input.value
-                              .replace(/\D/g, "")
-                              .slice(0, 10);
-                          }}
                         />
                       </div>
                     </div>
                     <div className="row">
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Doğum Tarihi</label>
-                        <input
+                         <input
                           type="date"
                           className="form-control"
                           name="birthDate"
@@ -482,8 +525,8 @@ export default function CustomersPage() {
                             editingCustomer.applicationUser?.gender || 0
                           }
                         >
-                          <option value={0}>Kadın</option>
-                          <option value={1}>Erkek</option>
+                          <option value={0}>Erkek</option>
+                          <option value={1}>Kadın</option>
                         </select>
                       </div>
                     </div>
@@ -551,6 +594,7 @@ export default function CustomersPage() {
             </div>
           </div>
         )}
+
         {/* Delete Confirmation Modal */}
         {deletingCustomer && (
           <div

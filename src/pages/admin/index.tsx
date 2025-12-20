@@ -1,259 +1,6 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { useStockReport } from "@/hooks/services/reports/useStockReport";
-import { useMostLikedProductsReport } from "@/hooks/services/reports/useMostLikedProductsReport";
-import { useProductSalesReport } from "@/hooks/services/reports/useProductSalesReport";
-import { usePassiveProductsReport } from "@/hooks/services/reports/usePassiveProductsReport";
-import { useProductCartReport } from "@/hooks/services/reports/useProductCartReport";
-import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
-import { useGetSupportTickets } from "@/hooks/services/support/useGetSupportTicket";
-import { useGetOrderSupportTickets } from "@/hooks/services/support/order/useGetOrderSupportTickets";
-import {
-  SupportTicketStatus,
-  SupportTicketStatusLabels,
-} from "@/constants/enums/support-ticket/GeneralSupportTicket/SupportTicketStatus";
-import Link from "next/link";
+import { useEffect } from "react";
 
 function AdminHomePage() {
-  const [animatedCounts, setAnimatedCounts] = useState({
-    stockItems: 0,
-    likedProducts: 0,
-    salesCount: 0,
-    passiveProducts: 0,
-    cartItems: 0,
-    mainCategories: 0,
-    subCategories: 0,
-    totalSupportTickets: 0,
-    pendingSupportTickets: 0,
-  });
-  // Track which animations have been triggered to prevent re-animation
-  const animationTriggered = useRef({
-    stockItems: false,
-    likedProducts: false,
-    salesCount: false,
-    passiveProducts: false,
-    cartItems: false,
-    mainCategories: false,
-    totalSupportTickets: false,
-    pendingSupportTickets: false,
-  });
-
-  // Reports data
-  const { data: stockReport } = useStockReport({ pageSize: 1 });
-  const { data: likedProductsReport } = useMostLikedProductsReport({
-    pageSize: 1,
-  });
-  const { data: salesReport } = useProductSalesReport({ pageSize: 1 });
-  const { data: passiveProductsReport } = usePassiveProductsReport({
-    pageSize: 1,
-  });
-  const { data: cartReport } = useProductCartReport({ pageSize: 1 });
-
-  // Categories data
-  const { categories: mainCategories } = useMainCategoriesLookUp();
-  // Support tickets data - single hook call with both counts
-  const { totalCount: totalSupportTickets, tickets: allTickets } =
-    useGetSupportTickets({
-      page: 0,
-      pageSize: 1000, // Get all tickets to calculate pending count
-    });
-
-  // Order support tickets data
-  const { totalCount: totalOrderSupportTickets, tickets: allOrderTickets } =
-    useGetOrderSupportTickets({
-      page: 0,
-      pageSize: 1000, // Get all order tickets to calculate pending count
-    });
-  // Calculate support ticket status counts (both regular and order tickets)
-  const supportTicketStatusCounts = useMemo(() => {
-    const counts = {
-      pending: 0,
-      inProgress: 0,
-      resolved: 0,
-      closed: 0,
-      cancelled: 0,
-    };
-
-    // Count regular support tickets
-    allTickets.forEach((ticket) => {
-      switch (ticket.supportTicketStatus) {
-        case SupportTicketStatus.Pending:
-          counts.pending++;
-          break;
-        case SupportTicketStatus.InProgress:
-          counts.inProgress++;
-          break;
-        case SupportTicketStatus.Resolved:
-          counts.resolved++;
-          break;
-        case SupportTicketStatus.Closed:
-          counts.closed++;
-          break;
-        case SupportTicketStatus.Cancelled:
-          counts.cancelled++;
-          break;
-      }
-    });
-
-    return counts;
-  }, [allTickets, allOrderTickets]);
-
-  // Calculate pending tickets from the data (legacy - using requestType)
-  const pendingSupportTickets = useMemo(() => {
-    const regularPending = allTickets.filter(
-      (ticket) => ticket.requestType === 0
-    ).length;
-    const orderPending = allOrderTickets.filter(
-      (ticket) => ticket.requestType === 0
-    ).length;
-    return regularPending + orderPending;
-  }, [allTickets, allOrderTickets]);
-
-  // Memoize the data values to prevent unnecessary re-renders
-  const reportData = useMemo(
-    () => ({
-      stockCount: stockReport?.data?.count || 0,
-      likedCount: likedProductsReport?.data?.count || 0,
-      salesCount: salesReport?.data?.count || 0,
-      passiveCount: passiveProductsReport?.data?.count || 0,
-      cartCount: cartReport?.data?.count || 0,
-      categoryCount: Array.isArray(mainCategories?.data)
-        ? mainCategories.data.length
-        : 0,
-      supportCount:
-        (totalSupportTickets || 0) + (totalOrderSupportTickets || 0),
-      pendingCount: pendingSupportTickets || 0,
-    }),
-    [
-      stockReport?.data?.count,
-      likedProductsReport?.data?.count,
-      salesReport?.data?.count,
-      passiveProductsReport?.data?.count,
-      cartReport?.data?.count,
-      mainCategories?.data,
-      totalSupportTickets,
-      totalOrderSupportTickets,
-      pendingSupportTickets,
-    ]
-  );
-
-  // Animation function - memoized to prevent recreation on every render
-  const animateNumber = useCallback(
-    (target: number, setter: (value: number) => void, duration = 2000) => {
-      const startTime = Date.now();
-      const startValue = 0;
-
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function for smooth animation
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const currentValue = Math.floor(
-          startValue + (target - startValue) * easeOutQuart
-        );
-
-        setter(currentValue);
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      };
-
-      requestAnimationFrame(animate);
-    },
-    []
-  );
-
-  // Trigger animations when data loads - only once per data source
-  useEffect(() => {
-    if (reportData.stockCount > 0 && !animationTriggered.current.stockItems) {
-      animationTriggered.current.stockItems = true;
-      animateNumber(reportData.stockCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, stockItems: value }))
-      );
-    }
-  }, [reportData.stockCount, animateNumber]);
-
-  useEffect(() => {
-    if (
-      reportData.likedCount > 0 &&
-      !animationTriggered.current.likedProducts
-    ) {
-      animationTriggered.current.likedProducts = true;
-      animateNumber(reportData.likedCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, likedProducts: value }))
-      );
-    }
-  }, [reportData.likedCount, animateNumber]);
-
-  useEffect(() => {
-    if (reportData.salesCount > 0 && !animationTriggered.current.salesCount) {
-      animationTriggered.current.salesCount = true;
-      animateNumber(reportData.salesCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, salesCount: value }))
-      );
-    }
-  }, [reportData.salesCount, animateNumber]);
-
-  useEffect(() => {
-    if (
-      reportData.passiveCount > 0 &&
-      !animationTriggered.current.passiveProducts
-    ) {
-      animationTriggered.current.passiveProducts = true;
-      animateNumber(reportData.passiveCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, passiveProducts: value }))
-      );
-    }
-  }, [reportData.passiveCount, animateNumber]);
-
-  useEffect(() => {
-    if (reportData.cartCount > 0 && !animationTriggered.current.cartItems) {
-      animationTriggered.current.cartItems = true;
-      animateNumber(reportData.cartCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, cartItems: value }))
-      );
-    }
-  }, [reportData.cartCount, animateNumber]);
-
-  // Categories animations
-  useEffect(() => {
-    if (
-      reportData.categoryCount > 0 &&
-      !animationTriggered.current.mainCategories
-    ) {
-      animationTriggered.current.mainCategories = true;
-      animateNumber(reportData.categoryCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, mainCategories: value }))
-      );
-    }
-  }, [reportData.categoryCount, animateNumber]);
-
-  // Support tickets animations
-  useEffect(() => {
-    if (
-      reportData.supportCount > 0 &&
-      !animationTriggered.current.totalSupportTickets
-    ) {
-      animationTriggered.current.totalSupportTickets = true;
-      animateNumber(reportData.supportCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, totalSupportTickets: value }))
-      );
-    }
-  }, [reportData.supportCount, animateNumber]);
-
-  useEffect(() => {
-    if (
-      reportData.pendingCount > 0 &&
-      !animationTriggered.current.pendingSupportTickets
-    ) {
-      animationTriggered.current.pendingSupportTickets = true;
-      animateNumber(reportData.pendingCount, (value) =>
-        setAnimatedCounts((prev) => ({ ...prev, pendingSupportTickets: value }))
-      );
-    }
-  }, [reportData.pendingCount, animateNumber]);
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("apexcharts").then((ApexCharts) => {
@@ -283,59 +30,6 @@ function AdminHomePage() {
             },
           }
         );
-
-        // Reports Chart
-        const reportsChart = new ApexCharts.default(
-          document.querySelector("#reportsChart"),
-          {
-            series: [
-              {
-                name: "Rapor Verisi",
-                data: [65, 23, 89, 12, 34],
-              },
-            ],
-            chart: {
-              height: 250,
-              type: "area",
-              toolbar: { show: false },
-              zoom: { enabled: false },
-            },
-            dataLabels: {
-              enabled: false,
-            },
-            stroke: {
-              curve: "smooth",
-              width: 2,
-            },
-            colors: ["#4f46e5"],
-            fill: {
-              type: "gradient",
-              gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.4,
-                opacityTo: 0.1,
-                stops: [0, 90, 100],
-              },
-            },
-            grid: {
-              borderColor: "#e0e6ed",
-              strokeDashArray: 5,
-            },
-            xaxis: {
-              categories: ["Stok", "Beğeni", "Satış", "Pasif", "Sepet"],
-              axisBorder: {
-                show: false,
-              },
-              axisTicks: {
-                show: false,
-              },
-            },
-            yaxis: {
-              show: false,
-            },
-          }
-        );
-
         const growthChart = new ApexCharts.default(
           document.querySelector("#growthChart"),
           {
@@ -408,13 +102,11 @@ function AdminHomePage() {
         );
 
         totalRevenueChart.render();
-        reportsChart.render();
         growthChart.render();
         incomeChart.render();
 
         return () => {
           totalRevenueChart.destroy();
-          reportsChart.destroy();
           growthChart.destroy();
           incomeChart.destroy();
         };
@@ -427,7 +119,7 @@ function AdminHomePage() {
       <div className="container-l flex-grow-1 container-p-y">
         {/* Hoşgeldiniz Kartı */}
         <div className="row">
-          <div className="col-lg-8 mb-5 order-0">
+          <div className="col-lg-8 mb-4 order-0">
             <div className="card h-100 p-2">
               <div className="d-flex align-items-end row">
                 <div className="col-asm-7">
@@ -439,9 +131,15 @@ function AdminHomePage() {
                       Hoş Geldiniz! 🎉
                     </h5>
                     <p className="mb-3" style={{ fontSize: "0.8rem" }}>
-                      Nors Admin Paneline hoş geldiniz. Sol menüden yönetim
+                      Fiero Admin Paneline hoş geldiniz. Sol menüden yönetim
                       işlemlerine erişebilirsiniz.
                     </p>
+                    <a
+                      href="/admin/categories"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      Kategori Yönetimi
+                    </a>
                   </div>
                 </div>
               </div>
@@ -451,7 +149,7 @@ function AdminHomePage() {
           {/* İstatistik Kartları */}
           <div className="col-lg-4 col-md-4 order-1">
             <div className="row">
-              <div className="col-lg-6 col-md-12 col-6 mb-5">
+              <div className="col-lg-6 col-md-12 col-6 mb-4">
                 <div className="card h-100 p-2">
                   <div className="card-body p-3">
                     <div className="card-title d-flex align-items-start justify-content-between mb-2">
@@ -471,12 +169,18 @@ function AdminHomePage() {
                       className="card-title mb-2"
                       style={{ fontSize: "1rem" }}
                     >
-                      {animatedCounts.mainCategories}
+                      4
                     </h3>
+                    <small
+                      className="text-muted fw-semibold"
+                      style={{ fontSize: "0.7rem" }}
+                    >
+                      Ana Kategori
+                    </small>
                   </div>
                 </div>
               </div>
-              <div className="col-lg-6 col-md-12 col-6 mb-5">
+              <div className="col-lg-6 col-md-12 col-6 mb-4">
                 <div className="card h-100">
                   <div className="card-body p-3">
                     <div className="card-title d-flex align-items-start justify-content-between mb-2">
@@ -496,341 +200,14 @@ function AdminHomePage() {
                       className="card-title text-nowrap mb-1"
                       style={{ fontSize: "1rem" }}
                     >
-                      {animatedCounts.totalSupportTickets}
+                      5
                     </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Animasyonlu Raporlar Bölümü */}
-        <div className="row mb-4">
-          <div className="col-lg-8 col-md-12" style={{ marginBottom: "-8px" }}>
-            <div className="card">
-              <div className="card-header d-flex align-items-center justify-content-between mb-4">
-                <h5 className="card-title mb-0 m-3 m-3">
-                  <i className="bx bx-bar-chart-alt-2 me-2 text-primary"></i>
-                  Canlı Raporlar
-                </h5>
-                <Link
-                  href="/admin/reports"
-                  className="btn btn-sm btn-outline-primary m-3"
-                >
-                  <i className="bx bx-right-arrow-alt me-1"></i>
-                  Tüm Raporlar
-                </Link>
-              </div>
-              <div className="card-body">
-                <div className="row g-3 mb-4">
-                  {/* Stok Raporu */}
-                  <div className="col-md-4 col-sm-6">
-                    <div
-                      className="card h-100 report-card"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)",
-                        color: "#1565c0",
-                        border: "1px solid #e1f5fe",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        window.open("/admin/reports/stock-report", "_blank")
-                      }
+                    <small
+                      className="text-warning fw-semibold"
+                      style={{ fontSize: "0.7rem" }}
                     >
-                      <div className="card-body p-3">
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                          <div className="avatar flex-shrink-0">
-                            <span
-                              className="avatar-initial rounded bg-success text-white"
-                              style={{ width: "40px", height: "40px" }}
-                            >
-                              <i
-                                className="bx bx-package"
-                                style={{ fontSize: "1.2rem" }}
-                              ></i>
-                            </span>
-                          </div>
-                          <div className="text-end">
-                            <div
-                              className="fw-bold mb-0 animated-number"
-                              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                            >
-                              {animatedCounts.stockItems.toLocaleString()}
-                            </div>
-                            <small className="text-muted">Stok Kalemi</small>
-                          </div>
-                        </div>
-                        <h6
-                          className="card-title mb-1"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          Stok Raporu
-                        </h6>
-                        <p
-                          className="card-text mb-0 text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          Anlık stok durumları
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* En Beğenilen Ürünler */}
-                  <div className="col-md-4 col-sm-6">
-                    <div
-                      className="card h-100 report-card"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%)",
-                        color: "#c2185b",
-                        border: "1px solid #fce4ec",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        window.open(
-                          "/admin/reports/most-liked-products-report",
-                          "_blank"
-                        )
-                      }
-                    >
-                      <div className="card-body p-3">
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                          <div className="avatar flex-shrink-0">
-                            <span
-                              className="avatar-initial rounded bg-success text-white"
-                              style={{ width: "40px", height: "40px" }}
-                            >
-                              <i
-                                className="bx bx-heart"
-                                style={{ fontSize: "1.2rem" }}
-                              ></i>
-                            </span>
-                          </div>
-                          <div className="text-end">
-                            <div
-                              className="fw-bold mb-0 animated-number"
-                              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                            >
-                              {animatedCounts.likedProducts.toLocaleString()}
-                            </div>
-                            <small className="text-muted">Beğenilen</small>
-                          </div>
-                        </div>
-                        <h6
-                          className="card-title mb-1"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          Beğenilen Ürünler
-                        </h6>
-                        <p
-                          className="card-text mb-0 text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          En çok beğenilen ürünler
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Satış Raporu */}
-                  <div className="col-md-4 col-sm-6">
-                    <div
-                      className="card h-100 report-card"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%)",
-                        color: "#388e3c",
-                        border: "1px solid #e8f5e8",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        window.open(
-                          "/admin/reports/product-sales-report",
-                          "_blank"
-                        )
-                      }
-                    >
-                      <div className="card-body p-3">
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                          <div className="avatar flex-shrink-0">
-                            <span
-                              className="avatar-initial rounded bg-success text-white"
-                              style={{ width: "40px", height: "40px" }}
-                            >
-                              <i
-                                className="bx bx-trending-up"
-                                style={{ fontSize: "1.2rem" }}
-                              ></i>
-                            </span>
-                          </div>
-                          <div className="text-end">
-                            <div
-                              className="fw-bold mb-0 animated-number"
-                              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                            >
-                              {animatedCounts.salesCount.toLocaleString()}
-                            </div>
-                            <small className="text-muted">Satış</small>
-                          </div>
-                        </div>
-                        <h6
-                          className="card-title mb-1"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          Satış Raporu
-                        </h6>
-                        <p
-                          className="card-text mb-0 text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          Satış analitiği
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Pasif Ürünler */}
-                  <div className="col-md-4 col-sm-6">
-                    <div
-                      className="card h-100 report-card"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%)",
-                        color: "#f57c00",
-                        border: "1px solid #fff3e0",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        window.open(
-                          "/admin/reports/passive-products-report",
-                          "_blank"
-                        )
-                      }
-                    >
-                      <div className="card-body p-3">
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                          <div className="avatar flex-shrink-0">
-                            <span
-                              className="avatar-initial rounded bg-warning text-white"
-                              style={{ width: "40px", height: "40px" }}
-                            >
-                              <i
-                                className="bx bx-error-circle"
-                                style={{ fontSize: "1.2rem" }}
-                              ></i>
-                            </span>
-                          </div>
-                          <div className="text-end">
-                            <div
-                              className="fw-bold mb-0 animated-number"
-                              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                            >
-                              {animatedCounts.passiveProducts.toLocaleString()}
-                            </div>
-                            <small className="text-muted">Pasif</small>
-                          </div>
-                        </div>
-                        <h6
-                          className="card-title mb-1"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          Pasif Ürünler
-                        </h6>
-                        <p
-                          className="card-text mb-0 text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          Satışta olmayan ürünler
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sepet Analizi */}
-                  <div className="col-md-4 col-sm-6">
-                    <div
-                      className="card h-100 report-card"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #f3e5f5 0%, #ce93d8 100%)",
-                        color: "#7b1fa2",
-                        border: "1px solid #f3e5f5",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                      }}
-                      onClick={() =>
-                        window.open(
-                          "/admin/reports/product-cart-report",
-                          "_blank"
-                        )
-                      }
-                    >
-                      <div className="card-body p-3">
-                        <div className="d-flex align-items-center justify-content-between mb-2">
-                          <div className="avatar flex-shrink-0">
-                            <span
-                              className="avatar-initial rounded bg-info text-white"
-                              style={{ width: "40px", height: "40px" }}
-                            >
-                              <i
-                                className="bx bx-cart"
-                                style={{ fontSize: "1.2rem" }}
-                              ></i>
-                            </span>
-                          </div>
-                          <div className="text-end">
-                            <div
-                              className="fw-bold mb-0 animated-number"
-                              style={{ fontSize: "1.5rem", lineHeight: "1" }}
-                            >
-                              {animatedCounts.cartItems.toLocaleString()}
-                            </div>
-                            <small className="text-muted">Sepet</small>
-                          </div>
-                        </div>
-                        <h6
-                          className="card-title mb-1"
-                          style={{ fontSize: "0.9rem" }}
-                        >
-                          Sepet Analizi
-                        </h6>
-                        <p
-                          className="card-text mb-0 text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          Sepete eklenen ürünler
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Rapor Grafiği */}
-          <div className="col-lg-4 col-md-12">
-            <div className="card h-100">
-              <div className="card-header">
-                <h6 className="card-title mb-0 m-3">Rapor Özeti</h6>
-              </div>
-              <div className="card-body">
-                <div id="reportsChart"></div>
-                <div className="mt-3">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="text-muted small">Bu Ay</span>
-                    <span className="badge bg-primary">+12%</span>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="text-muted small">Geçen Aya Göre</span>
-                    <span className="text-success small">↗ Artış</span>
+                      Bekleyen Talepler
+                    </small>
                   </div>
                 </div>
               </div>
@@ -841,14 +218,14 @@ function AdminHomePage() {
         {/* Yönetim Kartları */}
         <div className="row">
           {/* Destek Talepleri - Yeni pozisyon */}
-          <div className="col-lg-8 col-md-12 mb-4">
+          <div className="col-8 mb-4 ">
             <div className="card">
               <div className="row row-bordered g-0">
-                <div className="col-lg-8 col-md-12">
+                <div className="col-md-8 ">
                   <h5 className="card-header p-4 fs-4"> Toplam Gelir</h5>
                   <div id="totalRevenueChart" className="px-2"></div>
                 </div>
-                <div className="col-lg-4 col-md-12">
+                <div className="col-md-4">
                   <div className="card-body">
                     <div className="text-center">
                       <div className="dropdown">
@@ -944,27 +321,21 @@ function AdminHomePage() {
                     style={{ fontSize: "0.75rem" }}
                   >
                     <span>Ana Kategoriler</span>
-                    <span className="badge bg-primary">
-                      {animatedCounts.mainCategories}
-                    </span>
+                    <span className="badge bg-primary">4</span>
                   </div>
                   <div
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
                     <span>Alt Kategoriler</span>
-                    <span className="badge bg-info">
-                      {animatedCounts.subCategories}
-                    </span>
+                    <span className="badge bg-info">12</span>
                   </div>
                   <div
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
                     <span>Toplam Ürün</span>
-                    <span className="badge bg-success">
-                      {animatedCounts.stockItems}
-                    </span>
+                    <span className="badge bg-success">120</span>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -1109,57 +480,21 @@ function AdminHomePage() {
                     style={{ fontSize: "0.75rem" }}
                   >
                     <span>Toplam Talepler</span>
-                    <span className="badge bg-primary">
-                      {animatedCounts.totalSupportTickets}
-                    </span>
+                    <span className="badge bg-primary">15</span>
                   </div>
                   <div
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
-                    <span>
-                      {SupportTicketStatusLabels[SupportTicketStatus.Pending]}
-                    </span>
-                    <span className="badge bg-warning">
-                      {supportTicketStatusCounts.pending}
-                    </span>
+                    <span>Bekleyen Talepler</span>
+                    <span className="badge bg-warning">5</span>
                   </div>
                   <div
                     className="d-flex justify-content-between align-items-center"
                     style={{ fontSize: "0.75rem" }}
                   >
-                    <span>
-                      {
-                        SupportTicketStatusLabels[
-                          SupportTicketStatus.InProgress
-                        ]
-                      }
-                    </span>
-                    <span className="badge bg-info">
-                      {supportTicketStatusCounts.inProgress}
-                    </span>
-                  </div>
-                  <div
-                    className="d-flex justify-content-between align-items-center"
-                    style={{ fontSize: "0.75rem" }}
-                  >
-                    <span>
-                      {SupportTicketStatusLabels[SupportTicketStatus.Resolved]}
-                    </span>
-                    <span className="badge bg-success">
-                      {supportTicketStatusCounts.resolved}
-                    </span>
-                  </div>
-                  <div
-                    className="d-flex justify-content-between align-items-center"
-                    style={{ fontSize: "0.75rem" }}
-                  >
-                    <span>
-                      {SupportTicketStatusLabels[SupportTicketStatus.Closed]}
-                    </span>
-                    <span className="badge bg-secondary">
-                      {supportTicketStatusCounts.closed}
-                    </span>
+                    <span>Yanıtlanan Talepler</span>
+                    <span className="badge bg-success">10</span>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -1286,65 +621,6 @@ function AdminHomePage() {
       </div>
 
       <div className="content-backdrop fade"></div>
-
-      <style jsx>{`
-        .report-card:hover {
-          transform: translateY(-5px) scale(1.01);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .animated-number {
-          transition: all 0.3s ease;
-          transform-origin: center;
-        }
-
-        .report-card:hover .animated-number {
-          transform: scale(1.05);
-        }
-
-        .text-white-75 {
-          color: rgba(255, 255, 255, 0.75) !important;
-        }
-
-        .text-white-50 {
-          color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.2);
-          }
-          70% {
-            box-shadow: 0 0 0 6px rgba(102, 126, 234, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-          }
-        }
-
-        .report-card .avatar-initial {
-          animation: pulse 3s infinite;
-        }
-
-        .card-header h5 {
-          background: linear-gradient(135deg, #495057 0%, #212529 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .report-card {
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .report-card:hover .card-title {
-          color: inherit !important;
-        }
-
-        .avatar-initial {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-      `}</style>
     </div>
   );
 }

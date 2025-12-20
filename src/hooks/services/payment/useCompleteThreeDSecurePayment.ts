@@ -20,16 +20,19 @@ export const useCompleteThreeDSecurePayment = () => {
         url: COMPLETE_THREE_D_SECURE_PAYMENT,
         method: HttpMethod.POST,
         data: completeData,
+        showErrorToast: false, // Manuel toast yönetimi için otomatik error toast'ı devre dışı bıraks
       });
 
       // Check if the response is successful according to CommandResult structure
-      if (!response.data.isSucceed || !response.data.data) {
+      if (!response.data.isSucceed) {
+        // Sadece gerçek başarısızlık durumunda error toast göster
         toast.error(response.data.message || "3DS payment completion failed");
         throw new Error(
           response.data.message || "3DS payment completion failed"
         );
       }
 
+      // Başarılı durumda toast mesajı çağıran tarafından gösterilecek (backend'den gelen message ile)
       return response.data;
     } catch (error: any) {
       throw error;

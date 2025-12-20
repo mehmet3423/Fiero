@@ -1,19 +1,33 @@
+import StatusBadge from "@/components/shared/StatusBadge";
 import { OrderItem } from "@/constants/models/Order";
 import { useGetOrderById } from "@/hooks/services/order/useGetOrderById";
+import { formatCurrency } from "@/utils/currencyFormatter";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function AdminOrderDetail() {
   const router = useRouter();
   const { id } = router.query;
-  const { order, isLoading, error } = useGetOrderById({
+  const { order, isLoading, error, refetchOrder } = useGetOrderById({
     orderId: id as string,
   });
 
   const [activeTab, setActiveTab] = useState<"details" | "items" | "customer">(
     "details"
   );
+  const [hasForcedRefresh, setHasForcedRefresh] = useState(false);
+
+  useEffect(() => {
+    if (!router.isReady || hasForcedRefresh) {
+      return;
+    }
+
+    if (router.query.refresh) {
+      refetchOrder();
+      setHasForcedRefresh(true);
+    }
+  }, [router.isReady, router.query.refresh, refetchOrder, hasForcedRefresh]);
 
   // Helper function to format date
   const formatDate = (dateString: string) => {
@@ -73,43 +87,6 @@ function AdminOrderDetail() {
   };
 
   // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: "TRY",
-    }).format(amount);
-  };
-
-  // Cargo status helper functions
-  const getCargoStatusText = (status: number) => {
-    switch (status) {
-      case 0:
-        return "Hazırlanıyor";
-      case 1:
-        return "Kargoya Verildi";
-      case 2:
-        return "Teslim Edildi";
-      case 3:
-        return "İptal Edildi";
-      default:
-        return "Bilinmeyen";
-    }
-  };
-
-  const getStatusBadgeClass = (status: number) => {
-    switch (status) {
-      case 0:
-        return "bg-warning";
-      case 1:
-        return "bg-info";
-      case 2:
-        return "bg-success";
-      case 3:
-        return "bg-danger";
-      default:
-        return "bg-secondary";
-    }
-  };
 
   if (isLoading) {
     return (
@@ -159,9 +136,24 @@ function AdminOrderDetail() {
         >
           <i className="bx bx-arrow-back me-1"></i> Geri
         </Link>
-        {/* <Link href={`/admin/orders/edit/${order.id}`} className="btn btn-primary btn-sm py-1 px-2" style={{ fontSize: "0.7rem" }}>
-                                <i className="bx bx-edit me-1"></i> Düzenle
-                            </Link> */}
+        {!order.cargoIntegrationCode && (
+          <Link
+            href={`/admin/cargo/create?orderId=${order.id}`}
+            className="btn btn-success btn-sm py-1 px-2"
+            style={{ fontSize: "0.7rem" }}
+          >
+            <i className="bx bx-package me-1"></i> Kargo Oluştur
+          </Link>
+        )}
+        {order.cargoIntegrationCode && (
+          <Link
+            href={`/admin/cargo/create?orderId=${order.id}`}
+            className="btn btn-warning btn-sm py-1 px-2"
+            style={{ fontSize: "0.7rem" }}
+          >
+            <i className="bx bx-refresh me-1"></i> Kargo Detayları
+          </Link>
+        )}
       </div>
 
       {/* Üst Bilgi Kartı */}
@@ -329,13 +321,7 @@ function AdminOrderDetail() {
                     <tr>
                       <td className="text-muted py-2">Durum</td>
                       <td className="py-2">
-                        <span
-                          className={`badge ${getStatusBadgeClass(
-                            order.cargoStatus
-                          )}`}
-                        >
-                          {getCargoStatusText(order.cargoStatus)}
-                        </span>
+                        <StatusBadge status={order.cargoStatus} type="order" />
                       </td>
                     </tr>
                     <tr>
@@ -346,6 +332,45 @@ function AdminOrderDetail() {
                           : "Güncelleme yok"}
                       </td>
                     </tr>
+                    {order.cargoIntegrationCode && (
+                      <tr>
+                        <td className="text-muted py-2">
+                          Kargo Entegrasyon Kodu
+                        </td>
+                        <td className="py-2">
+                          <span className="badge bg-info">
+                            {order.cargoIntegrationCode}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                    {order.cargoNumber && (
+                      <tr>
+                        <td className="text-muted py-2">Kargo Takip Kodu</td>
+                        <td className="py-2">
+                          <span className="badge bg-primary">
+                            {order.cargoNumber}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                    {order.cargoLabelUrls &&
+                      order.cargoLabelUrls.length > 0 && (
+                        <tr>
+                          <td className="text-muted py-2">Kargo Etiketi</td>
+                          <td className="py-2">
+                            <a
+                              href={order.cargoLabelUrls[0].labelUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-outline-info"
+                            >
+                              <i className="bx bx-image me-1"></i>
+                              Etiketi Görüntüle
+                            </a>
+                          </td>
+                        </tr>
+                      )}
                   </tbody>
                 </table>
               </div>
@@ -426,7 +451,7 @@ function AdminOrderDetail() {
                             <td className="py-2">
                               {formatCurrency(
                                 (item.orderItemPrice || item.price || 0) *
-                                item.quantity
+                                (item.quantity || 0)
                               )}
                             </td>
                           </tr>

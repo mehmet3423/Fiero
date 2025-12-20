@@ -39,6 +39,8 @@ export const useProcessRefundItemsByOrder = () => {
       }
     } catch (error) {
       // Network hatası veya diğer hatalar için genel mesaj göster
+      console.error("processRefundItemsByOrder error:", error);
+      toast.error("Sipariş iade işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.");
       return null; // Hata durumunda null döndür
     }
   };

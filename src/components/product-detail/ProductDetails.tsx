@@ -26,7 +26,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   handleAddToCart,
   isAddingToCart,
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  const titleToShow =
+    language === "en" && product.titleEn ? product.titleEn : product.title;
+  
+  const descriptionToShow =
+    language === "en" && product.descriptionEn
+      ? product.descriptionEn
+      : product.description;
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -158,7 +166,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <div className="tf-product-info-list other-image-zoom">
             {/* Product Title */}
             <div className="tf-product-info-title">
-              <h5>{product.title}</h5>
+              <h5>{titleToShow}</h5>
             </div>
 
             {/* Price */}

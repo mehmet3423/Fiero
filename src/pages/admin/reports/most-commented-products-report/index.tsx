@@ -236,7 +236,7 @@ function MostCommentedProductsReportPage() {
                 style={{ fontSize: "0.8rem" }}
               />
             </div>
-            <div className="col-md-4 d-flex align-items-end">
+            <div className="col-md-4 d-flex align-items-end mt-2">
               <button
                 className="btn btn-primary btn-sm me-2"
                 onClick={handleSearch}

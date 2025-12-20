@@ -11,12 +11,17 @@ export const useCreateMainCategory = () => {
 
   const createMainCategory = async (
     name: string,
+    nameEn?: string,
     displayIndex?: number,
     imageUrl?: string
   ) => {
     try {
       const params = new URLSearchParams();
       params.append("Name", name);
+
+      if (nameEn) {
+        params.append("NameEn", nameEn);
+      }
 
       if (displayIndex !== undefined) {
         params.append("DisplayIndex", displayIndex.toString());
@@ -36,6 +41,9 @@ export const useCreateMainCategory = () => {
             toast.success("Ana kategori başarıyla oluşturuldu");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
+            });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],
             });
           },
         }

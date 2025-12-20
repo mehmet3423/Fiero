@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface MobileMenuProps {
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
+  const { language } = useLanguage();
   const { userRole, userProfile } = useAuth();
   const { isAdmin } = useIsAdmin();
   const { categories } = useCategories();
@@ -130,7 +132,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         handleCategoryClick(category.id);
                       }}
                     >
-                      <span>{category.name}</span>
+                      <span>
+                        {language === "en" && category.nameEn
+                          ? category.nameEn
+                          : category.name}
+                      </span>
                       <span
                         className={`btn-open-sub ${
                           expandedCategoryId === category.id ? "expanded" : ""
@@ -171,7 +177,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                                     );
                                   }}
                                 >
-                                  {subCategory.name}
+                                  {language === "en" && subCategory.nameEn
+                                    ? subCategory.nameEn
+                                    : subCategory.name}
                                 </a>
                               </li>
                             ))}

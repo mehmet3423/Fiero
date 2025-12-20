@@ -29,8 +29,7 @@ export const useGetUserProfile = () => {
         setUserProfile(data);
       }
     },
-    onError: (err) => {
-    },
+    onError: (err) => {},
   });
 
   // Refetch when token changes

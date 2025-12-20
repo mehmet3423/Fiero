@@ -137,8 +137,32 @@
     "newsletter": "E-posta Kaydı",
     "newsletterDescription": "Yeni ürünler, indirimler, özel içerikler, etkinlikler ve daha fazlası için kayıt olun!",
     "subscribe": "Abone Ol",
+    "subscribing": "Abone olunuyor...",
+    "subscribeSuccess": "Başarıyla abone oldunuz!",
+    "subscribeError": "Abone olurken bir hata oluştu. Lütfen tekrar deneyin.",
+    "emailRequired": "Lütfen e-posta adresinizi girin.",
+    "emailInvalid": "Lütfen geçerli bir e-posta adresi girin.",
     "copyright": "Copyright",
-    "blog": "Bloglar"
+    "blog": "Bloglar",
+    "unsubscribe": {
+      "title": "Abonelikten Çık",
+      "processing": "İşleniyor...",
+      "processing_desc": "Lütfen abonelikten çıkma talebiniz işlenirken bekleyin.",
+      "success": "Bülten aboneliğinden başarıyla çıkıldı!",
+      "success_title": "Başarıyla Abonelikten Çıkıldı",
+      "success_message": "Bülten aboneliğinden başarıyla çıkıldı.",
+      "back_to_home": "Ana Sayfaya Dön",
+      "error_title": "Abonelikten Çıkma Başarısız",
+      "error_message": "Abonelikten çıkma talebiniz işlenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin veya destek ekibiyle iletişime geçin.",
+      "contact_support": "Destek ile İletişime Geç",
+      "error": {
+        "email_missing": "E-posta parametresi eksik",
+        "general": "Bir hata oluştu. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "breadcrumb": {
+    "home": "Ana Sayfa"
   },
   "announcementSlider": {
     "announcements": [
@@ -146,5 +170,9 @@
       "5000TL alışverişe Çanta hediye!",
       "Kargo ücretsiz!"
     ]
+  },
+  "categories": {
+    "youMightLike": "Beğenebileceğiniz Kategoriler",
+    "category": "kategorisi"
   }
 }

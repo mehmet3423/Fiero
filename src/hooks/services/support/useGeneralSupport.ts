@@ -48,7 +48,7 @@ export const useGeneralSupport = () => {
           }
         );
       } else {
-        toast.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+        toast.error("Bir hata oluştu.");
       }
     } finally {
       setIsPending(false);

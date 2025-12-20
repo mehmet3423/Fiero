@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { formatDate } from "@/utils/dateFormatter";
 
 const FreeProductDiscountPage = () => {
   const router = useRouter();
@@ -63,11 +64,6 @@ const FreeProductDiscountPage = () => {
     const value = e.target.value;
     setIsActive(value === "" ? undefined : value === "true");
     setPage(0);
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR");
   };
 
   const freeProductDiscounts =

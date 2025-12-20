@@ -9,10 +9,7 @@ import { useLanguage } from "@/context/LanguageContext";
 function FavoritesPage() {
   const { t } = useLanguage();
   const { userProfile } = useAuth();
-  const {
-    favorites,
-    isLoading: favoritesLoading,
-  } = useFavorites();
+  const { favorites, isLoading: favoritesLoading } = useFavorites();
 
   if (favoritesLoading) {
     return <PageLoadingAnimation />;
@@ -23,10 +20,11 @@ function FavoritesPage() {
       <div className="container">
         <i className="icon-heart-o display-1 text-muted mb-4"></i>
         <h3 className="mb-3">{t("favorites.emptyFavoritesTitle")}</h3>
-        <p className="mb-4">
-          {t("favorites.emptyFavoritesMessage")}
-        </p>
-        <Link href="/" className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center">
+        <p className="mb-4">{t("favorites.emptyFavoritesMessage")}</p>
+        <Link
+          href="/"
+          className="tf-btn w-100 radius-3 btn-fill animate-hover-btn justify-content-center"
+        >
           <span>{t("favorites.startShoppingButton")}</span>
           <i className="icon-long-arrow-right ml-2"></i>
         </Link>
@@ -35,12 +33,13 @@ function FavoritesPage() {
   );
 
   return (
-    <main className="main">
-
+    <main className="main" style={{ overflowX: "hidden" }}>
       {/* page-title */}
       <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">{t("favorites.breadcrumbFavorites")}</div>
+          <div className="heading text-center">
+            {t("favorites.breadcrumbFavorites")}
+          </div>
         </div>
       </div>
       {/* /page-title */}
