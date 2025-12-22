@@ -8,14 +8,8 @@ const FAQPage: NextPage = () => {
   const { contents: cargoInfos } = useGeneralContents(
     GeneralContentType.AccordionCargoInfos
   );
-  const { contents: ordersAndReturns } = useGeneralContents(
-    GeneralContentType.AccordionOrderAndReturns
-  );
-  const { contents: payment } = useGeneralContents(
-    GeneralContentType.AccordionPayment
-  );
 
-  const shippingFaqs = cargoInfos?.items.map((faq) => ({
+  const shippingFaqs = cargoInfos?.map((faq) => ({
     id: faq.id,
     question: faq.title,
     answer: faq.content,
@@ -23,8 +17,6 @@ const FAQPage: NextPage = () => {
 
   // Accordion açık/kapalı durumları için state'ler
   const [openedShipping, setOpenedShipping] = useState<number | null>(0);
-  const [openedOrders, setOpenedOrders] = useState<number | null>(0);
-  const [openedPayment, setOpenedPayment] = useState<number | null>(0);
 
   return (
     <>
@@ -72,72 +64,6 @@ const FAQPage: NextPage = () => {
                   </div>
                 ))}
               </div>
-
-              {/* --- Sipariş ve İadeler --- */}
-              {/* <h5 className="mb_24">Sipariş ve İadeler</h5>
-              <div className="flat-accordion style-default has-btns-arrow mb_60">
-                {ordersAndReturns?.items?.map((faq, index) => (
-                  <div
-                    className={`flat-toggle${
-                      openedOrders === index ? " active" : ""
-                    }`}
-                    key={faq.id}
-                  >
-                    <div
-                      className={`toggle-title${
-                        openedOrders === index ? " active" : ""
-                      }`}
-                      onClick={() =>
-                        setOpenedOrders(openedOrders === index ? null : index)
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      {faq.title}
-                    </div>
-                    <div
-                      className="toggle-content"
-                      style={{
-                        display: openedOrders === index ? "block" : "none",
-                      }}
-                    >
-                      <p>{faq.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div> */}
-
-              {/* --- Ödeme --- */}
-              {/* <h5 className="mb_24">Ödeme</h5>
-              <div className="flat-accordion style-default has-btns-arrow">
-                {payment?.items.map((faq, index) => (
-                  <div
-                    className={`flat-toggle${
-                      openedPayment === index ? " active" : ""
-                    }`}
-                    key={faq.id}
-                  >
-                    <div
-                      className={`toggle-title${
-                        openedPayment === index ? " active" : ""
-                      }`}
-                      onClick={() =>
-                        setOpenedPayment(openedPayment === index ? null : index)
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      {faq.title}
-                    </div>
-                    <div
-                      className="toggle-content"
-                      style={{
-                        display: openedPayment === index ? "block" : "none",
-                      }}
-                    >
-                      <p>{faq.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div> */}
             </div>
 
             {/* Sağ kutu */}

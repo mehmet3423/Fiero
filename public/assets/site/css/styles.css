@@ -17445,12 +17445,26 @@ blockquote .text {
   .testimonial-item.style-box {
     padding: 15px 24px;
   }
+  .wrapper-thumbs-testimonial-v2 {
+    flex-direction: row !important;
+    gap: 15px;
+    align-items: flex-start;
+  }
   .wrapper-thumbs-testimonial-v2 .box-right {
-    display: none;
+    display: block !important;
+    width: 50% !important;
+    flex-shrink: 0;
   }
   .wrapper-thumbs-testimonial-v2 .box-left {
-    width: 100% !important;
+    width: 50% !important;
     padding: 0;
+    flex-shrink: 0;
+  }
+  .wrapper-thumbs-testimonial-v2.type-1 .box-left {
+    width: 45% !important;
+  }
+  .wrapper-thumbs-testimonial-v2.type-1 .box-right {
+    width: 55% !important;
   }
   .tf-icon-box.style-row {
     flex-direction: column;

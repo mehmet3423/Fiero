@@ -167,7 +167,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           className="layout-menu menu-vertical menu bg-menu-theme"
           style={{ width: "260px", flexShrink: 0 }}
         >
-          üzen
           <div
             className="app-brand demo d-flex align-items-center justify-content-center"
             style={{ height: "60px" }}

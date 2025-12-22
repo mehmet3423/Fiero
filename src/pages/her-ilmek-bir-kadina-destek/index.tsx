@@ -1,5 +1,3 @@
-import { GeneralContentType } from "@/constants/models/GeneralContent";
-import { useGeneralContents } from "@/hooks/services/general-content/useGetAllGeneralContent";
 import Link from "next/link";
 import SEOHead from "@/components/SEO/SEOHead";
 import { GetStaticProps } from "next";
@@ -37,12 +35,6 @@ function AboutUs({ seoData }: AboutProps) {
         }
     };
 
-    const { contents: aboutName } = useGeneralContents(
-        GeneralContentType.AboutName
-    );
-    const { contents: aboutDesign } = useGeneralContents(
-        GeneralContentType.AboutDesign
-    );
 
     return (
         <>
