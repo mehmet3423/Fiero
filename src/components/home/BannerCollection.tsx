@@ -34,7 +34,7 @@ const BannerCollection: React.FC<BannerCollectionProps> = ({ banners }) => {
           }}
           breakpoints={{
             0: {
-              slidesPerView: 1.3,
+              slidesPerView: 1,
               spaceBetween: 15,
             },
             768: {

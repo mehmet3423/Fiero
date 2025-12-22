@@ -89,7 +89,9 @@ const TestimonialSection: React.FC = () => {
       link: item.contentUrl || "#",
     }));
 
-    return testimonialItems.length > 0 ? testimonialItems : fallbackTestimonials;
+    return testimonialItems.length > 0
+      ? testimonialItems
+      : fallbackTestimonials;
   }, [contents, language]);
 
   // Loading state - fallback göster
@@ -117,11 +119,8 @@ const TestimonialSection: React.FC = () => {
       data-wow-delay="0s"
     >
       <div className="container">
-        <div
-          className="wrapper-thumbs-testimonial-v2 type-1 flat-thumbs-testimonial"
-          style={{ display: "flex", gap: "40px" }}
-        >
-          <div className="box-left" style={{ flex: "1", maxWidth: "35%" }}>
+        <div className="wrapper-thumbs-testimonial-v2 type-1 flat-thumbs-testimonial">
+          <div className="box-left">
             <Swiper
               modules={[Navigation, Pagination, Controller]}
               slidesPerView={1}
@@ -166,7 +165,7 @@ const TestimonialSection: React.FC = () => {
                     </div>
                     <p className="text">{testimonial.text}</p>
                     <div className="author box-author">
-                      <div
+                      {/* <div
                         className="box-img d-md-none rounded-0"
                         style={{
                           width: "60px",
@@ -189,7 +188,7 @@ const TestimonialSection: React.FC = () => {
                           }}
                           unoptimized
                         />
-                      </div>
+                      </div> */}
                       <div className="content">
                         <Link
                           href={testimonial.link}
@@ -213,7 +212,7 @@ const TestimonialSection: React.FC = () => {
             </div>
             <div className="d-md-none sw-dots style-2 sw-pagination-tes-2"></div>
           </div>
-          <div className="box-right" style={{ flex: "2", maxWidth: "65%" }}>
+          <div className="box-right">
             <Swiper
               modules={[Controller]}
               slidesPerView={1}
@@ -232,7 +231,7 @@ const TestimonialSection: React.FC = () => {
                         className="img-style"
                         style={{
                           width: "100%",
-                          height: "600px",
+                          height: "300px",
                           overflow: "hidden",
                           borderRadius: "8px",
                         }}
