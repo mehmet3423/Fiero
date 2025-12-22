@@ -33,11 +33,6 @@ export enum GeneralContentType {
   // TermsOfUse = 12
   Explore = 13,
   AccordionCargoInfos = 26,
-  AccordionOrderAndReturns = 14,
-  AccordionPayment = 15,
-  AboutName = 16,
-  AboutDesign = 18,
-  PrivacyPolicy = 19,
   MainSlider = 20,
   MainBanner = 22,
   MainProductList = 23,
@@ -52,6 +47,8 @@ export enum GeneralContentType {
   DeliveryTerms = 33,
   MembershipAndUsageTerms = 34,
   BlogPosts = 35,
+  ShopCollection = 36,
+  IconBoxModern = 37,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -82,11 +79,6 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   // [GeneralContentType.TermsOfUse]: IsCustomizable.No,
   [GeneralContentType.Explore]: IsCustomizable.No,
   [GeneralContentType.AccordionCargoInfos]: IsCustomizable.No,
-  [GeneralContentType.AccordionOrderAndReturns]: IsCustomizable.No,
-  [GeneralContentType.AccordionPayment]: IsCustomizable.No,
-  [GeneralContentType.AboutName]: IsCustomizable.No,
-  [GeneralContentType.AboutDesign]: IsCustomizable.No,
-  [GeneralContentType.PrivacyPolicy]: IsCustomizable.No,
   [GeneralContentType.MainSlider]: IsCustomizable.No,
   [GeneralContentType.MainBanner]: IsCustomizable.No,
   [GeneralContentType.MainProductList]: IsCustomizable.No,
@@ -101,6 +93,8 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.DeliveryTerms]: IsCustomizable.No,
   [GeneralContentType.MembershipAndUsageTerms]: IsCustomizable.No,
   [GeneralContentType.BlogPosts]: IsCustomizable.No,
+  [GeneralContentType.ShopCollection]: IsCustomizable.No,
+  [GeneralContentType.IconBoxModern]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -183,19 +177,9 @@ export const getGeneralContentTypeName = (
     // case GeneralContentType.TermsOfUse:
     //     return "Kullanım Koşulları";
     case GeneralContentType.Explore:
-      return "Explore";
+      return "Müşteri Yorumları (Testimonial)";
     case GeneralContentType.AccordionCargoInfos:
       return "S.S.S. Kargo Bilgileri";
-    case GeneralContentType.AccordionOrderAndReturns:
-      return "S.S.S. Sipariş ve İade Bilgileri";
-    case GeneralContentType.AccordionPayment:
-      return "S.S.S. Ödeme Bilgileri";
-    case GeneralContentType.AboutName:
-      return "About Name";
-    case GeneralContentType.AboutDesign:
-      return "About Design";
-    case GeneralContentType.PrivacyPolicy:
-      return "Gizlilik Politikası";
     case GeneralContentType.MainSlider:
       return "Ana Sayfa Slider";
     case GeneralContentType.MainBanner:
@@ -224,6 +208,10 @@ export const getGeneralContentTypeName = (
       return "Üyelik ve Kullanım Şartları";
     case GeneralContentType.BlogPosts:
       return "Blog Yazıları";
+    case GeneralContentType.ShopCollection:
+      return "Mağaza Koleksiyonu";
+    case GeneralContentType.IconBoxModern:
+      return "Icon Box Modern";
     default:
       return "Bilinmeyen İçerik Türü";
   }

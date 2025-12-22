@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Controller } from "swiper/modules";
 import Link from "next/link";
@@ -8,6 +8,12 @@ import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import {
+  GeneralContentType,
+  ContentLanguage,
+} from "@/constants/models/GeneralContent";
+import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ExploreItem {
   id: number | string;
@@ -17,13 +23,11 @@ interface ExploreItem {
   link: string;
 }
 
-interface ExploreSectionProps {
-  testimonials?: ExploreItem[];
-}
-
-const TestimonialSection: React.FC<ExploreSectionProps> = ({
-  testimonials,
-}) => {
+const TestimonialSection: React.FC = () => {
+  const { language } = useLanguage();
+  const { contents, isLoading } = useGeneralContents(
+    GeneralContentType.Explore
+  );
   const [firstSwiper, setFirstSwiper] = useState<any>(null);
   const [secondSwiper, setSecondSwiper] = useState<any>(null);
 
@@ -45,11 +49,67 @@ const TestimonialSection: React.FC<ExploreSectionProps> = ({
     },
   ];
 
-  // Use provided testimonials or fallback
-  const testimonialData =
-    testimonials && testimonials.length > 0
-      ? testimonials
-      : fallbackTestimonials;
+  // Transform general content to testimonial items
+  const testimonialData = useMemo(() => {
+    if (!contents || contents.length === 0) {
+      return fallbackTestimonials;
+    }
+
+    // Mevcut dile göre ContentLanguage enum değerini belirle
+    const currentContentLanguage =
+      language === "en" ? ContentLanguage.EN : ContentLanguage.TR;
+
+    // Order'a göre sırala
+    const sortedContents = [...contents]
+      .filter((item) => item.willRender !== false)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+    // Mevcut dildeki içerikleri filtrele
+    let filteredContents = sortedContents.filter(
+      (item) => item.language === currentContentLanguage
+    );
+
+    // Mevcut dilde içerik yoksa, Türkçe veya dil belirtilmemiş içerikleri göster
+    if (filteredContents.length === 0) {
+      filteredContents = sortedContents.filter(
+        (item) =>
+          item.language === ContentLanguage.TR || item.language === undefined
+      );
+    }
+
+    // Hala içerik yoksa, tüm içerikleri göster
+    const finalContents =
+      filteredContents.length > 0 ? filteredContents : sortedContents;
+
+    const testimonialItems = finalContents.map((item) => ({
+      id: item.id,
+      title: item.title || "",
+      text: item.content || "",
+      image: item.imageUrl || "/assets/site/images/slider/te4.jpg",
+      link: item.contentUrl || "#",
+    }));
+
+    return testimonialItems.length > 0 ? testimonialItems : fallbackTestimonials;
+  }, [contents, language]);
+
+  // Loading state - fallback göster
+  if (isLoading) {
+    return (
+      <section
+        className="flat-testimonial-v2 py-0 wow fadeInUp"
+        data-wow-delay="0s"
+      >
+        <div className="container">
+          <div
+            className="wrapper-thumbs-testimonial-v2 type-1 flat-thumbs-testimonial"
+            style={{ display: "flex", gap: "40px" }}
+          >
+            {/* Loading state için fallback gösterilebilir veya null döndürülebilir */}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -115,23 +175,25 @@ const TestimonialSection: React.FC<ExploreSectionProps> = ({
                           borderRadius: "50%",
                         }}
                       >
-                        <img
+                        <Image
                           className="lazyload img-product"
-                          data-src={testimonial.image}
                           src={testimonial.image}
                           alt="image-product"
+                          width={60}
+                          height={60}
                           style={{
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
                             objectPosition: "center",
                           }}
+                          unoptimized
                         />
                       </div>
                       <div className="content">
                         <Link
                           href={testimonial.link}
-                          className="btn btn-dark btn-sm "
+                          className="btn btn-dark btn-sm"
                         >
                           Keşfet ➤
                         </Link>
@@ -175,17 +237,16 @@ const TestimonialSection: React.FC<ExploreSectionProps> = ({
                           borderRadius: "8px",
                         }}
                       >
-                        <img
+                        <Image
                           className="lazyload"
-                          data-src={testimonial.image}
                           src={testimonial.image}
                           alt="img-slider"
+                          fill
                           style={{
-                            width: "100%",
-                            height: "100%",
                             objectFit: "cover",
                             objectPosition: "center",
                           }}
+                          unoptimized
                         />
                       </div>
                     </div>

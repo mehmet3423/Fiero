@@ -72,13 +72,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
     refetchContents: refetchMainProductListContents,
   } = useGeneralContents(GeneralContentType.MainProductList);
 
-  //testimonial
-  const {
-    contents: testimonialContentsData,
-    isLoading: testimonialContentsLoading,
-    refetchContents: refetchTestimonialContents,
-  } = useGeneralContents(GeneralContentType.Explore);
-
   // Direkt kullanım için memoized değerler (useEffect yerine)
   const mainSliderContents = useMemo(
     () => mainSliderContentsData || [],
@@ -91,10 +84,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
   const mainProductListContents = useMemo(
     () => mainProductListContentsData || [],
     [mainProductListContentsData]
-  );
-  const testimonialContents = useMemo(
-    () => testimonialContentsData || [],
-    [testimonialContentsData]
   );
 
   const homeSlides = [
@@ -150,18 +139,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
       })),
   ];
 
-  const testimonials = [
-    ...testimonialContents
-      .slice()
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      .map((item) => ({
-        id: item.id,
-        title: item.title || "",
-        text: item.content || "",
-        image: item.imageUrl || "",
-        link: item.contentUrl || "#",
-      })),
-  ];
 
   const ProductHeader = [
     {

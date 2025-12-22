@@ -80,12 +80,23 @@ export default function ContentForm({
     // Language'ı her form için ekle
     formData.set("language", selectedLanguage.toString());
 
+    // Eğer yeni bir görsel seçildiyse ve henüz yüklenmediyse, önce yükle
+    let finalImageUrl = imageUrl;
+    if (selectedFile && !imageUrl) {
+      const uploadedUrl = await uploadImage();
+      if (!uploadedUrl) {
+        toast.error("Görsel yüklenemedi");
+        return;
+      }
+      finalImageUrl = uploadedUrl;
+    }
+
     // MainProductList özel form
     if (selectedContentType === GeneralContentType.MainProductList) {
       formData.set("content", JSON.stringify(selectedProductIds));
       // MainProductList için imageUrl opsiyonel, eğer varsa ekle
-      if (imageUrl) {
-        formData.set("imageUrl", imageUrl);
+      if (finalImageUrl) {
+        formData.set("imageUrl", finalImageUrl);
       }
       onSubmit(formData);
       return;
@@ -93,29 +104,17 @@ export default function ContentForm({
 
     // Store özel form
     if (selectedContentType === GeneralContentType.Store) {
-      // Store formu için imageUrl opsiyonel
-      if (isImageUploading) {
-        toast.error("Görsel yükleniyor, lütfen bekleyin");
-        return;
-      }
-
       formData.set("content", storeAddress);
-      if (imageUrl) {
-        formData.set("imageUrl", imageUrl);
+      if (finalImageUrl) {
+        formData.set("imageUrl", finalImageUrl);
       }
       onSubmit(formData);
       return;
     }
 
-    // Görsel yükleniyorsa bekle
-    if (isImageUploading) {
-      toast.error("Görsel yükleniyor, lütfen bekleyin");
-      return;
-    }
-
     // Görsel opsiyonel, varsa ekle
-    if (imageUrl) {
-      formData.set("imageUrl", imageUrl);
+    if (finalImageUrl) {
+      formData.set("imageUrl", finalImageUrl);
     }
     onSubmit(formData);
   };
@@ -189,16 +188,16 @@ export default function ContentForm({
         <button
           type="submit"
           className="btn btn-primary w-100"
-          disabled={isLoading}
+          disabled={isLoading || isImageUploading}
         >
-          {isLoading ? (
+          {isLoading || isImageUploading ? (
             <>
               <span
                 className="spinner-border spinner-border-sm mr-2"
                 role="status"
                 aria-hidden="true"
               ></span>
-              İşleniyor...
+              {isImageUploading ? "Görsel Yükleniyor..." : "İşleniyor..."}
             </>
           ) : (
             <>
@@ -303,34 +302,14 @@ export default function ContentForm({
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
                 setSelectedFile(e.target.files[0]);
+                // Yeni dosya seçildiğinde eski imageUrl'i temizle
+                setImageUrl("");
               }
             }}
           />
-          <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>
-            Her resim eklemesinde <b>Görseli Yükle</b> butonuna basmanız
-            gerekmektedir.
-          </div>
-          <button
-            type="button"
-            className="btn btn-outline-primary mt-2"
-            onClick={uploadImage}
-            disabled={!selectedFile || isImageUploading}
-          >
-            {isImageUploading ? (
-              <>
-                <span
-                  className="spinner-border spinner-border-sm mr-2"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
-                Yükleniyor...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-upload mr-1"></i> Görseli Yükle
-              </>
-            )}
-          </button>
+          <small className="form-text text-muted">
+            Görsel seçildikten sonra "Ekle" veya "Güncelle" butonuna basın, görsel otomatik olarak yüklenecektir.
+          </small>
 
           {!imageUrl && editingContent?.imageUrl && (
             <div className="mt-2">
@@ -358,16 +337,16 @@ export default function ContentForm({
         <button
           type="submit"
           className="btn btn-primary w-100"
-          disabled={isLoading}
+          disabled={isLoading || isImageUploading}
         >
-          {isLoading ? (
+          {isLoading || isImageUploading ? (
             <>
               <span
                 className="spinner-border spinner-border-sm mr-2"
                 role="status"
                 aria-hidden="true"
               ></span>
-              İşleniyor...
+              {isImageUploading ? "Görsel Yükleniyor..." : "İşleniyor..."}
             </>
           ) : (
             <>
@@ -468,34 +447,14 @@ export default function ContentForm({
           onChange={(e) => {
             if (e.target.files && e.target.files[0]) {
               setSelectedFile(e.target.files[0]);
+              // Yeni dosya seçildiğinde eski imageUrl'i temizle
+              setImageUrl("");
             }
           }}
         />
-        <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>
-          Her resim eklemesinde <b>Görseli Yükle</b> butonuna basmanız
-          gerekmektedir.
-        </div>
-        <button
-          type="button"
-          className="btn btn-outline-primary mt-2"
-          onClick={uploadImage}
-          disabled={!selectedFile || isImageUploading}
-        >
-          {isImageUploading ? (
-            <>
-              <span
-                className="spinner-border spinner-border-sm mr-2"
-                role="status"
-                aria-hidden="true"
-              ></span>
-              Yükleniyor...
-            </>
-          ) : (
-            <>
-              <i className="fas fa-upload mr-1"></i> Görseli Yükle
-            </>
-          )}
-        </button>
+        <small className="form-text text-muted">
+          Görsel seçildikten sonra "Ekle" veya "Güncelle" butonuna basın, görsel otomatik olarak yüklenecektir.
+        </small>
 
         {!imageUrl && editingContent?.imageUrl && (
           <div className="mt-2">
@@ -523,16 +482,16 @@ export default function ContentForm({
       <button
         type="submit"
         className="btn btn-primary w-100"
-        disabled={isLoading}
+        disabled={isLoading || isImageUploading}
       >
-        {isLoading ? (
+        {isLoading || isImageUploading ? (
           <>
             <span
               className="spinner-border spinner-border-sm mr-2"
               role="status"
               aria-hidden="true"
             ></span>
-            İşleniyor...
+            {isImageUploading ? "Görsel Yükleniyor..." : "İşleniyor..."}
           </>
         ) : (
           <>
