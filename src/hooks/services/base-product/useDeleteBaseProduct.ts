@@ -11,37 +11,31 @@ export const useDeleteBaseProduct = () => {
   const { mutateAsync, isPending } = useMyMutation<CommandResult>();
 
   const deleteBaseProduct = async (id: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: DELETE_BASE_PRODUCT,
-          method: HttpMethod.DELETE,
-          data: { id },
+    await mutateAsync(
+      {
+        url: DELETE_BASE_PRODUCT,
+        method: HttpMethod.DELETE,
+        data: { id },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Base product başarıyla silindi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCTS],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCT_BY_ID, id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCT_VARIANTS, id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Base product başarıyla silindi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCTS],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCT_BY_ID, id],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCT_VARIANTS, id],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Base product silinirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      throw error;
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return {

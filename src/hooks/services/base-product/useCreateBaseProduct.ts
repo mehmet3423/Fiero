@@ -14,31 +14,25 @@ export const useCreateBaseProduct = () => {
   const { mutateAsync, isPending } = useMyMutation<BaseProductDetailResponse>();
 
   const createBaseProduct = async (payload: CreateBaseProductRequest) => {
-    try {
-      await mutateAsync(
-        {
-          url: CREATE_BASE_PRODUCT,
-          method: HttpMethod.POST,
-          data: payload,
+    await mutateAsync(
+      {
+        url: CREATE_BASE_PRODUCT,
+        method: HttpMethod.POST,
+        data: payload,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Base product başarıyla oluşturuldu");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCTS],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Base product başarıyla oluşturuldu");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCTS],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Base product oluşturulurken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      throw error;
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return {

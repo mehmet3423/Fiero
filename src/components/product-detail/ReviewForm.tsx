@@ -8,9 +8,11 @@ import { useLanguage } from "@/context/LanguageContext";
 const ReviewForm = ({
   productId,
   onSubmit,
+  isRatingEnabled = true,
 }: {
   productId: string;
   onSubmit: (review: any) => void;
+  isRatingEnabled?: boolean;
 }) => {
   const { t } = useLanguage();
   const [title, setTitle] = useState("");
@@ -45,8 +47,12 @@ const ReviewForm = ({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!title || !content || !rating) {
-      toast.error(t("reviewForm.messages.requiredFields"));
+    if (!title || !content || (isRatingEnabled && !rating)) {
+      toast.error(
+        isRatingEnabled
+          ? t("reviewForm.messages.requiredFields")
+          : t("reviewForm.messages.requiredFieldsWithoutRating") || "Başlık ve içerik zorunludur."
+      );
       return;
     }
 
@@ -80,7 +86,7 @@ const ReviewForm = ({
       const review = {
         title,
         content,
-        rating,
+        rating: isRatingEnabled ? rating : 0,
         imageUrl: uploadedImageUrl,
         productId,
       };
@@ -129,25 +135,27 @@ const ReviewForm = ({
           }}
         ></textarea>
       </div>
-      <div className="form-group mb-3">
-        <label>{t("reviewForm.labels.rating")}</label>
-        <div>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              onClick={() => handleRatingChange(star)}
-              style={{
-                cursor: "pointer",
-                fontSize: "24px",
-                color: star <= rating ? "#fcb941" : "#ccc",
-                marginRight: "5px",
-              }}
-            >
-              ★
-            </span>
-          ))}
+      {isRatingEnabled && (
+        <div className="form-group mb-3">
+          <label>{t("reviewForm.labels.rating")}</label>
+          <div>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                onClick={() => handleRatingChange(star)}
+                style={{
+                  cursor: "pointer",
+                  fontSize: "24px",
+                  color: star <= rating ? "#fcb941" : "#ccc",
+                  marginRight: "5px",
+                }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       <div className="form-group mb-3">
         <label>{t("reviewForm.labels.photoOptional")}</label>
         <input

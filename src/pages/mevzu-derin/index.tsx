@@ -63,7 +63,7 @@ function MevzuDerin() {
                                                     const observer = new IntersectionObserver((entries) => {
                                                         entries.forEach(entry => {
                                                             if (entry.isIntersecting) {
-                                                                video.play().catch(console.log);
+                                                                video.play().catch(() => {});
                                                             } else {
                                                                 video.pause();
                                                             }

@@ -10,7 +10,7 @@ import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import QuickView from "../product/QuickView";
 import { useLanguage } from "@/context/LanguageContext";
-import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
+import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
 import { Product } from "@/constants/models/Product";
 import toast from "react-hot-toast";
 
@@ -33,20 +33,21 @@ const PeopleAlsoBought: React.FC<PeopleAlsoBoughtProps> = ({
     isLoading: isFavoritesLoading,
   } = useFavorites();
 
-  // Kategoriye göre ürünleri çek
-  const { products, isLoading } = useProductsByCategory(categoryId, {
+  // Kategoriye göre ürünleri çek - yeni endpoint kullanıyor
+  const { data: productsData, isLoading } = useGetAllProducts({
     page: 0,
     pageSize: 12,
+    subCategoryIds: categoryId ? [categoryId] : undefined,
     enabled: !!categoryId,
   });
 
   // Mevcut ürünü listeden çıkar ve maksimum 8 ürün göster
   const filteredProducts = useMemo(() => {
-    if (!products?.items) return [];
-    return products.items
+    if (!productsData?.items) return [];
+    return productsData.items
       .filter((product: Product) => product.id !== currentProductId)
       .slice(0, 8);
-  }, [products?.items, currentProductId]);
+  }, [productsData?.items, currentProductId]);
 
   // ProductCard ile aynı mantıkta Quick View state'leri
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);

@@ -10,31 +10,25 @@ export const useDeleteProduct = () => {
     const { mutateAsync, isPending } = useMyMutation<string>();
 
     const deleteProduct = async (productId: string) => {
-        try {
-            await mutateAsync({
-                url: `${DELETE_PRODUCT}?Id=${productId}`,
-                method: HttpMethod.DELETE
-            }, {
-                onSuccess: () => {
-                    toast.success('Ürün başarıyla silindi');
-                    queryClient.invalidateQueries({ queryKey: [QueryKeys.ALL_PRODUCTS] });
-                    queryClient.invalidateQueries({ queryKey: [QueryKeys.PRODUCT_LIST] });
-                    queryClient.invalidateQueries({
-                        predicate: (query) => {
-                            const queryKey = query.queryKey;
-                            return Array.isArray(queryKey) &&
-                                queryKey[0] === QueryKeys.PRODUCT_LIST &&
-                                queryKey.length > 1;
-                        }
-                    });
-                },
-                onError: () => {
-                    toast.error('Ürün silinirken bir hata oluştu');
-                }
-            });
-        } catch (error) {
-            toast.error('Ürün silinirken bir hata oluştu');
-        }
+        await mutateAsync({
+            url: `${DELETE_PRODUCT}?Id=${productId}`,
+            method: HttpMethod.DELETE
+        }, {
+            onSuccess: () => {
+                toast.success('Ürün başarıyla silindi');
+                queryClient.invalidateQueries({ queryKey: [QueryKeys.ALL_PRODUCTS] });
+                queryClient.invalidateQueries({ queryKey: [QueryKeys.PRODUCT_LIST] });
+                queryClient.invalidateQueries({
+                    predicate: (query) => {
+                        const queryKey = query.queryKey;
+                        return Array.isArray(queryKey) &&
+                            queryKey[0] === QueryKeys.PRODUCT_LIST &&
+                            queryKey.length > 1;
+                    }
+                });
+            },
+            // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+        });
     };
 
     return {

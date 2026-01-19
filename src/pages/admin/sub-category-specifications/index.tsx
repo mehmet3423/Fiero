@@ -221,7 +221,7 @@ function SubCategorySpecifications() {
         // Gecikme ile refetch dene, hata olursa yerel state zaten boş dizi olarak ayarlandı
         setTimeout(() => {
           refetchSubCategorySpecifications().catch(() => {
-            console.log("Refetch failed, but UI is already updated");
+            // Refetch failed, but UI is already updated
           });
         }, 300);
       }

@@ -13,7 +13,7 @@ import {
 } from "@/constants/enums/SortOptions";
 import { Product, TechnicalDetail } from "@/constants/models/Product";
 import { SubCategorySpecification } from "@/constants/models/SubCategorySpecification";
-import { useCategories } from "@/hooks/services/categories/useCategories";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
 import { useGetAllOutletProducts } from "@/hooks/services/products/useGetAllOutletProducts";
 import { useSubCategorySpecifications } from "@/hooks/services/sub-category-specifications/useSubCategorySpecifications";
@@ -23,6 +23,7 @@ import ProductFilterSidebar from "@/components/product/ProductFilterSidebar";
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import Image from "next/image";
+import { useGetProductRatings } from "@/hooks/services/settings";
 
 declare global {
   interface Window {
@@ -88,10 +89,14 @@ interface ProductsProps {
 const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const { t } = useLanguage();
   const sortOptionLabels = SORT_OPTION_LABELS;
-  const [selectedMainCategoryId, setSelectedMainCategoryId] =
-    useState<string>("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] =
-    useState<string>("");
+  // Product ratings ayarını kontrol et
+  const { isRatingEnabled } = useGetProductRatings();
+  const [selectedMainCategoryIds, setSelectedMainCategoryIds] = useState<
+    string[]
+  >([]);
+  const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState<
+    string[]
+  >([]);
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
@@ -197,10 +202,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   useEffect(() => {
     if (categoryId && typeof categoryId === "string") {
-      setSelectedMainCategoryId(categoryId);
+      setSelectedMainCategoryIds([categoryId]);
     }
     if (subCategoryId && typeof subCategoryId === "string") {
-      setSelectedSubCategoryId(subCategoryId);
+      setSelectedSubCategoryIds([subCategoryId]);
     }
     if (page && typeof page === "string") {
       const pageNumber = parseInt(page, 10);
@@ -213,14 +218,16 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       setSearchTerm(decodeURIComponent(searchQuery));
     }
     if (!router.query.subCategoryId) {
-      setSelectedSubCategoryId("");
+      setSelectedSubCategoryIds([]);
     }
   }, [categoryId, subCategoryId, page, title, search]);
 
+  // Alt kategoriler için specifications - ilk seçili alt kategoriyi kullan
+  const firstSelectedSubCategoryId = selectedSubCategoryIds[0] || "";
   const {
     subCategorySpecifications,
     isLoading: subCategorySpecificationsLoading,
-  } = useSubCategorySpecifications(selectedSubCategoryId);
+  } = useSubCategorySpecifications(firstSelectedSubCategoryId);
 
   const [selectedSpecificationIds, setSelectedSpecificationIds] = useState<
     string[]
@@ -250,7 +257,9 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     }
   }, [selectedSpecificationIds, subCategorySpecifications]);
 
-  const { categories, isLoading: categoriesLoading } = useCategories();
+  const { categories: categoriesData, isLoading: categoriesLoading } =
+    useActiveCategories();
+  const categories = { items: categoriesData?.items || [] };
 
   // Kategorileri displayIndex'e göre sırala ve ilk 5'ini al
   const sortedCategories =
@@ -258,18 +267,22 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       ?.sort((a, b) => a.displayIndex - b.displayIndex)
       .slice(0, 5) || [];
 
-  const isOutletPage = selectedMainCategoryId === "outlet";
+  const isOutletPage = selectedMainCategoryIds.includes("outlet");
 
   const { data: allProducts, isLoading: allProductsLoading } =
     useGetAllProducts({
       page: displayPage - 1,
       pageSize: pageSize,
       searchTerm: searchTerm || undefined,
-      mainCategoryId: !isOutletPage
-        ? selectedMainCategoryId || undefined
+      mainCategoryIds: !isOutletPage
+        ? selectedMainCategoryIds.length > 0
+          ? selectedMainCategoryIds
+          : undefined
         : undefined,
-      subCategoryId: !isOutletPage
-        ? selectedSubCategoryId || undefined
+      subCategoryIds: !isOutletPage
+        ? selectedSubCategoryIds.length > 0
+          ? selectedSubCategoryIds
+          : undefined
         : undefined,
       ...sortParams,
       enabled: !isOutletPage,
@@ -284,21 +297,18 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       enabled: isOutletPage,
     });
 
-  const selectedMainCategory = useMemo(() => {
-    if (!categories?.items) return null;
-    return categories.items.find((cat) => cat.id === selectedMainCategoryId);
-  }, [categories, selectedMainCategoryId]);
-
+  // Seçili ana kategorilerin alt kategorilerini topla
   const subCategories = useMemo(() => {
-    if (!selectedMainCategory?.subCategories) return [];
-    return selectedMainCategory.subCategories;
-  }, [selectedMainCategory]);
-
-  useEffect(() => {
-    if (!router.query.subCategoryId) {
-      setSelectedSubCategoryId("");
-    }
-  }, [selectedMainCategoryId]);
+    if (!categories?.items || selectedMainCategoryIds.length === 0) return [];
+    const allSubCategories: any[] = [];
+    selectedMainCategoryIds.forEach((catId) => {
+      const category = categories.items.find((cat) => cat.id === catId);
+      if (category?.subCategories) {
+        allSubCategories.push(...category.subCategories);
+      }
+    });
+    return allSubCategories;
+  }, [categories, selectedMainCategoryIds]);
 
   useEffect(() => {
     setDisplayPage(1);
@@ -315,16 +325,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const apiProducts = (currentProductData?.items || []) as Product[];
   const actualPageSize = currentProductData?.size || pageSize;
   const totalCount = currentProductData?.count || 0;
-
-  // Debug için console.log ekleyelim
-  console.log("Debug Info:", {
-    currentProductData,
-    apiProducts: apiProducts?.length,
-    totalCount,
-    priceRange,
-    selectedFilters,
-    isLoading,
-  });
 
   useEffect(() => {
     if (apiProducts && apiProducts.length > 0) {
@@ -374,13 +374,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       });
     }
 
-    console.log("Filtered Products:", {
-      originalCount: apiProducts?.length,
-      filteredCount: filtered.length,
-      priceRange,
-      selectedFilters,
-    });
-
     return filtered;
   }, [apiProducts, selectedFilters, priceRange]);
 
@@ -393,56 +386,53 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
   const clearAllFilters = () => {
     setSelectedFilters({});
-    setSelectedMainCategoryId("");
-    setSelectedSubCategoryId("");
+    setSelectedMainCategoryIds([]);
+    setSelectedSubCategoryIds([]);
     setPriceRange([0, maxPossiblePrice]);
     setSelectedSpecificationIds([]);
     setDisplayPage(1);
   };
 
-  // Kategori değiştiğinde URL'yi güncelle
+  // Çoklu kategori seçimi - toggle mantığı
   const handleMainCategoryChange = (categoryId: string) => {
-    setSelectedMainCategoryId(categoryId);
-    setSelectedSubCategoryId(""); // Ana kategori değiştiğinde alt kategoriyi sıfırla
+    setSelectedMainCategoryIds((prev) => {
+      if (prev.includes(categoryId)) {
+        // Kategori seçiliyse kaldır
+        const newIds = prev.filter((id) => id !== categoryId);
+        // Alt kategorilerini de kaldır
+        if (newIds.length !== prev.length) {
+          const category = categories.items.find(
+            (cat) => cat.id === categoryId
+          );
+          if (category?.subCategories) {
+            const subCatIds = category.subCategories.map((sub) => sub.id);
+            setSelectedSubCategoryIds((subPrev) =>
+              subPrev.filter((id) => !subCatIds.includes(id))
+            );
+          }
+        }
+        return newIds;
+      } else {
+        // Kategori seçili değilse ekle
+        return [...prev, categoryId];
+      }
+    });
     setDisplayPage(1);
-
-    const newQuery = { ...router.query };
-    if (categoryId) {
-      newQuery.categoryId = categoryId;
-    } else {
-      delete newQuery.categoryId;
-    }
-    delete newQuery.subCategoryId; // Alt kategoriyi kaldır
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: newQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
   };
 
+  // Çoklu alt kategori seçimi - toggle mantığı
   const handleSubCategoryChange = (subCategoryId: string) => {
-    setSelectedSubCategoryId(subCategoryId);
+    setSelectedSubCategoryIds((prev) => {
+      if (prev.includes(subCategoryId)) {
+        // Alt kategori seçiliyse kaldır
+        return prev.filter((id) => id !== subCategoryId);
+      } else {
+        // Alt kategori seçili değilse ekle
+        return [...prev, subCategoryId];
+      }
+    });
+    setSelectedSpecificationIds([]); // Alt kategori değiştiğinde specification'ları temizle
     setDisplayPage(1);
-
-    const newQuery = { ...router.query };
-    if (subCategoryId) {
-      newQuery.subCategoryId = subCategoryId;
-    } else {
-      delete newQuery.subCategoryId;
-    }
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: newQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
   };
 
   const handlePageChange = useCallback(
@@ -491,8 +481,8 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
           onSpecificationChange={setSelectedSpecificationIds}
           priceRange={priceRange}
           onPriceRangeChange={setPriceRange}
-          selectedMainCategoryId={selectedMainCategoryId}
-          selectedSubCategoryId={selectedSubCategoryId}
+          selectedMainCategoryIds={selectedMainCategoryIds}
+          selectedSubCategoryIds={selectedSubCategoryIds}
           onMainCategoryChange={handleMainCategoryChange}
           onSubCategoryChange={handleSubCategoryChange}
         />
@@ -584,7 +574,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       </div>
       {/* /Page Title */}
       {/* Collection Slider Section */}
-      <section className="flat-spacing-3 pb_0">
+      {/* <section className="flat-spacing-3 pb_0">
         <div className="container">
           <div className="hover-sw-nav">
             <div
@@ -638,7 +628,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                         <div className="collection-item style-2 hover-img">
                           <div className="collection-inner">
                             <Link
-                              href={`/products?categoryId=${category.id}`}
+                              href={
+                                category.seo?.slug
+                                  ? `/category/${category.seo.slug}`
+                                  : `/products?categoryId=${category.id}`
+                              }
                               className="collection-image img-style"
                             >
                               <Image
@@ -668,7 +662,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                             </Link>
                             <div className="collection-content ">
                               <Link
-                                href={`/products?categoryId=${category.id}`}
+                                href={
+                                  category.seo?.slug
+                                    ? `/category/${category.seo.slug}`
+                                    : `/products?categoryId=${category.id}`
+                                }
                                 className="tf-btn collection-title hover-icon fs-15 rounded-full"
                               >
                                 <span>{category.name}</span>
@@ -682,7 +680,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
               </div>
             </div>
 
-            {/* Navigation Buttons */}
             <div className="nav-sw nav-prev-slider nav-next-collection box-icon w_46 round">
               <span className="icon icon-arrow-right"></span>
             </div>
@@ -690,11 +687,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
               <span className="icon icon-arrow-left"></span>
             </div>
 
-            {/* Pagination Dots */}
             <div className="sw-dots style-2 sw-pagination-collection justify-content-center"></div>
           </div>
         </div>
-      </section>
+      </section> */}
       {/* /Collection Slider Section */}
 
       {/* Section Product */}
@@ -704,10 +700,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
             <div className="col-12 col-md-3 mb-2 mb-md-0">
               <a
                 href="#"
-                data-bs-toggle="offcanvas"
-                aria-controls="offcanvasLeft"
                 className="tf-btn-filter"
-                onClick={toggleFilters}
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleFilters();
+                }}
               >
                 <span className="icon icon-filter"></span>
                 <span className="text">{t("productsPage.filterButton")}</span>
@@ -785,13 +782,16 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                   key={product.id}
                   className={
                     grid === 2
-                      ? "col-12 col-md-6 d-flex"
+                      ? "col-6 col-md-6 d-flex"
                       : grid === 3
-                      ? "col-12 col-md-4 d-flex"
-                      : "col-12 col-sm-6 col-md-4 col-lg-3 d-flex"
+                      ? "col-6 col-md-4 d-flex"
+                      : "col-6 col-sm-6 col-md-4 col-lg-3 d-flex"
                   }
                 >
-                  <ProductCard product={product} />
+                  <ProductCard
+                    product={product}
+                    isRatingEnabled={isRatingEnabled}
+                  />
                 </div>
               ))
             ) : (

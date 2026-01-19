@@ -11,11 +11,11 @@ const fetchStockReport = async (
 ): Promise<StockReportResponse> => {
   const url = new URL(GET_STOCK_REPORT);
 
-  if (params?.page) {
+  if (params?.page !== undefined) {
     url.searchParams.append("Page", params.page.toString());
   }
 
-  if (params?.pageSize) {
+  if (params?.pageSize !== undefined) {
     url.searchParams.append("PageSize", params.pageSize.toString());
   }
 

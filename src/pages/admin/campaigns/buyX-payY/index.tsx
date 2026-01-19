@@ -78,7 +78,6 @@ const BuyXPayYDiscountPage = () => {
     }
     return [];
   };
-  console.log("buyXPayYDiscounts", buyXPayYDiscounts);
 
   return (
     <div className="container-fluid">

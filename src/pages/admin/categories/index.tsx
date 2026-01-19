@@ -45,8 +45,10 @@ function CategoryManagementPage() {
 
   const [newMainCategoryName, setNewMainCategoryName] = useState("");
   const [newMainCategoryNameEn, setNewMainCategoryNameEn] = useState("");
+  const [newMainCategoryIsActive, setNewMainCategoryIsActive] = useState<boolean>(true);
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
   const [newSubCategoryNameEn, setNewSubCategoryNameEn] = useState("");
+  const [newSubCategoryIsActive, setNewSubCategoryIsActive] = useState<boolean>(true);
   const [mainCategoryError, setMainCategoryError] = useState<string | null>(
     null
   );
@@ -68,6 +70,7 @@ function CategoryManagementPage() {
     mainCategoryId: string;
     displayIndex: number;
     imageUrl?: string;
+    isActive?: boolean;
   } | null>(null);
   const [deletingMainCategory, setDeletingMainCategory] = useState<
     string | null
@@ -109,7 +112,14 @@ function CategoryManagementPage() {
       setMainCategories(updated);
 
       updated.forEach((cat) => {
-        updateMainCategory(cat.id, cat.name, cat.index);
+        updateMainCategory(
+          cat.id,
+          cat.name,
+          cat.index,
+          cat.imageUrl,
+          cat.nameEn || undefined,
+          cat.isActive
+        );
       });
     }
     if (source.droppableId === "subCategories" && selectedMainCategory) {
@@ -129,7 +139,8 @@ function CategoryManagementPage() {
           sub.name,
           sub.index,
           sub.imageUrl,
-          sub.nameEn || undefined
+          sub.nameEn || undefined,
+          sub.isActive
         );
       });
     }
@@ -226,7 +237,8 @@ function CategoryManagementPage() {
       newMainCategoryName,
       newMainCategoryNameEn || undefined,
       index,
-      imageUrl || ""
+      imageUrl || "",
+      newMainCategoryIsActive
     );
     setNewMainCategoryName("");
     setNewMainCategoryNameEn("");
@@ -257,7 +269,8 @@ function CategoryManagementPage() {
       newSubCategoryName,
       selectedMainCategory.id,
       newSubCategoryNameEn || undefined,
-      imageUrl
+      imageUrl,
+      newSubCategoryIsActive
     );
     setNewSubCategoryName("");
     setNewSubCategoryNameEn("");
@@ -288,7 +301,8 @@ function CategoryManagementPage() {
       editingMainCategory.name,
       editingMainCategory.displayIndex,
       imageUrl ?? undefined,
-      editingMainCategory.nameEn || undefined
+      editingMainCategory.nameEn || undefined,
+      editingMainCategory.isActive
     );
     setEditingMainCategory(null);
     setNewMainCategoryImageUrl("");
@@ -312,7 +326,8 @@ function CategoryManagementPage() {
       editingSubCategory.name,
       editingSubCategory.displayIndex,
       imageUrl,
-      editingSubCategory.nameEn || undefined
+      editingSubCategory.nameEn || undefined,
+      editingSubCategory.isActive
     );
     setEditingSubCategory(null);
     setNewSubCategoryImageUrl("");
@@ -664,6 +679,8 @@ function CategoryManagementPage() {
                                                   selectedMainCategory.id,
                                                 displayIndex:
                                                   subCategory.displayIndex,
+                                                imageUrl: subCategory.imageUrl,
+                                                isActive: subCategory.isActive,
                                               });
                                               $("#editSubCategoryModal").modal(
                                                 "show"
@@ -723,6 +740,7 @@ function CategoryManagementPage() {
         onClose={() => {
           setNewMainCategoryName("");
           setNewMainCategoryNameEn("");
+          setNewMainCategoryIsActive(true);
           setNewMainCategoryImageUrl("");
           mainImageUpload.setSelectedFile(null);
           mainImageUpload.setImageUrl("");
@@ -838,6 +856,20 @@ function CategoryManagementPage() {
               </small>
             </div>
           )}
+        </div>
+        <div className="mt-3">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="newMainCategoryIsActive"
+              checked={newMainCategoryIsActive}
+              onChange={(e) => setNewMainCategoryIsActive(e.target.checked)}
+            />
+            <label className="form-check-label text-dark" htmlFor="newMainCategoryIsActive">
+              Aktif
+            </label>
+          </div>
         </div>
       </GeneralModal>
 
@@ -965,6 +997,24 @@ function CategoryManagementPage() {
             </div>
           )}
         </div>
+        <div className="mt-3">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="editMainCategoryIsActive"
+              checked={editingMainCategory?.isActive ?? true}
+              onChange={(e) =>
+                setEditingMainCategory((prev) =>
+                  prev ? { ...prev, isActive: e.target.checked } : null
+                )
+              }
+            />
+            <label className="form-check-label text-dark" htmlFor="editMainCategoryIsActive">
+              Aktif
+            </label>
+          </div>
+        </div>
       </GeneralModal>
 
       {/* Yeni Alt Kategori Modal */}
@@ -974,6 +1024,7 @@ function CategoryManagementPage() {
         onClose={() => {
           setNewSubCategoryName("");
           setNewSubCategoryNameEn("");
+          setNewSubCategoryIsActive(true);
           setNewSubCategoryImageUrl("");
           subImageUpload.setSelectedFile(null);
           subImageUpload.setImageUrl("");
@@ -1086,6 +1137,20 @@ function CategoryManagementPage() {
               </small>
             </div>
           )}
+        </div>
+        <div className="mt-3">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="newSubCategoryIsActive"
+              checked={newSubCategoryIsActive}
+              onChange={(e) => setNewSubCategoryIsActive(e.target.checked)}
+            />
+            <label className="form-check-label text-dark" htmlFor="newSubCategoryIsActive">
+              Aktif
+            </label>
+          </div>
         </div>
       </GeneralModal>
 
@@ -1209,6 +1274,24 @@ function CategoryManagementPage() {
               </small>
             </div>
           )}
+        </div>
+        <div className="mt-3">
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="editSubCategoryIsActive"
+              checked={editingSubCategory?.isActive ?? true}
+              onChange={(e) =>
+                setEditingSubCategory((prev) =>
+                  prev ? { ...prev, isActive: e.target.checked } : null
+                )
+              }
+            />
+            <label className="form-check-label text-dark" htmlFor="editSubCategoryIsActive">
+              Aktif
+            </label>
+          </div>
         </div>
       </GeneralModal>
 

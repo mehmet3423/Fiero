@@ -4,6 +4,9 @@ import { uploadImageToCloudinary } from "@/helpers/imageUpload";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useGetMainCategories } from "@/hooks/services/categories/useGetMainCategories";
+import { useSubCategoriesByMainCategoryId } from "@/hooks/services/categories/useSubCategoriesByMainCategoryId";
+import { useMainCategoriesWithSubCategories } from "@/hooks/services/categories/useMainCategoriesWithSubCategories";
 
 interface EditProductFormProps {
   product: Product;
@@ -37,7 +40,20 @@ export default function EditProductForm({
     isAvailable: product.isAvailable,
     refundable: product.refundable,
     isOutlet: product.isOutlet,
+    currencyType: (product as any).currencyType ? Number((product as any).currencyType) : undefined,
+    likeCount: (product as any).likeCount || undefined,
+    saleCount: (product as any).saleCount || undefined,
+    taxRate: (product as any).taxRate || undefined,
   });
+
+  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string>("");
+  
+  // Category hooks
+  const { data: mainCategories, isLoading: isMainCategoriesLoading } = useGetMainCategories();
+  const { data: subCategories, isLoading: isSubCategoriesLoading } = useSubCategoriesByMainCategoryId(
+    selectedMainCategoryId || null
+  );
+  const { data: mainCategoriesWithSubs } = useMainCategoriesWithSubCategories();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedContentImages, setSelectedContentImages] = useState<File[]>(
@@ -59,6 +75,21 @@ export default function EditProductForm({
       icon: string;
     }>
   >([]);
+
+  // Product yüklendiğinde mevcut kategoriyi bul
+  useEffect(() => {
+    if (mainCategoriesWithSubs && mainCategoriesWithSubs.length > 0 && product.subCategoryId) {
+      for (const mainCategory of mainCategoriesWithSubs) {
+        const foundSubCategory = mainCategory.subCategories.find(
+          (sub) => sub.id === product.subCategoryId
+        );
+        if (foundSubCategory) {
+          setSelectedMainCategoryId(mainCategory.id);
+          break;
+        }
+      }
+    }
+  }, [mainCategoriesWithSubs, product.subCategoryId]);
 
   useEffect(() => {
     try {
@@ -118,7 +149,11 @@ export default function EditProductForm({
       }> = [];
 
       if (product.productInfos && Array.isArray(product.productInfos)) {
-        productInfosData = product.productInfos;
+        productInfosData = product.productInfos.map((info: any) => ({
+          ...info,
+          titleEn: info.titleEn ?? undefined,
+          descriptionEn: info.descriptionEn ?? undefined,
+        }));
       } else if (
         product.productInfos &&
         typeof product.productInfos === "object" &&
@@ -126,7 +161,11 @@ export default function EditProductForm({
       ) {
         const values = (product.productInfos as any).$values;
         if (Array.isArray(values)) {
-          productInfosData = values;
+          productInfosData = values.map((info: any) => ({
+            ...info,
+            titleEn: info.titleEn ?? undefined,
+            descriptionEn: info.descriptionEn ?? undefined,
+          }));
         }
       }
 
@@ -153,6 +192,10 @@ export default function EditProductForm({
         isAvailable: product.isAvailable,
         refundable: product.refundable,
         isOutlet: product.isOutlet,
+        currencyType: (product as any).currencyType ? Number((product as any).currencyType) : undefined,
+        likeCount: (product as any).likeCount || undefined,
+        saleCount: (product as any).saleCount || undefined,
+        taxRate: (product as any).taxRate || undefined,
       });
     } catch (error) {
       console.error("Resim verilerini işlerken hata oluştu:", error);
@@ -432,7 +475,57 @@ export default function EditProductForm({
       </div>
 
       <div className="row">
-        <div className="col-md-4">
+        <div className="col-md-6">
+          <div className="form-group">
+            <label>Ana Kategori:</label>
+            <select
+              className="form-control"
+              value={selectedMainCategoryId}
+              onChange={(e) => {
+                const mainCategoryId = e.target.value;
+                setSelectedMainCategoryId(mainCategoryId);
+                // Reset subcategory when main category changes
+                if (mainCategoryId !== selectedMainCategoryId) {
+                  setFormData({ ...formData, subCategoryId: "" });
+                }
+              }}
+              disabled={isMainCategoriesLoading}
+              required
+            >
+              <option value="">Kategori Seçin</option>
+              {mainCategories?.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="form-group">
+            <label>Alt Kategori:</label>
+            <select
+              className="form-control"
+              value={formData.subCategoryId}
+              onChange={(e) =>
+                setFormData({ ...formData, subCategoryId: e.target.value })
+              }
+              disabled={!selectedMainCategoryId || isSubCategoriesLoading}
+              required
+            >
+              <option value="">Alt Kategori Seçin</option>
+              {subCategories?.map((subCategory) => (
+                <option key={subCategory.id} value={subCategory.id}>
+                  {subCategory.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-3">
           <div className="form-group">
             <label>Fiyat:</label>
             <input
@@ -446,7 +539,7 @@ export default function EditProductForm({
             />
           </div>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-3">
           <div className="form-group">
             <label>Stok Miktarı:</label>
             <input
@@ -463,7 +556,7 @@ export default function EditProductForm({
             />
           </div>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-3">
           <div className="form-group">
             <label>Barkod:</label>
             <input
@@ -482,6 +575,24 @@ export default function EditProductForm({
               required
             />
             <small className="text-muted">Barkod 13 haneli olmalıdır</small>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="form-group">
+            <label>KDV Oranı (%):</label>
+            <input
+              type="number"
+              className="form-control"
+              value={formData.taxRate || 0}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  taxRate: Number(e.target.value),
+                })
+              }
+              min={0}
+              max={100}
+            />
           </div>
         </div>
       </div>

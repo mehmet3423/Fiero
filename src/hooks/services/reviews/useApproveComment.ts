@@ -10,28 +10,21 @@ export const useApproveComment = () => {
   const queryClient = useQueryClient();
 
   const approveComment = async (commentId: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: `${APPROVE_COMMENT}?commentId=${commentId}`,
-          method: HttpMethod.POST,
+    await mutateAsync(
+      {
+        url: `${APPROVE_COMMENT}?commentId=${commentId}`,
+        method: HttpMethod.POST,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Yorum onaylandı");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.COMMENT_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Yorum onaylandı");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.COMMENT_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Yorum onaylanırken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Approve comment error:", error);
-      toast.error("Yorum onaylanırken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
   return { approveComment, isPending };
 };

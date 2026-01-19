@@ -18,33 +18,26 @@ export const useApproveRefundRequest = () => {
     orderId: string,
     note?: string
   ) => {
-    try {
-      // TODO: Update this when backend endpoint is ready
-      // For now, this is a placeholder
-      const response = await mutateAsync(
-        {
-          url: `${APPROVE_REFUND_REQUEST_ENDPOINT}?orderId=${orderId}`,
-          method: HttpMethod.POST,
-          data: note ? { note } : undefined,
+    // TODO: Update this when backend endpoint is ready
+    // For now, this is a placeholder
+    const response = await mutateAsync(
+      {
+        url: `${APPROVE_REFUND_REQUEST_ENDPOINT}?orderId=${orderId}`,
+        method: HttpMethod.POST,
+        data: note ? { note } : undefined,
+      },
+      {
+        onSuccess: () => {
+          toast.success("İade talebi başarıyla onaylandı");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.REFUND_REQUESTED_ORDER_ITEMS],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("İade talebi başarıyla onaylandı");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.REFUND_REQUESTED_ORDER_ITEMS],
-            });
-          },
-          onError: () => {
-            toast.error("İade talebi onaylanırken bir hata oluştu");
-          },
-        }
-      );
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error("Approve refund request error:", error);
-      throw error;
-    }
+    return response.data;
   };
 
   return { approveRefundRequest, isPending };

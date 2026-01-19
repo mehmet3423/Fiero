@@ -4,7 +4,7 @@ import {
   SpecificationOption,
   SubCategorySpecification,
 } from "@/constants/models/SubCategorySpecification";
-import { useCategories } from "@/hooks/services/categories/useCategories";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useAddProduct } from "@/hooks/services/products/useAddProduct";
 import { useSubCategorySpecifications } from "@/hooks/services/sub-category-specifications/useSubCategorySpecifications";
 import Image from "next/image";
@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 
 const AddProductPage: React.FC = () => {
   const { addProduct, isPending } = useAddProduct();
-  const { categories, isLoading: categoriesLoading } = useCategories();
+  const { categories, isLoading: categoriesLoading } = useActiveCategories();
 
   const [selectedMainCategoryId, setSelectedMainCategoryId] =
     useState<string>("");
@@ -140,7 +140,7 @@ const AddProductPage: React.FC = () => {
         const imageUrl = URL.createObjectURL(file);
         setProduct((prev) => ({ ...prev, baseImageUrl: imageUrl }));
       } catch (error) {
-        console.log(error);
+        // Error handled silently
       }
     }
   };

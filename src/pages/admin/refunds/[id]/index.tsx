@@ -20,7 +20,6 @@ function RefundDetailPage() {
     if (!id || !refundRequests) return null;
     return refundRequests.find((r) => r.id === id) || null;
   }, [id, refundRequests]);
-  console.log("  refundRequest:", refundRequest);
   const [activeTab, setActiveTab] = useState<
     "details" | "items" | "customer" | "addresses"
   >("details");

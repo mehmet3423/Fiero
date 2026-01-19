@@ -11,11 +11,11 @@ const fetchProductSalesReport = async (
 ): Promise<ProductSalesReportResponse> => {
   const url = new URL(GET_PRODUCT_SALES_REPORT);
 
-  if (params?.page) {
+  if (params?.page !== undefined) {
     url.searchParams.append("page", params.page.toString());
   }
 
-  if (params?.pageSize) {
+  if (params?.pageSize !== undefined) {
     url.searchParams.append("pageSize", params.pageSize.toString());
   }
 

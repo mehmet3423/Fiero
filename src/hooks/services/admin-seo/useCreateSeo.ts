@@ -2,6 +2,7 @@ import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { CREATE_SEO } from "@/constants/links";
 import useMyMutation from "@/hooks/useMyMutation";
 import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 interface CreateSeoParams {
   title?: string;
@@ -9,6 +10,11 @@ interface CreateSeoParams {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string;
+  titleEn?: string;
+  descriptionEn?: string;
+  metaTitleEn?: string;
+  metaDescriptionEn?: string;
+  keywordsEn?: string;
   canonical?: string;
   robotsMetaTag?: string;
   author?: string;
@@ -38,6 +44,7 @@ export const useCreateSeo = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          showErrorToast: false, // Disable automatic toast, we'll handle it manually
         },
         {
           onSuccess: () => {
@@ -46,7 +53,34 @@ export const useCreateSeo = () => {
         }
       );
     } catch (error) {
-      toast.error("SEO oluşturulurken bir hata oluştu");
+      // Extract error message from backend response
+      const axiosError = error as AxiosError<any>;
+      let errorMessage = "SEO oluşturulurken bir hata oluştu.";
+      
+      if (axiosError?.response?.data) {
+        if (Array.isArray(axiosError.response.data)) {
+          errorMessage = axiosError.response.data.join(" | ");
+        } else if (
+          typeof axiosError.response.data === "object" &&
+          axiosError.response.data.message
+        ) {
+          errorMessage = axiosError.response.data.message;
+        } else if (
+          typeof axiosError.response.data === "object" &&
+          axiosError.response.data.detail
+        ) {
+          errorMessage = axiosError.response.data.detail;
+        } else if (typeof axiosError.response.data === "string") {
+          errorMessage = axiosError.response.data;
+        }
+      } else if (axiosError?.message) {
+        errorMessage = axiosError.message;
+      }
+      
+      // Re-throw error with message so the component can handle it
+      const errorWithMessage = new Error(errorMessage);
+      (errorWithMessage as any).response = axiosError?.response;
+      throw errorWithMessage;
     }
   };
 

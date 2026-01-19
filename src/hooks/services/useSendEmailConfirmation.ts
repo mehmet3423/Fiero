@@ -27,8 +27,6 @@ export const useSendEmailConfirmation = () => {
       },
       {
         onSuccess: (res) => {
-          console.log("Email confirmation response:", res.data);
-
           // Check if response has isSucceed property
           if (res.data && typeof res.data.isSucceed === "boolean") {
             if (res.data.isSucceed) {
@@ -40,18 +38,16 @@ export const useSendEmailConfirmation = () => {
             }
           } else {
             // Some APIs just return 200 without isSucceed property
-            console.log("API returned success without isSucceed property");
             toast.success("Onay e-postası başarıyla gönderildi!");
             onSuccess?.();
           }
         },
         onError: (error) => {
-          console.error("Email confirmation error:", error);
-          toast.error(
-            error.response?.data?.detail ||
-              error.response?.data?.message ||
-              "E-posta gönderilirken bir hata oluştu!"
-          );
+          // Sadece backend mesajını göster
+          const errorMessage = error.response?.data?.detail || error.response?.data?.message;
+          if (errorMessage) {
+            toast.error(errorMessage);
+          }
         },
       }
     );

@@ -14,7 +14,8 @@ export const useUpdateMainCategory = () => {
     name: string,
     displayIndex: number,
     imageUrl?: string,
-    nameEn?: string
+    nameEn?: string,
+    isActive?: boolean
   ) => {
     try {
       const params = new URLSearchParams();
@@ -30,6 +31,10 @@ export const useUpdateMainCategory = () => {
         params.append("NameEn", nameEn);
       }
 
+      if (isActive !== undefined) {
+        params.append("IsActive", isActive.toString());
+      }
+
       await mutateAsync(
         {
           url: `${UPDATE_MAIN_CATEGORY}?${params.toString()}`,
@@ -40,6 +45,9 @@ export const useUpdateMainCategory = () => {
             toast.success("Ana kategori başarıyla güncellendi");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
+            });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.ACTIVE_MAIN_CATEGORY_LIST],
             });
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],

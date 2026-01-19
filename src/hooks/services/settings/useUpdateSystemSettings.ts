@@ -12,8 +12,6 @@ export const useUpdateSystemSettings = () => {
 
   const updateSystemSettings = async (data: UpdateSettingsRequest) => {
     try {
-      console.log("Sending update request:", data);
-
       await mutateAsync(
         {
           url: UPDATE_SYSTEM_SETTINGS,

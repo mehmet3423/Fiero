@@ -40,8 +40,10 @@ export default function Document() {
           href="/assets/site/images/nors-sub-logo.png"
         />
 
-        <meta name="apple-mobile-web-app-title" content="Nors" />
-        <meta name="application-name" content="Nors" />
+        <meta name="apple-mobile-web-app-title" content="Eser Leather" />
+        <meta name="application-name" content="Eser Leather" />
+        <meta name="author" content="Eser Leather" />
+        <meta name="publisher" content="Eser Leather" />
         <meta name="msapplication-TileColor" content="#cc9966" />
         <meta
           name="msapplication-config"

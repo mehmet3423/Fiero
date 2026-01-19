@@ -13,7 +13,8 @@ export const useCreateSubCategory = () => {
     name: string,
     mainCategoryId: string,
     nameEn?: string,
-    imageUrl?: string
+    imageUrl?: string,
+    isActive?: boolean
   ) => {
     try {
       await mutateAsync(
@@ -24,6 +25,7 @@ export const useCreateSubCategory = () => {
             name: name,
             nameEn: nameEn,
             imageUrl: imageUrl || "",
+            isActive: isActive !== undefined ? isActive : true,
             createSEORequest: {
               slug: "string",
               metaTitle: "string",

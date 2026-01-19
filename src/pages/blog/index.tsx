@@ -10,7 +10,7 @@ const BlogPage: React.FC = () => {
   const { contents, isLoading } = useGeneralContents(GeneralContentType.BlogPosts);
 
   const mappedPosts = useMemo(() => {
-    const items = contents?.items || [];
+    const items = contents || [];
     return items
       .slice()
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))

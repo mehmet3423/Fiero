@@ -9,7 +9,8 @@ interface LoginProps {
 export default function Login({ onSuccess }: LoginProps) {
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
+    remember: false,
   });
 
   const { handleLogin, isPending } = useLogin();
@@ -79,6 +80,29 @@ export default function Login({ onSuccess }: LoginProps) {
             ></i>
           </div>
         </div>
+
+        <div className="form-group mb-3">
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              style={{ marginTop: "7px", cursor: "pointer" }}
+              id="remember"
+              checked={formData.remember}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, remember: e.target.checked }))
+              }
+            />
+            <label
+              className="form-check-label ml-2"
+              htmlFor="remember"
+              style={{ cursor: "pointer" }}
+            >
+              Beni Hatırla
+            </label>
+          </div>
+        </div>
+
         <button
           type="submit"
           className="btn btn-outline-primary-2 w-100 "

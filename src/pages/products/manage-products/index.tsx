@@ -2,9 +2,9 @@
 import GeneralModal from "@/components/shared/GeneralModal";
 import { PathEnums } from "@/constants/enums/PathEnums";
 import { Product } from "@/constants/models/Product";
-import { useCategories } from "@/hooks/services/categories/useCategories";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useDeleteProduct } from "@/hooks/services/products/useDeleteProduct";
-import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
+import { useGetAllProductsAdmin } from "@/hooks/services/products/useGetAllProductsAdmin";
 import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,11 +18,11 @@ const ManageProductsPage: React.FC = () => {
     useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { categories, isLoading: categoriesLoading } = useCategories();
+  const { categories, isLoading: categoriesLoading } = useActiveCategories();
   const { products: categoryProducts, isLoading: productsLoading } =
     useProductsByCategory(selectedSubCategoryId);
   const { data: allProducts, isLoading: allProductsLoading } =
-    useGetAllProducts();
+    useGetAllProductsAdmin();
 
   const { deleteProduct, isPending: isDeleting } = useDeleteProduct();
   const [deletingProductId, setDeletingProductId] = useState<string | null>(

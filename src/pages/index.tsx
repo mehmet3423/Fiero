@@ -175,7 +175,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
           title1 = sortedItems[0].title || "Ecomus's Favorites";
           productIds1 = JSON.parse(sortedItems[0].content || "[]");
         } catch (error) {
-          console.log("Parse error:", error);
           productIds1 = [];
         }
       }
@@ -186,7 +185,6 @@ const Home: React.FC<HomeProps> = ({ seoData }) => {
           title2 = sortedItems[1].title || "Ecomus's Favorites";
           productIds2 = JSON.parse(sortedItems[1].content || "[]");
         } catch (error) {
-          console.log("Parse error 2:", error);
           productIds2 = [];
         }
       } else {

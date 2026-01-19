@@ -560,7 +560,7 @@ function ShoppingCartPage() {
                                   </div>
                                 )}
                               <Link
-                                href={`/products/${item.id}`}
+                                href={item.seo?.slug ? `/products/${item.seo.slug}` : `/products/${item.id}`}
                                 className="img-box"
                               >
                                 <Image
@@ -580,7 +580,7 @@ function ShoppingCartPage() {
                               </Link>
                               <div className="cart-info">
                                 <Link
-                                  href={`/products/${item.id}`}
+                                  href={item.seo?.slug ? `/products/${item.seo.slug}` : `/products/${item.id}`}
                                   className="cart-title link"
                                 >
                                   {item.title}

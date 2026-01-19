@@ -14,6 +14,11 @@ interface SeoFormData {
   metaTitle: string;
   metaDescription: string;
   keywords: string;
+  titleEn: string;
+  descriptionEn: string;
+  metaTitleEn: string;
+  metaDescriptionEn: string;
+  keywordsEn: string;
   canonical: string;
   robotsMetaTag: string;
   author: string;
@@ -186,6 +191,11 @@ function CreateSeoPage() {
     metaTitle: "",
     metaDescription: "",
     keywords: "",
+    titleEn: "",
+    descriptionEn: "",
+    metaTitleEn: "",
+    metaDescriptionEn: "",
+    keywordsEn: "",
     canonical: "",
     robotsMetaTag: "index, follow",
     author: "",
@@ -272,13 +282,11 @@ function CreateSeoPage() {
   ) => {
     setSeoType(type);
     if (type === "homepage") {
-      // Ana sayfa seçilirse isHomePage true, diğer id alanları temizlenir
-      const baseUrl =
-        typeof window !== "undefined" ? window.location.origin + "/" : "";
+      // Ana sayfa seçilirse isHomePage true, canonical boş bırakılır (backend otomatik "/" yapar)
       setFormData((prev) => ({
         ...prev,
         isHomePage: true,
-        canonical: baseUrl,
+        canonical: "", // Anasayfa için canonical boş bırakılır, backend otomatik "/" olarak işler
         productId: "",
         mainCategoryId: "",
         subCategoryId: "",
@@ -401,6 +409,11 @@ function CreateSeoPage() {
         metaTitle: data.metaTitle || null,
         metaDescription: data.metaDescription || null,
         keywords: data.keywords || null,
+        titleEn: data.titleEn || null,
+        descriptionEn: data.descriptionEn || null,
+        metaTitleEn: data.metaTitleEn || null,
+        metaDescriptionEn: data.metaDescriptionEn || null,
+        keywordsEn: data.keywordsEn || null,
         canonical: null,
         robotsMetaTag: data.robotsMetaTag || null,
         author: data.author || null,
@@ -418,7 +431,10 @@ function CreateSeoPage() {
         baseUrl: baseUrl,
       };
 
-      if (type === "general") {
+      if (type === "homepage") {
+        // Anasayfa için canonical "/" olarak gönder
+        mapped.canonical = "/";
+      } else if (type === "general") {
         // Sadece path gönder (örn. 'about-us')
         mapped.canonical = data.canonical
           ? data.canonical.replace(/^\//, "")
@@ -438,7 +454,6 @@ function CreateSeoPage() {
             ? data.subCategoryId
             : null;
       }
-      // Diğerlerinde canonical null kalır
       return mapped;
     };
 
@@ -831,6 +846,158 @@ function CreateSeoPage() {
                         }`}
                       >
                         {formData.keywords.length}/255 karakter - Virgülle
+                        ayırın
+                      </small>
+                    </div>
+
+                    {/* İngilizce SEO Bilgileri */}
+                    <h6 className="fw-bold mb-3 text-info mt-4">
+                      İngilizce SEO Bilgileri (English SEO)
+                    </h6>
+
+                    <div className="mb-3">
+                      <label className="form-label">Başlık (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70)
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.titleEn}
+                        onChange={(e) =>
+                          handleInputChange("titleEn", e.target.value)
+                        }
+                        placeholder="Page title (5-70 characters)"
+                        maxLength={100}
+                      />
+                      <small
+                        className={`${
+                          formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70)
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.titleEn.length}/70 karakter
+                        {formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70) &&
+                          " (SEO için ideal değil)"}
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Açıklama (EN)</label>
+                      <textarea
+                        className={`form-control ${
+                          formData.descriptionEn.length > 160
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.descriptionEn}
+                        onChange={(e) =>
+                          handleInputChange("descriptionEn", e.target.value)
+                        }
+                        placeholder="Page description"
+                        rows={3}
+                        maxLength={160}
+                      />
+                      <small
+                        className={`${
+                          formData.descriptionEn.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.descriptionEn.length}/160 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Meta Başlık (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.metaTitleEn.length > 70
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.metaTitleEn}
+                        onChange={(e) =>
+                          handleInputChange("metaTitleEn", e.target.value)
+                        }
+                        placeholder="Meta title (maximum 70 characters)"
+                        maxLength={70}
+                      />
+                      <small
+                        className={`${
+                          formData.metaTitleEn.length > 70
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.metaTitleEn.length}/70 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Meta Açıklama (EN)</label>
+                      <textarea
+                        className={`form-control ${
+                          formData.metaDescriptionEn.length > 160
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.metaDescriptionEn}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "metaDescriptionEn",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Meta description (maximum 160 characters)"
+                        rows={3}
+                        maxLength={160}
+                      />
+                      <small
+                        className={`${
+                          formData.metaDescriptionEn.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.metaDescriptionEn.length}/160 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Anahtar Kelimeler (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.keywordsEn.length > 255
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.keywordsEn}
+                        onChange={(e) =>
+                          handleInputChange("keywordsEn", e.target.value)
+                        }
+                        placeholder="keyword1, keyword2, keyword3"
+                        maxLength={255}
+                      />
+                      <small
+                        className={`${
+                          formData.keywordsEn.length > 255
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.keywordsEn.length}/255 karakter - Virgülle
                         ayırın
                       </small>
                     </div>

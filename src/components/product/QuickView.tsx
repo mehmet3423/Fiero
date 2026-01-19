@@ -17,9 +17,10 @@ interface QuickViewProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product;
+  isRatingEnabled?: boolean;
 }
 
-const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
+const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatingEnabled = true }) => {
   const { t } = useLanguage();
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [fullscreenInitialSlide, setFullscreenInitialSlide] = useState(0);
@@ -263,22 +264,56 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
         
         /* Mobile responsive */
         @media (max-width: 768px) {
+          .modal-dialog {
+            max-width: 100% !important;
+            margin: 0 !important;
+            height: 100% !important;
+          }
+          
+          .modal-content {
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            overflow-y: auto !important;
+            display: block !important;
+          }
           
           .wrap {
             flex-direction: column !important;
-            gap: 10px !important;
+            gap: 0 !important;
+            display: block !important;
           }
           
           .tf-product-media-wrap {
-            height: 250px !important;
-            flex-shrink: 0 !important;
+            height: auto !important;
+            min-height: 350px !important;
+            flex: none !important;
           }
           
           .tf-product-info-wrap {
-            flex: 1 !important;
-            overflow-y: auto !important;
+            flex: none !important;
+            overflow-y: visible !important;
+            padding: 15px !important;
+            margin-bottom: 0 !important;
           }
-          
+
+          .tf-product-info-buy-button form {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+          }
+
+          .btn-group-wrapper {
+             display: flex !important;
+             gap: 10px !important;
+             align-items: center !important;
+          }
+
+          .wishlist-compare-group {
+             display: flex !important;
+             gap: 10px !important;
+          }
         }
         
         /* Small mobile */
@@ -414,6 +449,21 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                       )}
                     </div>
                   </div>
+                  {isRatingEnabled && displayProduct.averageRating !== undefined && displayProduct.averageRating > 0 && (
+                    <div className="ratings-container">
+                      <div className="ratings">
+                        <div
+                          className="ratings-val"
+                          style={{
+                            width: `${(displayProduct.averageRating / 5) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <span className="ratings-text">
+                        ({displayProduct.averageRating.toFixed(2)} / 5)
+                      </span>
+                    </div>
+                  )}
                   <div className="tf-product-description">
                     {isLoading ? (
                       <p>{t("quickView.loadingDescription")}</p>
@@ -481,16 +531,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                         <div className="variant-picker-label">
                           {t("quickView.size")}: <span className="fw-6 variant-picker-label-value">{selectedSize}</span>
                         </div>
-                        <a
-                          className="find-size btn-choose-size fw-6 d-none d-lg-block"
-                          href="/assets/site/images/products/beden-tablosu.jpg"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSizeChartOpen(true);
-                          }}
-                        >
-                          {t("quickView.sizeChart")}
-                        </a>
+                        
                       </div>
                       <div className="variant-picker-values">
                         {sizes.map((size) => (
@@ -534,60 +575,61 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
                     </div>
                   </div>
                   <div className="tf-product-info-buy-button">
-                    <form className="">
-                      <a
-                        href="#"
-                        className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn${isOutOfStock ? " disabled" : ""}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAddToCart();
-                        }}
-                        aria-disabled={isOutOfStock}
-                      >
-                        <span>
-                          {isOutOfStock
-                            ? t("productDetailComponent.buttons.outOfStock")
-                            : t("quickView.addToCart")}{" "}
-                          &nbsp;
-                        </span>
-                        {!isOutOfStock && (
-                          <span className="tf-qty-price">
-                            {new Intl.NumberFormat("tr-TR", {
-                              style: "currency",
-                              currency: "TRY",
-                            }).format(
-                              (displayProduct.discountedPrice ||
-                                displayProduct.price) * quantity
-                            )}
+                    <form className="d-flex flex-column gap-15">
+                      <div className="d-flex gap-10 align-items-center">
+                        <a
+                          href="#"
+                          className={`tf-btn btn-fill justify-content-center fw-6 flex-grow-1 animate-hover-btn${isOutOfStock ? " disabled" : ""}`}
+                          style={{ fontSize: "14px", padding: "10px 15px", height: "45px" }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleAddToCart();
+                          }}
+                          aria-disabled={isOutOfStock}
+                        >
+                          <span>
+                            {isOutOfStock
+                              ? t("productDetailComponent.buttons.outOfStock")
+                              : t("quickView.addToCart")}{" "}
+                            &nbsp;
                           </span>
-                        )}
-                      </a>
-                      <a
-                        href="javascript:void(0);"
-                        className="tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action"
-                        onClick={handleToggleFavorite}
-                      >
-                        <span className="icon icon-heart"></span>
-                        <span className="tooltip">{t("quickView.addToFavorites")}</span>
-                        <span className="icon icon-delete"></span>
-                      </a>
-                      <a
-                        href="#"
-                        className="tf-product-btn-wishlist hover-tooltip box-icon bg_white compare btn-icon-action"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <span className="icon icon-compare"></span>
-                        <span className="tooltip">{t("quickView.compare")}</span>
-                        <span className="icon icon-check"></span>
-                      </a>
-                      <div className="w-100">
-                        <a href="#" className="btns-full">
-                          <img src="/assets/site/images/payments/paypal.png" alt="" /> {t("quickView.buyWith")}
+                          {!isOutOfStock && (
+                            <span className="tf-qty-price" style={{ fontSize: "12px" }}>
+                              {new Intl.NumberFormat("tr-TR", {
+                                style: "currency",
+                                currency: "TRY",
+                              }).format(
+                                (displayProduct.discountedPrice ||
+                                  displayProduct.price) * quantity
+                              )}
+                            </span>
+                          )}
                         </a>
-                        <a href="#" className="payment-more-option">
-                          {t("quickView.morePaymentOptions")}
-                        </a>
+                        <div className="d-flex gap-10">
+                          <a
+                            href="javascript:void(0);"
+                            className="tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action"
+                            style={{ width: "45px", height: "45px" }}
+                            onClick={handleToggleFavorite}
+                          >
+                            <span className="icon icon-heart"></span>
+                            <span className="tooltip">{t("quickView.addToFavorites")}</span>
+                            <span className="icon icon-delete"></span>
+                          </a>
+                          <a
+                            href="#"
+                            className="tf-product-btn-wishlist hover-tooltip box-icon bg_white compare btn-icon-action"
+                            style={{ width: "45px", height: "45px" }}
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            <span className="icon icon-compare"></span>
+                            <span className="tooltip">{t("quickView.compare")}</span>
+                            <span className="icon icon-check"></span>
+                          </a>
+                        </div>
                       </div>
+
+                      
                     </form>
                   </div>
                   <div>
@@ -637,22 +679,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product }) => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src="/assets/site/images/products/beden-tablosu.jpg"
-              alt="Beden Tablosu"
-              width={800}
-              height={600}
-              style={{
-                maxWidth: '80vw',
-                maxHeight: '80vh',
-                width: 'auto',
-                height: 'auto',
-                objectFit: 'contain',
-                display: 'block'
-              }}
-              unoptimized
-            />
-
+            
             <button
               onClick={() => setSizeChartOpen(false)}
               style={{

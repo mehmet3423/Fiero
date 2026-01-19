@@ -24,6 +24,8 @@ interface UseGetAllProductsOptions {
   mainCategoryId?: string; // Tekil destek için eklendi
   subCategoryId?: string; // Tekil destek için eklendi
   search?: string;
+  isAvailable?: boolean;
+  specificationOptionIds?: string[];
 }
 
 // Ürünler ile ilgili hook
@@ -56,8 +58,10 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
       options.salesCountSort !== undefined ? options.salesCountSort : 0,
     likeCountSort:
       options.likeCountSort !== undefined ? options.likeCountSort : 0,
+    isAvailable: options.isAvailable !== undefined ? options.isAvailable : true,
     mainCategoryIds: mainCategoryIdsArray,
     subCategoryIds: subCategoryIdsArray,
+    specificationOptionIds: options.specificationOptionIds || [],
     search: searchQuery || "",
   };
 

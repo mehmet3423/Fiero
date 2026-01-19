@@ -10,30 +10,24 @@ export const useDeleteReview = () => {
   const queryClient = useQueryClient();
 
   const deleteReview = async (reviewId: string, productId: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: `${DELETE_REVIEW}?id=${reviewId}`,
-          method: HttpMethod.DELETE,
+    await mutateAsync(
+      {
+        url: `${DELETE_REVIEW}?id=${reviewId}`,
+        method: HttpMethod.DELETE,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Yorum başarıyla silindi");
+
+          // İlgili ürünün yorumlarını invalidate et
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.REVIEWS, productId] });
+
+          // Kullanıcının yorumlarını da invalidate et
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.USER_REVIEWS] });
         },
-        {
-          onSuccess: () => {
-            toast.success("Yorum başarıyla silindi");
-
-            // İlgili ürünün yorumlarını invalidate et
-            queryClient.invalidateQueries({ queryKey: [QueryKeys.REVIEWS, productId] });
-
-            // Kullanıcının yorumlarını da invalidate et
-            queryClient.invalidateQueries({ queryKey: [QueryKeys.USER_REVIEWS] });
-          },
-          onError: () => {
-            toast.error("Yorum silinirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      toast.error("Yorum silinirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return {

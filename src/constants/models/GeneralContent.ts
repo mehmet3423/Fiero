@@ -49,6 +49,7 @@ export enum GeneralContentType {
   BlogPosts = 35,
   ShopCollection = 36,
   IconBoxModern = 37,
+  HeaderTopBar = 38,
 }
 // enum extends bak heposi aynı tşip sayıları farklı olcak
 // conternt url tıklaynca gitceği yer
@@ -95,6 +96,7 @@ export const CONTENT_CUSTOMIZATION_SETTINGS: Record<
   [GeneralContentType.BlogPosts]: IsCustomizable.No,
   [GeneralContentType.ShopCollection]: IsCustomizable.No,
   [GeneralContentType.IconBoxModern]: IsCustomizable.No,
+  [GeneralContentType.HeaderTopBar]: IsCustomizable.No,
 };
 
 // Helper function to check if a content type is customizable
@@ -212,6 +214,8 @@ export const getGeneralContentTypeName = (
       return "Mağaza Koleksiyonu";
     case GeneralContentType.IconBoxModern:
       return "Icon Box Modern";
+    case GeneralContentType.HeaderTopBar:
+      return "Header Üst Bar İçeriği";
     default:
       return "Bilinmeyen İçerik Türü";
   }

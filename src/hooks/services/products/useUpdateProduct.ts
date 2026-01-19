@@ -18,6 +18,7 @@ export const useUpdateProduct = () => {
       // Body olarak gönderilecek veri
       const body: any = {
         Id: productId,
+        SubCategoryId: product.subCategoryId,
         Price: product.price,
         SellableQuantity: product.sellableQuantity,
         BarcodeNumber: product.barcodeNumber,
@@ -31,6 +32,7 @@ export const useUpdateProduct = () => {
         Refundable: product.refundable,
         ContentImageUrls: product.contentImageUrls,
         Banner: product.banner || [],
+        TaxRate: product.taxRate || 0,
       };
 
       // -En alanlarını ekle (varsa)
@@ -51,6 +53,23 @@ export const useUpdateProduct = () => {
       }
       if (product.videoUrlEn) {
         body.VideoUrlEn = product.videoUrlEn;
+      }
+
+      // Yeni alanlar
+      if (product.currencyType !== undefined) {
+        body.CurrencyType = product.currencyType;
+      }
+      if (product.likeCount !== undefined) {
+        body.LikeCount = product.likeCount;
+      }
+      if (product.saleCount !== undefined) {
+        body.SaleCount = product.saleCount;
+      }
+      if (product.updateProductInfos && product.updateProductInfos.length > 0) {
+        body.UpdateProductInfos = product.updateProductInfos;
+      }
+      if (product.createProductInfos && product.createProductInfos.length > 0) {
+        body.CreateProductInfos = product.createProductInfos;
       }
 
       await mutateAsync(
@@ -89,13 +108,11 @@ export const useUpdateProduct = () => {
               },
             });
           },
-          onError: () => {
-            toast.error("Ürün güncellenirken bir hata oluştu");
-          },
+          // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
         }
       );
     } catch (error) {
-      toast.error("Ürün güncellenirken bir hata oluştu");
+      // Hata mesajı useMyMutation tarafından gösterildi
     }
   };
 

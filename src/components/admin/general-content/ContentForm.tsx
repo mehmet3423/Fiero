@@ -43,11 +43,9 @@ export default function ContentForm({
   // MainProductList özel form state'i
   const [selectedProductIds, setSelectedProductIds] = React.useState<string[]>(
     () => {
-      console.log(editingContent);
       if (editingContent && editingContent.content) {
         try {
           const arr = JSON.parse(editingContent.content);
-          console.log(arr);
           if (Array.isArray(arr)) return arr;
         } catch { }
       }

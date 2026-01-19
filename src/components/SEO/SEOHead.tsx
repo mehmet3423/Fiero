@@ -29,16 +29,26 @@ const SEOHead: React.FC<SEOHeadProps> = ({ seoId, canonical, slug }) => {
     isLoading = false;
   }
 
-  if (!seoData) return null;
-
   // Structured data
   let structuredData = null;
-  if (seoData.structuredDataJson) {
+  if (seoData?.structuredDataJson) {
     try {
       structuredData = JSON.parse(seoData.structuredDataJson);
     } catch {
       structuredData = null;
     }
+  }
+
+  // SEO verisi yoksa varsayılan meta tag'ler
+  if (!seoData) {
+    return (
+      <Head>
+        <title>Eser Leather - Online Shopping</title>
+        <meta name="description" content="Eser Leather online alışveriş sitesi" />
+        <meta name="author" content="Eser Leather" />
+        <meta name="publisher" content="Eser Leather" />
+      </Head>
+    );
   }
 
   return (
@@ -54,10 +64,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({ seoId, canonical, slug }) => {
         <meta name="robots" content={seoData.robotsMetaTag} />
       )}
       {seoData.canonical && <link rel="canonical" href={seoData.canonical} />}
-      {seoData.author && <meta name="author" content={seoData.author} />}
-      {seoData.publisher && (
-        <meta name="publisher" content={seoData.publisher} />
-      )}
+      <meta name="author" content={seoData.author || "Eser Leather"} />
+      <meta name="publisher" content={seoData.publisher || "Eser Leather"} />
       {seoData.language && (
         <meta httpEquiv="content-language" content={seoData.language} />
       )}
@@ -81,7 +89,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({ seoId, canonical, slug }) => {
       )}
       {seoData.ogImageUrl && <meta property="og:image:width" content="1200" />}
       {seoData.ogImageUrl && <meta property="og:image:height" content="630" />}
-      <meta property="og:site_name" content="Nors" />
+      <meta property="og:site_name" content="Eser Leather" />
       {seoData.language && (
         <meta property="og:locale" content={seoData.language} />
       )}

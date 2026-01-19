@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useFavorites } from "@/hooks/context/useFavorites";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
@@ -15,6 +14,7 @@ interface ProductDetailsProps {
   handleToggleFavorite: () => void;
   isInFavorites: (productId: string) => boolean;
   isFavoritesLoading: boolean;
+  isRatingEnabled?: boolean;
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
@@ -25,12 +25,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   setQuantity,
   handleAddToCart,
   isAddingToCart,
+  handleToggleFavorite,
+  isInFavorites,
+  isFavoritesLoading,
+  isRatingEnabled = true,
 }) => {
   const { t, language } = useLanguage();
-  
+
   const titleToShow =
     language === "en" && product.titleEn ? product.titleEn : product.title;
-  
+
   const descriptionToShow =
     language === "en" && product.descriptionEn
       ? product.descriptionEn
@@ -43,14 +47,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     seconds: 0,
   });
   const [sizeChartOpen, setSizeChartOpen] = useState(false); // Beden tablosu için yeni state
-
-  // Favori mantığı
-  const {
-    addToFavorites,
-    removeFromFavorites,
-    isInFavorites,
-    isLoading: isFavoritesLoading,
-  } = useFavorites();
 
   // Karşılaştır mantığı
   const router = useRouter();
@@ -69,14 +65,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         // ignore
       }
       router.push("/compare-products");
-    }
-  };
-
-  const handleToggleFavorite = async (productId: string) => {
-    if (isInFavorites(productId)) {
-      await removeFromFavorites(productId);
-    } else {
-      await addToFavorites(productId);
     }
   };
 
@@ -169,6 +157,31 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               <h5>{titleToShow}</h5>
             </div>
 
+            {/* Ratings */}
+            {isRatingEnabled && averageRating > 0 && (
+              <div className="ratings-container">
+                <div className="ratings">
+                  <div
+                    className="ratings-val"
+                    style={{
+                      width: `${(averageRating / 5) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+                <a
+                  className="ratings-text"
+                  href="#product-review-link"
+                  id="review-link"
+                  title="Değerlendirmeler bölümüne git"
+                >
+                  ({reviews ? reviews.length : 0}{" "}
+                  {t("productDetailComponent.titles.reviews") ||
+                    "Değerlendirme"}
+                  )
+                </a>
+              </div>
+            )}
+
             {/* Price */}
             <div className="tf-product-info-price">
               {hasDiscount && product.price !== product.discountedPrice ? (
@@ -186,7 +199,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     })}
                   </div>
                   <div className="badges-on-sale">
-                    <span>{discountPercentage}</span>% {t("productDetailComponent.titles.sale")}
+                    <span>{discountPercentage}</span>%{" "}
+                    {t("productDetailComponent.titles.sale")}
                   </div>
                 </>
               ) : (
@@ -200,13 +214,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </div>
 
             {/* Live View */}
-            <div className="tf-product-info-liveview">
+            {/* <div className="tf-product-info-liveview">
               <div className="liveview-count">{product.viewCount || 20}</div>
               <p className="fw-6">{t("productDetailComponent.titles.currentlyViewing")}</p>
-            </div>
+            </div> */}
 
             {/* Countdown Timer */}
-            <div className="tf-product-info-countdown">
+            {/* <div className="tf-product-info-countdown">
               <div className="countdown-wrap">
                 <div className="countdown-title">
                   <i className="icon-time tf-ani-tada"></i>
@@ -214,15 +228,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </div>
                 <div className="tf-countdown style-1">
                   <p>
-                    {timeLeft.days} {t("productDetailComponent.titles.day")} : {timeLeft.hours} {t("productDetailComponent.titles.hour")} :{" "}
-                    {timeLeft.minutes} {t("productDetailComponent.titles.minute")} : {timeLeft.seconds} {t("productDetailComponent.titles.second")}
+                    {timeLeft.days} {t("productDetailComponent.titles.day")} :{" "}
+                    {timeLeft.hours} {t("productDetailComponent.titles.hour")} :{" "}
+                    {timeLeft.minutes}{" "}
+                    {t("productDetailComponent.titles.minute")} :{" "}
+                    {timeLeft.seconds}{" "}
+                    {t("productDetailComponent.titles.second")}
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Variant Picker */}
-            <div className="tf-product-info-variant-picker">
+            {/* <div className="tf-product-info-variant-picker">
               <div className="variant-picker-item">
                 <div className="variant-picker-label">
                   {t("productDetailComponent.titles.color")}:{" "}
@@ -265,6 +283,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       e.preventDefault();
                       setSizeChartOpen(true);
                     }}
+                    title="Beden rehberini görüntüle"
                   >
                     {t("productDetailComponent.titles.sizeChart")}
                   </a>
@@ -285,11 +304,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   )}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Quantity Selector */}
             <div className="tf-product-info-quantity">
-              <div className="quantity-title fw-6">{t("productDetailComponent.titles.quantity")}</div>
+              <div className="quantity-title fw-6">
+                {t("productDetailComponent.titles.quantity")}
+              </div>
               <div className="wg-quantity">
                 <span
                   className="btn-quantity minus-btn"
@@ -333,10 +354,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             >
               <a
                 href="#"
-                className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn ${isAddingToCart || product.sellableQuantity <= 0
-                  ? "disabled"
-                  : ""
-                  }`}
+                className={`tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn ${
+                  isAddingToCart || product.sellableQuantity <= 0
+                    ? "disabled"
+                    : ""
+                }`}
                 style={{
                   padding: "15px 20px",
                   fontSize: "18px",
@@ -354,8 +376,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   {isAddingToCart
                     ? t("productDetailComponent.buttons.addingToCart")
                     : product.sellableQuantity > 0
-                      ? t("productDetailComponent.buttons.addToCart")
-                      : t("productDetailComponent.buttons.outOfStock")}
+                    ? t("productDetailComponent.buttons.addToCart")
+                    : t("productDetailComponent.buttons.outOfStock")}
                   {product.sellableQuantity > 0 && (
                     <span
                       style={{ marginLeft: "8px" }}
@@ -363,21 +385,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     >
                       {product.discountedPrice
                         ? product.discountedPrice.toLocaleString("tr-TR", {
-                          style: "currency",
-                          currency: "TRY",
-                        })
+                            style: "currency",
+                            currency: "TRY",
+                          })
                         : product.price.toLocaleString("tr-TR", {
-                          style: "currency",
-                          currency: "TRY",
-                        })}
+                            style: "currency",
+                            currency: "TRY",
+                          })}
                     </span>
                   )}
                 </span>
               </a>
               <a
                 href="#"
-                className={`tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action ${isInFavorites(product.id) ? "added" : ""
-                  } ${isFavoritesLoading ? "disabled" : ""}`}
+                className={`tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action${
+                  isInFavorites(product.id) ? " active" : ""
+                } ${isFavoritesLoading ? "disabled" : ""}`}
                 style={{
                   padding: "15px 20px",
                   fontSize: "18px",
@@ -400,7 +423,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     ? t("productDetailComponent.buttons.removeFromFavorites")
                     : t("productDetailComponent.buttons.addToFavorites")}
                 </span>
-                <span className="icon icon-delete"></span>
+
+                <span className="icon icon-heart-full"></span>
               </a>
               <a
                 href="#"
@@ -417,7 +441,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 title={t("productDetailComponent.buttons.addToCompare")}
               >
                 <span className="icon icon-compare"></span>
-                <span className="tooltip">{t("productDetailComponent.buttons.addToCompare")}</span>
+                <span className="tooltip">
+                  {t("productDetailComponent.buttons.addToCompare")}
+                </span>
                 <span className="icon icon-check"></span>
               </a>
             </div>

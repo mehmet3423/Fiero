@@ -13,7 +13,8 @@ export const useCreateMainCategory = () => {
     name: string,
     nameEn?: string,
     displayIndex?: number,
-    imageUrl?: string
+    imageUrl?: string,
+    isActive?: boolean
   ) => {
     try {
       const params = new URLSearchParams();
@@ -31,6 +32,10 @@ export const useCreateMainCategory = () => {
         params.append("ImageUrl", imageUrl);
       }
 
+      if (isActive !== undefined) {
+        params.append("IsActive", isActive.toString());
+      }
+
       await mutateAsync(
         {
           url: `${CREATE_MAIN_CATEGORY}?${params.toString()}`,
@@ -41,6 +46,9 @@ export const useCreateMainCategory = () => {
             toast.success("Ana kategori başarıyla oluşturuldu");
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LIST],
+            });
+            queryClient.invalidateQueries({
+              queryKey: [QueryKeys.ACTIVE_MAIN_CATEGORY_LIST],
             });
             queryClient.invalidateQueries({
               queryKey: [QueryKeys.MAIN_CATEGORY_LOOKUP_LIST],
