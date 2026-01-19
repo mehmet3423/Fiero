@@ -148,6 +148,8 @@ export default function EditProductForm({
         icon: string;
       }> = [];
 
+
+      
       if (product.productInfos && Array.isArray(product.productInfos)) {
         productInfosData = product.productInfos.map((info: any) => ({
           ...info,
