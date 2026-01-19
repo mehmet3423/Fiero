@@ -10,28 +10,21 @@ export const useRejectComment = () => {
   const queryClient = useQueryClient();
 
   const rejectComment = async (commentId: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: `${REJECT_COMMENT}?commentId=${commentId}`,
-          method: HttpMethod.POST,
+    await mutateAsync(
+      {
+        url: `${REJECT_COMMENT}?commentId=${commentId}`,
+        method: HttpMethod.POST,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Yorum reddedildi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.COMMENT_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Yorum reddedildi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.COMMENT_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Yorum reddedilirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Reject comment error:", error);
-      toast.error("Yorum reddedilirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
   return { rejectComment, isPending };
 };

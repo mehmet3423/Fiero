@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useSubCategoriesLookUp } from "@/hooks/services/categories/useSubCategoriesLookUp";
 import { useLanguage } from "@/context/LanguageContext";
+import { GET_SUB_CATEGORY_LOOKUP_LIST } from "@/constants/links";
 
 declare global {
   interface Window {
@@ -38,9 +39,9 @@ interface ProductFilterSidebarProps {
   onSpecificationChange: (ids: string[]) => void;
   priceRange: [number, number];
   onPriceRangeChange: (range: [number, number]) => void;
-  // Kategori seçimi için yeni props
-  selectedMainCategoryId?: string;
-  selectedSubCategoryId?: string;
+  // Kategori seçimi için yeni props - çoklu seçim
+  selectedMainCategoryIds?: string[];
+  selectedSubCategoryIds?: string[];
   onMainCategoryChange: (categoryId: string) => void;
   onSubCategoryChange: (subCategoryId: string) => void;
 }
@@ -56,26 +57,67 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
   onSpecificationChange,
   priceRange,
   onPriceRangeChange,
-  selectedMainCategoryId: propSelectedMainCategoryId,
-  selectedSubCategoryId: propSelectedSubCategoryId,
+  selectedMainCategoryIds: propSelectedMainCategoryIds = [],
+  selectedSubCategoryIds: propSelectedSubCategoryIds = [],
   onMainCategoryChange,
   onSubCategoryChange,
 }) => {
   const { t } = useLanguage();
-  // Lookup hook'u kullanarak kategorileri çekiyoruz
-  const { categories: lookupCategories } = useMainCategoriesLookUp();
+  // Active categories hook'u kullanarak kategorileri çekiyoruz
+  const { categories: activeCategoriesData } = useActiveCategories();
+  const activeCategories = activeCategoriesData?.items || [];
 
-  // Kategorileri belirliyoruz: önce lookup'tan gelen, yoksa prop'tan gelen
+  // Kategorileri belirliyoruz: önce active categories'ten gelen, yoksa prop'tan gelen
   const categories =
-    (Array.isArray(lookupCategories?.data)
-      ? lookupCategories.data
+    (Array.isArray(activeCategories) && activeCategories.length > 0
+      ? activeCategories
       : propCategories) || [];
 
-  // Seçili ana kategori için alt kategorileri yükle
-  const selectedMainCategoryId = propSelectedMainCategoryId || "";
-  const { categories: subCategories } = useSubCategoriesLookUp(
-    selectedMainCategoryId
-  );
+  // Seçili tüm ana kategoriler için alt kategorileri yükle
+  const [allSubCategories, setAllSubCategories] = useState<any[]>([]);
+  
+  useEffect(() => {
+    if (propSelectedMainCategoryIds.length === 0) {
+      setAllSubCategories([]);
+      return;
+    }
+
+    // Tüm seçili ana kategoriler için alt kategorileri topla
+    const fetchSubCategories = async () => {
+      const subCatMap = new Map<string, any>();
+      
+      for (const mainCatId of propSelectedMainCategoryIds) {
+        try {
+          const response = await fetch(
+            `${GET_SUB_CATEGORY_LOOKUP_LIST}?MainCategoryId=${mainCatId}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const subCats = data?.data || [];
+            subCats.forEach((subCat: any) => {
+              // Her alt kategoriye mainCategoryId ekle ve Map'e ekle
+              // Aynı ID'ye sahip alt kategori varsa, mainCategoryId'yi array'e çevir veya mevcut olanı koru
+              if (subCatMap.has(subCat.id)) {
+                // Eğer bu alt kategori başka bir ana kategoriye de aitse, mevcut mainCategoryId'yi koru
+                // (Bazı alt kategoriler birden fazla ana kategoriye ait olabilir)
+              } else {
+                subCatMap.set(subCat.id, {
+                  ...subCat,
+                  mainCategoryId: mainCatId, // Ana kategori ID'sini ekle
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching subcategories for ${mainCatId}:`, error);
+        }
+      }
+      
+      setAllSubCategories(Array.from(subCatMap.values()));
+    };
+
+    fetchSubCategories();
+  }, [propSelectedMainCategoryIds]);
 
   const handleFilter = (group: string, value: string) => {
     const groupFilters = selectedFilters[group] || [];
@@ -89,16 +131,9 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
     onFilterChange(newFilters);
   };
 
-  // Ana kategori seçildiğinde alt kategorileri yükle
+  // Ana kategori toggle - çoklu seçim
   const handleMainCategoryClick = (categoryId: string) => {
-    if (selectedMainCategoryId === categoryId) {
-      // Aynı kategoriye tekrar tıklanırsa kapat
-      onMainCategoryChange("");
-    } else {
-      // Yeni kategori seç
-      onMainCategoryChange(categoryId);
-    }
-    handleFilter("category", categoryId);
+    onMainCategoryChange(categoryId);
   };
 
   // Backend ile entegre specification handler
@@ -176,50 +211,64 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
         const rangeSlider = document.getElementById("slider-range");
 
         if (rangeSlider && window.noUiSlider && window.wNumb) {
-          // Eğer slider zaten varsa, önce yok et
+          // Eğer slider zaten varsa, önce yok et ve referansı temizle
           if ((rangeSlider as any).noUiSlider) {
-            (rangeSlider as any).noUiSlider.destroy();
+            try {
+              (rangeSlider as any).noUiSlider.destroy();
+              (rangeSlider as any).noUiSlider = null;
+            } catch (e) {
+              // Slider zaten destroy edilmiş olabilir
+            }
           }
 
-          window.noUiSlider.create(rangeSlider, {
-            start: [priceRange[0], priceRange[1]],
-            step: 100,
-            range: {
-              min: [0],
-              max: [99999],
-            },
-            connect: true,
-          });
+          // Slider'ı tekrar oluşturmadan önce kısa bir bekleme
+          setTimeout(() => {
+            if (rangeSlider && window.noUiSlider && !(rangeSlider as any).noUiSlider) {
+              try {
+                window.noUiSlider.create(rangeSlider, {
+                  start: [priceRange[0], priceRange[1]],
+                  step: 100,
+                  range: {
+                    min: [0],
+                    max: [99999],
+                  },
+                  connect: true,
+                });
 
-          // Debounce için timer
-          let updateTimer: NodeJS.Timeout;
+                // Debounce için timer
+                let updateTimer: NodeJS.Timeout;
 
-          (rangeSlider as any).noUiSlider.on(
-            "update",
-            function (values: string[]) {
-              const value1 = document.getElementById("slider-range-value1");
-              const value2 = document.getElementById("slider-range-value2");
+                (rangeSlider as any).noUiSlider.on(
+                  "update",
+                  function (values: string[]) {
+                    const value1 = document.getElementById("slider-range-value1");
+                    const value2 = document.getElementById("slider-range-value2");
 
-              if (value1)
-                value1.innerHTML = Math.round(parseFloat(values[0])).toString();
-              if (value2)
-                value2.innerHTML = Math.round(parseFloat(values[1])).toString();
+                    if (value1)
+                      value1.innerHTML = Math.round(parseFloat(values[0])).toString();
+                    if (value2)
+                      value2.innerHTML = Math.round(parseFloat(values[1])).toString();
+                  }
+                );
+
+                (rangeSlider as any).noUiSlider.on(
+                  "change",
+                  function (values: string[]) {
+                    clearTimeout(updateTimer);
+                    updateTimer = setTimeout(() => {
+                      const newRange: [number, number] = [
+                        Math.round(parseFloat(values[0])),
+                        Math.round(parseFloat(values[1])),
+                      ];
+                      onPriceRangeChange(newRange);
+                    }, 100);
+                  }
+                );
+              } catch (error) {
+                console.error("Slider oluşturulurken hata:", error);
+              }
             }
-          );
-
-          (rangeSlider as any).noUiSlider.on(
-            "change",
-            function (values: string[]) {
-              clearTimeout(updateTimer);
-              updateTimer = setTimeout(() => {
-                const newRange: [number, number] = [
-                  Math.round(parseFloat(values[0])),
-                  Math.round(parseFloat(values[1])),
-                ];
-                onPriceRangeChange(newRange);
-              }, 100);
-            }
-          );
+          }, 50);
         }
       }, 100);
 
@@ -228,7 +277,11 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
         // Cleanup: slider'ı temizle
         const rangeSlider = document.getElementById("slider-range");
         if (rangeSlider && (rangeSlider as any).noUiSlider) {
-          (rangeSlider as any).noUiSlider.destroy();
+          try {
+            (rangeSlider as any).noUiSlider.destroy();
+            (rangeSlider as any).noUiSlider = null;
+          } catch (e) {
+          }
         }
       };
     }
@@ -243,7 +296,6 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
             (rangeSlider as any).noUiSlider.set([priceRange[0], priceRange[1]]);
           } catch (error) {
             // Slider henüz hazır değilse veya destroy edildiyse hata vermesin
-            console.debug("Slider güncelleme hatası:", error);
           }
         }
       }, 150);
@@ -306,7 +358,10 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                 id="categories"
                 className={`collapse${openSections.categories ? " show" : ""}`}
               >
-                <ul className="list-categoris current-scrollbar mb_36">
+                <ul 
+                  className="list-categoris current-scrollbar mb_36"
+                  style={{ maxHeight: "500px", overflowY: "auto" }}
+                >
                   {categories.length === 0 ? (
                     <li className="cate-item">
                       <span>{t("productFilter.noCategories")}</span>
@@ -315,65 +370,81 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                     categories
                       .slice()
                       .sort((a: any, b: any) => a.displayIndex - b.displayIndex)
-                      .map((cat: any) => (
-                        <li
-                          className={`cate-item${
-                            selectedMainCategoryId === cat.id ? " current" : ""
-                          }`}
-                          key={cat.id}
-                        >
-                          <a
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleMainCategoryClick(cat.id);
-                            }}
+                      .map((cat: any) => {
+                        const isMainCategorySelected = propSelectedMainCategoryIds.includes(cat.id);
+                        // Bu ana kategoriye ait alt kategorileri bul
+                        const categorySubCategories = allSubCategories.filter(
+                          (subCat: any) => subCat.mainCategoryId === cat.id
+                        );
+                        
+                        return (
+                          <li
+                            className={`cate-item${
+                              isMainCategorySelected ? " current" : ""
+                            }`}
+                            key={cat.id}
                           >
-                            <span>
-                              {cat.name && cat.name.trim() !== ""
-                                ? cat.name
-                                : "kategori"}
-                            </span>
-                            {selectedMainCategoryId === cat.id && (
-                              <span
-                                className="icon icon-arrow-down ms-2 mt-2"
-                                style={{ fontSize: "8px" }}
-                              ></span>
-                            )}
-                          </a>
+                            <div className="list-item d-flex gap-12 align-items-center">
+                              <input
+                                type="checkbox"
+                                className="tf-check"
+                                id={`main-cat-${cat.id}`}
+                                checked={isMainCategorySelected}
+                                onChange={() => handleMainCategoryClick(cat.id)}
+                              />
+                              <label
+                                htmlFor={`main-cat-${cat.id}`}
+                                className="label"
+                                style={{ flex: 1, cursor: "pointer" }}
+                              >
+                                <span>
+                                  {cat.name && cat.name.trim() !== ""
+                                    ? cat.name
+                                    : "kategori"}
+                                </span>
+                              </label>
+                            </div>
 
-                          {/* Alt kategoriler */}
-                          {selectedMainCategoryId === cat.id &&
-                            subCategories?.data &&
-                            subCategories.data.length > 0 && (
-                              <ul className="sub-categories mt-2 ms-3">
-                                {subCategories.data.map((subCat: any) => (
-                                  <li
-                                    className={`sub-cate-item${
-                                      selectedFilters.subCategory?.includes(
-                                        subCat.id
-                                      )
-                                        ? " current"
-                                        : ""
-                                    }`}
-                                    key={subCat.id}
-                                  >
-                                    <a
-                                      href="#"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        onSubCategoryChange(subCat.id);
-                                        handleFilter("subCategory", subCat.id);
-                                      }}
-                                    >
-                                      <span>{subCat.name}</span>
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                        </li>
-                      ))
+                            {/* Alt kategoriler - sadece ana kategori seçiliyse göster */}
+                            {isMainCategorySelected &&
+                              categorySubCategories.length > 0 && (
+                                <ul className="sub-categories mt-2 ms-3">
+                                  {categorySubCategories.map((subCat: any) => {
+                                    const isSubCategorySelected =
+                                      propSelectedSubCategoryIds.includes(subCat.id);
+                                    return (
+                                      <li
+                                        className={`sub-cate-item${
+                                          isSubCategorySelected ? " current" : ""
+                                        }`}
+                                        key={subCat.id}
+                                      >
+                                        <div className="list-item d-flex gap-12 align-items-center">
+                                          <input
+                                            type="checkbox"
+                                            className="tf-check"
+                                            id={`sub-cat-${subCat.id}`}
+                                            checked={isSubCategorySelected}
+                                            onChange={() => {
+                                              onSubCategoryChange(subCat.id);
+                                            }}
+                                          />
+                                          <label
+                                            htmlFor={`sub-cat-${subCat.id}`}
+                                            className="label"
+                                            style={{ cursor: "pointer" }}
+                                          >
+                                            <span>{subCat.name}</span>
+                                          </label>
+                                        </div>
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              )}
+                          </li>
+                        );
+                      })
                   )}
                 </ul>
               </div>

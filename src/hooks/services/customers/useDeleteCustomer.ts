@@ -15,28 +15,21 @@ export const useDeleteCustomer = () => {
   const { mutateAsync, isPending } = useMyMutation<DeleteCustomerResponse>();
 
   const deleteCustomer = async (customerId: string) => {
-    try {
-      await mutateAsync(
-        {
-          url: `${DELETE_CUSTOMER}?customerId=${customerId}`,
-          method: HttpMethod.DELETE,
+    await mutateAsync(
+      {
+        url: `${DELETE_CUSTOMER}?customerId=${customerId}`,
+        method: HttpMethod.DELETE,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Müşteri başarıyla silindi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.CUSTOMERS_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Müşteri başarıyla silindi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.CUSTOMERS_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Müşteri silinirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error deleting customer:", error);
-      toast.error("Müşteri silinirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return { deleteCustomer, isPending };

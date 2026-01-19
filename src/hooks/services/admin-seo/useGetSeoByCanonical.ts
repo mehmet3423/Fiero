@@ -10,6 +10,11 @@ interface SeoData {
   metaTitle: string;
   metaDescription: string;
   keywords: string;
+  titleEn?: string;
+  descriptionEn?: string;
+  metaTitleEn?: string;
+  metaDescriptionEn?: string;
+  keywordsEn?: string;
   canonical: string;
   robotsMetaTag: string;
   author: string;

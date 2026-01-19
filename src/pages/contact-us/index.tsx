@@ -1,7 +1,54 @@
+"use client";
 import Link from "next/link";
 import SEOHead from "@/components/SEO/SEOHead";
+import { useGetSupportEmailAddress } from "@/hooks/services/settings";
+import { useState } from "react";
+import { SEND_MAIL } from "@/constants/links";
+import { HttpMethod } from "@/constants/enums/HttpMethods";
+import toast from "react-hot-toast";
 
 function ContactUsPage() {
+  const { supportEmail, isLoading: isLoadingEmail } = useGetSupportEmailAddress();
+  // Fallback email adresi
+  const defaultEmail = "merhaba@nors.com.tr";
+  const emailAddress = supportEmail || defaultEmail;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+
+    try {
+      const response = await fetch(SEND_MAIL, {
+        method: HttpMethod.POST,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: emailAddress,
+          subject: `İletişim Formu: ${name}`,
+          body: `Gönderen: ${email}\n\nMesaj:\n${message}`,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Mesajınız başarıyla gönderildi!");
+        e.currentTarget.reset();
+      } else {
+        toast.error("Mesaj gönderilirken bir hata oluştu.");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("Mesaj gönderilirken bir hata oluştu.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <>
       <SEOHead canonical="/contact-us" />
@@ -34,6 +81,13 @@ function ContactUsPage() {
                   <div className="mb_20">
                     <p className="mb_15"><strong>Telefon</strong></p>
                     <p>444 44 44</p>
+                  </div>
+                  <div className="mb_20">
+                    <p className="mb_15"><strong>E-posta</strong></p>
+                    <p>
+                      <i className="icon-envelope"></i>
+                      <a href={`mailto:${emailAddress}`}>{emailAddress}</a>
+                    </p>
                   </div>                  
                   <div>
                     <ul className="tf-social-icon d-flex gap-20 style-default">
@@ -55,7 +109,7 @@ function ContactUsPage() {
                       </p>
                     </div>
                     <div>
-                      <form className="mw-705 mx-auto text-center form-contact" id="contactform" action="#" method="post">
+                      <form className="mw-705 mx-auto text-center form-contact" id="contactform" onSubmit={handleSubmit}>
                         <div className="d-flex gap-15 mb_15">
                           <fieldset className="w-100">
                             <input type="text" name="name" id="name" required placeholder="Name *" />
@@ -68,8 +122,8 @@ function ContactUsPage() {
                           <textarea placeholder="Message" name="message" id="message" required cols={30} rows={10}></textarea>
                         </div>
                         <div className="send-wrap">
-                          <button type="submit" className="tf-btn radius-3 btn-fill animate-hover-btn justify-content-center">
-                            Send
+                          <button type="submit" className="tf-btn radius-3 btn-fill animate-hover-btn justify-content-center" disabled={isSubmitting}>
+                            {isSubmitting ? "Gönderiliyor..." : "Send"}
                           </button>
                         </div>
                       </form>

@@ -83,7 +83,7 @@ function AboutUs({ seoData }: AboutProps) {
             {isLoading && <p>Yükleniyor...</p>}
             {!isLoading && (
               <>
-                {(aboutUsContents?.items || [])
+                {(aboutUsContents || [])
                   .slice()
                   .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                   .map((item, index) => {
@@ -151,7 +151,7 @@ function AboutUs({ seoData }: AboutProps) {
                       </div>
                     );
                   })}
-                {(aboutUsContents?.items || []).length === 0 && (
+                {(aboutUsContents || []).length === 0 && (
                   <p>Şu anda görüntülenecek içerik bulunamadı.</p>
                 )}
               </>

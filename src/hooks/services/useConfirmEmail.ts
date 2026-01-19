@@ -29,9 +29,6 @@ export const useConfirmEmail = () => {
         },
         {
           onSuccess: (res) => {
-            console.log("Email confirmation verification response:", res.data);
-            console.log("Full response object:", res);
-
             // Check if response has isSucceed property
             if (res.data && typeof res.data.isSucceed === "boolean") {
               if (res.data.isSucceed) {
@@ -47,20 +44,17 @@ export const useConfirmEmail = () => {
               }
             } else {
               // Backend doesn't use isSucceed field, check by HTTP status and message
-              console.log(
-                "Backend doesn't use isSucceed field, assuming success"
-              );
               toast.success("E-posta adresiniz başarıyla onaylandı!");
               onComplete?.(true);
             }
           },
           onError: (error) => {
-            console.error("Email confirmation error:", error);
-            toast.error(
-              error.response?.data?.detail ||
-                error.response?.data?.message ||
-                "E-posta onayı sırasında bir hata oluştu!"
-            );
+            // Sadece backend mesajını göster
+            const errorMessage =
+              error.response?.data?.detail || error.response?.data?.message;
+            if (errorMessage) {
+              toast.error(errorMessage);
+            }
             onComplete?.(false);
           },
         }

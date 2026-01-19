@@ -48,6 +48,27 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
     }
   };
 
+  // Karşılaştırma butonu fonksiyonu
+  const handleCompare = (productId: string) => {
+    if (typeof window !== "undefined") {
+      const key = "compareProducts";
+      let compareList: string[] = [];
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          compareList = JSON.parse(stored);
+        }
+        if (!compareList.includes(productId)) {
+          compareList.push(productId);
+          localStorage.setItem(key, JSON.stringify(compareList));
+        }
+      } catch (e) {
+        // ignore
+      }
+      window.location.href = "/compare-products";
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="loading-overlay">
@@ -237,7 +258,10 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                               href="#"
                               className="box-icon bg_white compare btn-icon-action"
                               title="Add to Compare"
-                              onClick={(e) => e.preventDefault()}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleCompare(product.id);
+                              }}
                             >
                               <span className="icon icon-compare"></span>
                               <span className="tooltip">
@@ -268,7 +292,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             </div>
                           )}
                         </div>
-                        <div className="card-product-info mt-auto">
+                        <div className="card-product-info mt-auto mb-3">
                           <Link
                             href={`/products/${product.id}`}
                             className="title link d-block text-truncate"
@@ -287,7 +311,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                               ? `From ${product.discountedPrice.toFixed(2)}₺`
                               : `${product.price.toFixed(2)}₺`}
                           </span>
-                          <ul className="list-color-product">
+                          {/* <ul className="list-color-product">
                             <li className="list-color-item color-swatch active">
                               <span className="tooltip">
                                 {t("productCard.default")}
@@ -301,7 +325,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                                 title={titleToShow}
                               />
                             </li>
-                          </ul>
+                          </ul> */}
                         </div>
                       </div>
                     </SwiperSlide>

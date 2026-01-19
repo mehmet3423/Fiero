@@ -5,7 +5,7 @@ import { SubCategory } from "@/constants/models/Category";
 import { Product } from "@/constants/models/Product";
 import { useCategories } from "@/hooks/services/categories/useCategories";
 import { useDeleteProduct } from "@/hooks/services/products/useDeleteProduct";
-import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
+import { useGetAllProductsAdmin } from "@/hooks/services/products/useGetAllProductsAdmin";
 import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,7 +26,7 @@ function ProductsAdminPage() {
 
   // Tüm ürünleri getiren hook'u çağırıyoruz
   const { data: allProducts, isLoading: allProductsLoading } =
-    useGetAllProducts({
+    useGetAllProductsAdmin({
       page: currentPage - 1, // API 0 tabanlı, UI 1 tabanlı
       pageSize: itemsPerPage,
       searchTerm: searchTerm, // Arama terimini API'ye gönder

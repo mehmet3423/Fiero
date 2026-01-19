@@ -16,6 +16,11 @@ interface SeoFormData {
   metaTitle: string;
   metaDescription: string;
   keywords: string;
+  titleEn: string;
+  descriptionEn: string;
+  metaTitleEn: string;
+  metaDescriptionEn: string;
+  keywordsEn: string;
   canonical: string;
   robotsMetaTag: string;
   author: string;
@@ -182,6 +187,11 @@ function EditSeoPage() {
     metaTitle: "",
     metaDescription: "",
     keywords: "",
+    titleEn: "",
+    descriptionEn: "",
+    metaTitleEn: "",
+    metaDescriptionEn: "",
+    keywordsEn: "",
     canonical: "",
     robotsMetaTag: "index, follow",
     author: "",
@@ -227,6 +237,11 @@ function EditSeoPage() {
     null
   );
   const ogImageInputRef = useRef<HTMLInputElement>(null);
+  // Toast/hata mesajı için state
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!formData.canonical) {
@@ -244,6 +259,12 @@ function EditSeoPage() {
 
   useEffect(() => {
     if (seoData) {
+      const isHomePageSeo =
+        ("isHomePage" in seoData && Boolean(seoData.isHomePage)) ||
+        !seoData.canonical ||
+        seoData.canonical === "" ||
+        seoData.canonical === "/";
+      
       setFormData({
         id: seoData.id || "",
         isHomePage:
@@ -253,7 +274,12 @@ function EditSeoPage() {
         metaTitle: seoData.metaTitle || "",
         metaDescription: seoData.metaDescription || "",
         keywords: seoData.keywords || "",
-        canonical: seoData.canonical || "",
+        titleEn: seoData.titleEn || "",
+        descriptionEn: seoData.descriptionEn || "",
+        metaTitleEn: seoData.metaTitleEn || "",
+        metaDescriptionEn: seoData.metaDescriptionEn || "",
+        keywordsEn: seoData.keywordsEn || "",
+        canonical: isHomePageSeo ? "" : (seoData.canonical || ""), // Anasayfa için canonical boş
         robotsMetaTag: seoData.robotsMetaTag || "index, follow",
         author: seoData.author || "",
         publisher: seoData.publisher || "Nors",
@@ -273,11 +299,7 @@ function EditSeoPage() {
         setSeoType("category");
       } else if (seoData.productId) {
         setSeoType("product");
-      } else if (
-        ("isHomePage" in seoData && Boolean(seoData.isHomePage)) ||
-        !seoData.canonical ||
-        seoData.canonical === ""
-      ) {
+      } else if (isHomePageSeo) {
         setSeoType("homepage");
       } else {
         setSeoType("general");
@@ -307,12 +329,11 @@ function EditSeoPage() {
   ) => {
     setSeoType(type);
     if (type === "homepage") {
-      const baseUrl =
-        typeof window !== "undefined" ? window.location.origin + "/" : "";
+      // Ana sayfa seçilirse isHomePage true, canonical boş bırakılır (backend otomatik "/" yapar)
       setFormData((prev) => ({
         ...prev,
         isHomePage: true,
-        canonical: baseUrl,
+        canonical: "", // Anasayfa için canonical boş bırakılır, backend otomatik "/" olarak işler
         productId: "",
         mainCategoryId: "",
         subCategoryId: "",
@@ -367,6 +388,11 @@ function EditSeoPage() {
         metaTitle: data.metaTitle || null,
         metaDescription: data.metaDescription || null,
         keywords: data.keywords || null,
+        titleEn: data.titleEn || null,
+        descriptionEn: data.descriptionEn || null,
+        metaTitleEn: data.metaTitleEn || null,
+        metaDescriptionEn: data.metaDescriptionEn || null,
+        keywordsEn: data.keywordsEn || null,
         canonical: null,
         robotsMetaTag: data.robotsMetaTag || null,
         author: data.author || null,
@@ -384,7 +410,8 @@ function EditSeoPage() {
         baseUrl: baseUrl,
       };
       if (type === "homepage") {
-        mapped.canonical = null;
+        // Anasayfa için canonical "/" olarak gönder
+        mapped.canonical = "/";
       } else if (type === "general") {
         mapped.canonical = data.canonical
           ? data.canonical.replace(/^\//, "")
@@ -412,8 +439,25 @@ function EditSeoPage() {
     try {
       await updateSeo(submitData);
       router.push("/admin/seo");
-    } catch (error) {
-      alert("SEO güncelleme başarısız.");
+    } catch (error: any) {
+      // Backend'den dönen hata mesajı ister string, ister array, ister object olsun, uygun şekilde göster
+      let errorMsg = "SEO güncelleme başarısız.";
+      if (error?.message) {
+        errorMsg = error.message;
+      } else if (error?.response?.data) {
+        if (Array.isArray(error.response.data)) {
+          errorMsg = error.response.data.join(" | ");
+        } else if (
+          typeof error.response.data === "object" &&
+          error.response.data.message
+        ) {
+          errorMsg = error.response.data.message;
+        } else if (typeof error.response.data === "string") {
+          errorMsg = error.response.data;
+        }
+      }
+      setToast({ type: "error", message: errorMsg });
+      // Do NOT redirect on error - keep form data intact
     }
   };
 
@@ -710,14 +754,178 @@ function EditSeoPage() {
                       <label className="form-label">Anahtar Kelimeler</label>
                       <input
                         type="text"
-                        className="form-control"
+                        className={`form-control ${
+                          formData.keywords.length > 255 ? "is-invalid" : ""
+                        }`}
                         value={formData.keywords}
                         onChange={(e) =>
                           handleInputChange("keywords", e.target.value)
                         }
                         placeholder="kelime1, kelime2, kelime3"
+                        maxLength={255}
                       />
-                      <small className="text-muted">Virgülle ayırın</small>
+                      <small
+                        className={`${
+                          formData.keywords.length > 255
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.keywords.length}/255 karakter - Virgülle
+                        ayırın
+                      </small>
+                    </div>
+
+                    {/* İngilizce SEO Bilgileri */}
+                    <h6 className="fw-bold mb-3 text-info mt-4">
+                      İngilizce SEO Bilgileri (English SEO)
+                    </h6>
+
+                    <div className="mb-3">
+                      <label className="form-label">Başlık (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70)
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.titleEn}
+                        onChange={(e) =>
+                          handleInputChange("titleEn", e.target.value)
+                        }
+                        placeholder="Page title (5-70 characters)"
+                        maxLength={100}
+                      />
+                      <small
+                        className={`${
+                          formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70)
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.titleEn.length}/70 karakter
+                        {formData.titleEn.length > 0 &&
+                          (formData.titleEn.length < 5 ||
+                            formData.titleEn.length > 70) &&
+                          " (SEO için ideal değil)"}
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Açıklama (EN)</label>
+                      <textarea
+                        className={`form-control ${
+                          formData.descriptionEn.length > 160
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.descriptionEn}
+                        onChange={(e) =>
+                          handleInputChange("descriptionEn", e.target.value)
+                        }
+                        placeholder="Page description"
+                        rows={3}
+                        maxLength={160}
+                      />
+                      <small
+                        className={`${
+                          formData.descriptionEn.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.descriptionEn.length}/160 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Meta Başlık (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.metaTitleEn.length > 70
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.metaTitleEn}
+                        onChange={(e) =>
+                          handleInputChange("metaTitleEn", e.target.value)
+                        }
+                        placeholder="Meta title (maximum 70 characters)"
+                        maxLength={70}
+                      />
+                      <small
+                        className={`${
+                          formData.metaTitleEn.length > 70
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.metaTitleEn.length}/70 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Meta Açıklama (EN)</label>
+                      <textarea
+                        className={`form-control ${
+                          formData.metaDescriptionEn.length > 160
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.metaDescriptionEn}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "metaDescriptionEn",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Meta description (maximum 160 characters)"
+                        rows={3}
+                        maxLength={160}
+                      />
+                      <small
+                        className={`${
+                          formData.metaDescriptionEn.length > 160
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.metaDescriptionEn.length}/160 karakter
+                      </small>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Anahtar Kelimeler (EN)</label>
+                      <input
+                        type="text"
+                        className={`form-control ${
+                          formData.keywordsEn.length > 255
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        value={formData.keywordsEn}
+                        onChange={(e) =>
+                          handleInputChange("keywordsEn", e.target.value)
+                        }
+                        placeholder="keyword1, keyword2, keyword3"
+                        maxLength={255}
+                      />
+                      <small
+                        className={`${
+                          formData.keywordsEn.length > 255
+                            ? "text-danger"
+                            : "text-muted"
+                        }`}
+                      >
+                        {formData.keywordsEn.length}/255 karakter - Virgülle
+                        ayırın
+                      </small>
                     </div>
 
                     {/* Canonical sadece genel sayfa için gösterilir ve autocomplete ile sayfa seçilebilir */}
@@ -934,6 +1142,32 @@ function EditSeoPage() {
           </div>
         </div>
       </div>
+
+      {/* Toast/alert mesajı */}
+      {toast && (
+        <div
+          className={`alert alert-${
+            toast.type === "error" ? "danger" : "success"
+          } fixed-top`}
+          style={{
+            top: 70,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 2000,
+            minWidth: 300,
+            maxWidth: 500,
+          }}
+        >
+          {toast.message}
+          <button
+            type="button"
+            className="btn-close float-end"
+            aria-label="Close"
+            onClick={() => setToast(null)}
+            style={{ fontSize: 12 }}
+          ></button>
+        </div>
+      )}
 
       <style jsx>{`
         .card {

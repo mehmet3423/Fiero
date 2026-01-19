@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useSubscribeToNotifications } from "@/hooks/services/useSubscribeToNotifications";
+import { useGetSupportEmailAddress } from "@/hooks/services/settings";
 
 export default function Footer() {
   const { t, language } = useLanguage();
@@ -13,6 +14,12 @@ export default function Footer() {
   const { subscribe, isPending } = useSubscribeToNotifications();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const [subscribeMessage, setSubscribeMessage] = useState<string>("");
+  // Support email adresini dinamik olarak al
+  const { supportEmail, isLoading: isLoadingEmail } =
+    useGetSupportEmailAddress();
+  // Fallback email adresi
+  const defaultEmail = "merhaba@nors.com.tr";
+  const emailAddress = supportEmail || defaultEmail;
 
   const isLoggedIn = !!userProfile;
   const accountLinkHref = isLoggedIn ? "/profile" : "/register";
@@ -77,7 +84,9 @@ export default function Footer() {
                 <div className="col-xl-3 col-md-6 col-12">
                   <div className="footer-infor">
                     <div className="footer-logo">
-                      <Link href="/">LOGO</Link>
+                      <Link href="/" title="Eser Leather - Ana Sayfaya Dön">
+                        LOGO
+                      </Link>
                     </div>
                     <ul>
                       <li>
@@ -86,19 +95,26 @@ export default function Footer() {
                       <li>
                         <p>
                           {t("footer.email")}:{" "}
-                          <a href="mailto:siparis@desa.com.tr">
-                            email@hotmail.com
-                          </a>
+                          <a href={`mailto:${emailAddress}`}>{emailAddress}</a>
                         </p>
                       </li>
                       <li>
                         <p>
                           {t("footer.phone")}:{" "}
-                          <a href="tel:02124731800">444 44 44</a>
+                          <a
+                            href="tel:02124731800"
+                            title="Eser Leather Müşteri Hizmetleri'ni ara: 444 44 44"
+                          >
+                            444 44 44
+                          </a>
                         </p>
                       </li>
                     </ul>
-                    <Link href="/contact-us" className="tf-btn btn-line">
+                    <Link
+                      href="/contact-us"
+                      className="tf-btn btn-line"
+                      title="İletişim sayfasına git"
+                    >
                       {t("footer.getDirections")}
                       <i className="icon icon-arrow1-top-left"></i>
                     </Link>
@@ -108,6 +124,7 @@ export default function Footer() {
                           href="/"
                           className="box-icon w_34 round social-facebook social-line"
                           target="_blank"
+                          title="Eser Leather'ı Facebook'ta takip edin"
                         >
                           <i className="icon fs-14 icon-fb"></i>
                         </a>
@@ -117,6 +134,7 @@ export default function Footer() {
                           href="/"
                           className="box-icon w_34 round social-instagram social-line"
                           target="_blank"
+                          title="Eser Leather'ı Instagram'da takip edin"
                         >
                           <i className="icon fs-14 icon-instagram"></i>
                         </a>
@@ -126,6 +144,7 @@ export default function Footer() {
                           href="/"
                           className="box-icon w_34 round social-youtube social-line"
                           target="_blank"
+                          title="Eser Leather'ı YouTube'da takip edin"
                         >
                           <i
                             className="icon fs-10 icon-play"
@@ -167,7 +186,11 @@ export default function Footer() {
                     }`}
                   >
                     <li>
-                      <Link href="/policies" className="footer-menu_item">
+                      <Link
+                        href="/policies"
+                        className="footer-menu_item"
+                        title="Politikalar sayfasına git"
+                      >
                         {t("footer.policies")}
                       </Link>
                     </li>
@@ -175,12 +198,17 @@ export default function Footer() {
                       <Link
                         href="/distance-sales-agreement"
                         className="footer-menu_item"
+                        title="Mesafeli Satış Sözleşmesi sayfasına git"
                       >
                         {t("footer.returns")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/delivery-terms" className="footer-menu_item">
+                      <Link
+                        href="/delivery-terms"
+                        className="footer-menu_item"
+                        title="Teslimat Koşulları sayfasına git"
+                      >
                         {t("footer.deliveryTerms")}
                       </Link>
                     </li>
@@ -188,6 +216,7 @@ export default function Footer() {
                       <Link
                         href="/sales-agreement"
                         className="footer-menu_item"
+                        title="Satış Sözleşmesi sayfasına git"
                       >
                         {t("footer.salesAgreement")}
                       </Link>
@@ -196,6 +225,7 @@ export default function Footer() {
                       <Link
                         href="/privacy-and-cookies"
                         className="footer-menu_item"
+                        title="Gizlilik ve Çerez Politikası sayfasına git"
                       >
                         {t("footer.privacyAndCookies")}
                       </Link>
@@ -204,17 +234,26 @@ export default function Footer() {
                       <Link
                         href="/privacy-and-payment-security"
                         className="footer-menu_item"
+                        title="Gizlilik ve Ödeme Güvenliği sayfasına git"
                       >
                         {t("footer.privacyAndPayment")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/terms" className="footer-menu_item">
+                      <Link
+                        href="/terms"
+                        className="footer-menu_item"
+                        title="Kullanım Koşulları sayfasına git"
+                      >
                         {t("footer.terms")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/faq" className="footer-menu_item">
+                      <Link
+                        href="/faq"
+                        className="footer-menu_item"
+                        title="Sıkça Sorulan Sorular sayfasına git"
+                      >
                         {t("footer.faq")}
                       </Link>
                     </li>
@@ -222,12 +261,17 @@ export default function Footer() {
                       <Link
                         href="/compare-products"
                         className="footer-menu_item"
+                        title="Ürün Karşılaştırma sayfasına git"
                       >
                         {t("footer.compare")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/favorites" className="footer-menu_item">
+                      <Link
+                        href="/favorites"
+                        className="footer-menu_item"
+                        title="Favorilerim sayfasına git"
+                      >
                         {t("footer.favorites")}
                       </Link>
                     </li>
@@ -257,30 +301,51 @@ export default function Footer() {
                     }`}
                   >
                     <li>
-                      <Link href="/our-story" className="footer-menu_item">
+                      <Link
+                        href="/our-story"
+                        className="footer-menu_item"
+                        title="Hikayemiz sayfasına git"
+                      >
                         {t("footer.ourStory")}
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link
                         href="/store-locations"
                         className="footer-menu_item"
+                        title="Mağaza Lokasyonları sayfasına git"
                       >
                         {t("footer.stores")}
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
-                      <Link href="/contact-us" className="footer-menu_item">
+                      <Link
+                        href="/contact-us"
+                        className="footer-menu_item"
+                        title="İletişim sayfasına git"
+                      >
                         {t("footer.contact")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/blog" className="footer-menu_item">
+                      <Link
+                        href="/blog"
+                        className="footer-menu_item"
+                        title="Blog sayfasına git"
+                      >
                         {t("footer.blog")}
                       </Link>
                     </li>
                     <li>
-                      <Link href={accountLinkHref} className="footer-menu_item">
+                      <Link
+                        href={accountLinkHref}
+                        className="footer-menu_item"
+                        title={
+                          isLoggedIn
+                            ? "Profil sayfasına git"
+                            : "Yeni hesap oluştur"
+                        }
+                      >
                         {accountLinkLabel}
                       </Link>
                     </li>
@@ -290,12 +355,20 @@ export default function Footer() {
                       </Link>
                     </li> */}
                     <li>
-                      <Link href="/about-us" className="footer-menu_item">
+                      <Link
+                        href="/about-us"
+                        className="footer-menu_item"
+                        title="Hakkımızda sayfasına git"
+                      >
                         {t("footer.aboutUs")}
                       </Link>
                     </li>
                     <li>
-                      <Link href="/support-ticket" className="footer-menu_item">
+                      <Link
+                        href="/support-ticket"
+                        className="footer-menu_item"
+                        title="Genel Destek Talebi sayfasına git"
+                      >
                         {t("footer.supportTicket")}
                       </Link>
                     </li>

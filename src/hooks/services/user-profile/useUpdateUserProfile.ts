@@ -35,29 +35,22 @@ export const useUpdateUserProfile = () => {
       isEmailNotificationEnabled: data.isEmailNotificationEnabled ?? false,
     };
 
-    try {
-      await mutateAsync(
-        {
-          url: UPDATE_USER_PROFILE,
-          method: HttpMethod.PUT,
-          data: requestBody,
+    await mutateAsync(
+      {
+        url: UPDATE_USER_PROFILE,
+        method: HttpMethod.PUT,
+        data: requestBody,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Profil bilgileriniz başarıyla güncellendi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.GET_USER_PROFILE],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Profil bilgileriniz başarıyla güncellendi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.GET_USER_PROFILE],
-            });
-          },
-          onError: () => {
-            toast.error("Profil güncellenirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Profil güncellenirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return { updateProfile, isPending };

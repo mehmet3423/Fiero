@@ -23,30 +23,22 @@ export const useUpdateCustomer = () => {
       gender: data.gender || 0,
     };
 
-    try {
-      console.log("Customer Update Request:", requestBody);
-      await mutateAsync(
-        {
-          url: UPDATE_CUSTOMER,
-          method: HttpMethod.PUT,
-          data: requestBody,
+    await mutateAsync(
+      {
+        url: UPDATE_CUSTOMER,
+        method: HttpMethod.PUT,
+        data: requestBody,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Müşteri bilgileri başarıyla güncellendi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.CUSTOMERS_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Müşteri bilgileri başarıyla güncellendi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.CUSTOMERS_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Müşteri güncellenirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error updating customer:", error);
-      toast.error("Müşteri güncellenirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return { updateCustomer, isPending };

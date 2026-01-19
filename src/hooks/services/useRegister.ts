@@ -110,7 +110,6 @@ export const useRegister = () => {
         },
         {
           onSuccess: (res) => {
-            console.log("Register response:", res.data);
 
             if (res.data && res.data.data.accessToken) {
               // Save token to localStorage for automatic login
@@ -129,14 +128,16 @@ export const useRegister = () => {
             }
           },
           onError: (error) => {
-            console.error("Register error:", error);
-            toast.error(error.response?.data?.detail || "Kayıt başarısız!");
+            // Sadece backend mesajını göster
+            const errorMessage = error.response?.data?.detail || error.response?.data?.message;
+            if (errorMessage) {
+              toast.error(errorMessage);
+            }
           },
         }
       );
     } catch (error) {
-      console.error("Register error:", error);
-      toast.error("Kayıt başarısız!");
+      // Hata mesajı useMyMutation tarafından gösterildi
     }
   };
 

@@ -4,7 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
-import { useCategories } from "@/hooks/services/categories/useCategories";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -19,7 +19,7 @@ const defaultCategoryImages = [
 
 function ServiceIcons() {
   const { t, language } = useLanguage();
-  const { categories, isLoading } = useCategories();
+  const { categories, isLoading } = useActiveCategories();
 
   const sortedCategories =
     categories?.items
@@ -87,7 +87,11 @@ function ServiceIcons() {
                     <div className="collection-item style-2 hover-img">
                       <div className="collection-inner">
                         <Link
-                          href={`/products?categoryId=${category.id}`}
+                          href={
+                            category.seo?.slug
+                              ? `/category/${category.seo.slug}`
+                              : `/products?categoryId=${category.id}`
+                          }
                           className="collection-image img-style"
                         >
                           <Image
@@ -127,7 +131,11 @@ function ServiceIcons() {
                           }}
                         >
                           <Link
-                            href={`/products?categoryId=${category.id}`}
+                            href={
+                              category.seo?.slug
+                                ? `/category/${category.seo.slug}`
+                                : `/products?categoryId=${category.id}`
+                            }
                             className="tf-btn collection-title hover-icon fs-15 rounded-full "
                           >
                             <span>

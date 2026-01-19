@@ -40,10 +40,12 @@ export const GET_PRODUCT_BY_ID = `${BASE_URL}api/Product/GetProductById`;
 export const ADD_PRODUCT = `${BASE_URL}api/Product/CreateProduct`;
 export const UPDATE_PRODUCT = `${BASE_URL}api/Product/UpdateProduct`;
 export const DELETE_PRODUCT = `${BASE_URL}api/Product/DeleteProduct`;
-export const GET_ALL_PRODUCTS = `${BASE_URL}api/Product/GetAllProducts`;
+export const GET_ALL_PRODUCTS = `${BASE_URL}api/Product/GetAllProductsForCustomerListAsync`;
+export const GET_ALL_PRODUCTS_ADMIN = `${BASE_URL}api/Product/GetAllProductsForCustomerListAsync`;
 export const GET_ALL_OUTLET_PRODUCTS = `${BASE_URL}api/Product/GetAllOutletProducts`;
 export const GET_PRODUCT_LIST_BY_IDS = `${BASE_URL}api/Product/GetProductsByIds`;
 export const GET_BASIC_PRODUCT_LIST = `${BASE_URL}api/Product/GetBasicProductList`;
+export const GET_PRODUCT_BY_SLUG = `${BASE_URL}api/Product/GetProductBySlug`;
 
 // Base Product endpoints
 export const CREATE_BASE_PRODUCT = `${BASE_URL}api/BaseProduct/CreateBaseProduct`;
@@ -59,9 +61,13 @@ export const DELETE_BASE_PRODUCT = `${BASE_URL}api/BaseProduct/DeleteBaseProduct
 
 // Category endpoints
 export const GET_MAIN_CATEGORY_LIST = `${BASE_URL}api/MainCategory/GetMainCategoriesList`;
+export const GET_ACTIVE_MAIN_CATEGORY_LIST = `${BASE_URL}api/MainCategory/GetActiveMainCategoriesList`;
+export const GET_ALL_ACTIVE_MAIN_CATEGORIES = `${BASE_URL}api/MainCategory/GetAllActiveMainCategories`;
 export const GET_MAIN_CATEGORY_LOOKUP_LIST = `${BASE_URL}api/MainCategory/GetMainCategoryLookupList`;
+export const GET_MAIN_CATEGORY_BY_SLUG = `${BASE_URL}api/MainCategory/GetMainCategoryBySlug`;
 export const GET_SUB_CATEGORY_LOOKUP_LIST = `${BASE_URL}api/SubCategory/GetSubCategoryLookupListByMainCategoryId`;
 export const GET_SUB_CATEGORY_LIST = `${BASE_URL}api/SubCategory/GetSubCategoriesListByMainCategoryId`;
+export const GET_SUB_CATEGORY_BY_SLUG = `${BASE_URL}api/SubCategory/GetSubCategoryBySlug`;
 export const CREATE_MAIN_CATEGORY = `${BASE_URL}api/MainCategory/CreateMainCategory`;
 export const CREATE_SUB_CATEGORY = `${BASE_URL}api/SubCategory/CreateSubCategory`;
 export const UPDATE_MAIN_CATEGORY = `${BASE_URL}api/MainCategory/UpdateMainCategory`;
@@ -240,6 +246,9 @@ export const GET_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
 export const UPDATE_SYSTEM_SETTINGS = `${BASE_URL}api/SystemSettings`;
 export const CREATE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
 export const DELETE_SYSTEM_SETTING = `${BASE_URL}api/SystemSettings`;
+export const GET_GOOGLE_AND_META_ANALYTICS = `${BASE_URL}api/SystemSettings/GetGoogleAndMetaAnalytics`;
+export const GET_PRODUCT_RATINGS = `${BASE_URL}api/SystemSettings/GetProductRatings`;
+export const GET_SUPPORT_EMAIL_ADDRESS = `${BASE_URL}api/SystemSettings/GetSupportEmailAddress`;
 
 // Reports endpoints
 export const GET_STOCK_REPORT = `${BASE_URL}api/Reports/StockReportPaginated`;
@@ -254,6 +263,9 @@ export const GET_RETURN_REASON_REPORT = `${BASE_URL}api/Reports/ReturnReasonRepo
 export const GET_PRODUCT_CART_REPORT = `  ${BASE_URL}api/Reports/ProductCartReportPaginated`;
 export const GET_UNSOLD_PRODUCTS_REPORT = `${BASE_URL}api/Reports/UnsoldProductsReportPaginated`;
 export const GET_PRODUCT_SALES_REPORT = `${BASE_URL}api/Reports/ProductSalesReportPaginated`;
+
+// Reports endpoints (Non-Paginated - for bulk data)
+export const GET_PRODUCT_SALES_REPORT_ALL = `${BASE_URL}api/Reports/ProductSalesReport`;
 
 // Reports with excel
 export const GET_STOCK_REPORT_EXCEL = `${BASE_URL}api/Reports/StockReportExcel`;

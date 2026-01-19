@@ -39,6 +39,8 @@ export const useGeneralSupport = () => {
 
       toast.success("Destek talebiniz başarıyla oluşturuldu.");
     } catch (error: any) {
+      // useMyMutation zaten backend mesajını gösteriyor
+      // Sadece validation errors için özel işlem yap
       if (error.response?.data?.errors) {
         Object.entries(error.response.data.errors).forEach(
           ([field, messages]) => {
@@ -47,9 +49,8 @@ export const useGeneralSupport = () => {
             }
           }
         );
-      } else {
-        toast.error("Bir hata oluştu.");
       }
+      // Backend mesajı zaten useMyMutation tarafından gösterildi
     } finally {
       setIsPending(false);
     }

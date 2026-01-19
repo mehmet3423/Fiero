@@ -26,7 +26,7 @@ const PrivacyAndCookiesPage = () => {
                                 {isLoading && <p>Yükleniyor...</p>}
                                 {!isLoading && (
                                     <>
-                                        {(contents?.items || [])
+                                        {(contents || [])
                                             .slice()
                                             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                                             .map((item) => (
@@ -37,7 +37,7 @@ const PrivacyAndCookiesPage = () => {
                                                     )}
                                                 </div>
                                             ))}
-                                        {(!contents || (contents.items || []).length === 0) && (
+                                        {(!contents || contents.length === 0) && (
                                             <p>Şu anda görüntülenecek içerik bulunamadı.</p>
                                         )}
                                     </>

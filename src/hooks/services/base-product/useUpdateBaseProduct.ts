@@ -15,37 +15,31 @@ export const useUpdateBaseProduct = () => {
     useMyMutation<BaseProductDetailResponse>();
 
   const updateBaseProduct = async (payload: UpdateBaseProductRequest) => {
-    try {
-      await mutateAsync(
-        {
-          url: UPDATE_BASE_PRODUCT,
-          method: HttpMethod.PUT,
-          data: payload,
+    await mutateAsync(
+      {
+        url: UPDATE_BASE_PRODUCT,
+        method: HttpMethod.PUT,
+        data: payload,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Base product başarıyla güncellendi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCT_BY_ID, payload.id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCTS],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASE_PRODUCT_VARIANTS, payload.id],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
+          });
         },
-        {
-          onSuccess: () => {
-            toast.success("Base product başarıyla güncellendi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCT_BY_ID, payload.id],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCTS],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASE_PRODUCT_VARIANTS, payload.id],
-            });
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.BASIC_PRODUCT_LIST],
-            });
-          },
-          onError: () => {
-            toast.error("Base product güncellenirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      throw error;
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return {

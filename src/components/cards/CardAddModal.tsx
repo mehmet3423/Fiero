@@ -59,8 +59,6 @@ const CardAddModal: React.FC<CardAddModalProps> = ({
           // Başarısız durumda toast göster
           if (!binInfo.data?.success) {
             toast.error(t("myCards.binCheckFailed"));
-          } else {
-            console.log("BIN kontrolü başarılı:", binInfo.data); // Debug için
           }
         } catch (error) {
           console.error("BIN kontrolü başarısız:", error);

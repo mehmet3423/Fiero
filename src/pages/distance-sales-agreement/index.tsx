@@ -1,17 +1,22 @@
 
-
+"use client";
 import { GeneralContentType } from "@/constants/models/GeneralContent";
 import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
+import { useGetSupportEmailAddress } from "@/hooks/services/settings";
 
-const ReturnExchangePolicyPage = () => {
+const DistanceSalesAgreementPage = () => {
   const { contents, isLoading } = useGeneralContents(
-    GeneralContentType.WarrantyAndReturnPolicies
+    GeneralContentType.DistanceSalesAgreement
   );
+  const { supportEmail, isLoading: isLoadingEmail } = useGetSupportEmailAddress();
+  // Fallback email adresi
+  const defaultEmail = "merhaba@nors.com.tr";
+  const emailAddress = supportEmail || defaultEmail;
   return (
     <>
       <div className="tf-page-title style-2">
         <div className="container-full">
-          <div className="heading text-center">Garanti ve İade Koşulları</div>
+          <div className="heading text-center">Mesafeli Satış Sözleşmesi</div>
         </div>
       </div>
       <section className="flat-spacing-25">
@@ -19,14 +24,17 @@ const ReturnExchangePolicyPage = () => {
           <div className="tf-main-area-page">
             <div className="flatpage__content">
               <div className="flatpage__header">
-                <div className="flatpage__title flatpage__title--noimg">Garanti ve İade Koşulları</div>
-                <img className="lazyload flatpage__img" src="" alt="Garanti ve İade Koşulları" style={{ display: "none" }} />
+                <div className="flatpage__title flatpage__title--noimg">Mesafeli Satış Sözleşmesi</div>
+                <img className="lazyload flatpage__img" src="" alt="Mesafeli Satış Sözleşmesi" style={{ display: "none" }} />
               </div>
               <div className="flatpage__text">
+                <p>
+                  <strong>E-posta:</strong> {emailAddress}
+                </p>
                 {isLoading && <p>Yükleniyor...</p>}
                 {!isLoading && (
                   <>
-                    {(contents?.items || [])
+                    {(contents || [])
                       .slice()
                       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                       .map((item) => (
@@ -47,7 +55,7 @@ const ReturnExchangePolicyPage = () => {
                           )}
                         </div>
                       ))}
-                    {(!contents || (contents.items || []).length === 0) && (
+                    {(!contents || contents.length === 0) && (
                       <p>Şu anda görüntülenecek içerik bulunamadı.</p>
                     )}
                   </>
@@ -108,4 +116,4 @@ const ReturnExchangePolicyPage = () => {
   );
 };
 
-export default ReturnExchangePolicyPage;
+export default DistanceSalesAgreementPage;

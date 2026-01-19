@@ -12,7 +12,8 @@ export default function Login({ onSuccess }: LoginProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
+    remember: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showRecover, setShowRecover] = useState(false);
@@ -128,6 +129,28 @@ export default function Login({ onSuccess }: LoginProps) {
                           </svg>
                         )}
                       </button>
+                    </div>
+                  </div>
+
+                  <div className="mb_20">
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        style={{ marginTop: "7px", cursor: "pointer" }}
+                        id="remember"
+                        checked={formData.remember}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, remember: e.target.checked }))
+                        }
+                      />
+                      <label
+                        className="form-check-label ml-2"
+                        htmlFor="remember"
+                        style={{ cursor: "pointer" }}
+                      >
+                        {t("login.rememberMe")}
+                      </label>
                     </div>
                   </div>
                   

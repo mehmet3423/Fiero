@@ -9,7 +9,7 @@ const PoliciesPage: NextPage = () => {
     GeneralContentType.Policies
   );
 
-  const policies = contents?.items
+  const policies = contents
     ?.slice()
     ?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 

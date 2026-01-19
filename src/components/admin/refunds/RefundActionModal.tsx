@@ -148,37 +148,9 @@ export default function RefundActionModal({
   const refundScope = useMemo<RefundScope>(() => {
     if (!refundRequest) return "order";
 
-    console.log("🔍 [RefundActionModal] refundRequest:", refundRequest);
-    console.log("🔍 [RefundActionModal] displayItems:", displayItems);
-    console.log(
-      "🔍 [RefundActionModal] displayItems length:",
-      displayItems.length
-    );
-
-    displayItems.forEach((item: any, index: number) => {
-      console.log(`🔍 [RefundActionModal] displayItems[${index}]:`, {
-        orderItemNumber: item.orderItemNumber,
-        productId: item.productId,
-        name: item.name,
-        rejectReason: item.rejectReason,
-        cancelReasonType: item.cancelReasonType,
-        paymentTransactionId: item.paymentTransactionId,
-      });
-    });
-
     const hasItemRefundRequests = refundRequestedDisplayItems.length > 0;
 
-    console.log(
-      "🔍 [RefundActionModal] hasItemRefundRequests (by cancelReasonType):",
-      hasItemRefundRequests
-    );
-    console.log(
-      "🔍 [RefundActionModal] displayItems with cancelReasonType !== null:",
-      refundRequestedDisplayItems
-    );
-
     const scope = hasItemRefundRequests ? "items" : "order";
-    console.log("🔍 [RefundActionModal] Determined scope:", scope);
 
     return scope;
   }, [refundRequest, displayItems, refundRequestedDisplayItems]);

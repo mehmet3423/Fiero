@@ -1,6 +1,6 @@
 import { PathEnums } from "@/constants/enums/PathEnums";
 import { useSearch } from "@/context/SearchContext";
-import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
@@ -26,7 +26,8 @@ export default function SearchSidebar({
 }: SearchSidebarProps) {
   const router = useRouter();
   const { searchResults, isSearching } = useSearch();
-  const { categories } = useMainCategoriesLookUp();
+  const { categories: categoriesData } = useActiveCategories();
+  const categories = categoriesData?.items || [];
   const searchRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
@@ -60,8 +61,9 @@ export default function SearchSidebar({
     }
   };
 
-  const handleResultClick = (productId: string) => {
-    router.push(`/products/${productId}`);
+  const handleResultClick = (product: any) => {
+    const productSlug = product?.seo?.slug || product?.id;
+    router.push(`/products/${productSlug}`);
     onClose();
   };
 
@@ -166,7 +168,7 @@ export default function SearchSidebar({
                         <div
                           key={product.id}
                           className="tf-loop-item"
-                          onClick={() => handleResultClick(product.id)}
+                          onClick={() => handleResultClick(product)}
                           style={{ cursor: "pointer" }}
                         >
                           <div className="image">
@@ -238,12 +240,16 @@ export default function SearchSidebar({
                       {t("searchBar.quickLinks")}
                     </div>
                     <ul className="tf-quicklink-list">
-                      {(Array.isArray(categories?.data) &&
-                        categories.data.length > 0 &&
-                        categories.data.slice(0, 4).map((category: any) => (
+                      {(Array.isArray(categories) &&
+                        categories.length > 0 &&
+                        categories.slice(0, 4).map((category: any) => (
                           <li key={category.id} className="tf-quicklink-item">
                             <Link
-                              href={`/products?categoryId=${category.id}`}
+                              href={
+                                category.seo?.slug
+                                  ? `/category/${category.seo.slug}`
+                                  : `/products?categoryId=${category.id}`
+                              }
                               className=""
                               onClick={onClose}
                             >

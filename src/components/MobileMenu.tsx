@@ -2,8 +2,8 @@ import { PathEnums } from "@/constants/enums/PathEnums";
 import { UserRole } from "@/constants/enums/UserRole";
 import { useSearch } from "@/context/SearchContext";
 import { useAuth } from "@/hooks/context/useAuth";
-import { useCategories } from "@/hooks/services/categories/useCategories";
-import { useSubCategoriesLookUp } from "@/hooks/services/categories/useSubCategoriesLookUp";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
+import { useSubCategories } from "@/hooks/services/categories/useSubCategories";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,19 +22,24 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const { language } = useLanguage();
   const { userRole, userProfile } = useAuth();
   const { isAdmin } = useIsAdmin();
-  const { categories } = useCategories();
+  const { categories: categoriesData } = useActiveCategories();
+  const categories = categoriesData?.items || [];
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(
     null
   );
   const { searchTerm, setSearchTerm } = useSearch();
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const collapseRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Alt kategori verisi
-  const { categories: subCategories } = useSubCategoriesLookUp(
+  const { data: subCategoriesData } = useSubCategories(
     expandedCategoryId || ""
   );
+  const subCategories = Array.isArray(subCategoriesData)
+    ? subCategoriesData
+    : [];
 
   const showCustomerFeatures =
     userRole === UserRole.CUSTOMER || userRole === null;
@@ -119,8 +124,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         <div className="mb-canvas-content">
           <div className="mb-body">
             <ul className="nav-ul-mb" id="wrapper-menu-navigation">
-              {categories?.items?.length &&
-                categories.items.map((category) => (
+              {categories?.length > 0 &&
+                categories.map((category) => (
                   <li key={category.id} className="nav-mb-item">
                     <a
                       href="#"
@@ -157,10 +162,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                       }}
                     >
                       {expandedCategoryId === category.id &&
-                        subCategories?.data &&
-                        subCategories.data.length > 0 && (
+                        subCategories &&
+                        subCategories.length > 0 && (
                           <ul className="sub-nav-menu" id="sub-menu-navigation">
-                            {subCategories.data.map((subCategory) => (
+                            {subCategories.map((subCategory) => (
                               <li key={subCategory.id}>
                                 <a
                                   href="#"
@@ -173,7 +178,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                                   onClick={(e) => {
                                     e.preventDefault();
                                     handleLinkClick(
-                                      `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
+                                      category.seo?.slug &&
+                                        subCategory.seo?.slug
+                                        ? `/category/${category.seo.slug}/${subCategory.seo.slug}`
+                                        : `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
                                     );
                                   }}
                                 >
@@ -243,11 +251,51 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   className="site-nav-icon"
                   onClick={(e) => {
                     e.preventDefault();
+                    setIsSearchOpen(!isSearchOpen);
                   }}
                 >
                   <i className="icon icon-search"></i>Ara
                 </a>
               </div>
+
+              {isSearchOpen && (
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="mb-search-form"
+                  style={{ marginTop: "10px", padding: "0 15px" , marginBottom: "10px"}}
+                >
+                  <div className="search-box d-flex">
+                    <input
+                      type="text"
+                      placeholder="Ürün ara..."
+                      value={localSearchTerm}
+                      onChange={(e) => setLocalSearchTerm(e.target.value)}
+                      className="form-control"
+                      style={{
+                        flex: 1,
+                        padding: "8px 12px",
+                        border: "1px solid #ddd",
+                        borderRadius: "4px 0 0 4px",
+                        boxShadow: "none",
+                        outline: "none",
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      className="search-btn"
+                      style={{
+                        padding: "8px 12px",
+                        background: "#000",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "0 4px 4px 0",
+                      }}
+                    >
+                      <i className="icon icon-search"></i>
+                    </button>
+                  </div>
+                </form>
+              )}
 
               <div className="mb-notice">
                 <a href={PathEnums.CONTACT} className="text-need">
@@ -280,7 +328,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   onClose();
-                  $("#signin-modal").modal("show");
+                  router.push("/login");
                 }}
               >
                 <i className="icon icon-account"></i>Giriş Yap

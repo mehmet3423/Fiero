@@ -53,12 +53,16 @@ export const useLogin = () => {
       },
       {
         onSuccess: (res) => {
-          setToken(res.data.data.accessToken);
+          setToken(res.data.data.accessToken, data.remember || false);
           toast.success("Giriş başarılı!");
           onSuccess?.();
         },
         onError: (error) => {
-          toast.error(error.response?.data.detail);
+          // Sadece backend mesajını göster
+          const errorMessage = error.response?.data?.detail || error.response?.data?.message;
+          if (errorMessage) {
+            toast.error(errorMessage);
+          }
         },
       }
     );

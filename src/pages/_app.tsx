@@ -6,6 +6,7 @@ import { SearchProvider } from "@/context/SearchContext";
 import AdminGuard from "@/guards/AdminGuard";
 import AuthGuard from "@/guards/AuthGuard";
 import { LanguageProvider } from "@/context/LanguageContext";
+import MetaAnalytics from "@/components/analytics/MetaAnalytics";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
@@ -148,6 +149,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <AdminGuard>
                 <FavoritesProvider>
                   <CartProvider>
+                    <MetaAnalytics />
                     <RootLayout>
                       <Component {...pageProps} />
                     </RootLayout>

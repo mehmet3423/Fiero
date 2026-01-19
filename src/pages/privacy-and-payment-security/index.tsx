@@ -25,7 +25,7 @@ const PrivacyAndPaymentSecurityPage = () => {
                                 {isLoading && <p>Yükleniyor...</p>}
                                 {!isLoading && (
                                     <>
-                                        {(contents?.items || [])
+                                        {(contents || [])
                                             .slice()
                                             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
                                             .map((item) => (
@@ -34,7 +34,7 @@ const PrivacyAndPaymentSecurityPage = () => {
                                                     {item.content && (
                                                         <div
                                                             className="gc-content"
-                                                            dangerouslySetInnerHTML={{ __html: item.content }}
+                                                            dangerouslySetInnerHTML={{ __html: item.content.replace(/\n/g, "<br />") }}
                                                         />
                                                     )}
                                                     {!item.content && item.contentUrl && (
@@ -46,7 +46,7 @@ const PrivacyAndPaymentSecurityPage = () => {
                                                     )}
                                                 </div>
                                             ))}
-                                        {(!contents || (contents.items || []).length === 0) && (
+                                        {(!contents || contents.length === 0) && (
                                             <p>Şu anda görüntülenecek içerik bulunamadı.</p>
                                         )}
                                     </>
@@ -101,6 +101,9 @@ const PrivacyAndPaymentSecurityPage = () => {
         }
         .gc-content :global(p) {
           margin: 0 0 0.7rem 0;
+        }
+        .gc-content {
+          white-space: pre-line;
         }
       `}</style>
         </>

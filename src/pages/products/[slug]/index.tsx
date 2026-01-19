@@ -8,6 +8,7 @@ import { DtoReview } from "@/constants/models/Review";
 import { UpdatedReview } from "@/constants/models/UpdatedReview";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
+import { useGetProductBySlug } from "@/hooks/services/products/useGetProductBySlug";
 import { useProductDetail } from "@/hooks/services/products/useProductDetail";
 import { useAddReview } from "@/hooks/services/reviews/useAddReview";
 import { useDeleteReview } from "@/hooks/services/reviews/useDeleteReview";
@@ -26,9 +27,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import ProductGallery from "@/components/product-detail/ProductGallery";
 import ProductDetails from "@/components/product-detail/ProductDetails";
-import AccordionSection from "@/components/product-detail/AccordionSection"; // Import AccordionSection
+import AccordionSection from "@/components/product-detail/AccordionSection";
 import PeopleAlsoBought from "@/components/product-detail/PeopleAlsoBought";
 import { useLanguage } from "@/context/LanguageContext";
+import { useGetProductRatings } from "@/hooks/services/settings";
+import { GET_ALL_PRODUCTS, GET_PRODUCT_BY_ID, GET_PRODUCT_BY_SLUG } from "@/constants/links";
 
 // Removed utility imports - using simplified discount structure
 
@@ -55,23 +58,49 @@ interface ProductDetailSEOData {
 
 interface ProductDetailProps {
   seoData?: ProductDetailSEOData;
-  productId: string;
+  seoId: string | null;
+  slug: string;
 }
 
-const ProductDetailPage = ({ seoId }: { seoId: string }) => {
+const isUuid = (value: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  );
+
+const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => {
   const { t } = useLanguage();
   const router = useRouter();
-  const { productId } = router.query;
+  const slugValue = (router.query.slug as string) || initialSlug || "";
+  const slugIsUuid = slugValue ? isUuid(slugValue) : false;
   const { addToCart, addLoading: isAddingToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  // Product ratings ayarını kontrol et
+  const { isRatingEnabled } = useGetProductRatings();
 
-  const { product, isLoading, error } = useProductDetail(productId as string);
+  const {
+    product: productById,
+    isLoading: isLoadingById,
+    error: errorById,
+  } = useProductDetail(slugIsUuid ? slugValue : undefined);
+  const {
+    data: productBySlug,
+    isLoading: isLoadingBySlug,
+    error: errorBySlug,
+  } = useGetProductBySlug({
+    slug: slugIsUuid ? "" : slugValue,
+    enabled: !slugIsUuid,
+  });
+
+  const product = slugIsUuid ? productById : productBySlug;
+  const productId = product?.id || (slugIsUuid ? slugValue : "");
+  const isLoading = slugIsUuid ? isLoadingById : isLoadingBySlug;
+  const error = slugIsUuid ? errorById : errorBySlug;
 
   const {
     reviews,
     isLoading: isLoadingReviews,
     error: errorReviews,
-  } = useGetReviews(productId as string);
+  } = useGetReviews({ productId });
   const { addReview, isPending } = useAddReview();
   const { updateReview, isPending: isUpdating } = useUpdateReview();
   const { deleteReview, isPending: isDeleting } = useDeleteReview();
@@ -120,7 +149,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
     content: "",
     rating: 0,
     imageUrl: "",
-    productId: productId as string,
+    productId: productId,
     comment: "",
     modifiedValue: "",
   });
@@ -204,7 +233,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
         content: "",
         rating: 0,
         imageUrl: "",
-        productId: productId as string,
+        productId: productId,
         comment: "",
         modifiedValue: "",
       });
@@ -343,7 +372,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
 
   return (
     <>
-      {product?.seoId && <SEOHead seoId={product.seoId} />}
+      {seoId && <SEOHead seoId={seoId} />}
       <main className="main">
         {/*   NAVBAR  */}
         <nav aria-label="breadcrumb" className="tf-breadcrumb">
@@ -398,6 +427,7 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
                     isAddingToCart={isAddingToCart}
                     isInFavorites={isInFavorites}
                     isFavoritesLoading={isFavoritesLoading}
+                    isRatingEnabled={isRatingEnabled}
                   />
                 </div>
               </div>
@@ -453,24 +483,11 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
               );
             })()}
             <div className="product-details-tab">
-              <AccordionSection />
+              <AccordionSection product={product} />
               <PeopleAlsoBought
                 categoryId={product?.subCategoryId}
                 currentProductId={productId as string}
               />
-              {/* <ProductTabs
-                activeTab={activeTab}
-                handleTabChange={handleTabChange}
-                reviews={reviews}
-                sortedReviews={sortedReviews}
-                sortOrder={sortOrder}
-                handleSortChange={handleSortChange}
-                handleReviewImageClick={handleReviewImageClick}
-                handleReviewSubmit={handleReviewSubmit}
-                getRatingPercentage={getRatingPercentage}
-                extendedProduct={extendedProduct}
-                productId={productId as string}
-              /> */}
             </div>
           </div>
         </div>
@@ -482,17 +499,35 @@ const ProductDetailPage = ({ seoId }: { seoId: string }) => {
 // getStaticPaths - Hangi ürün sayfalarının pre-render edileceğini belirler
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    // En popüler ürünlerin ID'lerini çek (performans için sadece ilk 100 ürün)
+    // Slug'ı olan ürünlerin path'lerini oluştur
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Product/GetAllProducts?Page=1&PageSize=100`
+      `${GET_ALL_PRODUCTS}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          page: 0,
+          pageSize: 100,
+          mainCategoryIds: [],
+          subCategoryIds: [],
+          search: "",
+          discountSort: 0,
+          ratingSort: 0,
+          salesCountSort: 0,
+          likeCountSort: 0,
+        }),
+      }
     );
 
     if (response.ok) {
-      const data = await response.json();
+      const result = await response.json();
+      const items = result?.data?.items || result?.items || [];
       const paths =
-        data.items?.map((product: any) => ({
-          params: { productId: product.id.toString() },
-        })) || [];
+        items
+          .filter((product: any) => product?.seo?.slug || product?.id)
+          .map((product: any) => ({
+            params: { slug: product?.seo?.slug || product.id.toString() },
+          })) || [];
 
       return {
         paths,
@@ -510,34 +545,48 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 // getStaticProps - Ürün detay sayfası SEO verilerini çeker
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const productId = params?.productId as string;
+export const getStaticProps: GetStaticProps<ProductDetailProps> = async ({
+  params,
+}) => {
+  const slug = params?.slug as string;
+
+  if (!slug) {
+    return { notFound: true };
+  }
+
   try {
+    // UUID kontrolü - slug UUID ise ID olarak kullan
+    const slugIsUuid = isUuid(slug);
+    
     // API'den product detayını çek
-    const productResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Product/GetProductById?id=${productId}`
-    );
-    let product = null;
-    if (productResponse.ok) {
-      product = await productResponse.json();
+    const productUrl = slugIsUuid
+      ? `${GET_PRODUCT_BY_ID}?id=${slug}`
+      : `${GET_PRODUCT_BY_SLUG}?Slug=${encodeURIComponent(slug)}`;
+
+    const productResponse = await fetch(productUrl);
+
+    if (!productResponse.ok) {
+      return { notFound: true };
     }
+
+    const responseJson = await productResponse.json();
+    const product = responseJson?.data || responseJson;
+
+    if (!product || !product.id) {
+      return { notFound: true };
+    }
+
     return {
       props: {
         seoId: product?.seoId || null,
-        productId,
+        slug: slug, // slug her zaman string olacak, undefined olmayacak
       },
-      revalidate: 120,
+      revalidate: 120, // 2 dakikada bir ISR ile yenile
     };
   } catch (error) {
     console.error("Product detail SEO verisi alınamadı:", error);
+    return { notFound: true };
   }
-  return {
-    props: {
-      seoId: null,
-      productId,
-    },
-    revalidate: 120,
-  };
 };
 
 export default ProductDetailPage;

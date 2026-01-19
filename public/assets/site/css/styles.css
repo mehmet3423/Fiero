@@ -220,6 +220,7 @@ section {
 html {
   margin-right: 0 !important;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 * {
@@ -235,6 +236,11 @@ body {
   font-weight: 400;
   color: var(--main);
   background-color: var(--white);
+  overflow-x: hidden;
+}
+
+.page-wrapper {
+  overflow-x: hidden;
 }
 
 img {

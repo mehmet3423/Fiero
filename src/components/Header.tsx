@@ -4,8 +4,8 @@ import { useSearch } from "@/context/SearchContext";
 import { useAuth } from "@/hooks/context/useAuth";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
-import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCategoriesLookUp";
-import { useSubCategoriesLookUp } from "@/hooks/services/categories/useSubCategoriesLookUp";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
+import { useSubCategories } from "@/hooks/services/categories/useSubCategories";
 import { useLogout } from "@/hooks/services/useLogout";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,11 @@ import SearchSidebar from "./SearchSidebar";
 import AnnouncementSlider from "./home/AnnouncementSlider";
 import LanguageSwitcher from "./shared/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
+import { useGeneralContents } from "@/hooks/services/general-content/useGeneralContents";
+import {
+  GeneralContentType,
+  ContentLanguage,
+} from "@/constants/models/GeneralContent";
 
 export default function Header() {
   const { t, language } = useLanguage();
@@ -33,20 +38,25 @@ export default function Header() {
   const { searchTerm, setSearchTerm, searchResults, isSearching } = useSearch();
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const { categories } = useMainCategoriesLookUp();
+  const { categories: categoriesData } = useActiveCategories();
+  const categories = categoriesData?.items || [];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string>("");
-  const { categories: subCategories } =
-    useSubCategoriesLookUp(hoveredCategoryId);
+  const { data: subCategoriesData } = useSubCategories(hoveredCategoryId);
+
+  // Ensure subCategories is always an array
+  const subCategories = Array.isArray(subCategoriesData)
+    ? subCategoriesData
+    : [];
 
   // Chunk subcategories into groups of 10 for column layout
   const chunkedSubCategories = useMemo(() => {
-    if (!subCategories) return [];
-    const sorted = [...subCategories.data].sort(
-      (a, b) => a.displayIndex - b.displayIndex
+    if (!Array.isArray(subCategories) || subCategories.length === 0) return [];
+    const sorted = [...subCategories].sort(
+      (a, b) => (a.displayIndex || 0) - (b.displayIndex || 0)
     );
     const chunks: (typeof sorted)[] = [];
     for (let i = 0; i < sorted.length; i += 10) {
@@ -61,6 +71,38 @@ export default function Header() {
   const showAdminFeatures = userRole === UserRole.ADMIN;
   const [sustainabilityDropdownOpen, setSustainabilityDropdownOpen] =
     useState(false);
+
+  // Header Top Bar içeriğini çek
+  const { contents: headerTopBarContents, isLoading: headerTopBarLoading } =
+    useGeneralContents(GeneralContentType.HeaderTopBar);
+
+  // Mevcut dile göre ContentLanguage enum değerini belirle
+  const currentContentLanguage =
+    language === "en" ? ContentLanguage.EN : ContentLanguage.TR;
+
+  // Header Top Bar içeriğini filtrele (dil ve willRender kontrolü)
+  const filteredHeaderTopBarContents = useMemo(() => {
+    if (!headerTopBarContents || headerTopBarContents.length === 0) return [];
+
+    const sortedContents = [...headerTopBarContents].sort(
+      (a, b) => a.order - b.order
+    );
+
+    // Önce mevcut dildeki içeriği bul
+    const currentLanguageContent = sortedContents.find(
+      (item) => item.language === currentContentLanguage && item.willRender
+    );
+
+    // Eğer mevcut dilde içerik yoksa, Türkçe içeriği kullan (fallback)
+    return currentLanguageContent
+      ? [currentLanguageContent]
+      : sortedContents.filter(
+          (item) =>
+            (item.language === ContentLanguage.TR ||
+              item.language === undefined) &&
+            item.willRender
+        );
+  }, [headerTopBarContents, currentContentLanguage]);
 
   if (userProfileLoading) {
     return <></>;
@@ -111,12 +153,6 @@ export default function Header() {
   }, [isAccountDropdownOpen]);
 
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
-  useEffect(() => {
-    console.log(
-      "Header useEffect - isCartDropdownOpen changed to:",
-      isCartDropdownOpen
-    );
-  }, [isCartDropdownOpen]);
 
   const [windowWidth, setWindowWidth] = useState(0);
   useEffect(() => {
@@ -165,8 +201,9 @@ export default function Header() {
   };
 
   // Arama sonucu öğesine tıklama:
-  const handleResultClick = (productId: string) => {
-    router.push(`/products/${productId}`);
+  const handleResultClick = (product: any) => {
+    const productSlug = product?.seo?.slug || product?.id;
+    router.push(`/products/${productSlug}`);
     closeSearch();
   };
 
@@ -229,31 +266,70 @@ export default function Header() {
                   paddingLeft: windowWidth > 768 ? "10%" : "0",
                 }}
               >
-                <Link href="/" className="logo-header">
+                <Link
+                  href="/"
+                  className="logo-header"
+                  title="Eser Leather - Ana Sayfaya Dön"
+                >
                   LOGO
                 </Link>
               </div>
               <div className="col-4 tf-md-hidden text-center overflow-hidden">
-                <div
-                  className="swiper tf-sw-top_bar"
-                  data-preview="1"
-                  data-space="0"
-                  data-loop="true"
-                  data-speed="1000"
-                  data-delay="2000"
-                >
-                  <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                      <p className="top-bar-text fw-5">
-                        {t("header.springSale")}
-                        <Link href="/products" className="tf-btn btn-line">
-                          {t("header.shopNow")}
-                          <i className="icon icon-arrow1-top-left"></i>
-                        </Link>
-                      </p>
+                {!headerTopBarLoading &&
+                filteredHeaderTopBarContents.length > 0 ? (
+                  <div
+                    className="swiper tf-sw-top_bar"
+                    data-preview="1"
+                    data-space="0"
+                    data-loop="true"
+                    data-speed="1000"
+                    data-delay="2000"
+                  >
+                    <div className="swiper-wrapper">
+                      {filteredHeaderTopBarContents.map((content) => (
+                        <div key={content.id} className="swiper-slide">
+                          <p className="top-bar-text fw-5">
+                            {content.title || content.content || ""}
+                            {content.contentUrl && (
+                              <Link
+                                href={content.contentUrl}
+                                className="tf-btn btn-line"
+                              >
+                                {content.content || t("header.shopNow")}
+                                <i className="icon icon-arrow1-top-left"></i>
+                              </Link>
+                            )}
+                            {!content.contentUrl && content.content && (
+                              <span> {content.content}</span>
+                            )}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                ) : (
+                  // Fallback: Eğer içerik yoksa eski hardcoded metni göster
+                  <div
+                    className="swiper tf-sw-top_bar"
+                    data-preview="1"
+                    data-space="0"
+                    data-loop="true"
+                    data-speed="1000"
+                    data-delay="2000"
+                  >
+                    <div className="swiper-wrapper">
+                      <div className="swiper-slide">
+                        <p className="top-bar-text fw-5">
+                          {t("header.springSale")}
+                          <Link href="/products" className="tf-btn btn-line">
+                            {t("header.shopNow")}
+                            <i className="icon icon-arrow1-top-left"></i>
+                          </Link>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div
@@ -265,7 +341,11 @@ export default function Header() {
                 <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
                   <LanguageSwitcher />
                   <li className="nav-search tf-md-hidden">
-                    <button onClick={toggleSearch} className="nav-icon-item">
+                    <button
+                      onClick={toggleSearch}
+                      className="nav-icon-item"
+                      title="Arama yap"
+                    >
                       <i className="icon icon-search"></i>
                     </button>
                     <SearchSidebar
@@ -304,6 +384,7 @@ export default function Header() {
                               <Link
                                 href={PathEnums.PROFILE}
                                 className="dropdown-item"
+                                title="Profil sayfasına git"
                               >
                                 <i className="icon-user"></i>
                                 <span> {t("header.profile")}</span>
@@ -314,6 +395,7 @@ export default function Header() {
                                 <Link
                                   href={`${PathEnums.PROFILE}/orders`}
                                   className="dropdown-item"
+                                  title="Siparişlerim sayfasına git"
                                 >
                                   <i className="icon-bag"></i>
                                   <span>{t("header.orders")}</span>
@@ -321,6 +403,7 @@ export default function Header() {
                                 <Link
                                   href={`${PathEnums.PROFILE}/addresses`}
                                   className="dropdown-item"
+                                  title="Adreslerim sayfasına git"
                                 >
                                   <i className="icon-place"></i>
                                   <span>{t("header.adres")}</span>
@@ -331,6 +414,7 @@ export default function Header() {
                               <Link
                                 href={PathEnums.SELLER_PRODUCTS}
                                 className="dropdown-item"
+                                title="Ürünlerimi yönet"
                               >
                                 <i className="bx bx-user-pin"></i>
                                 <span>{t("header.manageProducts")}</span>
@@ -340,6 +424,7 @@ export default function Header() {
                               <Link
                                 href={PathEnums.ADMIN_DASHBOARD}
                                 className="dropdown-item"
+                                title="Admin Paneli sayfasına git"
                               >
                                 <i className="icon-cog"></i>
                                 <span>{t("header.adminPanel")}</span>
@@ -361,6 +446,7 @@ export default function Header() {
                       <button
                         className="nav-icon-item"
                         onClick={() => router.push("/login")}
+                        title="Giriş yap"
                       >
                         <i className="icon icon-account"></i>
                       </button>
@@ -373,6 +459,7 @@ export default function Header() {
                       }`}
                       onClick={() => router.push("/favorites")}
                       style={{ marginTop: "3px" }}
+                      title="Favorilerim"
                     >
                       {totalFavorites > 0 ? (
                         // Dolu kalp SVG - büyük ve geniş
@@ -405,14 +492,9 @@ export default function Header() {
                     <button
                       className="nav-icon-item"
                       onClick={() => {
-                        console.log(
-                          "Cart button clicked, current state:",
-                          isCartDropdownOpen
-                        );
-                        const newState = !isCartDropdownOpen;
-                        console.log("Setting new state to:", newState);
-                        setIsCartDropdownOpen(newState);
+                        setIsCartDropdownOpen(!isCartDropdownOpen);
                       }}
+                      title="Sepetim"
                     >
                       <i className="icon icon-bag"></i>
                       {totalItems > 0 && (
@@ -423,7 +505,6 @@ export default function Header() {
                     <CartSidebar
                       isOpen={isCartDropdownOpen}
                       onClose={() => {
-                        console.log("CartSidebar onClose called");
                         setIsCartDropdownOpen(false);
                       }}
                     />
@@ -443,9 +524,9 @@ export default function Header() {
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center">
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
-                  {Array.isArray(categories?.data) &&
-                    categories.data.length > 0 &&
-                    categories.data
+                  {Array.isArray(categories) &&
+                    categories.length > 0 &&
+                    categories
                       .slice()
                       .sort((a: any, b: any) => a.displayIndex - b.displayIndex)
                       .map((category: any) => (
@@ -456,8 +537,17 @@ export default function Header() {
                           onMouseLeave={() => setHoveredCategoryId("")}
                         >
                           <Link
-                            href={`${PathEnums.PRODUCTS}?categoryId=${category.id}`}
-                            className="item-link"
+                            href={
+                              category.seo?.slug
+                                ? `/category/${category.seo.slug}`
+                                : `${PathEnums.PRODUCTS}?categoryId=${category.id}`
+                            }
+                            className="item-link mx-4"
+                            title={`${
+                              language === "en" && category.nameEn
+                                ? category.nameEn
+                                : category.name
+                            } kategorisine git`}
                           >
                             {language === "en" && category.nameEn
                               ? category.nameEn
@@ -466,7 +556,8 @@ export default function Header() {
                           </Link>
 
                           {hoveredCategoryId === category.id &&
-                            subCategories && (
+                            subCategories &&
+                            subCategories.length > 0 && (
                               <div className="sub-menu mega-menu">
                                 <div className="container">
                                   <div className="row">
@@ -489,10 +580,22 @@ export default function Header() {
                                                   (subCategory, subIdx) => (
                                                     <li key={subCategory.id}>
                                                       <Link
-                                                        href={`${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`}
+                                                        href={
+                                                          category.seo?.slug &&
+                                                          subCategory.seo?.slug
+                                                            ? `/category/${category.seo.slug}/${subCategory.seo.slug}`
+                                                            : `${PathEnums.PRODUCTS}?categoryId=${category.id}&subCategoryId=${subCategory.id}`
+                                                        }
                                                         className="menu-link-text link"
+                                                        title={`${
+                                                          language === "en" &&
+                                                          subCategory.nameEn
+                                                            ? subCategory.nameEn
+                                                            : subCategory.name
+                                                        } alt kategorisine git`}
                                                       >
-                                                        {language === "en" && subCategory.nameEn
+                                                        {language === "en" &&
+                                                        subCategory.nameEn
                                                           ? subCategory.nameEn
                                                           : subCategory.name}
                                                       </Link>
@@ -512,7 +615,11 @@ export default function Header() {
                         </li>
                       ))}
                   <li className="menu-item">
-                    <Link href={PathEnums.BLOG} className="item-link">
+                    <Link
+                      href={PathEnums.BLOG}
+                      className="item-link"
+                      title="Blog sayfasına git"
+                    >
                       {t("header.blog")}
                     </Link>
                   </li>

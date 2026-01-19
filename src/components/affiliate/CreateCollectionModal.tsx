@@ -5,7 +5,7 @@ import {
 } from "@/constants/models/Affiliate";
 import { useCreateAffiliateCollection } from "@/hooks/services/affiliate/useCreateAffiliateCollection";
 import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
-import { useCategories } from "@/hooks/services/categories/useCategories";
+import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { AffiliateCollectionType } from "@/constants/enums/affiliate/AffiliateApplicationStatus";
@@ -99,7 +99,8 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
   const { data: productsData, isLoading: productsLoading } = useGetAllProducts({
     pageSize: 100,
   });
-  const { categories, isLoading: categoriesLoading } = useCategories();
+  const { categories: categoriesData, isLoading: categoriesLoading } = useActiveCategories();
+  const categories = categoriesData;
 
   const [formData, setFormData] = useState({
     name: "",

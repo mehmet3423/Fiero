@@ -1,13 +1,23 @@
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import { QueryKeys } from "@/constants/enums/QueryKeys";
 import { GET_SUB_CATEGORY_LIST } from "@/constants/links";
-import { SubCategoriesLookUp } from "@/constants/models/SubCategoryLookUp";
+import { SubCategory } from "@/constants/models/Category";
 import { PaginationModel } from "@/constants/models/Pagination";
 import useGetData from "@/hooks/useGetData";
 
 export interface SubCategoryResponse {
-  data: SubCategoriesLookUp[];
-  pagination: PaginationModel;
+  data: {
+    items: SubCategory[];
+    count: number;
+    from: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    index: number;
+    pages: number;
+    size: number;
+  };
+  isSucceed: boolean;
+  message: string;
 }
 
 export const useSubCategories = (mainCategoryId: string) => {
@@ -21,8 +31,8 @@ export const useSubCategories = (mainCategoryId: string) => {
     onError(err) {},
   });
   return {
-    data: data?.data || [],
-    pagination: data?.pagination,
+    data: data?.data?.items || [],
+    pagination: data?.data,
     isLoading,
     error,
   };

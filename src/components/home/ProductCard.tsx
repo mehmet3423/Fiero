@@ -9,9 +9,10 @@ import { useLanguage } from "@/context/LanguageContext";
 
 interface ProductCardProps {
   product: Product;
+  isRatingEnabled?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, isRatingEnabled = true }: ProductCardProps) {
   const { t, language } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
@@ -97,7 +98,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <>
       <div className="card-product style-7">
         <div className="card-product-wrapper">
-          <Link href={`/products/${product.id}`} className="product-img">
+          <Link href={product.seo?.slug ? `/products/${product.seo.slug}` : `/products/${product.id}`} className="product-img">
             {isOutOfStock && (
               <span className="stock-badge">
                 {t("productDetailComponent.buttons.outOfStock")}
@@ -197,7 +198,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               : t("productCard.addToCart")}
           </a>
 
-          <Link href={`/products/${product.id}`} className="title link">
+          <Link href={product.seo?.slug ? `/products/${product.seo.slug}` : `/products/${product.id}`} className="title link">
             {titleToShow}
           </Link>
 
@@ -228,6 +229,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </span>
 
+          {isRatingEnabled && product.averageRating !== undefined && product.averageRating > 0 && (
+            <div className="ratings-container mt-1">
+              <div className="ratings">
+                <div
+                  className="ratings-val"
+                  style={{ width: `${(product.averageRating / 5) * 100}%` }}
+                ></div>
+              </div>
+              <span className="ratings-text">( {product.ratingCount || 0} {t("product.reviewWord")} )</span>
+            </div>
+          )}
+
           {/* Color swatch sistemi - isteğe bağlı */}
           <ul className="list-color-product">
             <li className="list-color-item color-swatch active">
@@ -248,6 +261,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             isOpen={quickViewOpen}
             onClose={() => setQuickViewOpen(false)}
             product={selectedProduct}
+            isRatingEnabled={isRatingEnabled}
           />
         )}
       </div>

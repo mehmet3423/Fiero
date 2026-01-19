@@ -274,7 +274,6 @@ const AddProductPage: React.FC = () => {
         // Cloudinary URL'sini kaydet
         setProduct((prev) => ({ ...prev, baseImageUrl: data.secure_url }));
       } catch (error) {
-        console.log(error);
         toast.error("Resim yüklenirken hata oluştu");
       }
     }
@@ -333,7 +332,6 @@ const AddProductPage: React.FC = () => {
           ],
         }));
       } catch (error) {
-        console.log(error);
         toast.error("Resim yüklenirken hata oluştu");
       }
     }
@@ -389,7 +387,6 @@ const AddProductPage: React.FC = () => {
           banner: [...(prev.banner || []).slice(0, -1), data.secure_url],
         }));
       } catch (error) {
-        console.log(error);
         toast.error("Resim yüklenirken hata oluştu");
       }
     }

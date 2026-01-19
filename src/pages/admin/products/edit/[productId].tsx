@@ -74,7 +74,6 @@ export default function EditProductPage() {
           seller: null,
           orderItems: { $id: "", $values: [] },
         } as unknown as Product;
-        console.log("productData", productData.isAvailable);
         setFormattedProduct(productData);
       } catch (error) {
         console.error("Ürün verisi formatlanırken hata oluştu:", error);

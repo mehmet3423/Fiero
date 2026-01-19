@@ -7,13 +7,13 @@ import { useAddProductSpecification } from "@/hooks/services/product-specificati
 import { useDeleteProductSpecification } from "@/hooks/services/product-specifications/useDeleteProductSpecification";
 import { useGetProductSpecifications } from "@/hooks/services/product-specifications/useGetProductSpecifications";
 import { useUpdateProductSpecification } from "@/hooks/services/product-specifications/useUpdateProductSpecification";
-import { useGetAllProducts } from "@/hooks/services/products/useGetAllProducts";
+import { useGetAllProductsAdmin } from "@/hooks/services/products/useGetAllProductsAdmin";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 function ProductSpecifications() {
-  const { data: products, isLoading: productsLoading } = useGetAllProducts();
+  const { data: products, isLoading: productsLoading } = useGetAllProductsAdmin();
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
@@ -146,7 +146,6 @@ function ProductSpecifications() {
         setTimeout(() => {
           refetchProductSpecifications().catch(() => {
             // If refetch fails, we already have an empty array in the UI
-            console.log("Refetch failed, but UI is already updated");
           });
         }, 300);
       }

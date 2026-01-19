@@ -14,7 +14,8 @@ export const useUpdateSubCategory = () => {
     name: string,
     displayIndex: number,
     imageUrl?: string,
-    nameEn?: string
+    nameEn?: string,
+    isActive?: boolean
   ) => {
     try {
       // Request body oluştur
@@ -24,6 +25,7 @@ export const useUpdateSubCategory = () => {
         nameEn?: string;
         displayIndex: number;
         imageUrl?: string;
+        isActive?: boolean;
       } = {
         id: id,
         name: name,
@@ -36,6 +38,10 @@ export const useUpdateSubCategory = () => {
 
       if (imageUrl) {
         requestBody.imageUrl = imageUrl;
+      }
+
+      if (isActive !== undefined) {
+        requestBody.isActive = isActive;
       }
 
       await mutateAsync(

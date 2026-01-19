@@ -11,40 +11,34 @@ export const useUpdateReview = () => {
   const queryClient = useQueryClient(); // QueryClient'ı ekliyorum
 
   const updateReview = async (review: DtoReview) => {
-    try {
-      const params = new URLSearchParams({
-        Id: review.id,
-        Title: review.title,
-        Content: review.content,
-        Rating: review.rating.toString(),
-        ImageUrl: review.imageUrl || "",
-        ProductId: review.productId,
-        ReviewId: review.id,
-      }).toString();
+    const params = new URLSearchParams({
+      Id: review.id,
+      Title: review.title,
+      Content: review.content,
+      Rating: review.rating.toString(),
+      ImageUrl: review.imageUrl || "",
+      ProductId: review.productId,
+      ReviewId: review.id,
+    }).toString();
 
-      await mutateAsync(
-        {
-          url: `${UPDATE_REVIEW}?${params}`,
-          method: HttpMethod.PUT,
+    await mutateAsync(
+      {
+        url: `${UPDATE_REVIEW}?${params}`,
+        method: HttpMethod.PUT,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Yorum başarıyla güncellendi");
+
+          // İlgili ürünün yorumlarını invalidate et
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.REVIEWS, review.productId] });
+
+          // Kullanıcının yorumlarını da invalidate et
+          queryClient.invalidateQueries({ queryKey: [QueryKeys.USER_REVIEWS] });
         },
-        {
-          onSuccess: () => {
-            toast.success("Yorum başarıyla güncellendi");
-
-            // İlgili ürünün yorumlarını invalidate et
-            queryClient.invalidateQueries({ queryKey: [QueryKeys.REVIEWS, review.productId] });
-
-            // Kullanıcının yorumlarını da invalidate et
-            queryClient.invalidateQueries({ queryKey: [QueryKeys.USER_REVIEWS] });
-          },
-          onError: () => {
-            toast.error("Yorum güncellenirken bir hata oluştu");
-          },
-        }
-      );
-    } catch (error) {
-      toast.error("Yorum güncellenirken bir hata oluştu");
-    }
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
   };
 
   return {

@@ -82,11 +82,30 @@ export interface UpdateDtoProduct {
   isAvailable: boolean;
   refundable: boolean;
   isOutlet: boolean;
+  currencyType?: number;
+  likeCount?: number;
+  saleCount?: number;
+  taxRate?: number;
   productInfos?: {
     title: string;
     titleEn?: string | null;
     description: string;
     descriptionEn?: string | null;
     icon?: string;
+  }[];
+  updateProductInfos?: {
+    id: string;
+    title: string;
+    titleEn?: string | null;
+    description: string;
+    descriptionEn?: string | null;
+    icon: string;
+  }[];
+  createProductInfos?: {
+    title: string;
+    titleEn?: string | null;
+    description: string;
+    descriptionEn?: string | null;
+    icon: string;
   }[];
 }

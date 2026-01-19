@@ -182,7 +182,9 @@ export interface CommentDTO extends BaseEntity {
 // Technical detail interface
 export interface TechnicalDetailDTO extends BaseEntity {
   title: string;
+  titleEn?: string | null;
   description: string;
+  descriptionEn?: string | null;
 }
 
 // BuyXPayY discount interface

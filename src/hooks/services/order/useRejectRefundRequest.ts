@@ -21,36 +21,29 @@ export const useRejectRefundRequest = () => {
   const queryClient = useQueryClient();
 
   const rejectRefundRequest = async (params: RejectRefundRequestParams) => {
-    try {
-      // TODO: Update this when backend endpoint is ready
-      // For now, this is a placeholder
-      const response = await mutateAsync(
-        {
-          url: `${REJECT_REFUND_REQUEST_ENDPOINT}?orderId=${params.orderId}`,
-          method: HttpMethod.POST,
-          data: {
-            rejectReason: params.rejectReason,
-            note: params.note,
-          },
+    // TODO: Update this when backend endpoint is ready
+    // For now, this is a placeholder
+    const response = await mutateAsync(
+      {
+        url: `${REJECT_REFUND_REQUEST_ENDPOINT}?orderId=${params.orderId}`,
+        method: HttpMethod.POST,
+        data: {
+          rejectReason: params.rejectReason,
+          note: params.note,
         },
-        {
-          onSuccess: () => {
-            toast.success("İade talebi başarıyla reddedildi");
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.REFUND_REQUESTED_ORDER_ITEMS],
-            });
-          },
-          onError: () => {
-            toast.error("İade talebi reddedilirken bir hata oluştu");
-          },
-        }
-      );
+      },
+      {
+        onSuccess: () => {
+          toast.success("İade talebi başarıyla reddedildi");
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.REFUND_REQUESTED_ORDER_ITEMS],
+          });
+        },
+        // onError kaldırıldı - useMyMutation zaten backend mesajını gösteriyor
+      }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error("Reject refund request error:", error);
-      throw error;
-    }
+    return response.data;
   };
 
   return { rejectRefundRequest, isPending };
