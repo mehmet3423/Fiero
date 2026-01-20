@@ -18,6 +18,7 @@ import { useGetAddresses } from "@/hooks/services/address/useGetAddresses";
 import { CheckoutData } from "@/types/checkout";
 import { useCart } from "@/hooks/context/useCart";
 import { useAuth } from "@/hooks/context/useAuth";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
@@ -25,6 +26,7 @@ import { toast } from "react-hot-toast";
 import styles from "@/styles/components/Payment.module.css";
 
 function PaymentPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const { orderId, orderNumber } = router.query;
   const { userRole } = useAuth();
@@ -830,365 +832,341 @@ function PaymentPage() {
   }
 
   return (
-    <main className="main">
-      <div
-        className="page-header text-center"
-        style={{ backgroundImage: "url('assets/images/page-header-bg.jpg')" }}
-      >
-        <div className="container">
-          <h1 className="page-title">
-            Hesabım<span>Ödeme</span>
-          </h1>
+    <main>
+      {/* Page Title */}
+      <div className="tf-page-title">
+        <div className="container-full">
+          <div className="heading text-center">
+            {t("paymentPage.pageTitle") || "Ödeme"}
+          </div>
         </div>
       </div>
-      <nav aria-label="breadcrumb" className="breadcrumb-nav">
-        <div className="container">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link href="/">Anasayfa</Link>
-            </li>
-            <li className="breadcrumb-item">
-              <Link href="/shopping-cart">Sepetim</Link>
-            </li>
-            <li className="breadcrumb-item">
-              <Link href="/checkout">Sipariş</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              Ödeme
-            </li>
-          </ol>
-        </div>
-      </nav>
 
       {/* Checkout Progress Steps */}
-      <CheckoutProgress currentStep="payment" />
+      {/* <CheckoutProgress currentStep="payment" /> */}
 
-      <div className="page-content">
+      {/* Page Cart Section */}
+      <section className="flat-spacing-11 mt-4">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-8">
-              <div className="card card-dashboard">
-                <div className="card-body">
-                  <h3 className="card-title">Ödeme Kartı Bilgileri</h3>
+          <div className="tf-page-cart-wrap layout-2">
+            <div className="tf-page-cart-item">
+              <h5 className="fw-5 mb_20">{t("paymentPage.paymentCardInfo")}</h5>
 
-                  {/* Credit Card Display with Flip Button */}
-                  <div className={styles.creditCardWithButton}>
-                    <div className={styles.creditCardContainer}>
-                      <div
-                        className={`${styles.creditCard} ${
-                          isCardFlipped ? styles.flipped : ""
-                        }`}
-                        onClick={toggleCardFlip}
-                      >
-                        {/* Card Front */}
-                        <div
-                          className={`${styles.cardSide} ${styles.cardFront}`}
-                        >
-                          <div className={styles.cardHeader}>
-                            <div className={styles.cardType}>CREDIT CARD</div>
-                            <div className={styles.cardChip}></div>
-                          </div>
-                          <div
-                            className={`${styles.cardNumber} ${
-                              !cardForm.cardNumber ? styles.placeholder : ""
-                            }`}
-                          >
-                            {formatCardNumberDisplay(cardForm.cardNumber || "")}
-                          </div>
-                          <div className={styles.cardFooter}>
-                            <div className={styles.cardHolder}>
-                              <div className={styles.cardHolderLabel}>
-                                CARD HOLDER
-                              </div>
-                              <div className={styles.cardHolderName}>
-                                {(
-                                  cardForm.cardHolderName || "FULL NAME"
-                                ).toUpperCase()}
-                              </div>
-                            </div>
-                            <div className={styles.cardExpiry}>
-                              <div className={styles.cardExpiryLabel}>
-                                EXPIRES
-                              </div>
-                              <div className={styles.cardExpiryDate}>
-                                {formatExpiryDisplay(
-                                  cardForm.expireMonth || "",
-                                  cardForm.expireYear || ""
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Card Back */}
-                        <div
-                          className={`${styles.cardSide} ${styles.cardBack}`}
-                        >
-                          <div className={styles.cardBackContent}>
-                            <div className={styles.cardMagneticStripe}></div>
-                            <div className={styles.cardCvcSection}>
-                              <div className={styles.cardCvcLabel}>CVC</div>
-                              <div
-                                className={`${styles.cardCvcValue} ${
-                                  !cardForm.cvc ? styles.placeholder : ""
-                                }`}
-                              >
-                                {cardForm.cvc || "•••"}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Flip Button - Positioned at top right of card */}
-                      <button
-                        type="button"
-                        className={styles.cardFlipButtonIcon}
-                        onClick={toggleCardFlip}
-                        title={
-                          isCardFlipped ? "Kartın Önünü Gör" : "Kartı Çevir"
-                        }
-                      >
-                        <i
-                          className={`fas ${
-                            isCardFlipped ? "fa-eye" : "fa-sync-alt"
-                          }`}
-                        ></i>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Card Input Form */}
-                  <div className={styles.cardInputs}>
-                    <div className={`${styles.cardInputRow} ${styles.small}`}>
-                      <div className={styles.cardInputGroup}>
-                        <label>Ad Soyad *</label>
-                        <input
-                          type="text"
-                          placeholder="Ad Soyad"
-                          value={cardForm.cardHolderName || ""}
-                          onChange={(e) =>
-                            handleCardInputChange(
-                              "cardHolderName",
-                              e.target.value
-                            )
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div className={styles.cardInputGroup}>
-                        <label>Kart Numarası *</label>
-                        <input
-                          type="text"
-                          placeholder="1234 5678 9012 3456"
-                          value={cardForm.cardNumber || ""}
-                          onChange={handleCardNumberChange}
-                          maxLength={19}
-                          required
-                        />
-                      </div>
-                    </div>
-
+              {/* Credit Card Display with Flip Button */}
+              <div className={styles.creditCardWithButton}>
+                <div className={styles.creditCardContainer}>
+                  <div
+                    className={`${styles.creditCard} ${
+                      isCardFlipped ? styles.flipped : ""
+                    }`}
+                    onClick={toggleCardFlip}
+                  >
+                    {/* Card Front */}
                     <div
-                      className={`${styles.cardInputRow} ${styles.small} ${styles.dateRow}`}
+                      className={`${styles.cardSide} ${styles.cardFront}`}
                     >
-                      <div className={styles.cardInputGroup}>
-                        <label>Ay *</label>
-                        <select
-                          value={cardForm.expireMonth || ""}
-                          onChange={(e) =>
-                            handleCardInputChange("expireMonth", e.target.value)
-                          }
-                          required
-                          size={1}
-                          className={styles.scrollableSelect}
-                        >
-                          <option value="">Ay</option>
-                          {Array.from({ length: 12 }, (_, i) => {
-                            const month = (i + 1).toString().padStart(2, "0");
-                            return (
-                              <option key={month} value={month}>
-                                {month}
-                              </option>
-                            );
-                          })}
-                        </select>
+                      <div className={styles.cardHeader}>
+                        <div className={styles.cardType}>CREDIT CARD</div>
+                        <div className={styles.cardChip}></div>
                       </div>
-                      <div className={styles.cardInputGroup}>
-                        <label>Yıl *</label>
-                        <select
-                          value={cardForm.expireYear || ""}
-                          onChange={(e) =>
-                            handleCardInputChange("expireYear", e.target.value)
-                          }
-                          required
-                          size={1}
-                          className={styles.scrollableSelect}
-                        >
-                          <option value="">Yıl</option>
-                          {Array.from({ length: 10 }, (_, i) => {
-                            const year = (2025 + i).toString();
-                            return (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            );
-                          })}
-                        </select>
+                      <div
+                        className={`${styles.cardNumber} ${
+                          !cardForm.cardNumber ? styles.placeholder : ""
+                        }`}
+                      >
+                        {formatCardNumberDisplay(cardForm.cardNumber || "")}
                       </div>
-                    </div>
-
-                    <div className={styles.cardInputGroup}>
-                      <label>CVC / CVV *</label>
-                      <input
-                        type="text"
-                        placeholder="123"
-                        value={cardForm.cvc || ""}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, ""); // Sadece rakamlar
-                          if (value.length <= 3) {
-                            handleCardInputChange("cvc", value);
-                          }
-                        }}
-                        maxLength={3}
-                        required
-                      />
-                      <small className="text-muted">
-                        <i className="fas fa-info-circle me-1"></i>
-                        Kartın arkasındaki 3 haneli güvenlik kodu
-                      </small>
-                    </div>
-                  </div>
-
-                  {/* Taksit Seçenekleri - Kart numarası girildiyse ve seçenekler varsa göster */}
-                  {cardForm.cardNumber &&
-                    cardForm.cardNumber.length >= 6 &&
-                    installmentOptions.length > 0 && (
-                      <div className="row mt-4">
-                        <div className="col-md-8">
-                          <div className={styles.installmentSection}>
-                            <div className={styles.installmentHeaderSection}>
-                              <h6 className={styles.installmentSectionTitle}>
-                                <i className="bx bx-credit-card me-2"></i>
-                                Taksit Seçeneği *
-                              </h6>
-                              <small className="text-muted">
-                                Girilen kart için uygun taksit seçenekleri
-                              </small>
-                            </div>
-
-                            {isInstallmentLoading ? (
-                              <div className={styles.installmentLoading}>
-                                <div className={styles.loadingSpinner}>
-                                  <i className="fas fa-spinner fa-spin"></i>
-                                </div>
-                                <span>Taksit seçenekleri yükleniyor...</span>
-                              </div>
-                            ) : (
-                              <div className={styles.installmentOptions}>
-                                {installmentOptions.map((option) => (
-                                  <div
-                                    key={option.installmentNumber}
-                                    className={`${styles.installmentOption} ${
-                                      selectedInstallment ===
-                                      option.installmentNumber
-                                        ? styles.selected
-                                        : ""
-                                    }`}
-                                    onClick={() =>
-                                      setSelectedInstallment(
-                                        option.installmentNumber
-                                      )
-                                    }
-                                  >
-                                    <div className={styles.installmentRadio}>
-                                      <input
-                                        type="radio"
-                                        name="installment"
-                                        value={option.installmentNumber}
-                                        checked={
-                                          selectedInstallment ===
-                                          option.installmentNumber
-                                        }
-                                        onChange={() =>
-                                          setSelectedInstallment(
-                                            option.installmentNumber
-                                          )
-                                        }
-                                      />
-                                      <div className={styles.radioCustom}></div>
-                                    </div>
-
-                                    <div className={styles.installmentContent}>
-                                      <div className={styles.installmentInfo}>
-                                        <span
-                                          className={styles.installmentTitle}
-                                        >
-                                          {option.installmentNumber === 1
-                                            ? "Tek Çekim"
-                                            : `${option.installmentNumber} Taksit`}
-                                        </span>
-
-                                        {option.installmentNumber > 1 && (
-                                          <span
-                                            className={
-                                              styles.installmentSubtitle
-                                            }
-                                          >
-                                            Aylık{" "}
-                                            {option.installmentPrice.toFixed(2)}{" "}
-                                            ₺
-                                          </span>
-                                        )}
-                                      </div>
-
-                                      <div className={styles.installmentPrice}>
-                                        <span className={styles.totalPrice}>
-                                          {option.totalPrice.toFixed(2)} ₺
-                                        </span>
-
-                                        {option.installmentRate &&
-                                          option.installmentRate > 0 && (
-                                            <span
-                                              className={styles.commissionBadge}
-                                            >
-                                              %{option.installmentRate} Komisyon
-                                            </span>
-                                          )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
+                      <div className={styles.cardFooter}>
+                        <div className={styles.cardHolder}>
+                          <div className={styles.cardHolderLabel}>
+                            CARD HOLDER
+                          </div>
+                          <div className={styles.cardHolderName}>
+                            {(
+                              cardForm.cardHolderName || "FULL NAME"
+                            ).toUpperCase()}
+                          </div>
+                        </div>
+                        <div className={styles.cardExpiry}>
+                          <div className={styles.cardExpiryLabel}>
+                            EXPIRES
+                          </div>
+                          <div className={styles.cardExpiryDate}>
+                            {formatExpiryDisplay(
+                              cardForm.expireMonth || "",
+                              cardForm.expireYear || ""
                             )}
                           </div>
                         </div>
                       </div>
-                    )}
-                </div>
-              </div>
-            </div>
+                    </div>
 
-            <div className="col-lg-4">
-              <div className="card card-dashboard">
-                <div className="card-body">
-                  <h3 className="card-title">Ödeme Özeti</h3>
-
-                  {cartLoading ? (
-                    <div className="text-center py-4">
-                      <div
-                        className="spinner-border text-primary"
-                        role="status"
-                      >
-                        <span className="visually-hidden">Yükleniyor...</span>
+                    {/* Card Back */}
+                    <div
+                      className={`${styles.cardSide} ${styles.cardBack}`}
+                    >
+                      <div className={styles.cardBackContent}>
+                        <div className={styles.cardMagneticStripe}></div>
+                        <div className={styles.cardCvcSection}>
+                          <div className={styles.cardCvcLabel}>CVC</div>
+                          <div
+                            className={`${styles.cardCvcValue} ${
+                              !cardForm.cvc ? styles.placeholder : ""
+                            }`}
+                          >
+                            {cardForm.cvc || "•••"}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  ) : cartProducts && cartProducts.length > 0 ? (
-                    <div className={styles.paymentSummary}>
+                  </div>
+
+                  {/* Flip Button - Positioned at top right of card */}
+                  <button
+                    type="button"
+                    className={styles.cardFlipButtonIcon}
+                    onClick={toggleCardFlip}
+                    title={
+                      isCardFlipped ? "Kartın Önünü Gör" : "Kartı Çevir"
+                    }
+                  >
+                    <i
+                      className={`fas ${
+                        isCardFlipped ? "fa-eye" : "fa-sync-alt"
+                      }`}
+                    ></i>
+                  </button>
+                </div>
+              </div>
+
+              {/* Card Input Form */}
+              <div className={styles.cardInputs}>
+                <div className={`${styles.cardInputRow} ${styles.small}`}>
+                  <div className={styles.cardInputGroup}>
+                    <label>Ad Soyad *</label>
+                    <input
+                      type="text"
+                      placeholder="Ad Soyad"
+                      value={cardForm.cardHolderName || ""}
+                      onChange={(e) =>
+                        handleCardInputChange(
+                          "cardHolderName",
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className={styles.cardInputGroup}>
+                    <label>Kart Numarası *</label>
+                    <input
+                      type="text"
+                      placeholder="1234 5678 9012 3456"
+                      value={cardForm.cardNumber || ""}
+                      onChange={handleCardNumberChange}
+                      maxLength={19}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.cardInputRow} ${styles.small} ${styles.dateRow}`}
+                >
+                  <div className={styles.cardInputGroup}>
+                    <label>Ay *</label>
+                    <select
+                      value={cardForm.expireMonth || ""}
+                      onChange={(e) =>
+                        handleCardInputChange("expireMonth", e.target.value)
+                      }
+                      required
+                      size={1}
+                      className={styles.scrollableSelect}
+                    >
+                      <option value="">Ay</option>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const month = (i + 1).toString().padStart(2, "0");
+                        return (
+                          <option key={month} value={month}>
+                            {month}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className={styles.cardInputGroup}>
+                    <label>Yıl *</label>
+                    <select
+                      value={cardForm.expireYear || ""}
+                      onChange={(e) =>
+                        handleCardInputChange("expireYear", e.target.value)
+                      }
+                      required
+                      size={1}
+                      className={styles.scrollableSelect}
+                    >
+                      <option value="">Yıl</option>
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const year = (2025 + i).toString();
+                        return (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+
+                <div className={styles.cardInputGroup}>
+                  <label>CVC / CVV *</label>
+                  <input
+                    type="text"
+                    placeholder="123"
+                    value={cardForm.cvc || ""}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, ""); // Sadece rakamlar
+                      if (value.length <= 3) {
+                        handleCardInputChange("cvc", value);
+                      }
+                    }}
+                    maxLength={3}
+                    required
+                  />
+                  <small className="text-muted">
+                    <i className="fas fa-info-circle me-1"></i>
+                    Kartın arkasındaki 3 haneli güvenlik kodu
+                  </small>
+                </div>
+              </div>
+
+              {/* Taksit Seçenekleri - Kart numarası girildiyse ve seçenekler varsa göster */}
+              {cardForm.cardNumber &&
+                cardForm.cardNumber.length >= 6 &&
+                installmentOptions.length > 0 && (
+                  <div className="row mt-4">
+                    <div className="col-md-8">
+                      <div className={styles.installmentSection}>
+                        <div className={styles.installmentHeaderSection}>
+                          <h6 className={styles.installmentSectionTitle}>
+                            <i className="bx bx-credit-card me-2"></i>
+                            Taksit Seçeneği *
+                          </h6>
+                          <small className="text-muted">
+                            Girilen kart için uygun taksit seçenekleri
+                          </small>
+                        </div>
+
+                        {isInstallmentLoading ? (
+                          <div className={styles.installmentLoading}>
+                            <div className={styles.loadingSpinner}>
+                              <i className="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <span>Taksit seçenekleri yükleniyor...</span>
+                          </div>
+                        ) : (
+                          <div className={styles.installmentOptions}>
+                            {installmentOptions.map((option) => (
+                              <div
+                                key={option.installmentNumber}
+                                className={`${styles.installmentOption} ${
+                                  selectedInstallment ===
+                                  option.installmentNumber
+                                    ? styles.selected
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  setSelectedInstallment(
+                                    option.installmentNumber
+                                  )
+                                }
+                              >
+                                <div className={styles.installmentRadio}>
+                                  <input
+                                    type="radio"
+                                    name="installment"
+                                    value={option.installmentNumber}
+                                    checked={
+                                      selectedInstallment ===
+                                      option.installmentNumber
+                                    }
+                                    onChange={() =>
+                                      setSelectedInstallment(
+                                        option.installmentNumber
+                                      )
+                                    }
+                                  />
+                                  <div className={styles.radioCustom}></div>
+                                </div>
+
+                                <div className={styles.installmentContent}>
+                                  <div className={styles.installmentInfo}>
+                                    <span
+                                      className={styles.installmentTitle}
+                                    >
+                                      {option.installmentNumber === 1
+                                        ? "Tek Çekim"
+                                        : `${option.installmentNumber} Taksit`}
+                                    </span>
+
+                                    {option.installmentNumber > 1 && (
+                                      <span
+                                        className={
+                                          styles.installmentSubtitle
+                                        }
+                                      >
+                                        Aylık{" "}
+                                        {option.installmentPrice.toFixed(2)}{" "}
+                                        ₺
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div className={styles.installmentPrice}>
+                                    <span className={styles.totalPrice}>
+                                      {option.totalPrice.toFixed(2)} ₺
+                                    </span>
+
+                                    {option.installmentRate &&
+                                      option.installmentRate > 0 && (
+                                        <span
+                                          className={styles.commissionBadge}
+                                        >
+                                          %{option.installmentRate} Komisyon
+                                        </span>
+                                      )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+            </div>
+
+            <div className="tf-page-cart-footer">
+              <div className="tf-cart-footer-inner">
+                <h5 className="fw-5 mb_20">{t("paymentPage.paymentSummary")}</h5>
+
+                {cartLoading ? (
+                  <div className="text-center py-4">
+                    <div
+                      className="spinner-border text-primary"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Yükleniyor...</span>
+                    </div>
+                  </div>
+                ) : cartProducts && cartProducts.length > 0 ? (
+                  <div className={styles.paymentSummary}>
                       {/* Sipariş Bilgileri */}
                       <div className="summary-header mb-3">
-                        <h6 className={styles.summaryTitle}>Sipariş Özeti</h6>
+                        <h6 className={styles.summaryTitle}>{t("paymentPage.orderSummary")}</h6>
                         <div className="order-info">
                           <small className="text-muted">
                             {(localOrderNumber || orderNumber) &&
@@ -1480,12 +1458,11 @@ function PaymentPage() {
                       </p>
                     </div>
                   )}
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

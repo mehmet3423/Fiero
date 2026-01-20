@@ -213,5 +213,15 @@
         "statusTab": "Affiliate Durumum",
         "collectionsTab": "Koleksiyonlarım",
         "paymentTab": "Ödeme Bilgilerim"
+    },
+    "common": {
+        "checkoutProgress": {
+            "cart": "Sepet",
+            "cartDescription": "Ürünleri inceleyin",
+            "checkout": "Adres ",
+            "checkoutDescription": "Adres Seçimi",
+            "payment": "Ödeme",
+            "paymentDescription": "Ödeme yöntemi seçimi"
+        }
     }
 }

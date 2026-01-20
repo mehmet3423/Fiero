@@ -89,6 +89,7 @@
         "save": "Save",
         "firstNamePlaceholder": "Your First Name",
         "lastNamePlaceholder": "Your Last Name",
+        "phoneNumberPlaceholder": "05XX XXX XX XX",
         "addressTitlePlaceholder": "Address Title",
         "countryPlaceholder": "Country",
         "provincePlaceholder": "Select Province",

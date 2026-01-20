@@ -9,6 +9,7 @@ interface GeneralModalProps {
   size?: "sm" | "md" | "lg" | "xl" | "xxl" | "fullscreen";
   showFooter?: boolean;
   approveButtonText?: string;
+  approveButtonClassName?: string;
   isLoading?: boolean;
   formId?: string;
 }
@@ -22,6 +23,7 @@ function GeneralModal({
   size = "md",
   showFooter = false,
   approveButtonText = "Onayla",
+  approveButtonClassName = "btn-primary",
   isLoading = false,
   formId,
 }: GeneralModalProps) {
@@ -61,7 +63,7 @@ function GeneralModal({
               <button
                 type={formId ? "submit" : "button"}
                 form={formId}
-                className="btn btn-primary"
+                className={`btn ${approveButtonClassName}`}
                 onClick={!formId ? onApprove : undefined}
                 disabled={isLoading}
               >

@@ -161,10 +161,10 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                                       );
                                     }
 
-                                    // Check if there's an active discount
-                                    const hasDiscount = (item as any).discountDTO !== null;
+                                    // Check if there's an actual active discount
+                                    const hasDiscount = (item.price || 0) > (item.discountedPrice || 0);
 
-                                    if (hasDiscount || (item.price || 0) !== (item.discountedPrice || 0)) {
+                                    if (hasDiscount) {
                                       return (
                                         <div style={{ position: "relative" }}>
                                           <span

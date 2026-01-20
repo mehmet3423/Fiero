@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
@@ -71,7 +72,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
     return null;
   }
 
-  return (
+  const galleryContent = (
     <div className="fullscreen-container" onClick={handleClose}>
       <button
         type="button"
@@ -217,8 +218,8 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.3);
-          z-index: 1050;
+          background: rgba(0, 0, 0, 0.8);
+          z-index: 9999;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -233,7 +234,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           border: none;
           font-size: 2rem;
           cursor: pointer;
-          z-index: 1060;
+          z-index: 10000;
         }
 
         .carousel-dot {
@@ -282,6 +283,13 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
       `}</style>
     </div>
   );
+
+  // Render using portal to ensure it's on top of everything
+  if (typeof window !== "undefined") {
+    return createPortal(galleryContent, document.body);
+  }
+
+  return galleryContent;
 };
 
 export default FullscreenGallery;

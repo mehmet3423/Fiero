@@ -32,7 +32,7 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
     { href: "/shopping-cart", label: t("shoppingCart.myShoppingCart") },
     { href: "/favorites", label: t("favorites.myFavorites") },
     { href: "/profile/affiliate", label: "Affiliate" },
-    { href: "/profile/returns", label: t("returnsPage.myReturns") },
+    // { href: "/profile/returns", label: t("returnsPage.myReturns") },
     {
       href: "/profile/support-tickets",
       label: t("supportTicketsPage.myTickets"),

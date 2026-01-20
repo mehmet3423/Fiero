@@ -56,11 +56,14 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
 
   // Check if product has active discount based on the specific discount type
   const hasActiveDiscount = (product: any) => {
-    // Debug: Log product and its discount info
-
-    // If no specific discount type is provided, check all discounts (legacy behavior)
+    // If no specific discount type is provided, check all discounts
     if (!discountType) {
-      if (product.discountDTO !== null && product.discountDTO !== undefined) {
+      const hasDirectPriceDiscount = (product.price || 0) > (product.discountedPrice || 0);
+      
+      if (hasDirectPriceDiscount) return true;
+
+      const discount = product.discountResponse;
+      if (discount && discount.isActive) {
         return true;
       }
 
@@ -76,74 +79,66 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
     }
 
     // Check for specific discount types
-    if (product.discountDTO !== null && product.discountDTO !== undefined) {
+    const discount = product.discountResponse;
+    if (discount && discount.isActive) {
       // Check if the current active discount matches the specified type
-      const currentDiscount = product.discountDTO;
-
-      // API response contains discountType as string and type property for discount category
-      // First check if we have a type field that matches our expected discount types
-      if (currentDiscount.type !== undefined) {
+      // API response contains type property for discount category
+      if (discount.type !== undefined) {
         let typeMatches = false;
         switch (discountType) {
           case "product":
             typeMatches =
-              currentDiscount.type === 0 || currentDiscount.type === "Product"; // DiscountType.Product
+              discount.type === 0 || discount.type === "Product";
             break;
           case "bundle":
             typeMatches =
-              currentDiscount.type === 1 || currentDiscount.type === "Bundle"; // DiscountType.Bundle
+              discount.type === 1 || discount.type === "Bundle";
             break;
           case "cargo":
             typeMatches =
-              currentDiscount.type === 2 || currentDiscount.type === "Cargo"; // DiscountType.Cargo
+              discount.type === 2 || discount.type === "Cargo";
             break;
           case "birthday":
             typeMatches =
-              currentDiscount.type === 3 || currentDiscount.type === "Birthday"; // DiscountType.Birthday
+              discount.type === 3 || discount.type === "Birthday";
             break;
           case "subCategory":
             typeMatches =
-              currentDiscount.type === 4 ||
-              currentDiscount.type === "SubCategory";
+              discount.type === 4 ||
+              discount.type === "SubCategory";
             break;
           case "specialDay":
             typeMatches =
-              currentDiscount.type === 5 ||
-              currentDiscount.type === "SpecialDay";
+              discount.type === 5 ||
+              discount.type === "SpecialDay";
             break;
           case "weekday":
             typeMatches =
-              currentDiscount.type === 6 || currentDiscount.type === "Weekday";
+              discount.type === 6 || discount.type === "Weekday";
             break;
           case "timeOfDay":
             typeMatches =
-              currentDiscount.type === 7 ||
-              currentDiscount.type === "TimeOfDay";
+              discount.type === 7 ||
+              discount.type === "TimeOfDay";
             break;
           case "coupon":
             typeMatches =
-              currentDiscount.type === 8 || currentDiscount.type === "Coupon";
+              discount.type === 8 || discount.type === "Coupon";
             break;
           case "cart":
             typeMatches =
-              currentDiscount.type === 9 || currentDiscount.type === "Cart";
+              discount.type === 9 || discount.type === "Cart";
             break;
         }
         return typeMatches;
       }
 
-      // Fallback: check nested objects (in case API structure is different)
+      // Fallback: check nested objects
       switch (discountType) {
         case "product":
-          const hasProductDiscount =
-            currentDiscount.productDiscount !== null &&
-            currentDiscount.productDiscount !== undefined;
-          return hasProductDiscount;
+          return discount.productDiscount != null;
         case "bundle":
-          const hasBundleDiscount =
-            currentDiscount.bundleDiscount !== null &&
-            currentDiscount.bundleDiscount !== undefined;
-          return hasBundleDiscount;
+          return discount.bundleDiscount != null;
         default:
           return false;
       }

@@ -46,9 +46,17 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
   const [quantity, setQuantity] = useState(1);
 
   const totalImages = [displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].filter(Boolean).length;
-  const hasDiscount = displayProduct.discountedPrice !== displayProduct.price;
-  const discountPercentage = hasDiscount
-    ? Math.round(((displayProduct.price - displayProduct.discountedPrice) / displayProduct.price) * 100)
+  const discountResponse = displayProduct.discountResponse;
+  const hasDiscount = (displayProduct.price || 0) > (displayProduct.discountedPrice || 0);
+  const isPercentage = discountResponse?.discountValueType === 1;
+  const discountValue = hasDiscount ? discountResponse?.discountValue : null;
+  
+  // For the badge, we can still use the calculated percentage if it's more appropriate visually, 
+  // or use the backend value if it's a percentage discount.
+  const displayPercentage = hasDiscount
+    ? isPercentage && discountValue 
+      ? discountValue 
+      : Math.round(((displayProduct.price - displayProduct.discountedPrice) / displayProduct.price) * 100)
     : 0;
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -347,8 +355,8 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
 
               <div className="tf-product-media-wrap">
                 <div className="swiper tf-single-slide" style={{ position: "relative" }}>
-                  {hasDiscount && discountPercentage > 0 && (
-                    <DiscountBadge percentage={discountPercentage} />
+                  {hasDiscount && displayPercentage > 0 && (
+                    <DiscountBadge percentage={displayPercentage} />
                   )}
                   <div className="swiper-wrapper">
                     <Swiper
@@ -439,10 +447,15 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                     )}
                   </div>
                   <div className="tf-product-info-price">
-                    <div className="price">
+                    <div className="price d-flex align-items-center gap-10">
                       {hasDiscount ? (
                         <>
-                          {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.discountedPrice)}
+                          <span className="current-price" style={{ color: "#dc3545", fontWeight: "bold" }}>
+                            {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.discountedPrice)}
+                          </span>
+                          <span className="old-price" style={{ textDecoration: "line-through", color: "#999", fontSize: "0.9em" }}>
+                            {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.price)}
+                          </span>
                         </>
                       ) : (
                         new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.price)

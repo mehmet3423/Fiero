@@ -213,5 +213,15 @@
         "statusTab": "My Affiliate Status",
         "collectionsTab": "My Collections",
         "paymentTab": "My Payment Information"
+    },
+    "common": {
+        "checkoutProgress": {
+            "cart": "Cart",
+            "cartDescription": "Review products",
+            "checkout": "Address Information",
+            "checkoutDescription": "Address Selection",
+            "payment": "Payment",
+            "paymentDescription": "Payment method selection"
+        }
     }
 }

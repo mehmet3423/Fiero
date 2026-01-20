@@ -53,7 +53,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
 
   const handleImageClick = (index: number) => {
     setInitialSlide(index);
-    // Removed modal opening, only opens in new tab
+    setIsGalleryOpen(true);
   };
 
   const media = getAllProductMedia();
@@ -374,11 +374,10 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
             >
               {media.map((item, index) => (
                 <SwiperSlide key={index} className="swiper-slide">
-                  <a
-                    href={item.url}
-                    target="_blank"
+                  <div
                     className="item"
-                    rel="noopener noreferrer"
+                    onClick={() => handleImageClick(index)}
+                    style={{ cursor: "pointer" }}
                   >
                     {item.type === "video" ? (
                       <video
@@ -401,10 +400,10 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                         width={600}
                         height={600}
                         className="tf-image-zoom lazyload"
-                        style={{ objectFit: "contain", width: "100%", height: "auto" }}
+                        style={{ objectFit: "contain", width: "100%", height: "auto", cursor: "pointer" }}
                       />
                     )}
-                  </a>
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -482,11 +481,18 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
         </div>
 
         {/* Discount Badge */}
-        {(() => {
-          const hasDiscount = product.discountDTO !== null;
-          const isPercentageDiscount = hasDiscount && product.discountDTO?.discountValueType === 0;
+        {/* {(() => {
+          const discount = product.discountResponse;
+          const hasDiscount = !!(
+            discount?.isActive &&
+            (product.price || 0) > (product.discountedPrice || 0)
+          );
 
-          if (!isPercentageDiscount) return null;
+          if (!hasDiscount || !discount) return null;
+
+          const isPercentage =
+            discount.discountValueType === 1 ||
+            discount.discountValueType === "1";
 
           return (
             <div
@@ -498,12 +504,20 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                 fontSize: "1.2rem",
               }}
             >
-              %{product.discountDTO.discountValue}
+              {isPercentage
+                ? `%${discount.discountValue}`
+                : `${discount.discountValue}₺`}
             </div>
           );
-        })()}
+        })()} */}
 
-        {/* Removed FullscreenGallery component to disable modal */}
+        {/* FullscreenGallery component */}
+        <FullscreenGallery
+          isOpen={isGalleryOpen}
+          onClose={() => setIsGalleryOpen(false)}
+          media={media}
+          initialSlide={initialSlide}
+        />
       </div>
     </>
   );

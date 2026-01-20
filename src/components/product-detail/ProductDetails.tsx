@@ -68,12 +68,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   };
 
-  /* const hasDiscount = product.discountDTO !== null;
-  const discountPercentage = hasDiscount
-    ? product.discountDTO.discountValue
-    : null; */
-  const discountPercentage = product.discountDTO?.discountValue ?? null;
-  const hasDiscount = discountPercentage !== null;
+  const discountResponse = product.discountResponse;
+  const hasDiscount = !!(
+    discountResponse?.isActive &&
+    (product.price || 0) > (product.discountedPrice || 0)
+  );
+  const discountValue = hasDiscount ? discountResponse?.discountValue : null;
+  const isPercentage = discountResponse?.discountValueType === 1 || discountResponse?.discountValueType === "1";
 
   // Countdown Timer Logic
   useEffect(() => {
@@ -198,8 +199,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       currency: "TRY",
                     })}
                   </div>
-                  <div className="badges-on-sale">
-                    <span>{discountPercentage}</span>%{" "}
+                  <div className="badges-on-sale"  >
+                    <span>{discountValue}</span>
+                    {isPercentage ? "%" : "₺"}{" "}
                     {t("productDetailComponent.titles.sale")}
                   </div>
                 </>
@@ -409,7 +411,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 onClick={async (e) => {
                   e.preventDefault();
                   if (isFavoritesLoading) return;
-                  await handleToggleFavorite(product.id);
+                  await handleToggleFavorite();
                 }}
                 title={
                   isInFavorites(product.id)

@@ -102,6 +102,9 @@ function ShoppingCartPage() {
   // Hediye paketi mesajı için state
   const [giftWrapModalMessage, setGiftWrapModalMessage] = useState("");
 
+  // Şartlar ve koşullar checkbox state
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
   // Clean up modal backdrops on component unmount
   useEffect(() => {
     return () => {
@@ -647,20 +650,12 @@ function ShoppingCartPage() {
                                     );
                                   }
 
-                                  // Check if there's an active discount and prices are different
-                                  const hasDiscount =
-                                    (item as any).discountDTO !== null;
-                                  const pricesAreDifferent =
-                                    (item.price || 0) !==
+                                  // Sadece gerçekten indirimli olan ürünlerde üstü çizili fiyat göster
+                                  const hasActualDiscount =
+                                    (item.price || 0) >
                                     (item.discountedPrice || 0);
 
-                                  // Sadece gerçekten indirimli olan ürünlerde üstü çizili fiyat göster
-                                  if (
-                                    hasDiscount &&
-                                    pricesAreDifferent &&
-                                    (item.price || 0) >
-                                      (item.discountedPrice || 0)
-                                  ) {
+                                  if (hasActualDiscount) {
                                     return (
                                       <div className="position-relative">
                                         <span
@@ -1256,7 +1251,7 @@ function ShoppingCartPage() {
                     return null;
                   })()}
 
-                  <div className="cart-checkbox">
+                  <div className="cart-checkbox mb-2">
                     <input
                       type="checkbox"
                       className="tf-check"
@@ -1273,8 +1268,7 @@ function ShoppingCartPage() {
                       }}
                     />
                     <label htmlFor="cart-gift-checkbox" className="fw-4">
-                      <span>{t("giftWrap")}</span> {t("giftWrapPrice")}
-                      <span className="fw-5">{giftWrapPrice.toFixed(2)} ₺</span>
+                      <span>{t("giftWrap")}</span> 
                     </label>
                   </div>
                   <table className="table table-summary">
@@ -1500,7 +1494,7 @@ function ShoppingCartPage() {
                   </table>
                   <p className="tf-cart-tax">
                     {t("taxAndShippingNote1")}{" "}
-                    <Link href="/shipping-delivery">
+                    <Link href="/delivery-terms">
                       {t("taxAndShippingNote2")}
                     </Link>{" "}
                     {t("taxAndShippingNote3")}
@@ -1510,6 +1504,8 @@ function ShoppingCartPage() {
                       type="checkbox"
                       className="tf-check"
                       id="check-agree"
+                      checked={agreeTerms}
+                      onChange={(e) => setAgreeTerms(e.target.checked)}
                     />
                     <label htmlFor="check-agree" className="fw-4">
                       <Link href="/terms">{t("agreeTerms1")}</Link>{" "}
@@ -1518,8 +1514,20 @@ function ShoppingCartPage() {
                   </div>
                   <div className="cart-checkout-btn">
                     <Link
-                      href="/checkout"
-                      className="tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center"
+                      href={agreeTerms ? "/checkout" : "#"}
+                      className={`tf-btn w-100 btn-fill animate-hover-btn radius-3 justify-content-center ${
+                        !agreeTerms ? "disabled" : ""
+                      }`}
+                      onClick={(e) => {
+                        if (!agreeTerms) {
+                          e.preventDefault();
+                        }
+                      }}
+                      style={{
+                        pointerEvents: agreeTerms ? "auto" : "none",
+                        opacity: agreeTerms ? 1 : 0.6,
+                        cursor: agreeTerms ? "pointer" : "not-allowed",
+                      }}
                     >
                       <span>{t("proceedToCheckout")}</span>
                     </Link>
