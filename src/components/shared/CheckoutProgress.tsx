@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { useLanguage } from "@/context/LanguageContext";
 import styles from "@/styles/CheckoutProgress.module.css";
 
 interface CheckoutStep {
@@ -19,28 +20,29 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({
   currentStep,
   className = "",
 }) => {
+  const { t } = useLanguage();
   const router = useRouter();
 
   const steps: CheckoutStep[] = [
     {
       id: "cart",
-      title: "Sepet",
-      description: "Ürünleri inceleyin",
-      icon: "bx bx-cart",
+      title: t("common.checkoutProgress.cart") || "Sepet",
+      description: t("common.checkoutProgress.cartDescription") || "Ürünleri inceleyin",
+      icon: "icon icon-shopping-cart",
       path: "/shopping-cart",
     },
     {
       id: "checkout",
-      title: "Adres Bilgileri",
-      description: "Adres Seçimi",
-      icon: "bx bx-map",
+      title: t("common.checkoutProgress.checkout") || "Adres Bilgileri",
+      description: t("common.checkoutProgress.checkoutDescription") || "Adres Seçimi",
+      icon: "icon icon-map-marker",
       path: "/checkout",
     },
     {
       id: "payment",
-      title: "Ödeme",
-      description: "Ödeme yöntemi seçimi",
-      icon: "bx bx-credit-card",
+      title: t("common.checkoutProgress.payment") || "Ödeme",
+      description: t("common.checkoutProgress.paymentDescription") || "Ödeme yöntemi seçimi",
+      icon: "icon icon-dollar",
       path: "/payment",
     },
   ];
@@ -90,7 +92,7 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({
               >
                 <div className={styles.stepIcon}>
                   {isCompleted ? (
-                    <i className="bx bx-check"></i>
+                    <i className="icon icon-check"></i>
                   ) : (
                     <i className={step.icon}></i>
                   )}
@@ -98,7 +100,7 @@ const CheckoutProgress: React.FC<CheckoutProgressProps> = ({
 
                 <div className={styles.stepContent}>
                   <h4 className={styles.stepTitle}>{step.title}</h4>
-                  <p className={styles.stepDescription}>{step.description}</p>
+                  {/* <p className={styles.stepDescription}>{step.description}</p> */}
                 </div>
 
                 {index < steps.length - 1 && (

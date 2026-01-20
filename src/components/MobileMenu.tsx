@@ -29,7 +29,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   );
   const { searchTerm, setSearchTerm } = useSearch();
   const [localSearchTerm, setLocalSearchTerm] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const collapseRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -251,51 +250,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   className="site-nav-icon"
                   onClick={(e) => {
                     e.preventDefault();
-                    setIsSearchOpen(!isSearchOpen);
                   }}
                 >
                   <i className="icon icon-search"></i>Ara
                 </a>
               </div>
-
-              {isSearchOpen && (
-                <form
-                  onSubmit={handleSearchSubmit}
-                  className="mb-search-form"
-                  style={{ marginTop: "10px", padding: "0 15px" , marginBottom: "10px"}}
-                >
-                  <div className="search-box d-flex">
-                    <input
-                      type="text"
-                      placeholder="Ürün ara..."
-                      value={localSearchTerm}
-                      onChange={(e) => setLocalSearchTerm(e.target.value)}
-                      className="form-control"
-                      style={{
-                        flex: 1,
-                        padding: "8px 12px",
-                        border: "1px solid #ddd",
-                        borderRadius: "4px 0 0 4px",
-                        boxShadow: "none",
-                        outline: "none",
-                      }}
-                    />
-                    <button
-                      type="submit"
-                      className="search-btn"
-                      style={{
-                        padding: "8px 12px",
-                        background: "#000",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "0 4px 4px 0",
-                      }}
-                    >
-                      <i className="icon icon-search"></i>
-                    </button>
-                  </div>
-                </form>
-              )}
 
               <div className="mb-notice">
                 <a href={PathEnums.CONTACT} className="text-need">

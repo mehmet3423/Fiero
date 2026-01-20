@@ -1,5 +1,6 @@
 import ConfirmModal from "@/components/shared/ConfirmModal";
 import GeneralModal from "@/components/shared/GeneralModal";
+import AddressForm from "@/components/shared/AddressForm";
 import { Address } from "@/constants/models/Address";
 import { useCreateAddress } from "@/hooks/services/address/useCreateAddress";
 import { useDeleteAddress } from "@/hooks/services/address/useDeleteAddress";
@@ -8,12 +9,9 @@ import { useUpdateAddress } from "@/hooks/services/address/useUpdateAddress";
 import { useGetProvinces } from "@/hooks/services/address/useGetProvinces";
 import { useGetCountries } from "@/hooks/services/address/useGetCountries";
 import { useGetDistricts } from "@/hooks/services/address/useGetDistricts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { withProfileLayout } from "../_layout";
-import Select from "react-select";
-import { Province } from "@/constants/models/Province";
-import { District } from "@/constants/models/Province";
 import { useLanguage } from "@/context/LanguageContext";
 
 function AddressesPage() {
@@ -55,6 +53,18 @@ function AddressesPage() {
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!selectedProvinceId || !selectedDistrictId) {
+      toast.error(t("myAddresses.fillAllFields"));
+      return;
+    }
+
+    if (!newAddress.firstName || !newAddress.lastName || !newAddress.fullAddress) {
+      toast.error(t("myAddresses.fillAllFields"));
+      return;
+    }
+
     try {
       const selectedProvince = provinces.find(
         (p) => p.id === selectedProvinceId
@@ -63,29 +73,22 @@ function AddressesPage() {
         (d) => d.id === selectedDistrictId
       );
 
+      if (!selectedProvince || !selectedDistrict) {
+        toast.error(t("myAddresses.fillAllFields"));
+        return;
+      }
+
       await createAddress(
         newAddress as Address,
         "Türkiye",
         selectedProvince?.name,
-        selectedDistrict?.name
+        selectedDistrict?.name,
+        selectedDistrictId || undefined,
+        selectedProvinceId || undefined,
+        newAddress.phoneNumber
       );
 
-      $("#addAddressModal").modal("hide");
-      setNewAddress({
-        firstName: "",
-        lastName: "",
-        title: "",
-        fullAddress: "",
-        city: "",
-        district: "",
-        country: "",
-        neighbourhood: "",
-        street: "",
-        postalCode: "",
-      });
-      setSelectedCountryId("");
-      setSelectedProvinceId("");
-      setSelectedDistrictId("");
+      closeAddModal();
       toast.success(t("myAddresses.addSuccess"));
     } catch {
       toast.error(t("myAddresses.addError"));
@@ -124,10 +127,7 @@ function AddressesPage() {
         district: selectedDistrict?.name || "",
       });
 
-      $("#editAddressModal").modal("hide");
-      setEditAddress(null);
-      setSelectedProvinceId("");
-      setSelectedDistrictId("");
+      closeEditModal();
       toast.success(t("myAddresses.updateSuccess"));
     } catch (error) {
       console.error("Error updating address:", error);
@@ -139,24 +139,173 @@ function AddressesPage() {
     if (!addressToDelete) return;
     try {
       await deleteAddress(addressToDelete.id);
-      $("#deleteAddressModal").modal("hide");
-      setAddressToDelete(null);
+      closeDeleteModal();
       toast.success(t("myAddresses.deleteSuccess"));
     } catch {
       toast.error(t("myAddresses.deleteError"));
     }
   };
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const openModal = (id: string, address?: Address) => {
-    if (id === "add") $("#addAddressModal").modal("show");
+    if (id === "add") {
+      setIsAddModalOpen(true);
+    }
     if (id === "edit" && address) {
       setEditAddress(address);
-      $("#editAddressModal").modal("show");
+      setIsEditModalOpen(true);
     }
     if (id === "delete" && address) {
       setAddressToDelete(address);
-      $("#deleteAddressModal").modal("show");
+      setIsDeleteModalOpen(true);
     }
+  };
+
+  // Edit modal açıldığında province ve district ID'lerini bul
+  useEffect(() => {
+    if (isEditModalOpen && editAddress && provinces.length > 0) {
+      if (editAddress.city && editAddress.district) {
+        const province = provinces.find((p) => p.name === editAddress.city);
+        if (province) {
+          setSelectedProvinceId(province.id);
+          // District'leri yüklemek için province ID'si gerekiyor
+          // Districts zaten selectedProvinceId'ye bağlı olarak yükleniyor
+        }
+      }
+    }
+  }, [isEditModalOpen, editAddress, provinces]);
+
+  // District'ler yüklendiğinde district ID'sini bul
+  useEffect(() => {
+    if (
+      isEditModalOpen &&
+      editAddress &&
+      districts.length > 0 &&
+      selectedProvinceId
+    ) {
+      if (editAddress.district) {
+        const district = districts.find((d) => d.name === editAddress.district);
+        if (district) {
+          setSelectedDistrictId(district.id);
+        }
+      }
+    }
+  }, [isEditModalOpen, editAddress, districts, selectedProvinceId]);
+
+  // Modal'ları Bootstrap ile kontrol et
+  useEffect(() => {
+    if (!isAddModalOpen) return;
+
+    const modalElement = document.getElementById("addAddressModal");
+    if (!modalElement) return;
+
+    const bootstrap = (window as any).bootstrap;
+    if (!bootstrap || !bootstrap.Modal) return;
+
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (!modalInstance) {
+      modalInstance = new bootstrap.Modal(modalElement);
+    }
+
+    modalInstance.show();
+
+    const handleHidden = () => {
+      setIsAddModalOpen(false);
+    };
+
+    modalElement.addEventListener("hidden.bs.modal", handleHidden);
+
+    return () => {
+      modalElement.removeEventListener("hidden.bs.modal", handleHidden);
+    };
+  }, [isAddModalOpen]);
+
+  useEffect(() => {
+    if (!isEditModalOpen) return;
+
+    const modalElement = document.getElementById("editAddressModal");
+    if (!modalElement) return;
+
+    const bootstrap = (window as any).bootstrap;
+    if (!bootstrap || !bootstrap.Modal) return;
+
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (!modalInstance) {
+      modalInstance = new bootstrap.Modal(modalElement);
+    }
+
+    modalInstance.show();
+
+    const handleHidden = () => {
+      setIsEditModalOpen(false);
+    };
+
+    modalElement.addEventListener("hidden.bs.modal", handleHidden);
+
+    return () => {
+      modalElement.removeEventListener("hidden.bs.modal", handleHidden);
+    };
+  }, [isEditModalOpen]);
+
+  useEffect(() => {
+    if (!isDeleteModalOpen) return;
+
+    const modalElement = document.getElementById("deleteAddressModal");
+    if (!modalElement) return;
+
+    const bootstrap = (window as any).bootstrap;
+    if (!bootstrap || !bootstrap.Modal) return;
+
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (!modalInstance) {
+      modalInstance = new bootstrap.Modal(modalElement);
+    }
+
+    modalInstance.show();
+
+    const handleHidden = () => {
+      setIsDeleteModalOpen(false);
+    };
+
+    modalElement.addEventListener("hidden.bs.modal", handleHidden);
+
+    return () => {
+      modalElement.removeEventListener("hidden.bs.modal", handleHidden);
+    };
+  }, [isDeleteModalOpen]);
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+    setNewAddress({
+      firstName: "",
+      lastName: "",
+      title: "",
+      fullAddress: "",
+      city: "",
+      district: "",
+      country: "",
+      neighbourhood: "",
+      street: "",
+      postalCode: "",
+      phoneNumber: "",
+    });
+    setSelectedProvinceId("");
+    setSelectedDistrictId("");
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditAddress(null);
+    setSelectedProvinceId("");
+    setSelectedDistrictId("");
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setAddressToDelete(null);
   };
 
   if (isLoading) return <div>{t("myAddresses.loading")}</div>;
@@ -264,417 +413,61 @@ function AddressesPage() {
         }}
         isLoading={isAddingAddress}
         formId="addAddressForm"
+        onClose={closeAddModal}
       >
         <form id="addAddressForm" onSubmit={handleAddAddress}>
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.firstNamePlaceholder")}
-            value={newAddress.firstName}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, firstName: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.lastNamePlaceholder")}
-            value={newAddress.lastName}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, lastName: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.addressTitlePlaceholder")}
-            value={newAddress.title}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, title: e.target.value })
-            }
-          />
-          {/* <Select
-            className="mb-3"
-            options={countries.map((c: { id: string; commonName: string }) => ({
-              value: c.id,
-              label: c.commonName,
-            }))}
-            value={countries
-              .map((c: { id: string; commonName: string }) => ({
-                value: c.id,
-                label: c.commonName,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedCountryId
-              )}
-            onChange={(selectedOption) =>
-              setSelectedCountryId(selectedOption?.value || "")
-            }
-            placeholder="Ülke Seçiniz"
-            isClearable
-          /> */}
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.countryPlaceholder")}
-            value={t("myAddresses.country")}
-            readOnly
-          />
-
-          <Select
-            className="mb-3"
-            options={
-              provinces?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              })) || []
-            }
-            value={provinces
-              ?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedProvinceId
-              )}
-            onChange={(selectedOption) => {
-              setSelectedProvinceId(selectedOption?.value || "");
-              setSelectedDistrictId("");
-            }}
-            placeholder={isProvincesLoading ? t("myAddresses.loading") : t("myAddresses.provincePlaceholder")}
-            isClearable
-            isDisabled={isProvincesLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <Select
-            className="mb-3"
-            options={
-              districts?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              })) || []
-            }
-            value={districts
-              ?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedDistrictId
-              )}
-            onChange={(selectedOption) =>
-              setSelectedDistrictId(selectedOption?.value || "")
-            }
-            placeholder={isDistrictsLoading ? t("myAddresses.loading") : t("myAddresses.districtPlaceholder")}
-            isClearable
-            isDisabled={!selectedProvinceId || isDistrictsLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.neighbourhoodPlaceholder")}
-            value={newAddress.neighbourhood}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, neighbourhood: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.streetPlaceholder")}
-            value={newAddress.street}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, street: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.postalCodePlaceholder")}
-            value={newAddress.postalCode}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, postalCode: e.target.value })
-            }
-            pattern="\d{5}"
-            maxLength={5}
-            inputMode="numeric"
-            required
-            title={t("myAddresses.postalCodeTitle")}
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.fullAddressPlaceholder")}
-            value={newAddress.fullAddress}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, fullAddress: e.target.value })
-            }
+          <AddressForm
+            address={newAddress}
+            onAddressChange={setNewAddress}
+            selectedProvinceId={selectedProvinceId}
+            selectedDistrictId={selectedDistrictId}
+            onProvinceChange={setSelectedProvinceId}
+            onDistrictChange={setSelectedDistrictId}
+            provinces={provinces || []}
+            districts={districts || []}
+            isProvincesLoading={isProvincesLoading}
+            isDistrictsLoading={isDistrictsLoading}
+            showPostalCode={true}
+            showPhoneNumber={true}
+            translationPrefix="myAddresses"
           />
         </form>
       </GeneralModal>
 
-      <GeneralModal
-        id="editAddressModal"
-        title={t("myAddresses.editAddressTitle")}
-        showFooter
-        approveButtonText={t("myAddresses.updateButton")}
-        approveButtonStyle={{
-          backgroundColor: "#000",
-          color: "#fff",
-          border: "1px solid #000",
-        }}
-        isLoading={isUpdatingAddress}
-        formId="editAddressForm"
-      >
-        <form id="editAddressForm" onSubmit={handleUpdateAddress}>
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.firstNamePlaceholder")}
-            value={editAddress?.firstName || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress
-                  ? { ...editAddress, firstName: e.target.value }
-                  : null
-              )
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.lastNamePlaceholder")}
-            value={editAddress?.lastName || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress
-                  ? { ...editAddress, lastName: e.target.value }
-                  : null
-              )
-            }
-          />
-
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.addressTitlePlaceholder")}
-            value={editAddress?.title || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress ? { ...editAddress, title: e.target.value } : null
-              )
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.countryPlaceholder")}
-            value={t("myAddresses.country")}
-            readOnly
-          />
-          <Select
-            className="mb-3"
-            options={
-              provinces?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              })) || []
-            }
-            value={provinces
-              ?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedProvinceId
-              )}
-            onChange={(selectedOption) => {
-              setSelectedProvinceId(selectedOption?.value || "");
-              setSelectedDistrictId("");
-            }}
-            placeholder={isProvincesLoading ? t("myAddresses.loading") : t("myAddresses.provincePlaceholder")}
-            isClearable
-            isDisabled={isProvincesLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <Select
-            className="mb-3 text-dark"
-            options={
-              districts?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              })) || []
-            }
-            value={districts
-              ?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedDistrictId
-              )}
-            onChange={(selectedOption) =>
-              setSelectedDistrictId(selectedOption?.value || "")
-            }
-            placeholder={isDistrictsLoading ? t("myAddresses.loading") : t("myAddresses.districtPlaceholder")}
-            isClearable
-            isDisabled={!selectedProvinceId || isDistrictsLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.neighbourhoodPlaceholder")}
-            value={editAddress?.neighbourhood || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress
-                  ? { ...editAddress, neighbourhood: e.target.value }
-                  : null
-              )
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.streetPlaceholder")}
-            value={editAddress?.street || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress ? { ...editAddress, street: e.target.value } : null
-              )
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.postalCodePlaceholder")}
-            value={editAddress?.postalCode || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress
-                  ? { ...editAddress, postalCode: e.target.value }
-                  : null
-              )
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("myAddresses.fullAddressPlaceholder")}
-            value={editAddress?.fullAddress || ""}
-            onChange={(e) =>
-              setEditAddress(
-                editAddress
-                  ? { ...editAddress, fullAddress: e.target.value }
-                  : null
-              )
-            }
-          />
-        </form>
-      </GeneralModal>
+      {editAddress && (
+        <GeneralModal
+          id="editAddressModal"
+          title={t("myAddresses.editAddressTitle")}
+          showFooter
+          approveButtonText={t("myAddresses.updateButton")}
+          approveButtonStyle={{
+            backgroundColor: "#000",
+            color: "#fff",
+            border: "1px solid #000",
+          }}
+          isLoading={isUpdatingAddress}
+          formId="editAddressForm"
+          onClose={closeEditModal}
+        >
+          <form id="editAddressForm" onSubmit={handleUpdateAddress}>
+            <AddressForm
+              address={editAddress}
+              onAddressChange={(updated) => setEditAddress(updated as Address)}
+              selectedProvinceId={selectedProvinceId}
+              selectedDistrictId={selectedDistrictId}
+              onProvinceChange={setSelectedProvinceId}
+              onDistrictChange={setSelectedDistrictId}
+              provinces={provinces || []}
+              districts={districts || []}
+              isProvincesLoading={isProvincesLoading}
+              isDistrictsLoading={isDistrictsLoading}
+              showPostalCode={true}
+              showPhoneNumber={true}
+              translationPrefix="myAddresses"
+            />
+          </form>
+        </GeneralModal>
+      )}
 
       <GeneralModal
         id="deleteAddressModal"

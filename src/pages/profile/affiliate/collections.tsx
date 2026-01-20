@@ -41,7 +41,7 @@ export default function AffiliateCollectionsPage({
     isLoading: collectionsLoading,
     pagination,
     refetchCollections,
-  } = useGetAffiliateCollections({ noPagination: true });
+  } = useGetAffiliateCollections();
 
   const { deleteCollection, isPending: deleteCollectionPending } =
     useDeleteCollection();
@@ -198,7 +198,6 @@ export default function AffiliateCollectionsPage({
                     style={{ minWidth: "180px" }}
                   >
                     <option value="">
-                      <i className="bx bx-filter-alt me-1"></i>{" "}
                       {t("affiliateCollections.allCollections")}
                     </option>
                     <option value={AffiliateCollectionType.Product}>

@@ -1,4 +1,5 @@
 import GeneralModal from "@/components/shared/GeneralModal";
+import AddressForm from "@/components/shared/AddressForm";
 import {
   Address,
   District,
@@ -17,6 +18,7 @@ import {
 } from "@/hooks/services/order/useCreateOrderGuest";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/router";
+import { CheckoutData } from "@/types/checkout";
 
 import Select from "react-select";
 import React, { useEffect, useState } from "react";
@@ -57,6 +59,7 @@ function CheckoutPage() {
     neighbourhood: "",
     street: "",
     postalCode: "",
+    phoneNumber: "",
   });
 
   // Turkey is automatically selected and unchangeable
@@ -254,6 +257,18 @@ function CheckoutPage() {
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!selectedProvinceId || !selectedDistrictId) {
+      toast.error(t("checkoutPage.errors.selectProvince"));
+      return;
+    }
+
+    if (!newAddress.firstName || !newAddress.lastName || !newAddress.fullAddress) {
+      toast.error(t("checkoutPage.errors.requiredFields"));
+      return;
+    }
+
     try {
       const selectedProvince = provinces.find(
         (p) => p.id === selectedProvinceId
@@ -262,14 +277,31 @@ function CheckoutPage() {
         (d) => d.id === selectedDistrictId
       );
 
+      if (!selectedProvince || !selectedDistrict) {
+        toast.error(t("checkoutPage.errors.selectProvince"));
+        return;
+      }
+
       await createAddress(
         newAddress as Address,
         "Türkiye",
         selectedProvince?.name,
-        selectedDistrict?.name
+        selectedDistrict?.name,
+        selectedDistrictId || undefined,
+        selectedProvinceId || undefined,
+        newAddress.phoneNumber
       );
 
-      $("#addAddressModal").modal("hide");
+      // Modal'ı kapat
+      const modalElement = document.getElementById("addAddressModal");
+      if (modalElement) {
+        const bootstrap = (window as any).bootstrap;
+        const modalInstance = bootstrap?.Modal?.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      }
+
       setNewAddress({
         firstName: "",
         lastName: "",
@@ -281,6 +313,7 @@ function CheckoutPage() {
         neighbourhood: "",
         street: "",
         postalCode: "",
+        phoneNumber: "",
       });
       setSelectedProvinceId("");
       setSelectedDistrictId("");
@@ -468,12 +501,9 @@ function CheckoutPage() {
 
       toast.success(t("checkoutPage.orderSuccess"));
 
-      if (result.paymentUrl) {
-        window.location.href = result.paymentUrl;
-        return;
-      }
-
-      router.push("/");
+      // Guest order creation is now handled in payment page
+      // Redirect to payment page with order data
+      router.push("/payment");
       return;
     }
 
@@ -510,6 +540,229 @@ function CheckoutPage() {
     // TODO: Authenticated order creation will be handled separately.
   };
 
+  // Handle "Sipariş Ver" button click - Save checkout data and redirect to payment
+  const handlePlaceOrder = () => {
+    // Common validation for all users
+    if (!formData.tcId || !formData.email) {
+      toast.error(t("checkoutPage.errors.requiredFields"));
+      return;
+    }
+
+    if (formData.tcId.length !== 11) {
+      toast.error(t("checkoutPage.errors.tcIdLength"));
+      return;
+    }
+
+    if (isGuest) {
+      // Guest user validation
+      if (cartProducts.length === 0) {
+        toast.error(t("checkoutPage.errors.emptyCart"));
+        return;
+      }
+
+      // Guest kullanıcılar için telefon numarası guestShippingAddress içinde tutuluyor
+      if (!guestShippingAddress.phoneNumber) {
+        toast.error(t("checkoutPage.errors.requiredFields"));
+        return;
+      }
+
+      // Guest kullanıcılar için ad soyad bilgileri kontrolü
+      const recipientName = formData.recipientName || guestShippingAddress.firstName || "";
+      const recipientSurname = formData.recipientSurname || guestShippingAddress.lastName || "";
+      const recipientPhoneNumber = guestShippingAddress.phoneNumber || "";
+
+      if (!recipientName || !recipientSurname || !recipientPhoneNumber) {
+        toast.error(t("checkoutPage.errors.requiredFields"));
+        return;
+      }
+
+      if (!guestShippingProvinceId) {
+        toast.error(t("checkoutPage.errors.selectProvince"));
+        return;
+      }
+
+      const shippingProvince = provinces.find(
+        (p) => p.id === guestShippingProvinceId
+      );
+      const shippingDistrict = guestShippingDistricts.find(
+        (d) => d.id === guestShippingDistrictId
+      );
+
+      if (!shippingProvince) {
+        toast.error(t("checkoutPage.errors.selectProvince"));
+        return;
+      }
+
+      if (!shippingDistrict) {
+        toast.error(t("checkoutPage.errors.selectDistrict"));
+        return;
+      }
+
+      if (
+        !guestShippingAddress.neighbourhood ||
+        !guestShippingAddress.street ||
+        !guestShippingAddress.fullAddress
+      ) {
+        toast.error(t("checkoutPage.errors.shippingAddressFields"));
+        return;
+      }
+
+      // Prepare guest billing address
+      let finalGuestBillingAddress: GuestAddressFormData = {
+        ...guestShippingAddress,
+        firstName: recipientName,
+        lastName: recipientSurname,
+        phoneNumber: recipientPhoneNumber,
+        country: "Türkiye",
+        city: shippingProvince.name,
+        district: shippingDistrict.name,
+      };
+
+      if (!billingSameAsDelivery) {
+        if (!guestBillingProvinceId) {
+          toast.error(t("checkoutPage.errors.selectProvince"));
+          return;
+        }
+
+        const billingProvince = provinces.find(
+          (p) => p.id === guestBillingProvinceId
+        );
+        const billingDistrict = guestBillingDistricts.find(
+          (d) => d.id === guestBillingDistrictId
+        );
+
+        if (!billingProvince) {
+          toast.error(t("checkoutPage.errors.selectProvince"));
+          return;
+        }
+
+        if (!billingDistrict) {
+          toast.error(t("checkoutPage.errors.selectDistrict"));
+          return;
+        }
+
+        if (
+          !guestBillingAddress.neighbourhood ||
+          !guestBillingAddress.street ||
+          !guestBillingAddress.fullAddress
+        ) {
+          toast.error(t("checkoutPage.errors.billingAddressFields"));
+          return;
+        }
+
+        finalGuestBillingAddress = {
+          ...guestBillingAddress,
+          firstName: recipientName,
+          lastName: recipientSurname,
+          phoneNumber: recipientPhoneNumber,
+          country: "Türkiye",
+          city: billingProvince.name,
+          district: billingDistrict.name,
+        };
+      }
+
+      // Prepare guest shipping address with province and district names
+      const finalGuestShippingAddress: GuestAddressFormData = {
+        ...guestShippingAddress,
+        firstName: recipientName,
+        lastName: recipientSurname,
+        phoneNumber: recipientPhoneNumber,
+        country: "Türkiye",
+        city: shippingProvince.name,
+        district: shippingDistrict.name,
+      };
+
+      // Save checkout data for guest user
+      const checkoutData: CheckoutData = {
+        tcIdentityNumber: formData.tcId,
+        email: formData.email,
+        isGuest: true,
+        guestShippingAddress: finalGuestShippingAddress,
+        guestBillingAddress: finalGuestBillingAddress,
+        isBillingSameAsDelivery: billingSameAsDelivery,
+        billingType: isCorporateInvoice ? 1 : 0,
+        isCorporateBilling: isCorporateInvoice,
+        corporateCompanyName: isCorporateInvoice
+          ? formData.companyName
+          : undefined,
+        corporateTaxNumber: isCorporateInvoice
+          ? formData.taxNumber
+          : undefined,
+        corporateTaxOffice: isCorporateInvoice
+          ? formData.taxOffice
+          : undefined,
+        timestamp: Date.now(),
+      };
+
+      localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+      router.push("/payment");
+      return;
+    } else {
+      // Authenticated user validation
+      if (!selectedAddressId) {
+        toast.error(t("checkoutPage.errors.selectDeliveryAddress"));
+        return;
+      }
+
+      // Seçili adresten alıcı bilgilerini al
+      const selectedAddress = addresses.find(
+        (addr) => addr.id === selectedAddressId
+      );
+
+      if (!selectedAddress) {
+        toast.error(t("checkoutPage.errors.selectDeliveryAddress"));
+        return;
+      }
+
+      // Adresten alıcı bilgilerini kontrol et
+      if (!selectedAddress.firstName || !selectedAddress.lastName) {
+        toast.error(t("checkoutPage.errors.selectDeliveryAddress"));
+        return;
+      }
+
+      if (!billingSameAsDelivery && !selectedBillingAddressId) {
+        toast.error(t("checkoutPage.errors.selectBillingAddress"));
+        return;
+      }
+
+      if (
+        isCorporateInvoice &&
+        (!formData.companyName || !formData.taxNumber || !formData.taxOffice)
+      ) {
+        toast.error(t("checkoutPage.errors.corporateInvoiceFields"));
+        return;
+      }
+
+      // Save checkout data for authenticated user
+      const checkoutData: CheckoutData = {
+        tcIdentityNumber: formData.tcId,
+        email: formData.email,
+        isGuest: false,
+        shippingAddressId: selectedAddressId,
+        billingAddressId: billingSameAsDelivery
+          ? selectedAddressId
+          : selectedBillingAddressId,
+        isBillingSameAsDelivery: billingSameAsDelivery,
+        billingType: isCorporateInvoice ? 1 : 0,
+        isCorporateBilling: isCorporateInvoice,
+        corporateCompanyName: isCorporateInvoice
+          ? formData.companyName
+          : undefined,
+        corporateTaxNumber: isCorporateInvoice
+          ? formData.taxNumber
+          : undefined,
+        corporateTaxOffice: isCorporateInvoice
+          ? formData.taxOffice
+          : undefined,
+        timestamp: Date.now(),
+      };
+
+      localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+      router.push("/payment");
+      return;
+    }
+  };
+
   // Sepet verisi
   const {
     cartProducts = [],
@@ -518,12 +771,8 @@ function CheckoutPage() {
     appliedCoupon,
     isGiftWrap,
     giftWrapMessage,
+    totalPrice = 0,
   } = useCart();
-  const total = cartProducts.reduce(
-    (sum: number, item: any) =>
-      sum + (item.discountedPrice || item.price) * item.quantity,
-    0
-  );
 
   return (
     <main>
@@ -544,7 +793,7 @@ function CheckoutPage() {
               {/* Sipariş Bilgileri Section */}
               <h5 className="fw-5 mb_20">{t("checkoutPage.orderInfoTitle")}</h5>
 
-              <form className="form-checkout" onSubmit={handleSubmit}>
+              <form className="form-checkout" onSubmit={(e) => { e.preventDefault(); handlePlaceOrder(); }}>
                 <div className="box grid-2">
                   <fieldset className="box fieldset">
                     <label htmlFor="email">{t("checkoutPage.email")} </label>
@@ -941,6 +1190,7 @@ function CheckoutPage() {
                 <div className="form-check">
                   <input
                     className="form-check-input"
+                    style={{ cursor: "pointer" }}
                     type="checkbox"
                     id="isCorporateInvoice"
                     checked={isCorporateInvoice}
@@ -948,6 +1198,7 @@ function CheckoutPage() {
                   />
                   <label
                     className="form-check-label"
+                    style={{ cursor: "pointer" }}
                     htmlFor="isCorporateInvoice"
                   >
                     {t("checkoutPage.isCorporateInvoice")}
@@ -1401,7 +1652,7 @@ function CheckoutPage() {
 
                   <div className="d-flex justify-content-between line pb_20">
                     <h6 className="fw-5">{t("checkoutPage.total")}</h6>
-                    <h6 className="total fw-5">{total.toFixed(2)}₺</h6>
+                    <h6 className="total fw-5">{totalPrice.toFixed(2)}₺</h6>
                   </div>
                   <div className="wd-check-payment">
                     <div className="fieldset-radio mb_20">
@@ -1441,7 +1692,7 @@ function CheckoutPage() {
                   <button
                     type="button"
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
-                    onClick={() => router.push("/payment")}
+                    onClick={handlePlaceOrder}
                   >
                     {t("checkoutPage.placeOrderButton")}
                   </button>
@@ -1462,175 +1713,19 @@ function CheckoutPage() {
         formId="addAddressForm"
       >
         <form id="addAddressForm" onSubmit={handleAddAddress}>
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.firstNamePlaceholder")}
-            value={newAddress.firstName}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, firstName: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.lastNamePlaceholder")}
-            value={newAddress.lastName}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, lastName: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.addressTitlePlaceholder")}
-            value={newAddress.title}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, title: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.countryPlaceholder")}
-            value="Türkiye"
-            readOnly
-          />
-
-          <Select
-            className="mb-3"
-            options={
-              provinces?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              })) || []
-            }
-            value={provinces
-              ?.map((c: Province) => ({
-                value: c.id,
-                label: c.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedProvinceId
-              )}
-            onChange={(selectedOption) => {
-              setSelectedProvinceId(selectedOption?.value || "");
-              setSelectedDistrictId("");
-            }}
-            placeholder={
-              isProvincesLoading
-                ? t("checkoutPage.loading")
-                : t("checkoutPage.provincePlaceholder")
-            }
-            isClearable
-            isDisabled={isProvincesLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <Select
-            className="mb-3"
-            options={
-              districts?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              })) || []
-            }
-            value={districts
-              ?.map((d: District) => ({
-                value: d.id,
-                label: d.name,
-              }))
-              .find(
-                (option: { value: string; label: string }) =>
-                  option.value === selectedDistrictId
-              )}
-            onChange={(selectedOption) =>
-              setSelectedDistrictId(selectedOption?.value || "")
-            }
-            placeholder={
-              isDistrictsLoading
-                ? t("checkoutPage.loading")
-                : t("checkoutPage.districtPlaceholder")
-            }
-            isClearable
-            isDisabled={!selectedProvinceId || isDistrictsLoading}
-            styles={{
-              option: (provided) => ({
-                ...provided,
-                color: "#333",
-                backgroundColor: "#fff",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }),
-              menu: (provided) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                backgroundColor: "#f8f8f8",
-                outline: "none",
-                boxShadow: "none",
-                borderColor: state.isFocused ? "#ced4da" : provided.borderColor,
-                "&:hover": {
-                  borderColor: "#ced4da",
-                  boxShadow: "none",
-                },
-              }),
-            }}
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.neighbourhoodPlaceholder")}
-            value={newAddress.neighbourhood}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, neighbourhood: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.streetPlaceholder")}
-            value={newAddress.street}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, street: e.target.value })
-            }
-          />
-
-          <input
-            type="text"
-            className="form-control mb-3 shadow-none"
-            placeholder={t("checkoutPage.fullAddressPlaceholder")}
-            value={newAddress.fullAddress}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, fullAddress: e.target.value })
-            }
+          <AddressForm
+            address={newAddress}
+            onAddressChange={setNewAddress}
+            selectedProvinceId={selectedProvinceId}
+            selectedDistrictId={selectedDistrictId}
+            onProvinceChange={setSelectedProvinceId}
+            onDistrictChange={setSelectedDistrictId}
+            provinces={provinces || []}
+            districts={districts || []}
+            isProvincesLoading={isProvincesLoading}
+            isDistrictsLoading={isDistrictsLoading}
+            showPhoneNumber={true}
+            translationPrefix="checkoutPage"
           />
         </form>
       </GeneralModal>

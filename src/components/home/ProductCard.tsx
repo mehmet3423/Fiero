@@ -242,7 +242,7 @@ export default function ProductCard({ product, isRatingEnabled = true }: Product
           )}
 
           {/* Color swatch sistemi - isteğe bağlı */}
-          <ul className="list-color-product">
+          {/* <ul className="list-color-product">
             <li className="list-color-item color-swatch active">
               <span className="tooltip">{t("productCard.default")}</span>
               <span className="swatch-value bg_orange-3"></span>
@@ -253,7 +253,7 @@ export default function ProductCard({ product, isRatingEnabled = true }: Product
                 alt="image-product"
               />
             </li>
-          </ul>
+          </ul> */}
         </div>
 
         {selectedProduct && (

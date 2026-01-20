@@ -121,12 +121,15 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                 wrapperClass="d-flex align-items-stretch"
               >
                 {products.map((product: Product) => {
-                  const hasDiscount = product.discountResponse !== null;
-                  const isPercentageDiscount =
-                    hasDiscount &&
-                    (product.discountResponse as any)?.discountValueType === 1;
-                  const discountPercentage = isPercentageDiscount
-                    ? product.discountResponse?.discountValue
+                  const rawDiscount = product.discountResponse;
+                  const hasDiscount = !!(
+                    rawDiscount?.isActive &&
+                    (product.price || 0) > (product.discountedPrice || 0)
+                  );
+                  const isPercentage =
+                    rawDiscount?.discountValueType === 1;
+                  const discountValue = hasDiscount
+                    ? rawDiscount?.discountValue
                     : null;
                   const isOutOfStock =
                     !product.isAvailable ||
@@ -284,10 +287,11 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                               </span>
                             </a>
                           </div>
-                          {isPercentageDiscount && (
+                          {hasDiscount && (
                             <div className="on-sale-wrap">
                               <div className="on-sale-item">
-                                -{discountPercentage}%
+                                -{discountValue}
+                                {isPercentage ? "%" : "₺"}
                               </div>
                             </div>
                           )}
@@ -306,10 +310,18 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                             {titleToShow}
                           </Link>
                           <span className="price">
-                            {hasDiscount &&
-                            product.price !== product.discountedPrice
-                              ? `From ${product.discountedPrice.toFixed(2)}₺`
-                              : `${product.price.toFixed(2)}₺`}
+                            {hasDiscount ? (
+                              <div className="d-flex align-items-center gap-2">
+                                <span className="text-success fw-bold">
+                                  {product.discountedPrice.toFixed(2)}₺
+                                </span>
+                                <del className="text-muted fs-7">
+                                  {product.price.toFixed(2)}₺
+                                </del>
+                              </div>
+                            ) : (
+                              `${product.price.toFixed(2)}₺`
+                            )}
                           </span>
                           {/* <ul className="list-color-product">
                             <li className="list-color-item color-swatch active">
