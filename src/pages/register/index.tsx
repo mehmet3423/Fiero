@@ -120,34 +120,34 @@ export default function RegisterPage() {
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      toast.error(t("error.passwordMismatch"));
+      toast.error(t("register.errors.passwordMismatch"));
       return;
     }
     if (!formData.termsAccepted) {
       setTermsError(true);
-      toast.error(t("error.termsRequired"));
+      toast.error(t("register.errors.termsRequired"));
       return;
     }
     // Satıcı alanlarını kontrol et
     if (formData.isSeller) {
       if (!formData.companyName.trim()) {
-        toast.error(t("error.companyName"));
+        toast.error(t("register.errors.companyName"));
         return;
       }
       if (!formData.companyAddress.country) {
-        toast.error(t("error.country"));
+        toast.error(t("register.errors.country"));
         return;
       }
       if (!formData.companyAddress.state) {
-        toast.error(t("error.state"));
+        toast.error(t("register.errors.state"));
         return;
       }
       if (!formData.companyAddress.city) {
-        toast.error(t("error.city"));
+        toast.error(t("register.errors.city"));
         return;
       }
       if (!formData.companyAddress.fullAddress) {
-        toast.error(t("error.address"));
+        toast.error(t("register.errors.address"));
         return;
       }
     }

@@ -6526,7 +6526,7 @@ header.header-bg {
 }
 
 #quick_view .modal-dialog .modal-content .icon-close-popup {
-  top: 20px;
+  top: 50px;
   right: 20px;
   font-size: 16px;
   z-index: 5;
@@ -20686,6 +20686,41 @@ blockquote .text {
 
   .banner-countdown-v2 .tf-countdown .countdown__timer {
     justify-content: start;
+  }
+}
+
+/* Loading states for subcategories */
+.subcategory-loading,
+.sub-nav-menu-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.loading-placeholder,
+.loading-item {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.loading-placeholder {
+  width: 80%;
+}
+
+.loading-item {
+  width: 120px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 

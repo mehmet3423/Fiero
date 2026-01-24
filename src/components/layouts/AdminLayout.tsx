@@ -245,9 +245,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <li className="nav-item dropdown-notifications navbar-dropdown dropdown me-3">
                   <a
                     className="nav-link dropdown-toggle hide-arrow"
-                    href="javascript:void(0);"
+                    href="#"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    onClick={(e) => e.preventDefault()}
                   >
                     <i className="bx bx-bell bx-sm"></i>
                   </a>
@@ -302,8 +303,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <li className="nav-item navbar-dropdown dropdown-user dropdown">
                   <a
                     className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                    href="javascript:void(0);"
+                    href="#"
                     data-bs-toggle="dropdown"
+                    onClick={(e) => e.preventDefault()}
                   >
                     <div className="avatar avatar-online me-2">
                       <Image

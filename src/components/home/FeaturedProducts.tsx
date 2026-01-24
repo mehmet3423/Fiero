@@ -363,8 +363,45 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
         )}
       </section>
       <style jsx>{`
+        .card-product .card-product-wrapper {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          background-color: #ffffff;
+          overflow: hidden;
+          border-radius: 10px;
+        }
+
         .card-product .product-img {
           position: relative;
+          width: 100%;
+          height: 100%;
+          background-color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .card-product .product-img img,
+        .card-product .card-product-wrapper img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain !important;
+          object-position: center;
+          background-color: #ffffff;
+        }
+
+        .card-product .product-img .img-product {
+          position: relative;
+          z-index: 1;
+        }
+
+        .card-product .product-img .img-hover {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 2;
         }
 
         .stock-badge {
@@ -377,7 +414,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           font-size: 12px;
           font-weight: 600;
           border-radius: 999px;
-          z-index: 2;
+          z-index: 3;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }

@@ -64,6 +64,69 @@ const CompareProducts = () => {
       <Head>
         <title>{t("compareProducts.pageTitle")}</title>
       </Head>
+      <style jsx>{`
+        /* Mobil görünüm için buton düzenlemeleri */
+        @media (max-width: 768px) {
+          .tf-compare-group-btns {
+            flex-direction: column !important;
+            gap: 8px !important;
+            width: 100%;
+            margin-top: 15px !important;
+            margin-bottom: 15px !important;
+          }
+          
+          .tf-compare-group-btns button {
+            width: 100% !important;
+            padding: 10px 12px !important;
+            font-size: 13px !important;
+            white-space: nowrap;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            min-height: 42px;
+            box-sizing: border-box;
+          }
+          
+          .tf-compare-group-btns button .icon {
+            flex-shrink: 0 !important;
+            width: 18px !important;
+            height: 18px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 16px !important;
+          }
+          
+          .tf-compare-group-btns button > span:not(.icon) {
+            flex: 1 1 auto !important;
+            text-align: center !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            min-width: 0 !important;
+          }
+        }
+        
+        /* Çok küçük ekranlar için butonları daha kompakt yap */
+        @media (max-width: 480px) {
+          .tf-compare-group-btns {
+            gap: 6px !important;
+          }
+          
+          .tf-compare-group-btns button {
+            padding: 8px 10px !important;
+            font-size: 12px !important;
+            min-height: 38px;
+          }
+          
+          .tf-compare-group-btns button .icon {
+            font-size: 14px !important;
+            width: 16px !important;
+            height: 16px !important;
+          }
+        }
+      `}</style>
       <div className="tf-page-title">
         <div className="container-full">
           <div className="heading text-center">{t("compareProducts.pageTitle")}</div>

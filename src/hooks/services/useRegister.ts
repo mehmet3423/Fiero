@@ -127,17 +127,10 @@ export const useRegister = () => {
               onSuccess?.();
             }
           },
-          onError: (error) => {
-            // Sadece backend mesajını göster
-            const errorMessage = error.response?.data?.detail || error.response?.data?.message;
-            if (errorMessage) {
-              toast.error(errorMessage);
-            }
-          },
         }
       );
     } catch (error) {
-      // Hata mesajı useMyMutation tarafından gösterildi
+      // Hata mesajı useMyMutation'ın onError handler'ı tarafından gösterildi
     }
   };
 

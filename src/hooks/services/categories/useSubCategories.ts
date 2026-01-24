@@ -28,6 +28,8 @@ export const useSubCategories = (mainCategoryId: string) => {
     queryKey: [QueryKeys.SUB_CATEGORY_LIST, mainCategoryId],
     method: HttpMethod.GET,
     enabled: !!mainCategoryId,
+    staleTime: 300000, // 5 minutes instead of 30 seconds
+    cacheTime: 600000, // 10 minutes
     onError(err) {},
   });
   return {
