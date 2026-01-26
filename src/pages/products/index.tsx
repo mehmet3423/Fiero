@@ -562,7 +562,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       </div> */}
 
       {/* Page Title */}
-      <div className="tf-page-title">
+      {/* <div className="tf-page-title">
         <div className="container-full">
           <div className="heading text-center">
             {t("productsPage.pageTitle")}
@@ -571,7 +571,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
             {t("productsPage.pageSubtitle")}
           </p>
         </div>
-      </div>
+      </div> */}
       {/* /Page Title */}
       {/* Collection Slider Section */}
       {/* <section className="flat-spacing-3 pb_0">

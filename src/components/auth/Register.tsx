@@ -5,6 +5,7 @@ import {
   isPasswordValid,
 } from "@/helpers/passwordUtils";
 import { useRegister } from "@/hooks/services/useRegister";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -29,6 +30,7 @@ interface RegisterProps {
 }
 
 export default function Register({ onSuccess }: RegisterProps) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<RegisterFormData>({
     firstName: "",
     lastName: "",
@@ -163,13 +165,13 @@ export default function Register({ onSuccess }: RegisterProps) {
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Şifreler eşleşmiyor!");
+      toast.error(t("register.errors.passwordMismatch"));
       return;
     }
 
     if (!formData.termsAccepted) {
       setTermsError(true);
-      toast.error("Üyelik koşullarını kabul etmelisiniz");
+      toast.error(t("register.errors.termsRequired"));
       return;
     }
 
@@ -181,23 +183,23 @@ export default function Register({ onSuccess }: RegisterProps) {
     // Satıcı alanlarını kontrol et
     if (formData.isSeller) {
       if (!formData.companyName?.trim()) {
-        toast.error("Lütfen şirket adını girin");
+        toast.error(t("register.errors.companyName"));
         return;
       }
       if (!formData.companyAddress?.country) {
-        toast.error("Lütfen ülke bilgisini girin");
+        toast.error(t("register.errors.country"));
         return;
       }
       if (!formData.companyAddress?.state) {
-        toast.error("Lütfen bölge bilgisini girin");
+        toast.error(t("register.errors.state"));
         return;
       }
       if (!formData.companyAddress?.city) {
-        toast.error("Lütfen şehir bilgisini girin");
+        toast.error(t("register.errors.city"));
         return;
       }
       if (!formData.companyAddress?.fullAddress) {
-        toast.error("Lütfen açık adres bilgisini girin");
+        toast.error(t("register.errors.address"));
         return;
       }
     }

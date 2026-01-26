@@ -131,11 +131,35 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
     addToCart(displayProduct.id, quantity);
   };
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = async () => {
     if (isInFavorites(displayProduct.id)) {
-      removeFromFavorites(displayProduct.id);
+      await removeFromFavorites(displayProduct.id);
     } else {
-      addToFavorites(displayProduct.id);
+      await addToFavorites(displayProduct.id);
+    }
+  };
+
+  // Karşılaştırma butonu fonksiyonu
+  const handleCompare = (productId: string) => {
+    if (typeof window !== "undefined") {
+      const key = "compareProducts";
+      let compareList: string[] = [];
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          compareList = JSON.parse(stored);
+        }
+        if (!compareList.includes(productId)) {
+          compareList.push(productId);
+          localStorage.setItem(key, JSON.stringify(compareList));
+          toast.success(t("quickView.addedToCompare"));
+        } else {
+          toast(t("quickView.alreadyInCompare"), { icon: "ℹ️" });
+        }
+      } catch (e) {
+        toast.error(t("quickView.compareError"));
+      }
+      window.location.href = "/compare-products";
     }
   };
 
@@ -512,7 +536,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                       </>
                     )}
                   </div>
-                  <div className="tf-product-info-variant-picker">
+                  {/* <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item">
                       <div className="variant-picker-label">
                         {t("quickView.color")}: <span className="fw-6 variant-picker-label-value">{selectedColor}</span>
@@ -563,7 +587,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">{t("quickView.quantity")}</div>
                     <div className="wg-quantity">
@@ -620,20 +644,38 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                         </a>
                         <div className="d-flex gap-10">
                           <a
-                            href="javascript:void(0);"
-                            className="tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action"
+                            href="#"
+                            className={`tf-product-btn-wishlist hover-tooltip box-icon bg_white wishlist btn-icon-action${
+                              isInFavorites(displayProduct.id) ? " active" : ""
+                            }${isFavoritesLoading ? " disabled" : ""}`}
                             style={{ width: "45px", height: "45px" }}
-                            onClick={handleToggleFavorite}
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              if (isFavoritesLoading) return;
+                              await handleToggleFavorite();
+                            }}
+                            title={
+                              isInFavorites(displayProduct.id)
+                                ? t("productDetailComponent.buttons.removeFromFavorites")
+                                : t("quickView.addToFavorites")
+                            }
                           >
                             <span className="icon icon-heart"></span>
-                            <span className="tooltip">{t("quickView.addToFavorites")}</span>
-                            <span className="icon icon-delete"></span>
+                            <span className="tooltip">
+                              {isInFavorites(displayProduct.id)
+                                ? t("productDetailComponent.buttons.removeFromFavorites")
+                                : t("quickView.addToFavorites")}
+                            </span>
+                            <span className="icon icon-heart-full"></span>
                           </a>
                           <a
                             href="#"
                             className="tf-product-btn-wishlist hover-tooltip box-icon bg_white compare btn-icon-action"
                             style={{ width: "45px", height: "45px" }}
-                            onClick={(e) => e.preventDefault()}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleCompare(displayProduct.id);
+                            }}
                           >
                             <span className="icon icon-compare"></span>
                             <span className="tooltip">{t("quickView.compare")}</span>

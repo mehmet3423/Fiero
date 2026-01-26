@@ -68,6 +68,9 @@
         "buyWith": "Buy Now",
         "morePaymentOptions": "More Payment Options",
         "viewDetails": "View All Details",
+        "addedToCompare": "Product added to compare",
+        "alreadyInCompare": "Product already in compare",
+        "compareError": "Compare error",
         "errors": {
             "addToCartError": "An error occurred while adding the product to the cart.",
             "addToFavoritesError": "An error occurred while adding the product to favorites."

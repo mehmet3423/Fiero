@@ -68,6 +68,9 @@
         "buyWith": "ile satın alın",
         "morePaymentOptions": "Daha Fazla Ödeme Seçeneği",
         "viewDetails": "Tüm Detayları İncele",
+        "addedToCompare": "Ürün karşılaştırmaya eklendi",
+        "alreadyInCompare": "Ürün zaten karşılaştırmada",
+        "compareError": "Karşılaştırma hatası",
         "errors": {
             "addToCartError": "Ürün sepete eklenirken bir hata oluştu.",
             "addToFavoritesError": "Ürün favorilere eklenirken bir hata oluştu."

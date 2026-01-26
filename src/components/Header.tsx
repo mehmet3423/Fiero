@@ -45,12 +45,27 @@ export default function Header() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string>("");
-  const { data: subCategoriesData } = useSubCategories(hoveredCategoryId);
+  const { data: subCategoriesData, isLoading: isLoadingSubCategories } = useSubCategories(hoveredCategoryId);
 
   // Ensure subCategories is always an array
   const subCategories = Array.isArray(subCategoriesData)
     ? subCategoriesData
     : [];
+
+  // Add hover intent prefetching
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const handleMouseEnter = (categoryId: string) => {
+    setHoveredCategoryId(categoryId);
+
+    // Prefetch on hover intent (already handled by the hook, but we could add additional logic here)
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredCategoryId("");
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
 
   // Chunk subcategories into groups of 10 for column layout
   const chunkedSubCategories = useMemo(() => {
@@ -533,8 +548,8 @@ export default function Header() {
                         <li
                           key={category.id}
                           className="menu-item"
-                          onMouseEnter={() => setHoveredCategoryId(category.id)}
-                          onMouseLeave={() => setHoveredCategoryId("")}
+                          onMouseEnter={() => handleMouseEnter(category.id)}
+                          onMouseLeave={handleMouseLeave}
                         >
                           <Link
                             href={
@@ -555,22 +570,28 @@ export default function Header() {
                             <i className="icon icon-arrow-down"></i>
                           </Link>
 
-                          {hoveredCategoryId === category.id &&
-                            subCategories &&
-                            subCategories.length > 0 && (
-                              <div className="sub-menu mega-menu">
-                                <div className="container">
-                                  <div className="row">
-                                    <div className="col-lg-12">
-                                      <div className="mega-menu-item">
-                                        <div
-                                          className="menu-columns"
-                                          style={{
-                                            display: "flex",
-                                            gap: "40px",
-                                          }}
-                                        >
-                                          {chunkedSubCategories.map(
+                          {(hoveredCategoryId === category.id) && (
+                            <div className="sub-menu mega-menu">
+                              <div className="container">
+                                <div className="row">
+                                  <div className="col-lg-12">
+                                    <div className="mega-menu-item">
+                                      <div
+                                        className="menu-columns"
+                                        style={{
+                                          display: "flex",
+                                          gap: "40px",
+                                        }}
+                                      >
+                                        {isLoadingSubCategories ? (
+                                          // Loading skeleton
+                                          <div className="subcategory-loading">
+                                            <div className="loading-placeholder"></div>
+                                            <div className="loading-placeholder"></div>
+                                            <div className="loading-placeholder"></div>
+                                          </div>
+                                        ) : subCategories && subCategories.length > 0 ? (
+                                          chunkedSubCategories.map(
                                             (chunk, idx) => (
                                               <ul
                                                 key={idx}
@@ -604,14 +625,15 @@ export default function Header() {
                                                 )}
                                               </ul>
                                             )
-                                          )}
-                                        </div>
+                                          )
+                                        ) : null}
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            )}
+                            </div>
+                          )}
                         </li>
                       ))}
                   <li className="menu-item">

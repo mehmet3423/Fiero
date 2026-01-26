@@ -33,7 +33,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const collapseRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Alt kategori verisi
-  const { data: subCategoriesData } = useSubCategories(
+  const { data: subCategoriesData, isLoading: isLoadingSubCategories } = useSubCategories(
     expandedCategoryId || ""
   );
   const subCategories = Array.isArray(subCategoriesData)
@@ -72,22 +72,31 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
         setIsAnimating(false);
       }, 350);
     } else {
-      // Açma animasyonu
-      collapseElement.style.height = "0px";
-      collapseElement.style.overflow = "hidden";
-      setExpandedCategoryId(categoryId);
-
-      // Alt kategoriler yüklendikten sonra animasyonu başlat
-      setTimeout(() => {
-        collapseElement.style.height = collapseElement.scrollHeight + "px";
-
-        setTimeout(() => {
-          collapseElement.style.height = "";
-          collapseElement.style.overflow = "";
-          setIsAnimating(false);
-        }, 350);
-      }, 50);
+      // Açma animasyonu - only start if not loading or if we have cached data
+      if (!isLoadingSubCategories || subCategories.length > 0) {
+        startOpeningAnimation(collapseElement, categoryId);
+      } else {
+        // If loading and no cached data, wait for data or show loading state
+        setExpandedCategoryId(categoryId);
+        setIsAnimating(false); // Allow re-clicks while loading
+      }
     }
+  };
+
+  const startOpeningAnimation = (collapseElement: HTMLDivElement, categoryId: string) => {
+    collapseElement.style.height = "0px";
+    collapseElement.style.overflow = "hidden";
+    setExpandedCategoryId(categoryId);
+
+    setTimeout(() => {
+      collapseElement.style.height = collapseElement.scrollHeight + "px";
+
+      setTimeout(() => {
+        collapseElement.style.height = "";
+        collapseElement.style.overflow = "";
+        setIsAnimating(false);
+      }, 350);
+    }, 0); // Remove the 50ms delay
   };
 
   const handleLinkClick = (path: string) => {
@@ -160,9 +169,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         overflow: "hidden",
                       }}
                     >
-                      {expandedCategoryId === category.id &&
-                        subCategories &&
-                        subCategories.length > 0 && (
+                      {expandedCategoryId === category.id && (
+                        isLoadingSubCategories && subCategories.length === 0 ? (
+                          // Loading state
+                          <div className="sub-nav-menu-loading">
+                            <div className="loading-item"></div>
+                            <div className="loading-item"></div>
+                            <div className="loading-item"></div>
+                          </div>
+                        ) : subCategories && subCategories.length > 0 ? (
                           <ul className="sub-nav-menu" id="sub-menu-navigation">
                             {subCategories.map((subCategory) => (
                               <li key={subCategory.id}>
@@ -191,7 +206,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                               </li>
                             ))}
                           </ul>
-                        )}
+                        ) : null
+                      )}
                     </div>
                   </li>
                 ))}
@@ -256,11 +272,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 </a>
               </div>
 
-              <div className="mb-notice">
+              {/* <div className="mb-notice">
                 <a href={PathEnums.CONTACT} className="text-need">
                   Yardıma mı ihtiyacınız var?
                 </a>
-              </div>
+              </div> */}
 
               <ul className="mb-info">
                 <li>Adres: İstanbul, Türkiye</li>

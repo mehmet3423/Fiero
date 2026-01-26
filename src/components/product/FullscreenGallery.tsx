@@ -227,7 +227,7 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
 
         .fullscreen-close {
           position: absolute;
-          top: 20px;
+          top: 50px;
           right: 20px;
           color: white;
           background: transparent;
