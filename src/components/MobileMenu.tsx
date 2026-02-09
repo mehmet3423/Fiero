@@ -15,9 +15,10 @@ import { useLanguage } from "@/context/LanguageContext";
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenSearch?: () => void;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
+const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, onOpenSearch }) => {
   const router = useRouter();
   const { language } = useLanguage();
   const { userRole, userProfile } = useAuth();
@@ -266,6 +267,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   className="site-nav-icon"
                   onClick={(e) => {
                     e.preventDefault();
+                    onClose();
+                    onOpenSearch?.();
                   }}
                 >
                   <i className="icon icon-search"></i>Ara

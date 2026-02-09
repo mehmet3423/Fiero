@@ -229,12 +229,24 @@ const FullscreenGallery: React.FC<FullscreenGalleryProps> = ({
           position: absolute;
           top: 50px;
           right: 20px;
-          color: white;
-          background: transparent;
-          border: none;
-          font-size: 2rem;
+          color: #6b7280;
+          background: #6b7280;
+          border: 2px solid white;
+          font-size: 1.25rem;
           cursor: pointer;
           z-index: 10000;
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          padding: 0;
+          line-height: 1;
+        }
+
+        .fullscreen-close span {
+          color: white;
         }
 
         .carousel-dot {

@@ -694,10 +694,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
       {/* /Collection Slider Section */}
 
       {/* Section Product */}
-      <section className="flat-spacing-2">
+      <section className="flat-spacing-2 products-page-section">
         <div className="container">
-          <div className="tf-shop-control row align-items-center mb-4">
-            <div className="col-12 col-md-3 mb-2 mb-md-0">
+          <div className="tf-shop-control row align-items-center mb-4 flex-nowrap">
+            <div className="col-6 col-md-3 mb-0 pe-1">
               <a
                 href="#"
                 className="tf-btn-filter"
@@ -710,7 +710,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 <span className="text">{t("productsPage.filterButton")}</span>
               </a>
             </div>
-            <div className="col-12 col-md-5 d-flex justify-content-center mb-2 mb-md-0">
+            <div className="col-4 col-md-5 d-none d-md-flex justify-content-center mb-0">
               <ul className="tf-control-layout d-flex justify-content-center gap-2">
                 {[2, 3, 4].map((g) => (
                   <li
@@ -728,7 +728,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
                 ))}
               </ul>
             </div>
-            <div className="col-12 col-md-3 d-flex justify-content-end align-items-center">
+            <div className="col-6 col-md-3 d-flex justify-content-end align-items-center mb-0 ps-1">
               <div className="tf-control-sorting">
                 <div
                   className={`tf-dropdown-sort${dropdownOpen ? " show" : ""}`}
@@ -815,6 +815,24 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
         </div>
       </section>
       {/* /Section Product */}
+      <style jsx>{`
+        @media (max-width: 767px) {
+          .products-page-section {
+            overflow-x: hidden;
+          }
+          .products-page-section .tf-control-sorting {
+            position: relative;
+          }
+          .products-page-section .tf-dropdown-sort {
+            position: relative;
+          }
+          .products-page-section .tf-dropdown-sort .dropdown-menu {
+            right: 0;
+            left: auto;
+            max-width: min(280px, calc(100vw - 24px));
+          }
+        }
+      `}</style>
     </>
   );
 };

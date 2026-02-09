@@ -45,7 +45,8 @@ export default function Header() {
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const [hoveredCategoryId, setHoveredCategoryId] = useState<string>("");
-  const { data: subCategoriesData, isLoading: isLoadingSubCategories } = useSubCategories(hoveredCategoryId);
+  const { data: subCategoriesData, isLoading: isLoadingSubCategories } =
+    useSubCategories(hoveredCategoryId);
 
   // Ensure subCategories is always an array
   const subCategories = Array.isArray(subCategoriesData)
@@ -363,14 +364,6 @@ export default function Header() {
                     >
                       <i className="icon icon-search"></i>
                     </button>
-                    <SearchSidebar
-                      isOpen={showSearchInput}
-                      onClose={closeSearch}
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                      showResults={showResults}
-                      setShowResults={setShowResults}
-                    />
                   </li>
                   <li className="nav-account">
                     {userProfile ? (
@@ -535,7 +528,7 @@ export default function Header() {
       {/* Header */}
       <header id="header" className="header-default">
         <div className="px_15 lg-px_40">
-          <div className="row wrapper-header align-items-center">
+          <div className="row align-items-center">
             <div className="tf-md-hidden align-items-center ">
               <nav className="box-navigation text-center">
                 <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
@@ -570,7 +563,7 @@ export default function Header() {
                             <i className="icon icon-arrow-down"></i>
                           </Link>
 
-                          {(hoveredCategoryId === category.id) && (
+                          {hoveredCategoryId === category.id && (
                             <div className="sub-menu mega-menu">
                               <div className="container">
                                 <div className="row">
@@ -590,7 +583,8 @@ export default function Header() {
                                             <div className="loading-placeholder"></div>
                                             <div className="loading-placeholder"></div>
                                           </div>
-                                        ) : subCategories && subCategories.length > 0 ? (
+                                        ) : subCategories &&
+                                          subCategories.length > 0 ? (
                                           chunkedSubCategories.map(
                                             (chunk, idx) => (
                                               <ul
@@ -734,8 +728,21 @@ export default function Header() {
       {/* /Header */}
       {/* Mobil Menü */}
       {isMobileMenuOpen && (
-        <MobileMenu isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+        <MobileMenu
+          isOpen={isMobileMenuOpen}
+          onClose={closeMobileMenu}
+          onOpenSearch={() => setShowSearchInput(true)}
+        />
       )}
+      {/* Arama sidebar - menü dışında render edildiği için mobilde de açılabiliyor */}
+      <SearchSidebar
+        isOpen={showSearchInput}
+        onClose={closeSearch}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        showResults={showResults}
+        setShowResults={setShowResults}
+      />
       <style jsx>{`
       .tf-top-bar-wrapper {
   display: flex;

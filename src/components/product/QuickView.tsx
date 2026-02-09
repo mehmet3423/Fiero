@@ -5,7 +5,6 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import FullscreenGallery from "./FullscreenGallery";
-import DiscountBadge from "./DiscountBadge";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
 import { Product } from "@/constants/models/Product";
@@ -20,7 +19,12 @@ interface QuickViewProps {
   isRatingEnabled?: boolean;
 }
 
-const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatingEnabled = true }) => {
+const QuickView: React.FC<QuickViewProps> = ({
+  isOpen,
+  onClose,
+  product,
+  isRatingEnabled = true,
+}) => {
   const { t } = useLanguage();
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [fullscreenInitialSlide, setFullscreenInitialSlide] = useState(0);
@@ -34,7 +38,11 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
   } = useFavorites();
 
   // Backend'den ürün verisini al
-  const { product: backendProduct, isLoading, error } = useProductDetail(product.id);
+  const {
+    product: backendProduct,
+    isLoading,
+    error,
+  } = useProductDetail(product.id);
 
   // Backend verisini yoksa prop'tan geleni kullan
   const displayProduct = backendProduct || product;
@@ -45,26 +53,38 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [quantity, setQuantity] = useState(1);
 
-  const totalImages = [displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].filter(Boolean).length;
+  const totalImages = [
+    displayProduct.baseImageUrl,
+    ...displayProduct.contentImageUrls,
+  ].filter(Boolean).length;
   const discountResponse = displayProduct.discountResponse;
-  const hasDiscount = (displayProduct.price || 0) > (displayProduct.discountedPrice || 0);
+  const hasDiscount =
+    (displayProduct.price || 0) > (displayProduct.discountedPrice || 0);
   const isPercentage = discountResponse?.discountValueType === 1;
   const discountValue = hasDiscount ? discountResponse?.discountValue : null;
-  
-  // For the badge, we can still use the calculated percentage if it's more appropriate visually, 
+
+  // For the badge, we can still use the calculated percentage if it's more appropriate visually,
   // or use the backend value if it's a percentage discount.
   const displayPercentage = hasDiscount
-    ? isPercentage && discountValue 
-      ? discountValue 
-      : Math.round(((displayProduct.price - displayProduct.discountedPrice) / displayProduct.price) * 100)
+    ? isPercentage && discountValue
+      ? discountValue
+      : Math.round(
+          ((displayProduct.price - displayProduct.discountedPrice) /
+            displayProduct.price) *
+            100
+        )
     : 0;
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen && !fullscreenOpen && !sizeChartOpen) {
+      if (
+        event.key === "Escape" &&
+        isOpen &&
+        !fullscreenOpen &&
+        !sizeChartOpen
+      ) {
         onClose();
       }
     };
@@ -168,9 +188,9 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
   return (
     <>
       <style jsx>{`
-      .no-scroll {
-  overflow: hidden;
-  }
+        .no-scroll {
+          overflow: hidden;
+        }
         .tf-single-slide .swiper-button-next::after,
         .tf-single-slide .swiper-button-prev::after {
           font-size: 16px !important;
@@ -178,35 +198,35 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           color: #333 !important;
           transition: all 0.3s ease !important;
         }
-        
+
         .tf-single-slide .swiper-button-next,
         .tf-single-slide .swiper-button-prev {
           width: 40px !important;
           height: 40px !important;
           margin-top: -20px !important;
-          background-color: rgba(255,255,255,0.8) !important;
+          background-color: rgba(255, 255, 255, 0.8) !important;
           border-radius: 50% !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
           transition: all 0.3s ease !important;
           border: 2px solid transparent !important;
         }
-        
+
         .tf-single-slide .swiper-button-next:hover,
         .tf-single-slide .swiper-button-prev:hover {
-          background-color: #dc3545 !important; 
+          background-color: #dc3545 !important;
           border-color: #dc3545 !important;
         }
-        
+
         .tf-single-slide .swiper-button-next:hover::after,
         .tf-single-slide .swiper-button-prev:hover::after {
           color: white !important;
         }
-        
+
         .tf-single-slide .swiper-button-next:active,
         .tf-single-slide .swiper-button-prev:active {
           transform: translateY(0px) !important;
         }
-        
+
         .modal-backdrop {
           position: fixed;
           top: 0;
@@ -217,18 +237,71 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           z-index: 1040;
           opacity: 1;
         }
-          /* Modal responsive */
+
+        /* İndirim solda, çarpı sağda, ikisi de biraz aşağıda */
+        .modal-content {
+          position: relative;
+        }
+        .quickview-header {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          gap: 12px !important;
+          padding: 28px 20px 0 !important;
+          min-height: 48px !important;
+        }
+        .quickview-header .icon-close-popup {
+          position: relative !important;
+          top: auto !important;
+          right: auto !important;
+        }
+        /* Mobilde header resmin üstüne gelsin */
+        @media (max-width: 768px) {
+          .quickview-header {
+            position: absolute !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 10 !important;
+            padding: 40px 16px !important;
+            min-height: auto !important;
+            background: linear-gradient(
+              to bottom,
+              rgba(255, 255, 255, 0.95) 0%,
+              rgba(255, 255, 255, 0) 100%
+            ) !important;
+          }
+        }
+        .quickview-on-sale-wrap {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .quickview-on-sale-wrap .on-sale-item {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          padding: 4px 10px;
+          min-width: 40px;
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1.25;
+          background-color: #fc5732;
+          color: #fff;
+          border-radius: 999px;
+        }
+
+        /* Modal responsive */
         .modal-content {
           max-width: 95vw !important;
           max-height: 95vh !important;
         }
-        
+
         .wrap {
-        margin-top: 0% !important;
+          margin-top: 0% !important;
           display: flex !important;
           gap: 0px !important;
         }
-        
+
         .tf-product-media-wrap {
           flex: 0 0 65% !important;
           display: flex !important;
@@ -236,20 +309,20 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           justify-content: center !important;
           overflow: hidden !important;
         }
-        
+
         .tf-product-info-wrap {
           flex: 0 0 35% !important;
           overflow-y: auto !important;
           margin-bottom: 40px !important;
         }
-        
+
         .swiper.tf-single-slide {
           width: 100% !important;
           height: 100% !important;
           display: flex !important;
           align-items: center !important;
         }
-        
+
         .swiper-slide .item {
           width: 100% !important;
           height: 100% !important;
@@ -258,7 +331,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           margin: 0 !important;
           overflow: hidden !important;
         }
-        
+
         .swiper-slide .item img {
           width: 100% !important;
           height: 100% !important;
@@ -268,32 +341,32 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           margin: 0 !important;
           padding: 0 !important;
         }
-        
+
         .swiper-slide {
           display: flex !important;
           align-items: stretch !important;
           line-height: 0 !important;
         }
-        
+
         /* Tablet responsive */
         @media (max-width: 1024px) {
           .wrap {
             flex-direction: row !important;
             display: flex !important;
           }
-          
+
           .tf-product-media-wrap {
             justify-content: center !important;
             align-items: center !important;
             flex: 0 0 60% !important;
           }
-          
+
           .tf-product-info-wrap {
             flex-shrink: 1 !important;
             height: auto !important;
           }
         }
-        
+
         /* Mobile responsive */
         @media (max-width: 768px) {
           .modal-dialog {
@@ -301,7 +374,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
             margin: 0 !important;
             height: 100% !important;
           }
-          
+
           .modal-content {
             max-width: 100vw !important;
             max-height: 100vh !important;
@@ -310,19 +383,19 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
             overflow-y: auto !important;
             display: block !important;
           }
-          
+
           .wrap {
             flex-direction: column !important;
             gap: 0 !important;
             display: block !important;
           }
-          
+
           .tf-product-media-wrap {
             height: auto !important;
             min-height: 350px !important;
             flex: none !important;
           }
-          
+
           .tf-product-info-wrap {
             flex: none !important;
             overflow-y: visible !important;
@@ -337,38 +410,47 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
           }
 
           .btn-group-wrapper {
-             display: flex !important;
-             gap: 10px !important;
-             align-items: center !important;
+            display: flex !important;
+            gap: 10px !important;
+            align-items: center !important;
           }
 
           .wishlist-compare-group {
-             display: flex !important;
-             gap: 10px !important;
+            display: flex !important;
+            gap: 10px !important;
           }
         }
-        
+
         /* Small mobile */
         @media (max-width: 300px) {
           .tf-product-media-wrap {
             height: 250px !important;
           }
-          
+
           .tf-product-info-wrap {
             padding: 10px !important;
           }
         }
       `}</style>
 
-      <div
-        className="modal-backdrop"
-        onClick={onClose}
-      ></div>
+      <div className="modal-backdrop" onClick={onClose}></div>
 
-      <div className="modal fade modalDemo show" id="quick_view" style={{ display: 'block', zIndex: 1050 }}>
+      <div
+        className="modal fade modalDemo show"
+        id="quick_view"
+        style={{ display: "block", zIndex: 1050 }}
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content" ref={modalRef}>
-            <div className="header">
+            <div className="header quickview-header">
+              {hasDiscount && discountValue != null && (
+                <div className="quickview-on-sale-wrap">
+                  <div className="on-sale-item">
+                    -{discountValue}
+                    {isPercentage ? "%" : "₺"}
+                  </div>
+                </div>
+              )}
               <span
                 className="icon-close icon-close-popup"
                 onClick={onClose}
@@ -376,12 +458,11 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
               ></span>
             </div>
             <div className="wrap">
-
               <div className="tf-product-media-wrap">
-                <div className="swiper tf-single-slide" style={{ position: "relative" }}>
-                  {hasDiscount && displayPercentage > 0 && (
-                    <DiscountBadge percentage={displayPercentage} />
-                  )}
+                <div
+                  className="swiper tf-single-slide"
+                  style={{ position: "relative" }}
+                >
                   <div className="swiper-wrapper">
                     <Swiper
                       modules={[Navigation]}
@@ -392,12 +473,15 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                       loop={totalImages > 1}
                       spaceBetween={0}
                       slidesPerView={1}
-                      style={{ height: '100%' }}
+                      style={{ height: "100%" }}
                     >
                       <SwiperSlide>
                         <div className="item">
                           <Image
-                            src={displayProduct.baseImageUrl || "/assets/images/products/no-image.jpg"}
+                            src={
+                              displayProduct.baseImageUrl ||
+                              "/assets/images/products/no-image.jpg"
+                            }
                             alt={displayProduct.title}
                             width={500}
                             height={500}
@@ -407,9 +491,8 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                               objectFit: "cover",
                               display: "block",
                               margin: 0,
-                              padding: 0
+                              padding: 0,
                             }}
-
                             onClick={() => {
                               setFullscreenInitialSlide(0);
                               setFullscreenOpen(true);
@@ -432,7 +515,7 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                                 objectFit: "cover",
                                 display: "block",
                                 margin: 0,
-                                padding: 0
+                                padding: 0,
                               }}
                               onClick={() => {
                                 setFullscreenInitialSlide(idx + 1);
@@ -454,18 +537,25 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                 <div className="tf-product-info-list">
                   <div className="tf-product-info-title">
                     <h5>
-                      <a className="link" href={`/products/${displayProduct.id}`}>
+                      <a
+                        className="link"
+                        href={`/products/${displayProduct.id}`}
+                      >
                         {displayProduct.title}
                       </a>
                     </h5>
                   </div>
                   <div className="tf-product-info-badges">
-                    <div className="badges text-uppercase">{t("quickView.bestSeller")}</div>
+                    <div className="badges text-uppercase">
+                      {t("quickView.bestSeller")}
+                    </div>
                     {displayProduct.sellableQuantity > 10 && (
                       <div className="product-status-content">
                         <i className="icon-lightning"></i>
                         <p className="fw-6">
-                          {t("quickView.lastProducts1")} {displayProduct.sellableQuantity} {t("quickView.lastProducts2")}
+                          {t("quickView.lastProducts1")}{" "}
+                          {displayProduct.sellableQuantity}{" "}
+                          {t("quickView.lastProducts2")}
                         </p>
                       </div>
                     )}
@@ -474,33 +564,56 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                     <div className="price d-flex align-items-center gap-10">
                       {hasDiscount ? (
                         <>
-                          <span className="current-price" style={{ color: "#dc3545", fontWeight: "bold" }}>
-                            {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.discountedPrice)}
+                          <span
+                            className="current-price"
+                            style={{ color: "#dc3545", fontWeight: "bold" }}
+                          >
+                            {new Intl.NumberFormat("tr-TR", {
+                              style: "currency",
+                              currency: "TRY",
+                            }).format(displayProduct.discountedPrice)}
                           </span>
-                          <span className="old-price" style={{ textDecoration: "line-through", color: "#999", fontSize: "0.9em" }}>
-                            {new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.price)}
+                          <span
+                            className="old-price"
+                            style={{
+                              textDecoration: "line-through",
+                              color: "#999",
+                              fontSize: "0.9em",
+                            }}
+                          >
+                            {new Intl.NumberFormat("tr-TR", {
+                              style: "currency",
+                              currency: "TRY",
+                            }).format(displayProduct.price)}
                           </span>
                         </>
                       ) : (
-                        new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(displayProduct.price)
+                        new Intl.NumberFormat("tr-TR", {
+                          style: "currency",
+                          currency: "TRY",
+                        }).format(displayProduct.price)
                       )}
                     </div>
                   </div>
-                  {isRatingEnabled && displayProduct.averageRating !== undefined && displayProduct.averageRating > 0 && (
-                    <div className="ratings-container">
-                      <div className="ratings">
-                        <div
-                          className="ratings-val"
-                          style={{
-                            width: `${(displayProduct.averageRating / 5) * 100}%`,
-                          }}
-                        ></div>
+                  {isRatingEnabled &&
+                    displayProduct.averageRating !== undefined &&
+                    displayProduct.averageRating > 0 && (
+                      <div className="ratings-container">
+                        <div className="ratings">
+                          <div
+                            className="ratings-val"
+                            style={{
+                              width: `${
+                                (displayProduct.averageRating / 5) * 100
+                              }%`,
+                            }}
+                          ></div>
+                        </div>
+                        <span className="ratings-text">
+                          ({displayProduct.averageRating.toFixed(2)} / 5)
+                        </span>
                       </div>
-                      <span className="ratings-text">
-                        ({displayProduct.averageRating.toFixed(2)} / 5)
-                      </span>
-                    </div>
-                  )}
+                    )}
                   <div className="tf-product-description">
                     {isLoading ? (
                       <p>{t("quickView.loadingDescription")}</p>
@@ -511,28 +624,37 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                     ) : (
                       <>
                         <p>
-                          {displayProduct.description && displayProduct.description.trim() !== ""
+                          {displayProduct.description &&
+                          displayProduct.description.trim() !== ""
                             ? isDescriptionExpanded
                               ? displayProduct.description
-                              : `${displayProduct.description.substring(0, 100)}...`
+                              : `${displayProduct.description.substring(
+                                  0,
+                                  100
+                                )}...`
                             : t("quickView.defaultDescription")}
                         </p>
-                        {displayProduct.description && displayProduct.description.length > 100 && (
-                          <button
-                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                            style={{
-                              background: "none",
-                              border: "none",
-                              color: "#000000ff",
-                              cursor: "pointer",
-                              paddingTop: "5px",
-                              fontSize: "14px",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            {isDescriptionExpanded ? t("quickView.showLess") : t("quickView.showMore")}
-                          </button>
-                        )}
+                        {displayProduct.description &&
+                          displayProduct.description.length > 100 && (
+                            <button
+                              onClick={() =>
+                                setIsDescriptionExpanded(!isDescriptionExpanded)
+                              }
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#000000ff",
+                                cursor: "pointer",
+                                paddingTop: "5px",
+                                fontSize: "14px",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {isDescriptionExpanded
+                                ? t("quickView.showLess")
+                                : t("quickView.showMore")}
+                            </button>
+                          )}
                       </>
                     )}
                   </div>
@@ -589,7 +711,9 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                     </div>
                   </div> */}
                   <div className="tf-product-info-quantity">
-                    <div className="quantity-title fw-6">{t("quickView.quantity")}</div>
+                    <div className="quantity-title fw-6">
+                      {t("quickView.quantity")}
+                    </div>
                     <div className="wg-quantity">
                       <span
                         className="btn-quantity minus-btn"
@@ -616,8 +740,14 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                       <div className="d-flex gap-10 align-items-center">
                         <a
                           href="#"
-                          className={`tf-btn btn-fill justify-content-center fw-6 flex-grow-1 animate-hover-btn${isOutOfStock ? " disabled" : ""}`}
-                          style={{ fontSize: "14px", padding: "10px 15px", height: "45px" }}
+                          className={`tf-btn btn-fill justify-content-center fw-6 flex-grow-1 animate-hover-btn${
+                            isOutOfStock ? " disabled" : ""
+                          }`}
+                          style={{
+                            fontSize: "14px",
+                            padding: "10px 15px",
+                            height: "45px",
+                          }}
                           onClick={(e) => {
                             e.preventDefault();
                             handleAddToCart();
@@ -631,7 +761,10 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                             &nbsp;
                           </span>
                           {!isOutOfStock && (
-                            <span className="tf-qty-price" style={{ fontSize: "12px" }}>
+                            <span
+                              className="tf-qty-price"
+                              style={{ fontSize: "12px" }}
+                            >
                               {new Intl.NumberFormat("tr-TR", {
                                 style: "currency",
                                 currency: "TRY",
@@ -656,14 +789,18 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                             }}
                             title={
                               isInFavorites(displayProduct.id)
-                                ? t("productDetailComponent.buttons.removeFromFavorites")
+                                ? t(
+                                    "productDetailComponent.buttons.removeFromFavorites"
+                                  )
                                 : t("quickView.addToFavorites")
                             }
                           >
                             <span className="icon icon-heart"></span>
                             <span className="tooltip">
                               {isInFavorites(displayProduct.id)
-                                ? t("productDetailComponent.buttons.removeFromFavorites")
+                                ? t(
+                                    "productDetailComponent.buttons.removeFromFavorites"
+                                  )
                                 : t("quickView.addToFavorites")}
                             </span>
                             <span className="icon icon-heart-full"></span>
@@ -678,18 +815,22 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
                             }}
                           >
                             <span className="icon icon-compare"></span>
-                            <span className="tooltip">{t("quickView.compare")}</span>
+                            <span className="tooltip">
+                              {t("quickView.compare")}
+                            </span>
                             <span className="icon icon-check"></span>
                           </a>
                         </div>
                       </div>
-
-                      
                     </form>
                   </div>
                   <div>
-                    <a href={`/products/${displayProduct.id}`} className="tf-btn fw-6 btn-line">
-                      {t("quickView.viewDetails")}<i className="icon icon-arrow1-top-left"></i>
+                    <a
+                      href={`/products/${displayProduct.id}`}
+                      className="tf-btn fw-6 btn-line"
+                    >
+                      {t("quickView.viewDetails")}
+                      <i className="icon icon-arrow1-top-left"></i>
                     </a>
                   </div>
                 </div>
@@ -702,7 +843,10 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
       <FullscreenGallery
         isOpen={fullscreenOpen}
         onClose={closeFullscreen}
-        media={[displayProduct.baseImageUrl, ...displayProduct.contentImageUrls].map((url) => ({
+        media={[
+          displayProduct.baseImageUrl,
+          ...displayProduct.contentImageUrls,
+        ].map((url) => ({
           url,
           type: "image" as const,
         }))}
@@ -712,46 +856,45 @@ const QuickView: React.FC<QuickViewProps> = ({ isOpen, onClose, product, isRatin
       {sizeChartOpen && (
         <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
             zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
           }}
           onClick={() => setSizeChartOpen(false)}
         >
           <div
             style={{
-              position: 'relative',
-              maxWidth: '70vw',
-              maxHeight: '80vh'
+              position: "relative",
+              maxWidth: "70vw",
+              maxHeight: "80vh",
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            
             <button
               onClick={() => setSizeChartOpen(false)}
               style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                background: 'white',
-                color: 'black',
-                border: 'none',
-                width: '30px',
-                height: '30px',
-                fontSize: '24px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold'
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                background: "white",
+                color: "black",
+                border: "none",
+                width: "30px",
+                height: "30px",
+                fontSize: "24px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
               }}
             >
               ×
