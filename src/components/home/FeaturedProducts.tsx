@@ -418,6 +418,33 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
+
+        /* Web ve mobilde indirim rozeti sağ üstte, stok rozeti sol üstte – üst üste binme yok */
+        .card-product .card-product-wrapper .on-sale-wrap {
+          left: auto;
+          right: 12px;
+          top: 12px;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        @media (max-width: 767px) {
+          .card-product .card-product-wrapper .on-sale-wrap {
+            right: 8px;
+            top: 8px;
+          }
+          .card-product .card-product-wrapper .on-sale-wrap .on-sale-item {
+            min-width: auto;
+            padding: 4px 8px;
+            font-size: 11px;
+          }
+          .card-product .stock-badge {
+            top: 8px;
+            left: 8px;
+            padding: 4px 10px;
+            font-size: 10px;
+          }
+        }
       `}</style>
     </>
   );
