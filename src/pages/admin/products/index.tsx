@@ -122,26 +122,25 @@ function ProductsAdminPage() {
     : allProducts?.count || 0;
 
   return (
-    <div className="content-wrapper">
-      <div className="container-l flex-grow-1 container-p-y">
-        {/* Header */}
+    <div className="content-wrapper overflow-hidden">
+      <div className="container-fluid flex-grow-1 container-p-y px-2 px-md-3">
+        {/* Header - mobilde alt alta, masaüstünde yan yana */}
         <div className="card bg-transparent border-0 mb-0">
-          <div className="card-body mb-0 pb-3 ">
-            <div className="d-flex pt-0 justify-content-between align-items-center ">
+          <div className="card-body mb-0 pb-3 px-0">
+            <div className="d-flex flex-column flex-sm-row flex-wrap pt-0 justify-content-between align-items-stretch align-items-sm-center gap-2">
               <h6
-                className="card-header"
+                className="card-header mb-0"
                 style={{
-                  fontSize: "1.3rem",
+                  fontSize: "1.2rem",
                   fontWeight: "bold",
                   color: "#566a7f",
-                  marginLeft: "-10px",
                 }}
               >
                 Ürün Yönetimi
               </h6>
               <Link
                 href="/admin/products/add-product"
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm flex-shrink-0"
                 style={{ fontSize: "0.75rem" }}
               >
                 <i className="bx bx-plus me-1"></i>
@@ -151,11 +150,11 @@ function ProductsAdminPage() {
           </div>
         </div>
 
-        {/* Filtreler */}
+        {/* Filtreler - mobilde tam genişlik, dikey dizilim */}
         <div className="card mb-4">
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Arama
                 </label>
@@ -179,7 +178,7 @@ function ProductsAdminPage() {
                   )}
                 </div>
               </div>
-              <div className="col-md-3">
+              <div className="col-12 col-md-3">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Ana Kategori
                 </label>
@@ -198,7 +197,7 @@ function ProductsAdminPage() {
                   ))}
                 </select>
               </div>
-              <div className="col-md-3">
+              <div className="col-12 col-md-3">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Alt Kategori
                 </label>
@@ -220,7 +219,7 @@ function ProductsAdminPage() {
               {(searchTerm ||
                 selectedMainCategoryId ||
                 selectedSubCategoryId) && (
-                <div className="col-md-2">
+                <div className="col-12 col-md-2">
                   <label className="form-label" style={{ fontSize: "0.75rem" }}>
                     &nbsp;
                   </label>
@@ -360,10 +359,10 @@ function ProductsAdminPage() {
         )}
 
         {/* Sayfa bilgisi gösterimi */}
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 border-top pt-3">
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 border-top pt-3 gap-2">
           <div
-            className="text-muted mb-3 mb-md-0"
-            style={{ fontSize: "0.813rem" }}
+            className="text-muted mb-0 text-center text-md-start"
+            style={{ fontSize: "0.813rem", wordBreak: "break-word" }}
           >
             {searchTerm
               ? `"${searchTerm}" aramasına uygun ${totalCount} ürün bulundu - Sayfa ${currentPage}/${totalPages}`
@@ -422,6 +421,8 @@ function ProductsAdminPage() {
         .form-select,
         .form-control {
           border-radius: 3px;
+          min-width: 0;
+          max-width: 100%;
         }
         .badge {
           font-weight: 500;

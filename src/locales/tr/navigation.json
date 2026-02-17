@@ -47,7 +47,8 @@
         "shippingLabel": "Kargo",
         "freeShippingMessage1": "daha alışveriş yaparak ",
         "freeShippingMessage2": "Ücretsiz Kargo",
-        "freeShippingMessage3": " keyfini yaşayın"
+        "freeShippingMessage3": " keyfini yaşayın",
+        "clearCart": "Sepeti Temizle"
     },
     "favorites": {
         "myFavorites": "Favorilerim",

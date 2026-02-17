@@ -931,9 +931,9 @@ function PaymentPage() {
                     }
                   >
                     <i
-                      className={`fas ${
-                        isCardFlipped ? "fa-eye" : "fa-sync-alt"
-                      }`}
+                      className={
+                        isCardFlipped ? "icon-view" : "icon-view"
+                      }
                     ></i>
                   </button>
                 </div>
@@ -1036,7 +1036,7 @@ function PaymentPage() {
                     required
                   />
                   <small className="text-muted">
-                    <i className="fas fa-info-circle me-1"></i>
+                    <i className="icon-help me-1"></i>
                     Kartın arkasındaki 3 haneli güvenlik kodu
                   </small>
                 </div>
@@ -1051,7 +1051,7 @@ function PaymentPage() {
                       <div className={styles.installmentSection}>
                         <div className={styles.installmentHeaderSection}>
                           <h6 className={styles.installmentSectionTitle}>
-                            <i className="bx bx-credit-card me-2"></i>
+                            <i className="icon-card me-2"></i>
                             Taksit Seçeneği *
                           </h6>
                           <small className="text-muted">
@@ -1421,7 +1421,7 @@ function PaymentPage() {
                       {/* Ödeme Butonu */}
                       <button
                         type="button"
-                        className="btn btn-outline-primary-2 btn-order btn-block mt-3"
+                        className="btn btn-primary btn-order btn-block mt-3"
                         onClick={handlePayment}
                         disabled={
                           isPaymentPending ||
@@ -1444,10 +1444,7 @@ function PaymentPage() {
                             Ödeme Tamamlanıyor...
                           </span>
                         ) : (
-                          <>
-                            <span className="btn-text">Ödemeyi Tamamla</span>
-                            <span className="btn-hover-text">Ödeme Yap</span>
-                          </>
+                          <span className="btn-text">Ödemeyi Tamamla</span>
                         )}
                       </button>
                     </div>

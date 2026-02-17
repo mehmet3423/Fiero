@@ -4,10 +4,14 @@ import CirclePagination from "@/components/shared/CirclePagination";
 import { Order, OrderItem } from "@/constants/models/Order";
 import { useDeleteOrder } from "@/hooks/services/order/useDeleteOrder";
 import { useGetOrdersFromToken } from "@/hooks/services/order/useGetUserOrders";
+import {
+  getOrderStatusClass,
+  getOrderStatusText,
+} from "@/utils/orderStatus";
 import Link from "next/link";
 import { useState } from "react";
 import { withProfileLayout } from "../_layout";
-import { useLanguage } from "@/context/LanguageContext"; // Import useLanguage
+import { useLanguage } from "@/context/LanguageContext";
 
 function OrdersPage() {
   const { t } = useLanguage(); // Initialize useLanguage
@@ -91,30 +95,69 @@ function OrdersPage() {
             </thead>
             <tbody>
               {orders.map((order: Order) => {
-                const totalAmount = order.orderItems?.reduce(
-                  (sum: number, item: OrderItem) => {
-                    const price =
-                      typeof item.price === "number" ? item.price : 0;
-                    const quantity =
-                      typeof item.quantity === "number" ? item.quantity : 0;
-                    return sum + price * quantity;
-                  },
-                  0
-                );
+                // API'deki totalPrice (bazen shippingAddress içinde dönüyor) veya orderProducts/orderItems
+                const totalAmount =
+                  (typeof order.totalPrice === "number" && order.totalPrice >= 0
+                    ? order.totalPrice
+                    : undefined) ??
+                  (typeof (order.shippingAddress as { totalPrice?: number } | undefined)
+                    ?.totalPrice === "number"
+                    ? (order.shippingAddress as { totalPrice?: number }).totalPrice
+                    : undefined) ??
+                  (order.orderProducts?.length
+                    ? order.orderProducts.reduce(
+                        (sum: number, item: OrderItem) =>
+                          sum +
+                          (typeof item.orderItemDiscountedPrice === "number"
+                            ? item.orderItemDiscountedPrice
+                            : (item.orderItemPrice ?? 0)) *
+                            (typeof item.quantity === "number"
+                              ? item.quantity
+                              : 0),
+                        0
+                      )
+                    : order.orderItems?.reduce(
+                        (sum: number, item: OrderItem) => {
+                          const price =
+                            typeof item.orderItemDiscountedPrice === "number"
+                              ? item.orderItemDiscountedPrice
+                              : typeof item.price === "number"
+                                ? item.price
+                                : 0;
+                          const quantity =
+                            typeof item.quantity === "number"
+                              ? item.quantity
+                              : 0;
+                          return sum + price * quantity;
+                        },
+                        0
+                      ));
                 return (
                   <tr className="tf-order-item" key={order.id}>
                     <td>#{order.orderNumber}</td>
                     <td>
                       {new Date(order.createdOnValue).toLocaleDateString()}
                     </td>
-                    <td>{order.cargoStatus}</td>
                     <td>
-                      {!isNaN(totalAmount)
-                        ? totalAmount.toLocaleString("tr-TR", {
-                            style: "currency",
-                            currency: "TRY",
-                          })
-                        : t("orders.zeroAmount")}
+                      <span
+                        className={`badge ${getOrderStatusClass(
+                          order.orderStatus ?? order.cargoStatus
+                        )} text-white`}
+                      >
+                        {getOrderStatusText(
+                          order.orderStatus ?? order.cargoStatus,
+                          t
+                        )}
+                      </span>
+                    </td>
+                    <td>
+                      {(typeof totalAmount === "number" && !isNaN(totalAmount)
+                        ? totalAmount
+                        : 0
+                      ).toLocaleString("tr-TR", {
+                        style: "currency",
+                        currency: "TRY",
+                      })}
                     </td>
                     <td
                       style={{

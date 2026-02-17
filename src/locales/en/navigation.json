@@ -47,7 +47,8 @@
         "shippingLabel": "Shipping",
         "freeShippingMessage1": "is for to ",
         "freeShippingMessage2": "Free Shipping",
-        "freeShippingMessage3": "."
+        "freeShippingMessage3": ".",
+        "clearCart": "Clear Cart"
     },
     "favorites": {
         "myFavorites": "My Favorites",

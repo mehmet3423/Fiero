@@ -23,7 +23,8 @@
         "smsNotifications": "SMS Notifications",
         "smsDescription": "Stay informed about campaigns and offers via SMS",
         "emailNotifications": "Email Notifications",
-        "emailDescription": "Stay informed about special offers via email"
+        "emailDescription": "Stay informed about special offers via email",
+        "refundRequests": "My Refund Requests"
     },
     "orders": {
         "myOrders": "My Orders",
@@ -61,6 +62,15 @@
         "orderedProducts": "Ordered Products",
         "quantity": "Quantity",
         "backToOrders": "Back to Orders",
+        "refundable": "Refundable",
+        "nonRefundable": "Non-refundable",
+        "refundStatus": "Refund",
+        "requestRefund": "Request refund",
+        "refundWarningNonRefundable": "This order contains {count} non-refundable item(s). The refund request will apply only to refundable items.",
+        "refundReason": "Refund reason",
+        "refundDescription": "Description",
+        "refundSubmit": "Submit",
+        "noRefundRequests": "You have no refund requests yet.",
         "status": {
             "pending": "Pending",
             "processing": "Processing",

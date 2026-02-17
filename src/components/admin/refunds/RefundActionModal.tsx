@@ -438,20 +438,28 @@ export default function RefundActionModal({
     }
   };
 
+  // Sadece iade edilebilir (isRefundAllowed === true) ürünler seçilebilir
+  const refundableOrderItems = useMemo(
+    () => orderItems.filter((item) => item.isRefundAllowed === true),
+    [orderItems]
+  );
+  const refundableIds = useMemo(
+    () =>
+      refundableOrderItems
+        .map((item) => item.modalItemId)
+        .filter((id): id is string => !!id),
+    [refundableOrderItems]
+  );
+
   const allItemsSelected =
-    selectedItems.length > 0 &&
-    selectedItems.length === orderItems.length &&
-    orderItems.length > 0;
+    refundableIds.length > 0 &&
+    refundableIds.every((id) => selectedItems.includes(id));
 
   const toggleSelectAll = () => {
     if (allItemsSelected) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(
-        orderItems
-          .map((item) => item.modalItemId)
-          .filter((id): id is string => !!id)
-      );
+      setSelectedItems([...refundableIds]);
     }
   };
 
@@ -500,9 +508,15 @@ export default function RefundActionModal({
                   type="button"
                   className="btn btn-sm btn-outline-secondary"
                   onClick={toggleSelectAll}
-                  disabled={isSubmitting || orderItems.length === 0}
+                  disabled={
+                    isSubmitting ||
+                    orderItems.length === 0 ||
+                    refundableIds.length === 0
+                  }
                 >
-                  {allItemsSelected ? "Seçimi Kaldır" : "Tümünü Seç"}
+                  {allItemsSelected
+                    ? "Seçimi Kaldır"
+                    : `Tümünü Seç (${refundableIds.length} iade edilebilir)`}
                 </button>
               </div>
 
@@ -526,7 +540,9 @@ export default function RefundActionModal({
                             className="form-check-input"
                             checked={allItemsSelected}
                             onChange={toggleSelectAll}
-                            disabled={isSubmitting}
+                            disabled={
+                              isSubmitting || refundableIds.length === 0
+                            }
                           />
                         </th>
                         <th>Ürün</th>
@@ -536,34 +552,45 @@ export default function RefundActionModal({
                         <th style={{ width: "120px" }} className="text-end">
                           Toplam
                         </th>
+                        <th style={{ width: "100px" }}>İade</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {orderItems.map((item) => (
-                        <tr key={item.modalItemId}>
-                          <td>
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              checked={selectedItems.includes(item.modalItemId)}
-                              onChange={(e) =>
-                                toggleItemSelection(
-                                  item.modalItemId,
-                                  e.target.checked
-                                )
-                              }
-                              disabled={isSubmitting || !item.modalItemId}
-                            />
-                          </td>
-                          <td>
-                            <div className="fw-semibold d-flex align-items-center gap-2 flex-wrap">
-                              {item.displayTitle || item.productTitle || "Ürün"}
-                              {item.isBundleItem && (
-                                <span className="badge bg-primary text-white">
-                                  Bundle
-                                </span>
-                              )}
-                            </div>
+                      {orderItems.map((item) => {
+                        const isRefundAllowed = item.isRefundAllowed === true;
+                        return (
+                          <tr key={item.modalItemId}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={selectedItems.includes(
+                                  item.modalItemId
+                                )}
+                                onChange={(e) =>
+                                  toggleItemSelection(
+                                    item.modalItemId,
+                                    e.target.checked
+                                  )
+                                }
+                                disabled={
+                                  isSubmitting ||
+                                  !item.modalItemId ||
+                                  !isRefundAllowed
+                                }
+                              />
+                            </td>
+                            <td>
+                              <div className="fw-semibold d-flex align-items-center gap-2 flex-wrap">
+                                {item.displayTitle ||
+                                  item.productTitle ||
+                                  "Ürün"}
+                                {item.isBundleItem && (
+                                  <span className="badge bg-primary text-white">
+                                    Bundle
+                                  </span>
+                                )}
+                              </div>
                             {item.bundleProductNames?.length > 0 && (
                               <small className="text-muted d-block">
                                 {item.bundleProductNames.slice(0, 3).join(", ")}
@@ -582,8 +609,22 @@ export default function RefundActionModal({
                           <td className="text-end">
                             {formatCurrency(item.calculatedTotal || 0)}
                           </td>
+                          <td>
+                            <span
+                              className={`badge ${
+                                isRefundAllowed
+                                  ? "bg-success"
+                                  : "bg-secondary"
+                              } text-white`}
+                            >
+                              {isRefundAllowed
+                                ? "İade edilebilir"
+                                : "İade edilemez"}
+                            </span>
+                          </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

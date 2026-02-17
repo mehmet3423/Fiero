@@ -207,13 +207,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         {/* Content */}
-        <div
-          className="layout-page"
-          style={{ flex: "1 1 auto", width: "calc(100% - 260px)" }}
-        >
+        <div className="layout-page">
           <nav
             className="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
             id="layout-navbar"
+            style={{ flexWrap: "nowrap" }}
           >
             <div className="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
               <button
@@ -224,21 +222,29 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </button>
             </div>
 
-            <div className="navbar-nav align-items-center flex-grow-1">
-              <div className="nav-item d-flex align-items-center search-wrapper">
-                <i className="bx bx-search fs-4 lh-0 me-2"></i>
+            <div
+              className="navbar-nav align-items-center flex-grow-1 overflow-hidden"
+              style={{ minWidth: 0 }}
+            >
+              <div
+                className="nav-item d-flex align-items-center search-wrapper flex-grow-1 overflow-hidden"
+                style={{ minWidth: 0 }}
+              >
+                <i className="bx bx-search fs-4 lh-0 me-2 flex-shrink-0"></i>
                 <input
                   type="text"
-                  className="form-control border-0 shadow-none"
+                  className="form-control border-0 shadow-none flex-grow-1"
                   placeholder="Ara..."
                   aria-label="Ara..."
+                  style={{ minWidth: 0 }}
                 />
               </div>
             </div>
 
             <div
-              className="navbar-nav-right d-flex align-items-center"
+              className="navbar-nav-right d-flex align-items-center flex-shrink-0"
               id="navbar-collapse"
+              style={{ flexBasis: "auto", flexGrow: 0 }}
             >
               <ul className="navbar-nav flex-row align-items-center ms-auto">
                 {/* Notifications */}
@@ -307,7 +313,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     data-bs-toggle="dropdown"
                     onClick={(e) => e.preventDefault()}
                   >
-                    <div className="avatar avatar-online me-2">
+                    <div className="avatar avatar-online me-0 me-md-2 flex-shrink-0">
                       <Image
                         src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
                         alt="User Avatar"
@@ -316,7 +322,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         height={40}
                       />
                     </div>
-                    <div className="flex-grow-1">
+                    <div className="flex-grow-1 d-none d-md-block">
                       <span className="fw-semibold d-block">
                         {userProfile?.applicationUser?.firstName ||
                           "Admin Kullanıcı"}

@@ -23,7 +23,8 @@
         "smsNotifications": "SMS Bildirimleri",
         "smsDescription": "Kampanya ve fırsatlardan SMS ile haberdar olun",
         "emailNotifications": "E-posta Bildirimleri",
-        "emailDescription": "Özel tekliflerden e-posta ile haberdar olun"
+        "emailDescription": "Özel tekliflerden e-posta ile haberdar olun",
+        "refundRequests": "İade Taleplerim"
     },
     "orders": {
         "myOrders": "Siparişlerim",
@@ -61,6 +62,15 @@
         "orderedProducts": "Sipariş Edilen Ürünler",
         "quantity": "Adet",
         "backToOrders": "Siparişlere Dön",
+        "refundable": "İade edilebilir",
+        "nonRefundable": "İade edilemez",
+        "refundStatus": "İade",
+        "requestRefund": "İade talebi oluştur",
+        "refundWarningNonRefundable": "Bu siparişte {count} adet iade edilemeyen ürün bulunmaktadır. İade talebi yalnızca iade edilebilir ürünler için geçerli olacaktır.",
+        "refundReason": "İade nedeni",
+        "refundDescription": "Açıklama",
+        "refundSubmit": "Gönder",
+        "noRefundRequests": "Henüz iade talebiniz yok.",
         "status": {
             "pending": "Beklemede",
             "processing": "İşleniyor",
