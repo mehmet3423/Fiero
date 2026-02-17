@@ -379,17 +379,17 @@ const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => 
           <div className="container">
             <div className="tf-breadcrumb-wrap d-flex justify-content-between flex-wrap align-items-center">
               <div className="tf-breadcrumb-list">
-                <Link href="/" className="text">
+                {/* <Link href="/" className="text">
                   {t("productDetail.breadcrumb.home")}
-                </Link>
-                <i className="icon icon-arrow-right"></i>
+                </Link> */}
+                {/* <i className="icon icon-arrow-right"></i> */}
                 <Link href="/products" className="text">
                   {t("productDetail.breadcrumb.products")}
                 </Link>
                 <i className="icon icon-arrow-right"></i>
                 <span className="text">{product.title}</span>
               </div>
-              <div className="tf-breadcrumb-prev-next">
+              {/* <div className="tf-breadcrumb-prev-next">
                 <a href="#" className="tf-breadcrumb-prev hover-tooltip center">
                   <i className="icon icon-arrow-left"></i>
                 </a>
@@ -399,7 +399,7 @@ const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => 
                 <a href="#" className="tf-breadcrumb-next hover-tooltip center">
                   <i className="icon icon-arrow-right"></i>
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         </nav>

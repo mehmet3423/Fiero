@@ -371,31 +371,93 @@ export default function Header() {
                         <button className="nav-icon-item">
                           <i className="icon icon-account"></i>
                         </button>
-                        <div className="dropdown-menu dropdown-menu-end">
-                          <div className="dropdown-header">
-                            <div className="user-info">
-                              <div className="user-name">
+                        <div
+                          className="dropdown-menu dropdown-menu-end"
+                          style={{
+                            minWidth: "240px",
+                            padding: "0",
+                            borderRadius: "12px",
+                            border: "1px solid #eee",
+                            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {/* Header */}
+                          <div
+                            style={{
+                              padding: "16px 20px",
+                              background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
+                              borderBottom: "1px solid #eee",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "12px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                background: "var(--primary, #333)",
+                                color: "#fff",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                fontWeight: 600,
+                                flexShrink: 0,
+                              }}
+                            >
+                              {showAdminFeatures
+                                ? "A"
+                                : (userProfile?.applicationUser?.firstName?.[0] || "K").toUpperCase()}
+                            </div>
+                            <div style={{ overflow: "hidden" }}>
+                              <div
+                                style={{
+                                  fontWeight: 600,
+                                  fontSize: "14px",
+                                  color: "#333",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
                                 {showAdminFeatures
                                   ? "Admin"
-                                  : `${
-                                      userProfile?.applicationUser?.firstName ||
-                                      "Kullanıcı"
-                                    } ${
-                                      userProfile?.applicationUser?.lastName ||
-                                      ""
-                                    }`}
+                                  : `${userProfile?.applicationUser?.firstName || "Kullanıcı"} ${userProfile?.applicationUser?.lastName || ""}`}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "12px",
+                                  color: "#888",
+                                  marginTop: "2px",
+                                }}
+                              >
+                                {userProfile?.applicationUser?.email || ""}
                               </div>
                             </div>
                           </div>
-                          <div className="dropdown-body">
+
+                          {/* Menu Items */}
+                          <div style={{ padding: "8px 0" }}>
                             {!showAdminFeatures && (
                               <Link
                                 href={PathEnums.PROFILE}
                                 className="dropdown-item"
                                 title="Profil sayfasına git"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                  padding: "10px 20px",
+                                  fontSize: "14px",
+                                  color: "#444",
+                                  transition: "background 0.2s",
+                                }}
                               >
-                                <i className="icon-user"></i>
-                                <span> {t("header.profile")}</span>
+                                <i className="icon-user" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
+                                <span>{t("header.profile")}</span>
                               </Link>
                             )}
                             {showCustomerFeatures && (
@@ -404,16 +466,34 @@ export default function Header() {
                                   href={`${PathEnums.PROFILE}/orders`}
                                   className="dropdown-item"
                                   title="Siparişlerim sayfasına git"
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                    padding: "10px 20px",
+                                    fontSize: "14px",
+                                    color: "#444",
+                                    transition: "background 0.2s",
+                                  }}
                                 >
-                                  <i className="icon-bag"></i>
+                                  <i className="icon-bag" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
                                   <span>{t("header.orders")}</span>
                                 </Link>
                                 <Link
                                   href={`${PathEnums.PROFILE}/addresses`}
                                   className="dropdown-item"
                                   title="Adreslerim sayfasına git"
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
+                                    padding: "10px 20px",
+                                    fontSize: "14px",
+                                    color: "#444",
+                                    transition: "background 0.2s",
+                                  }}
                                 >
-                                  <i className="icon-place"></i>
+                                  <i className="icon-place" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
                                   <span>{t("header.adres")}</span>
                                 </Link>
                               </>
@@ -423,8 +503,17 @@ export default function Header() {
                                 href={PathEnums.SELLER_PRODUCTS}
                                 className="dropdown-item"
                                 title="Ürünlerimi yönet"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                  padding: "10px 20px",
+                                  fontSize: "14px",
+                                  color: "#444",
+                                  transition: "background 0.2s",
+                                }}
                               >
-                                <i className="bx bx-user-pin"></i>
+                                <i className="icon-shop" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
                                 <span>{t("header.manageProducts")}</span>
                               </Link>
                             )}
@@ -433,18 +522,47 @@ export default function Header() {
                                 href={PathEnums.ADMIN_DASHBOARD}
                                 className="dropdown-item"
                                 title="Admin Paneli sayfasına git"
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                  padding: "10px 20px",
+                                  fontSize: "14px",
+                                  color: "#444",
+                                  transition: "background 0.2s",
+                                }}
                               >
-                                <i className="icon-cog"></i>
+                                <i className="icon-fill" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
                                 <span>{t("header.adminPanel")}</span>
                               </Link>
                             )}
                           </div>
-                          <div className="dropdown-footer">
+
+                          {/* Footer - Logout */}
+                          <div
+                            style={{
+                              borderTop: "1px solid #eee",
+                              padding: "8px 0",
+                            }}
+                          >
                             <button
-                              className="dropdown-item text-danger"
+                              className="dropdown-item"
                               onClick={handleLogout}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                                padding: "10px 20px",
+                                fontSize: "14px",
+                                color: "#dc3545",
+                                width: "100%",
+                                border: "none",
+                                background: "none",
+                                cursor: "pointer",
+                                transition: "background 0.2s",
+                              }}
                             >
-                              <i className="icon-sign-out"></i>
+                              <i className="icon-logout" style={{ fontSize: "16px", width: "20px", textAlign: "center" }}></i>
                               <span>{t("header.logOut")}</span>
                             </button>
                           </div>

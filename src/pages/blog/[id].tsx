@@ -9,7 +9,7 @@ const BlogDetailByIdPage = () => {
   const { contents, isLoading } = useGeneralContents(GeneralContentType.BlogPosts);
 
   const post = useMemo(() => {
-    const items = contents?.items || [];
+    const items = contents || [];
     // Match by id or by slug
     const byId = items.find((it) => it.id === id);
     if (byId) return byId;
@@ -37,8 +37,8 @@ const BlogDetailByIdPage = () => {
           {post && (
             <article className="entry bg-white p-4 p-md-5 shadow-sm radius-8">
               {post.imageUrl && (
-                <div className="text-center mb-4">
-                  <img src={post.imageUrl} alt={post.title || "blog-image"} className="w-100" style={{ borderRadius: 8 }} />
+                <div className="entry-image-wrapper">
+                  <img src={post.imageUrl} alt={post.title || "blog-image"} className="entry-image" />
                 </div>
               )}
               <div className="entry-content" dangerouslySetInnerHTML={{ __html: post.content || "" }} />
@@ -49,6 +49,18 @@ const BlogDetailByIdPage = () => {
 
       <style jsx>{`
         .radius-8 { border-radius: 8px; }
+        .entry-image-wrapper {
+          max-width: 560px;
+          margin: 0 auto 1.5rem;
+          border-radius: 12px;
+          overflow: hidden;
+          aspect-ratio: 16 / 10;
+        }
+        .entry-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
         .entry-content :global(p) { line-height: 1.9; color: #222; margin-bottom: 14px; }
         .entry-content :global(h2), .entry-content :global(h3) { margin: 24px 0 12px; }
       `}</style>

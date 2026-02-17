@@ -330,6 +330,21 @@ function ShoppingCartPage() {
         <div className="container">
           <div className="tf-page-cart-wrap">
             <div className="tf-page-cart-item">
+              <div className="d-flex justify-content-end mb-3">
+                <button
+                  type="button"
+                  className="btn btn-outline-danger btn-sm d-flex align-items-center gap-2"
+                  onClick={clearCart}
+                  disabled={clearLoading}
+                >
+                  {clearLoading ? (
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  ) : (
+                    <i className="icon-delete"></i>
+                  )}
+                  <span>{t("shoppingCart.clearCart")}</span>
+                </button>
+              </div>
               <form>
                 <table className="tf-table-page-cart">
                   <thead>
@@ -1139,9 +1154,9 @@ function ShoppingCartPage() {
                               }}
                             >
                               {isCouponLoading ? (
-                                <i className="icon-spinner icon-spin"></i>
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                               ) : (
-                                <i className="icon-long-arrow-right"></i>
+                                <i className="icon-arrow-right"></i>
                               )}
                             </button>
                           </div>

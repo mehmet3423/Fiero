@@ -26,6 +26,7 @@ function ProfileLayout({ children }: ProfileLayoutProps) {
   const navLinks = [
     { href: "/profile", label: t("profile.myAccount") },
     { href: "/profile/orders", label: t("orders.myOrders") },
+    { href: "/profile/refund-requests", label: t("profile.refundRequests") },
     { href: "/profile/addresses", label: t("myAddresses.myAddress") },
     // { href: "/profile/cards", label: t("myCards.myCards") },
     { href: "/profile/reviews", label: t("myReviews.myReviewsTitle") },
