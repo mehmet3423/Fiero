@@ -174,5 +174,28 @@
   "categories": {
     "youMightLike": "Beğenebileceğiniz Kategoriler",
     "category": "kategorisi"
+  },
+  "contactUs": {
+    "pageTitle": "İletişim",
+    "visitStore": "Mağazamızı Ziyaret Edin",
+    "address": "Adres",
+    "addressValue": "İstanbul",
+    "website": "İnternet Sitemiz",
+    "websiteLink": "Site adresi",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "getInTouch": "İletişime Geçin",
+    "getInTouchDesc": "Harika ürünleriniz varsa veya bizimle çalışmak istiyorsanız bize ulaşın.",
+    "namePlaceholder": "Ad *",
+    "emailPlaceholder": "E-posta *",
+    "messagePlaceholder": "Mesaj",
+    "send": "Gönder",
+    "sending": "Gönderiliyor...",
+    "successMessage": "Mesajınız başarıyla gönderildi!",
+    "errorMessage": "Mesaj gönderilirken bir hata oluştu.",
+    "emailSubject": "İletişim Formu",
+    "emailFrom": "Gönderen",
+    "emailMessage": "Mesaj",
+    "socialMedia": "Sosyal Medya"
   }
 }
