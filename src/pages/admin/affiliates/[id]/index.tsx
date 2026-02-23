@@ -691,7 +691,7 @@ function AffiliateUserDetailPage() {
                                   <img
                                     src={
                                       item.product.baseImageUrl ||
-                                      "/images/no-image.png"
+                                      "/images/no-image.svg"
                                     }
                                     alt={item.product.title}
                                     style={{

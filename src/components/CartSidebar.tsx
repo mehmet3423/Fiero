@@ -1,5 +1,6 @@
 import { PathEnums } from "@/constants/enums/PathEnums";
 import { useCart } from "@/hooks/context/useCart";
+import { PLACEHOLDER_IMAGE_DATA_URI } from "@/utils/resolveImageUrl";
 import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -141,7 +142,17 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             <div key={item.id} className="tf-mini-cart-item">
                               <div className="tf-mini-cart-image">
                                 <Link href={`/products/${item.id}`} onClick={onClose}>
-                                  <img src={item.baseImageUrl || "/assets/site/images/no-image.jpg"} alt={item.title} />
+                                  <img
+                                  src={
+                                    item.baseImageUrl ||
+                                    "/assets/site/images/no-image.svg"
+                                  }
+                                  alt={item.title}
+                                  onError={(e) => {
+                                    e.currentTarget.src =
+                                      PLACEHOLDER_IMAGE_DATA_URI;
+                                  }}
+                                />
                                 </Link>
                               </div>
                               <div className="tf-mini-cart-info">

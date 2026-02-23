@@ -1508,7 +1508,7 @@ function TrendyolProductsPage() {
                       width={0}
                       height={0}
                       sizes="100vw"
-                      src={product.baseImageUrl || "/assets/images/no-image.jpg"}
+                      src={product.baseImageUrl || "/assets/site/images/no-image.svg"}
                       alt={product.title}
                       className="card-img-top"
                       style={{ height: "200px", objectFit: "contain" }}
@@ -1682,7 +1682,7 @@ function TrendyolProductsPage() {
                           <Image
                             width={80}
                             height={80}
-                            src={productToDelete.baseImageUrl || "/assets/images/no-image.jpg"}
+                            src={productToDelete.baseImageUrl || "/assets/site/images/no-image.svg"}
                             alt={productToDelete.title}
                             className="rounded"
                             style={{ objectFit: "contain" }}

@@ -1,4 +1,8 @@
 import { PathEnums } from "@/constants/enums/PathEnums";
+import {
+  NO_IMAGE_PATH,
+  PLACEHOLDER_IMAGE_DATA_URI,
+} from "@/utils/resolveImageUrl";
 import { useSearch } from "@/context/SearchContext";
 import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import Link from "next/link";
@@ -174,13 +178,12 @@ export default function SearchSidebar({
                           <div className="image">
                             <img
                               src={
-                                product.baseImageUrl ||
-                                "/assets/site/images/no-image.jpg"
+                                product.baseImageUrl || NO_IMAGE_PATH
                               }
                               alt={product.title}
                               onError={(e) => {
                                 e.currentTarget.src =
-                                  "/assets/site/images/no-image.jpg";
+                                  PLACEHOLDER_IMAGE_DATA_URI;
                               }}
                             />
                           </div>

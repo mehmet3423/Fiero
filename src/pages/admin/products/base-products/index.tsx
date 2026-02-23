@@ -970,7 +970,7 @@ const BaseProductManagementPage = () => {
                                 <Image
                                   src={
                                     variant.baseImageUrl ||
-                                    "/assets/images/no-image.jpg"
+                                    "/assets/site/images/no-image.svg"
                                   }
                                   alt={
                                     (variant as any).title ||

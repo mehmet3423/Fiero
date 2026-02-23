@@ -217,7 +217,7 @@ function ProductSpecifications() {
                               <Image
                                 src={
                                   product.baseImageUrl ||
-                                  "/assets/images/no-image.jpg"
+                                  "/assets/site/images/no-image.svg"
                                 }
                                 alt={product.title}
                                 width={60}

@@ -174,5 +174,28 @@
   "categories": {
     "youMightLike": "Categories you might like",
     "category": "category"
+  },
+  "contactUs": {
+    "pageTitle": "Contact Us",
+    "visitStore": "Visit Our Store",
+    "address": "Address",
+    "addressValue": "Istanbul",
+    "website": "Our Website",
+    "websiteLink": "Visit Website",
+    "phone": "Phone",
+    "email": "Email",
+    "getInTouch": "Get in Touch",
+    "getInTouchDesc": "If you've got great products you're making or looking to work with us then drop us a line.",
+    "namePlaceholder": "Name *",
+    "emailPlaceholder": "Email *",
+    "messagePlaceholder": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "successMessage": "Your message has been sent successfully!",
+    "errorMessage": "An error occurred while sending the message.",
+    "emailSubject": "Contact Form",
+    "emailFrom": "From",
+    "emailMessage": "Message",
+    "socialMedia": "Social Media"
   }
 }

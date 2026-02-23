@@ -80,6 +80,12 @@
             "unknown": "Bilinmiyor"
         }
     },
+    "guestOrder": {
+        "successTitle": "Siparişiniz Tamamlandı",
+        "successMessage": "Sipariş numaranızı takip için kaydedin.",
+        "continueShopping": "Alışverişe Devam Et",
+        "backToHome": "Ana Sayfaya Dön"
+    },
     "myAddresses": {
         "myAddress": "Adreslerim",
         "loading": "Yükleniyor...",

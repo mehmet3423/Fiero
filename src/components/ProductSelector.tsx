@@ -239,7 +239,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                         <Image
                           src={
                             product.baseImageUrl ||
-                            "/assets/images/products/no-image.jpg"
+                            "/assets/site/images/no-image.svg"
                           }
                           alt={product.title}
                           width={50}
@@ -316,7 +316,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                         <Image
                           src={
                             product.baseImageUrl ||
-                            "/assets/images/products/no-image.jpg"
+                            "/assets/site/images/no-image.svg"
                           }
                           alt={product.title}
                           width={35}

@@ -513,7 +513,7 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
                     />
                     <div className="d-flex align-items-center flex-grow-1">
                       <img
-                        src={product.baseImageUrl || "/placeholder-image.jpg"}
+                        src={product.baseImageUrl || "/assets/site/images/no-image.svg"}
                         alt={product.title}
                         style={{
                           width: "40px",

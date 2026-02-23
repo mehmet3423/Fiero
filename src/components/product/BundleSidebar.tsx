@@ -104,7 +104,7 @@ const BundleSidebar: React.FC<BundleSidebarProps> = ({
                     <div key={product.id} className="product-item">
                       <Image
                         src={
-                          product.baseImageUrl || "/assets/images/no-image.jpg"
+                          product.baseImageUrl || "/assets/site/images/no-image.svg"
                         }
                         alt={product.title}
                         width={80}

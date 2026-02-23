@@ -118,7 +118,7 @@ const SingleBundle: React.FC<SingleBundleProps> = ({
                     <Image
                       src={
                         currentProduct.baseImageUrl ||
-                        "/assets/images/no-image.jpg"
+                        "/assets/site/images/no-image.svg"
                       }
                       alt={currentProduct.title}
                       width={120}
@@ -171,7 +171,7 @@ const SingleBundle: React.FC<SingleBundleProps> = ({
                         <Image
                           src={
                             product.baseImageUrl ||
-                            "/assets/images/no-image.jpg"
+                            "/assets/site/images/no-image.svg"
                           }
                           alt={product.title}
                           width={120}
@@ -835,7 +835,7 @@ const BundleCard: React.FC<{
         >
           <div className="position-relative mb-2">
             <Image
-              src={currentProduct.baseImageUrl || "/assets/images/no-image.jpg"}
+              src={currentProduct.baseImageUrl || "/assets/site/images/no-image.svg"}
               alt={currentProduct.title}
               width={90}
               height={90}
@@ -876,7 +876,7 @@ const BundleCard: React.FC<{
             >
               <div className="mb-2">
                 <Image
-                  src={product.baseImageUrl || "/assets/images/no-image.jpg"}
+                  src={product.baseImageUrl || "/assets/site/images/no-image.svg"}
                   alt={product.title}
                   width={90}
                   height={90}

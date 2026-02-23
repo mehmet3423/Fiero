@@ -123,7 +123,7 @@ function CategoryBasedCollection({ categoryBasedAffiliateItems }: CategoryBasedC
                           <tr key={product.id} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/products/${product.id}`}>
                             <td>
                               <img
-                                src={product.baseImageUrl || '/images/no-image.png'}
+                                src={product.baseImageUrl || '/images/no-image.svg'}
                                 alt={product.title}
                                 style={{ width: '80px', height: '80px', marginLeft: '8px', objectFit: 'cover' }}
                                 className="rounded"
