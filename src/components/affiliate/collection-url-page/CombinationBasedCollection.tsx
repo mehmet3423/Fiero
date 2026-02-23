@@ -142,7 +142,7 @@ function CombinationBasedCollection({
               >
                 <td>
                   <img
-                    src={item.product.baseImageUrl || "/images/no-image.png"}
+                    src={item.product.baseImageUrl || "/images/no-image.svg"}
                     alt={item.product.title}
                     style={{
                       width: "80px",

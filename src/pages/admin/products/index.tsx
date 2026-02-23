@@ -270,7 +270,7 @@ function ProductsAdminPage() {
                         height={0}
                         sizes="100vw"
                         src={
-                          product.baseImageUrl || "/assets/images/no-image.jpg"
+                          product.baseImageUrl || "/assets/site/images/no-image.svg"
                         }
                         alt={product.title}
                         className="card-img-top"

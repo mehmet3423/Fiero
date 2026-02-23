@@ -584,7 +584,7 @@ function ShoppingCartPage() {
                                 <Image
                                   src={
                                     item.baseImageUrl ||
-                                    "/assets/images/no-image.jpg"
+                                    "/assets/site/images/no-image.svg"
                                   }
                                   alt={item.title}
                                   width={80}

@@ -1628,7 +1628,7 @@ function CheckoutPage() {
                               src={
                                 item.baseImageUrl ||
                                 item.imageUrl ||
-                                "/assets/images/products/no-image.jpg"
+                                "/assets/site/images/no-image.svg"
                               }
                               alt={item.title}
                             />

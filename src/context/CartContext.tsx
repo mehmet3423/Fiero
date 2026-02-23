@@ -39,7 +39,7 @@ const convertBundleToProduct = (
     isOutlet: false,
     refundable: true,
     imageUrl:
-      firstProduct?.baseImageUrl || "/assets/images/bundle-placeholder.jpg",
+      firstProduct?.baseImageUrl || "/assets/site/images/no-image.svg",
     banner: firstProduct?.banner || [],
     videoUrl: firstProduct?.videoUrl || "",
     effectedDiscountId: "",
@@ -55,7 +55,7 @@ const convertBundleToProduct = (
     discountedPrice: cartBundle.bundleDiscount.bundlePrice || 0,
     discountResponse: null as any,
     baseImageUrl:
-      firstProduct?.baseImageUrl || "/assets/images/bundle-placeholder.jpg",
+      firstProduct?.baseImageUrl || "/assets/site/images/no-image.svg",
     contentImageUrls: firstProduct?.contentImageUrls || [],
     isAvailable: true,
     barcodeNumber: "",

@@ -1,6 +1,8 @@
 import { Product } from "@/constants/models/Product";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
+import SafeImage from "@/components/shared/SafeImage";
+import { resolveImageUrl } from "@/utils/resolveImageUrl";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -78,9 +80,7 @@ export default function ProductCard({ product, isRatingEnabled = true }: Product
     hasDiscount && (product.discountResponse as any)?.discountValueType === 1;
 
   const imageSrc =
-    !product.baseImageUrl || product.baseImageUrl === "no_url"
-      ? "/assets/images/no-image.jpg"
-      : language === "en" && product.baseImageUrlEn
+    language === "en" && product.baseImageUrlEn
       ? product.baseImageUrlEn
       : product.baseImageUrl;
 
@@ -104,20 +104,20 @@ export default function ProductCard({ product, isRatingEnabled = true }: Product
                 {t("productDetailComponent.buttons.outOfStock")}
               </span>
             )}
-            <img
+            <SafeImage
               className="lazyload img-product"
-              data-src={imageSrc}
-              src={imageSrc}
+              data-src={resolveImageUrl(imageSrc)}
+              src={resolveImageUrl(imageSrc)}
               alt={titleToShow}
               title={titleToShow}
             />
             {contentImageUrl && (
-                <img
+                <SafeImage
                   className="lazyload img-hover"
-                data-src={contentImageUrl}
-                src={contentImageUrl}
-                alt={titleToShow}
-                title={titleToShow}
+                  data-src={contentImageUrl}
+                  src={contentImageUrl}
+                  alt={titleToShow}
+                  title={titleToShow}
                 />
               )}
           </Link>

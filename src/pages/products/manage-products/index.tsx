@@ -217,7 +217,7 @@ const ManageProductsPage: React.FC = () => {
                             sizes="100vw"
                             src={
                               product.baseImageUrl ||
-                              "/assets/images/no-image.jpg"
+                              "/assets/site/images/no-image.svg"
                             }
                             alt={product.title}
                             className="product-image"

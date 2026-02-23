@@ -150,7 +150,7 @@ const BundleSlider: React.FC<BundleSliderProps> = ({
                   <Image
                     src={
                       bundleData.product.baseImageUrl ||
-                      "/assets/images/no-image.jpg"
+                      "/assets/site/images/no-image.svg"
                     }
                     alt={bundleData.product.title}
                     width={40}
@@ -187,7 +187,7 @@ const BundleSlider: React.FC<BundleSliderProps> = ({
                 <Image
                   src={
                     selectedProduct.product.baseImageUrl ||
-                    "/assets/images/no-image.jpg"
+                    "/assets/site/images/no-image.svg"
                   }
                   alt={selectedProduct.product.title}
                   width={60}

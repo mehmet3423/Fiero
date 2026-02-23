@@ -154,8 +154,23 @@ function PaymentPage() {
         // Popup'ı güvenli şekilde kapat
         closePopupSafely(threeDSPopup, "Payment callback received");
 
-        // Toast mesajı göster
-        if (event.data.status === "success") {
+        // Callback sayfasından gelen veri ile handlePaymentResult çağır
+        // (SignalR gelmezse callback sayfası bu akışı tamamlar)
+        if (event.data.status === "success" && event.data.paymentId) {
+          handlePaymentResult({
+            status: "success",
+            message: event.data.message,
+            paymentId: event.data.paymentId,
+            conversationData: event.data.conversationData,
+            conversationId: event.data.conversationId,
+            mdStatus: event.data.mdStatus,
+          });
+        } else if (event.data.status === "failure") {
+          handlePaymentResult({
+            status: "failure",
+            message: event.data.message || "Ödeme tamamlanamadı.",
+          });
+        } else {
           toast.success(event.data.message || "Ödeme başarıyla tamamlandı!");
         }
       }

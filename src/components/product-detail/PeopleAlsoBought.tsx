@@ -159,7 +159,7 @@ const PeopleAlsoBought: React.FC<PeopleAlsoBoughtProps> = ({
                   // Language-aware image URLs
                   const baseImageSrc =
                     !product.baseImageUrl || product.baseImageUrl === "no_url"
-                      ? "/assets/images/products/no-image.jpg"
+                      ? "/assets/site/images/no-image.svg"
                       : language === "en" && product.baseImageUrlEn
                       ? product.baseImageUrlEn
                       : product.baseImageUrl;

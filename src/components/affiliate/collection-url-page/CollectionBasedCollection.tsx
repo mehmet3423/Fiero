@@ -72,7 +72,7 @@ function CollectionBasedCollection({ collectionBasedAffiliateItems }: Collection
             <tr key={item.id} style={{ cursor: 'pointer' }} onClick={() => window.location.href = `/products/${item.product.id}`}>
               <td>
                 <img
-                  src={item.product.baseImageUrl || '/images/no-image.png'}
+                  src={item.product.baseImageUrl || '/images/no-image.svg'}
                   alt={item.product.title}
                   style={{ width: '80px', height: '80px', objectFit: 'cover', marginLeft: '8px' }}
                   className="rounded"

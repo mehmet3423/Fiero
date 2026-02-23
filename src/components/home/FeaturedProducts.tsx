@@ -1,4 +1,6 @@
 import QuickView from "@/components/product/QuickView";
+import SafeImage from "@/components/shared/SafeImage";
+import { resolveImageUrl } from "@/utils/resolveImageUrl";
 import { Product } from "@/constants/models/Product";
 import { useCart } from "@/hooks/context/useCart";
 import { useFavorites } from "@/hooks/context/useFavorites";
@@ -143,9 +145,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
 
                   // Language-aware image URLs
                   const baseImageSrc =
-                    !product.baseImageUrl || product.baseImageUrl === "no_url"
-                      ? "/assets/images/products/no-image.jpg"
-                      : language === "en" && product.baseImageUrlEn
+                    language === "en" && product.baseImageUrlEn
                       ? product.baseImageUrlEn
                       : product.baseImageUrl;
 
@@ -178,16 +178,16 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
                                 {t("productDetailComponent.buttons.outOfStock")}
                               </span>
                             )}
-                            <img
+                            <SafeImage
                               className="lazyload img-product"
-                              data-src={baseImageSrc}
-                              src={baseImageSrc}
+                              data-src={resolveImageUrl(baseImageSrc)}
+                              src={resolveImageUrl(baseImageSrc)}
                               alt={titleToShow}
                               title={titleToShow}
                             />
                             {contentImageUrl && (
-                                <img
-                                  className="lazyload img-hover"
+                                <SafeImage
+                                className="lazyload img-hover"
                                 data-src={contentImageUrl}
                                 src={contentImageUrl}
                                 alt={titleToShow}

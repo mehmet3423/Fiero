@@ -1,5 +1,6 @@
 import Head from "next/head";
-import Image from "next/image";
+import SafeImage from "@/components/shared/SafeImage";
+import { resolveImageUrl } from "@/utils/resolveImageUrl";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useCart } from "@/hooks/context/useCart";
@@ -148,13 +149,12 @@ const CompareProducts = () => {
                         {t("compareProducts.remove")}
                       </div>
                       <a className="tf-compare-image" href={`/products/${product.id}`}>
-                        <Image
-                          src={product.baseImageUrl || "/assets/images/no-image.jpg"}
+                        <SafeImage
+                          src={resolveImageUrl(product.baseImageUrl)}
                           alt={product.title}
                           width={220}
                           height={300}
                           style={{ objectFit: "contain", background: "#fff", borderRadius: 12 }}
-                          unoptimized
                         />
                       </a>
                       <a className="tf-compare-title" href={`/products/${product.id}`}>{product.title}</a>

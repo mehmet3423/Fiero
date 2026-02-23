@@ -480,7 +480,7 @@ const QuickView: React.FC<QuickViewProps> = ({
                           <Image
                             src={
                               displayProduct.baseImageUrl ||
-                              "/assets/images/products/no-image.jpg"
+                              "/assets/site/images/no-image.svg"
                             }
                             alt={displayProduct.title}
                             width={500}

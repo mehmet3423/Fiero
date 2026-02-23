@@ -80,6 +80,12 @@
             "unknown": "Unknown"
         }
     },
+    "guestOrder": {
+        "successTitle": "Your Order is Complete",
+        "successMessage": "Save your order number for tracking.",
+        "continueShopping": "Continue Shopping",
+        "backToHome": "Back to Home"
+    },
     "myAddresses": {
         "myAddress": "My Addresses",
         "loading": "Loading...",

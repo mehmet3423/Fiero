@@ -300,7 +300,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                         />
                       ) : (
                         <Image
-                          src={item.url || "/assets/images/no-image.jpg"}
+                          src={item.url || "/assets/site/images/no-image.svg"}
                           alt={`${titleToShow} - ${index + 1}`}
                           width={80}
                           height={80}
@@ -395,7 +395,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                       />
                     ) : (
                       <Image
-                        src={item.url || baseImageUrl || "/assets/images/no-image.jpg"}
+                        src={item.url || baseImageUrl || "/assets/site/images/no-image.svg"}
                         alt={titleToShow}
                         width={600}
                         height={600}
@@ -459,7 +459,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({
                       />
                     ) : (
                       <Image
-                        src={item.url || "/assets/images/no-image.jpg"}
+                        src={item.url || "/assets/site/images/no-image.svg"}
                         alt={`${product.title} - ${index + 1}`}
                         width={60}
                         height={60}
