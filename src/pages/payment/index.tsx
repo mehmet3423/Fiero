@@ -336,8 +336,24 @@ function PaymentPage() {
           completeData
         );
 
-        // paymentId varlığı başarılı ödeme göstergesi
-        if (completeResponse?.data?.paymentId) {
+        // Backend farklı response yapıları dönebilir: data.paymentId veya doğrudan paymentId
+        // data: null dönebilir (backend sadece isSucceed + message döner)
+        const innerData = completeResponse?.data;
+        const responseAny = completeResponse as unknown as Record<string, unknown>;
+        const paymentId =
+          innerData?.paymentId ?? responseAny?.paymentId ?? result.paymentId;
+        const price =
+          innerData?.price ?? (responseAny?.price as number) ?? 0;
+        const paidPrice =
+          innerData?.paidPrice ?? (responseAny?.paidPrice as number) ?? 0;
+        const currency =
+          innerData?.currency ?? (responseAny?.currency as string) ?? "TRY";
+
+        // isSucceed true ve paymentId varsa (veya gönderdiğimiz paymentId) başarılı kabul et
+        const isSuccess =
+          completeResponse?.isSucceed !== false && !!paymentId;
+
+        if (isSuccess) {
           // Ödeme başarılı - popup'ı kapat
           closePopupSafely(threeDSPopup, "Payment completed successfully");
 
@@ -349,10 +365,10 @@ function PaymentPage() {
             JSON.stringify({
               status: "success",
               message: "Ödeme başarıyla tamamlandı",
-              paymentId: completeResponse.data.paymentId,
-              price: completeResponse.data.price,
-              paidPrice: completeResponse.data.paidPrice,
-              currency: completeResponse.data.currency,
+              paymentId,
+              price,
+              paidPrice,
+              currency,
               orderNumber: currentOrderNumber,
               timestamp: Date.now(),
             })
@@ -398,9 +414,18 @@ function PaymentPage() {
           `Hata: ${errorMessage}. Lütfen siparişlerinizi kontrol edin.`
         );
 
-        // Hata durumunda da orders sayfasına yönlendir (ödeme başarılı olmuş olabilir)
+        // Hata durumunda yönlendir (ödeme başarılı olmuş olabilir)
+        // Guest için guest-order, authenticated için profile/orders
         setTimeout(() => {
-          router.push("/profile/orders", undefined, { shallow: true });
+          if (isGuest && (localOrderId || orderId)) {
+            router.push(
+              `/guest-order/${localOrderId || orderId}`,
+              undefined,
+              { shallow: true }
+            );
+          } else {
+            router.push("/profile/orders", undefined, { shallow: true });
+          }
         }, 3000);
       }
 
