@@ -1,9 +1,13 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { COMPLETE_THREE_D_SECURE_PAYMENT } from "@/constants/links";
+import { getToken } from "@/helpers/tokenUtils";
+import axios from "axios";
 
 /**
  * 3D Secure ödeme sonrası ödeme sağlayıcısının yönlendirdiği callback sayfası.
  * Popup içinde açıldığında parent window'a postMessage ile sonucu iletir.
+ * Mobil redirect flow'da (popup yok) API çağrısı yapıp sonuç sayfasına yönlendirir.
  */
 export default function PaymentCallbackPage() {
   const router = useRouter();
@@ -65,16 +69,96 @@ export default function PaymentCallbackPage() {
         window.close();
       }, 1500);
     } else {
-      // Doğrudan açıldıysa (popup değil) payment sayfasına yönlendir
-      setMessage("Yönlendiriliyorsunuz...");
-      const oid = params.orderId || params.OrderId || "";
-      const onum = params.orderNumber || params.OrderNumber || "";
-      const redirectUrl = oid || onum
-        ? `/payment?orderId=${oid}&orderNumber=${onum}`
-        : "/payment";
-      setTimeout(() => {
-        router.replace(redirectUrl);
-      }, 2000);
+      // Mobil redirect flow: popup yok
+      if (!isSuccess) {
+        setMessage("Ödeme tamamlanamadı. Yönlendiriliyorsunuz...");
+        localStorage.removeItem("pendingPayment");
+        setTimeout(() => router.replace("/shopping-cart"), 2000);
+        return;
+      }
+
+      // API çağrısı yapıp sonuç sayfasına yönlendir
+      const completeRedirectFlow = async () => {
+        const pendingPayment = localStorage.getItem("pendingPayment");
+        let orderId = params.orderId || params.OrderId || "";
+        let orderNumber = params.orderNumber || params.OrderNumber || "";
+        let resolvedPaymentId = paymentId;
+        let conversationId = params.conversationId || params.ConversationId || "";
+        let isGuest = false;
+
+        if (pendingPayment) {
+          try {
+            const pending = JSON.parse(pendingPayment);
+            orderId = orderId || pending.orderId;
+            orderNumber = orderNumber || pending.orderNumber;
+            resolvedPaymentId = resolvedPaymentId || pending.paymentId;
+            conversationId = conversationId || pending.conversationId || pending.orderNumber;
+            isGuest = pending.isGuest === true;
+          } catch {
+            // ignore
+          }
+        }
+
+        if (!resolvedPaymentId || !orderId) {
+          setMessage("Ödeme bilgisi bulunamadı. Yönlendiriliyorsunuz...");
+          setTimeout(() => router.replace("/payment"), 2000);
+          return;
+        }
+
+        try {
+          const token = getToken();
+          const response = await axios.post(COMPLETE_THREE_D_SECURE_PAYMENT, {
+            paymentId: resolvedPaymentId,
+            conversationData: conversationData || "",
+            conversationId: conversationId || orderNumber,
+            orderId,
+            locale: 0,
+          }, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            timeout: 30000,
+          });
+
+          const resData = response?.data;
+          const success = resData?.isSucceed !== false;
+
+          if (success) {
+            localStorage.removeItem("pendingPayment");
+            localStorage.removeItem("checkoutData");
+            localStorage.setItem(
+              "paymentSuccess",
+              JSON.stringify({
+                status: "success",
+                message: "Ödeme başarıyla tamamlandı",
+                paymentId: resolvedPaymentId,
+                orderNumber,
+                orderId,
+                isGuest,
+                timestamp: Date.now(),
+              })
+            );
+            if (isGuest) {
+              localStorage.removeItem("guestCheckoutAddresses");
+              localStorage.removeItem("nors_cart");
+            }
+            setMessage("Ödeme başarılı! Yönlendiriliyorsunuz...");
+            setTimeout(() => {
+              router.replace(isGuest ? `/guest-order/${orderId}` : "/profile/orders");
+            }, 1500);
+          } else {
+            setMessage("Ödeme tamamlanamadı. Yönlendiriliyorsunuz...");
+            localStorage.removeItem("pendingPayment");
+            setTimeout(() => router.replace("/shopping-cart"), 2000);
+          }
+        } catch (err) {
+          console.error("Payment callback complete error:", err);
+          setMessage("Bir hata oluştu. Siparişlerinizi kontrol edin.");
+          setTimeout(() => {
+            router.replace(isGuest ? `/guest-order/${orderId}` : "/profile/orders");
+          }, 3000);
+        }
+      };
+
+      completeRedirectFlow();
     }
   }, [router.isReady, router.query]);
 
