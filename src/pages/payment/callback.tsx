@@ -124,18 +124,6 @@ export default function PaymentCallbackPage() {
           if (success) {
             localStorage.removeItem("pendingPayment");
             localStorage.removeItem("checkoutData");
-            localStorage.setItem(
-              "paymentSuccess",
-              JSON.stringify({
-                status: "success",
-                message: "Ödeme başarıyla tamamlandı",
-                paymentId: resolvedPaymentId,
-                orderNumber,
-                orderId,
-                isGuest,
-                timestamp: Date.now(),
-              })
-            );
             if (isGuest) {
               localStorage.removeItem("guestCheckoutAddresses");
               localStorage.removeItem("nors_cart");
