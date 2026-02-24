@@ -103,29 +103,6 @@ function PaymentPage() {
   const paymentIdRef = useRef<string | null>(null);
   const conversationDataRef = useRef<string | null>(null);
 
-  // 3D Secure popup state
-  const [threeDSPopup, setThreeDSPopup] = useState<Window | null>(null);
-
-  // Popup automatic close helper function
-  const closePopupSafely = (popup: Window | null, reason: string = "") => {
-    if (!popup) return;
-
-    try {
-      if (!popup.closed) {
-        popup.close();
-      }
-    } catch (e) {
-      // Fallback attempts
-      try {
-        popup.location.href = "about:blank";
-        popup.close();
-      } catch (e2) {
-        // Silent fail
-      }
-    }
-    setThreeDSPopup(null);
-  };
-
   // Initialize SignalR connection on component mount
   useEffect(() => {
     const initializeSignalR = async () => {
@@ -143,49 +120,11 @@ function PaymentPage() {
       }
     };
 
-    // Message listener for payment popup callbacks
-    const handlePopupMessage = (event: MessageEvent) => {
-      // Security check - only allow messages from same origin
-      if (event.origin !== window.location.origin) {
-        return;
-      }
-
-      if (event.data && event.data.type === "PAYMENT_CALLBACK_SUCCESS") {
-        // Popup'ı güvenli şekilde kapat
-        closePopupSafely(threeDSPopup, "Payment callback received");
-
-        // Callback sayfasından gelen veri ile handlePaymentResult çağır
-        // (SignalR gelmezse callback sayfası bu akışı tamamlar)
-        if (event.data.status === "success" && event.data.paymentId) {
-          handlePaymentResult({
-            status: "success",
-            message: event.data.message,
-            paymentId: event.data.paymentId,
-            conversationData: event.data.conversationData,
-            conversationId: event.data.conversationId,
-            mdStatus: event.data.mdStatus,
-          });
-        } else if (event.data.status === "failure") {
-          handlePaymentResult({
-            status: "failure",
-            message: event.data.message || "Ödeme tamamlanamadı.",
-          });
-        } else {
-          toast.success(event.data.message || "Ödeme başarıyla tamamlandı!");
-        }
-      }
-    };
-
-    // Message listener'ı ekle
-    window.addEventListener("message", handlePopupMessage);
-
     initializeSignalR();
 
     // Cleanup on unmount
     return () => {
       signalRService.removePaymentResultCallback();
-      closePopupSafely(threeDSPopup, "Component unmounting");
-      window.removeEventListener("message", handlePopupMessage);
 
       // Close SignalR connection if no pending payment
       const pending = localStorage.getItem("pendingPayment");
@@ -193,7 +132,7 @@ function PaymentPage() {
         signalRService.stopConnection();
       }
     };
-  }, [threeDSPopup]);
+  }, []);
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -211,7 +150,18 @@ function PaymentPage() {
           cleanupGuestData();
 
           toast.success("Ödeme başarıyla tamamlandı!");
-          router.push("/profile/orders", undefined, { shallow: true });
+          const orderIdForRedirect = successData.orderId;
+          if (successData.isGuest) {
+            router.push(
+              orderIdForRedirect
+                ? `/guest-order/${orderIdForRedirect}`
+                : "/",
+              undefined,
+              { shallow: true }
+            );
+          } else {
+            router.push("/profile/orders", undefined, { shallow: true });
+          }
           return;
         } catch (err) {
           // Silent fail
@@ -317,9 +267,6 @@ function PaymentPage() {
         return; // Erken çık - gerçek callback bekle
       }
 
-      // SMS verification successful - closing 3DS popup
-      closePopupSafely(threeDSPopup, "SMS verification completed");
-
       try {
         const currentOrderId = localOrderId || (orderId as string);
         const currentOrderNumber = localOrderNumber || (orderNumber as string);
@@ -354,9 +301,6 @@ function PaymentPage() {
           completeResponse?.isSucceed !== false && !!paymentId;
 
         if (isSuccess) {
-          // Ödeme başarılı - popup'ı kapat
-          closePopupSafely(threeDSPopup, "Payment completed successfully");
-
           toast.success("Ödeme başarıyla tamamlandı!");
 
           // Başarılı ödeme bilgisini sakla
@@ -369,7 +313,9 @@ function PaymentPage() {
               price,
               paidPrice,
               currency,
+              orderId: currentOrderId,
               orderNumber: currentOrderNumber,
+              isGuest,
               timestamp: Date.now(),
             })
           );
@@ -440,7 +386,6 @@ function PaymentPage() {
         result.status === "error"
       ) {
         toast.error(result.message || "Ödeme işlemi başarısız oldu!");
-        closePopupSafely(threeDSPopup, "Payment failed");
         signalRService.removePaymentResultCallback();
         signalRService.stopConnection();
         setTimeout(
@@ -451,9 +396,9 @@ function PaymentPage() {
     }
   };
 
-  const handleThreeDSRedirectViaPopup = (htmlContent: string) => {
+  /** Mobil cihazlarda popup engellendiği için sayfa yönlendirmesi kullan */
+  const handleThreeDSRedirectViaPage = (htmlContent: string) => {
     try {
-      // Auto-submit script ekle eğer yoksa
       let enhancedHtml = htmlContent;
       if (!htmlContent.includes("document.forms[0].submit()")) {
         const autoSubmitScript = `
@@ -470,81 +415,19 @@ function PaymentPage() {
           autoSubmitScript + "</body>"
         );
       }
-
-      // Blob URL kullanarak güvenli popup açma
-      const blob = new Blob([enhancedHtml], {
-        type: "text/html;charset=utf-8",
-      });
-      const blobUrl = URL.createObjectURL(blob);
-
-      // Önce boş popup aç, sonra içeriği yükle
-      const popup = window.open(
-        "",
-        "threeDSecurePopup",
-        "width=450,height=650,scrollbars=yes,resizable=yes"
-      );
-
-      if (popup) {
-        // Kısa bir delay ile içeriği yükle
-        setTimeout(() => {
-          popup.location.href = blobUrl;
-        }, 100);
+      const container = document.createElement("div");
+      container.innerHTML = enhancedHtml;
+      container.style.display = "none";
+      document.body.appendChild(container);
+      const form = container.querySelector("form");
+      if (form) {
+        form.submit();
+      } else {
+        toast.error("3D Secure formu yüklenemedi.");
       }
-
-      if (!popup) {
-        toast.error("Popup penceresi açılamadı. Tarayıcı engelliyor olabilir.");
-        URL.revokeObjectURL(blobUrl);
-        return;
-      }
-
-      setThreeDSPopup(popup);
-
-      // Popup kapanma durumunu izle
-      const checkClosed = setInterval(() => {
-        try {
-          if (popup.closed) {
-            clearInterval(checkClosed);
-            setThreeDSPopup(null);
-            URL.revokeObjectURL(blobUrl);
-          }
-        } catch (e) {
-          clearInterval(checkClosed);
-          setThreeDSPopup(null);
-          URL.revokeObjectURL(blobUrl);
-        }
-      }, 1000);
-
-      // 10 dakika sonra interval'i temizle
-      const cleanupTimeout = setTimeout(() => {
-        clearInterval(checkClosed);
-        if (popup && !popup.closed) {
-          popup.close();
-        }
-        setThreeDSPopup(null);
-        URL.revokeObjectURL(blobUrl);
-      }, 600000);
-
-      // Cleanup fonksiyonunu window'a ekle (gerekirse dışarıdan çağırabilmek için)
-      (window as any).__threeDSCleanup = () => {
-        clearInterval(checkClosed);
-        clearTimeout(cleanupTimeout);
-        if (popup && !popup.closed) {
-          popup.close();
-        }
-        setThreeDSPopup(null);
-        URL.revokeObjectURL(blobUrl);
-      };
     } catch (error) {
       toast.error("3D Secure sayfası açılırken hata oluştu.");
     }
-  };
-
-  // Handle 3D Secure popup close
-  const handleThreeDSClose = () => {
-    if (threeDSPopup && !threeDSPopup.closed) {
-      threeDSPopup.close();
-    }
-    setThreeDSPopup(null);
   };
 
   // Order bilgilerini al
@@ -832,12 +715,13 @@ function PaymentPage() {
               orderId: currentOrderId,
               orderNumber: currentOrderNumber,
               conversationId: finalConversationId,
+              isGuest,
               timestamp: Date.now(),
             })
           );
 
-          // 3D Secure popup açma
-          handleThreeDSRedirectViaPopup(threeDSHtmlContent);
+          // Tüm cihazlarda redirect flow (popup mobilde engelleniyor, e-ticaret standardı)
+          handleThreeDSRedirectViaPage(threeDSHtmlContent);
         } else {
           // Eğer 3D secure gerekmiyorsa direkt completion endpointini çağır
           if (!signalRService.isConnected()) {
