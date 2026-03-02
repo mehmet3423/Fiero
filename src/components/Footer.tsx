@@ -85,7 +85,12 @@ export default function Footer() {
                   <div className="footer-infor">
                     <div className="footer-logo">
                       <Link href="/" title="Eser Leather - Ana Sayfaya Dön">
-                        LOGO
+                        <img
+                          src="/assets/site/white-logo.png"
+                          alt="Eser Leather"
+                          width={110}
+                          height={40}
+                        />
                       </Link>
                     </div>
                     <ul>

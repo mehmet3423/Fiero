@@ -82,6 +82,34 @@
 }
 
 /*
+* Responsive Sidebar Breakpoint Fix
+* Admin template sidebar'ı 1200px altında gizliyor.
+* Bu kurallar ile sidebar 1150px'den itibaren görünür yapılıyor.
+******************************************************************************/
+
+/* 1150-1199px aralığında sidebar'ı normal akışa al */
+@media (min-width: 1150px) and (max-width: 1199.98px) {
+  .layout-menu {
+    position: relative !important;
+    transform: translate3d(0, 0, 0) !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+  }
+}
+
+/* Hamburger toggle: sadece 1150px altında görünür */
+.admin-hamburger-toggle {
+  display: none !important;
+}
+
+@media (max-width: 1149.98px) {
+  .admin-hamburger-toggle {
+    display: flex !important;
+  }
+}
+
+/*
 * Layout demo
 ******************************************************************************/
 

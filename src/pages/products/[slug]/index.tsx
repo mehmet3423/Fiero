@@ -68,7 +68,7 @@ const isUuid = (value: string) =>
   );
 
 const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const slugValue = (router.query.slug as string) || initialSlug || "";
   const slugIsUuid = slugValue ? isUuid(slugValue) : false;
@@ -180,18 +180,12 @@ const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => 
   // Açıklama expand/collapse state'i
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
-  // Tüm ürün görsellerini birleştiren yardımcı fonksiyon
+  // Tüm ürün görsellerini birleştiren yardımcı fonksiyon (banner hariç - banner Benzer Ürünler üstünde gösterilir)
   const getAllProductMedia = () => {
     const media: { url: string; type: "image" | "video" }[] = [];
 
     if (product?.baseImageUrl)
       media.push({ url: product.baseImageUrl, type: "image" });
-
-    if (Array.isArray(product?.banner)) {
-      media.push(
-        ...product.banner.map((url) => ({ url, type: "image" as const }))
-      );
-    }
 
     if (Array.isArray(product?.contentImageUrls)) {
       media.push(
@@ -484,6 +478,54 @@ const ProductDetailPage = ({ seoId, slug: initialSlug }: ProductDetailProps) => 
             })()}
             <div className="product-details-tab">
               <AccordionSection product={product} />
+              {/* Banner resimleri - Benzer Ürünler hemen üstünde alt alta */}
+              {(() => {
+                const bannerUrls =
+                  language === "en" &&
+                  product?.bannerEn &&
+                  Array.isArray(product.bannerEn) &&
+                  product.bannerEn.length > 0
+                    ? product.bannerEn
+                    : product?.banner;
+                if (!Array.isArray(bannerUrls) || bannerUrls.length === 0)
+                  return null;
+                return (
+                  <div
+                    className="product-detail-banner-section mt-4 mb-4"
+                    style={{
+                      border: "1px solid #e5e5e5",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      backgroundColor: "#fafafa",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    }}
+                  >
+                    <div className="d-flex flex-column align-items-center">
+                      {bannerUrls.map((url, index) => (
+                        <div
+                          key={index}
+                          className="product-detail-banner-item mb-3"
+                          style={{ maxWidth: "480px", width: "100%" }}
+                        >
+                          <Image
+                            src={url}
+                            alt={`${product.title} - Banner ${index + 1}`}
+                            width={480}
+                            height={200}
+                            className="w-100"
+                            style={{
+                              objectFit: "contain",
+                              width: "100%",
+                              height: "auto",
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <PeopleAlsoBought
                 categoryId={product?.subCategoryId}
                 currentProductId={productId as string}

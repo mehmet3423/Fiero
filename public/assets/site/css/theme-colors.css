@@ -1,0 +1,138 @@
+/**
+ * Eser Leather - Tema Renkleri
+ * Tüm site renkleri burada tanımlanır. Değişiklik için sadece :root değerlerini güncelleyin.
+ */
+:root {
+  /* Ana tema renkleri - tek yerden yönetim */
+  --theme-announcement-bar: #381c10;
+  --theme-filter-sort: #6c3820;
+  --theme-filter-sort-hover: #5a2f1a;
+  --theme-add-to-cart: #824b2d;
+  --theme-add-to-cart-hover: #6b3d24;
+  --theme-background: #fbf9fc;
+  --theme-header-bar: #6c3820;
+  --theme-text-on-dark: #ffffff;
+  --theme-filter-sort-active-bg: rgba(108, 56, 32, 0.15);
+}
+
+/* ========== Logo Boyutu ========== */
+.logo-header img {
+  width: 70px !important;
+  height: auto !important;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+/* Mobilde logo ortada */
+@media (max-width: 991px) {
+  .tf-top-bar_item .col-4:nth-child(2) {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+}
+
+/* ========== 1. İndirim Şeridi ========== */
+.announcement-bar.bg_dark {
+  background-color: var(--theme-announcement-bar) !important;
+}
+
+/* ========== 2. Filtrele ve En Popüler Butonları ========== */
+.tf-btn-filter {
+  background-color: var(--theme-filter-sort) !important;
+  color: var(--theme-text-on-dark) !important;
+  border-color: var(--theme-filter-sort) !important;
+}
+
+.tf-btn-filter:hover {
+  background-color: var(--theme-filter-sort-hover) !important;
+  color: var(--theme-text-on-dark) !important;
+  border-color: var(--theme-filter-sort-hover) !important;
+}
+
+.tf-dropdown-sort {
+  background-color: var(--theme-filter-sort) !important;
+  border-color: var(--theme-filter-sort) !important;
+  color: var(--theme-text-on-dark) !important;
+}
+
+.tf-dropdown-sort .btn-select,
+.tf-dropdown-sort .text-sort-value,
+.tf-dropdown-sort .btn-select .icon {
+  color: var(--theme-text-on-dark) !important;
+}
+
+.tf-dropdown-sort .select-item.active {
+  background-color: var(--theme-filter-sort-active-bg) !important;
+  color: var(--theme-filter-sort) !important;
+}
+
+.tf-dropdown-sort .select-item.active::before {
+  background-color: var(--theme-filter-sort) !important;
+}
+
+.tf-dropdown-sort .select-item.active::after {
+  background-color: var(--theme-text-on-dark) !important;
+}
+
+/* ========== 3. Sepete Ekle Butonları ========== */
+.card-product .btn-quick-add,
+.card-product.style-6 .btn-quick-add,
+.card-product.style-7 .btn-quick-add,
+.list-product-btn .box-icon.quick-add:hover,
+.card-product .list-product-btn .box-icon.quick-add:hover {
+  background-color: var(--theme-add-to-cart) !important;
+  color: var(--theme-text-on-dark) !important;
+  border-color: var(--theme-add-to-cart) !important;
+}
+
+.card-product .btn-quick-add:hover,
+.card-product.style-6 .btn-quick-add:hover,
+.card-product.style-7 .btn-quick-add:hover {
+  background-color: var(--theme-add-to-cart-hover) !important;
+  border-color: var(--theme-add-to-cart-hover) !important;
+}
+
+.tf-btn.btn-fill.animate-hover-btn,
+.product-detail .tf-btn.btn-fill,
+.btn-primary.bg-primary,
+.add-bundle-btn.btn-primary {
+  background-color: var(--theme-add-to-cart) !important;
+  border-color: var(--theme-add-to-cart) !important;
+  color: var(--theme-text-on-dark) !important;
+}
+
+.tf-btn.btn-fill:hover:not(.disabled),
+.tf-btn.btn-fill.animate-hover-btn:hover:not(.disabled),
+.btn-primary.bg-primary:hover,
+.add-bundle-btn.btn-primary:hover {
+  background-color: var(--theme-add-to-cart-hover) !important;
+  border-color: var(--theme-add-to-cart-hover) !important;
+  color: var(--theme-text-on-dark) !important;
+}
+
+/* ========== 4. Arka Plan ========== */
+html,
+body,
+.main,
+.flat-spacing-2,
+.products-page-section,
+.home-section,
+.main-content-container,
+.tf-slideshow,
+.tf-slideshow .swiper,
+.tf-slideshow .wrap-slider,
+.slider-women,
+.slider-women .wrap-slider {
+  background-color: var(--theme-background) !important;
+}
+
+.tf-slideshow .box-content {
+  background-color: transparent !important;
+}
+
+/* ========== 5. Header Bar ========== */
+.tf-top-bar.fixed-top {
+  background-color: var(--theme-header-bar) !important;
+  background: var(--theme-header-bar) !important;
+}

@@ -1,6 +1,7 @@
 import { UserRole } from "@/constants/enums/UserRole";
 import { UserProfile } from "@/constants/models/UserProfile";
 import { useLogin } from "@/hooks/services/useLogin";
+import { useGoogleLogin } from "@/hooks/services/useGoogleLogin";
 import { useLogout } from "@/hooks/services/useLogout";
 import { useGetUserProfile } from "@/hooks/services/user-profile/useGetUserProfile";
 import { useRegister } from "@/hooks/services/useRegister";
@@ -16,8 +17,10 @@ import { useQueryClient } from "@tanstack/react-query";
 interface AuthContextType {
   handleLogout: ReturnType<typeof useLogout>["handleLogout"];
   handleLogin: ReturnType<typeof useLogin>["handleLogin"];
+  handleGoogleLogin: ReturnType<typeof useGoogleLogin>["handleGoogleLogin"];
   handleRegister: ReturnType<typeof useRegister>["handleRegister"];
   loginLoading: boolean;
+  googleLoginLoading: boolean;
   logoutLoading: boolean;
   registerLoading: boolean;
   registerError: unknown;
@@ -32,9 +35,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   handleLogin: async () => {},
+  handleGoogleLogin: async () => {},
   handleLogout: async () => {},
   handleRegister: async () => {},
   loginLoading: false,
+  googleLoginLoading: false,
   logoutLoading: false,
   registerLoading: false,
   registerError: null,
@@ -56,6 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useState(false);
 
   const { handleLogin, isPending: loginLoading } = useLogin();
+  const { handleGoogleLogin, isPending: googleLoginLoading } = useGoogleLogin();
   const { handleLogout, isPending: logoutLoading } = useLogout();
 
   const {
@@ -198,8 +204,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     handleLogout,
     handleLogin,
+    handleGoogleLogin,
     handleRegister,
     loginLoading,
+    googleLoginLoading,
     logoutLoading,
     registerLoading,
     registerError,

@@ -9,6 +9,7 @@ import { useMainCategoriesLookUp } from "@/hooks/services/categories/useMainCate
 import { useMainCategoriesWithSubCategories } from "@/hooks/services/categories/useMainCategoriesWithSubCategories";
 import { useGetSupportTickets } from "@/hooks/services/support/useGetSupportTicket";
 import { useGetOrderSupportTickets } from "@/hooks/services/support/order/useGetOrderSupportTickets";
+import { formatCurrency } from "@/utils/currencyFormatter";
 
 function AdminHomePage() {
   // Animasyonlu sayılar için state
@@ -22,6 +23,7 @@ function AdminHomePage() {
     subCategories: 0,
     totalSupportTickets: 0,
     pendingSupportTickets: 0,
+    totalRevenue: 0,
   });
 
   // Animasyon tetikleme kontrolü (her animasyon sadece bir kez tetiklenir)
@@ -35,11 +37,11 @@ function AdminHomePage() {
     subCategories: false,
     totalSupportTickets: false,
     pendingSupportTickets: false,
+    totalRevenue: false,
   });
 
   // Grafik referansları
-  const reportsChartRef = useRef<any>(null);
-  const totalRevenueChartRef = useRef<any>(null);
+  const monthlySalesChartRef = useRef<any>(null);
 
   // API Hook'ları
   // Sadece count değerine ihtiyaç var - pageSize: 1 yeterli
@@ -99,34 +101,62 @@ function AdminHomePage() {
     };
   }, [getLast7DaysRange]);
 
-  const { data: weeklyRevenueData } =
-    useProductSalesReportAll(weeklyRevenueParams);
+  const {
+    data: weeklyRevenueData,
+    isLoading: isLoadingWeeklyRevenue,
+    error: weeklyRevenueError,
+  } = useProductSalesReportAll(weeklyRevenueParams);
+
+  // Son 6 ay için aylık tarih aralıklarını hesapla (her ay için ayrı)
+  const monthRanges = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 6 }, (_, i) => {
+      const monthStart = new Date(today.getFullYear(), today.getMonth() - (5 - i), 1);
+      const monthEnd = new Date(today.getFullYear(), today.getMonth() - (5 - i) + 1, 0);
+      monthEnd.setHours(23, 59, 59, 999);
+      return {
+        startDate: monthStart.toISOString(),
+        endDate: monthEnd.toISOString(),
+        label: monthStart.toLocaleDateString("tr-TR", { month: "short", year: "numeric" }),
+      };
+    });
+  }, []);
+
+  // 6 ayrı aylık API çağrısı (React hook loop kullanamaz, sabit 6 hook)
+  const { data: month0Data } = useProductSalesReportAll(monthRanges[0]);
+  const { data: month1Data } = useProductSalesReportAll(monthRanges[1]);
+  const { data: month2Data } = useProductSalesReportAll(monthRanges[2]);
+  const { data: month3Data } = useProductSalesReportAll(monthRanges[3]);
+  const { data: month4Data } = useProductSalesReportAll(monthRanges[4]);
+  const { data: month5Data } = useProductSalesReportAll(monthRanges[5]);
+
+  // Paginated endpoint ile 7 günlük günlük breakdown (createdOnValue alanı mevcut)
+  const weeklyPaginatedParams = useMemo(() => ({
+    page: 0,
+    pageSize: 500,
+    startDate: weeklyRevenueParams.startDate,
+    endDate: weeklyRevenueParams.endDate,
+  }), [weeklyRevenueParams]);
+
+  const { data: weeklyPaginatedData } = useProductSalesReport(weeklyPaginatedParams);
 
   // Memoized Data Hesaplamaları
   // Rapor sayılarını birleştir
   // API response yapısı: { data: { count, items, ... }, isSucceed, message }
-  // useQuery döndürür: { data: Response, ... }
-  // stockReport.data -> { data: { count, items, ... }, isSucceed, message }
-  // stockReport.data.data -> { count, items, ... }
-  // Fallback: Bazı API'ler root seviyede de count döndürebilir
+  // useQuery döndürür: { data: Response } -> Response.data = { count, items, ... }
   const reportData = useMemo(
     () => ({
-      stockCount: stockReport?.data?.data?.count || stockReport?.data?.count || 0,
-      likedCount: likedProductsReport?.data?.data?.count || likedProductsReport?.data?.count || 0,
-      salesCount: salesReport?.data?.data?.count || salesReport?.data?.count || 0,
-      passiveCount: passiveProductsReport?.data?.data?.count || passiveProductsReport?.data?.count || 0,
-      cartCount: cartReport?.data?.data?.count || cartReport?.data?.count || 0,
+      stockCount: stockReport?.data?.count ?? 0,
+      likedCount: likedProductsReport?.data?.count ?? 0,
+      salesCount: salesReport?.data?.count ?? 0,
+      passiveCount: passiveProductsReport?.data?.count ?? 0,
+      cartCount: cartReport?.data?.count ?? 0,
     }),
     [
-      stockReport?.data?.data?.count,
       stockReport?.data?.count,
-      likedProductsReport?.data?.data?.count,
       likedProductsReport?.data?.count,
-      salesReport?.data?.data?.count,
       salesReport?.data?.count,
-      passiveProductsReport?.data?.data?.count,
       passiveProductsReport?.data?.count,
-      cartReport?.data?.data?.count,
       cartReport?.data?.count,
     ]
   );
@@ -148,11 +178,11 @@ function AdminHomePage() {
   const supportData = useMemo(() => {
     // Bekleyen talepler (requestType === 0)
     const pendingSupportTickets = allSupportTickets.filter(
-      (ticket) => ticket.requestType === 0
+      (ticket: { requestType: number }) => ticket.requestType === 0
     ).length;
 
     const pendingOrderSupportTickets = allOrderSupportTickets.filter(
-      (ticket) => ticket.requestType === 0
+      (ticket: { requestType: number }) => ticket.requestType === 0
     ).length;
 
     return {
@@ -166,56 +196,106 @@ function AdminHomePage() {
     totalOrderSupportTickets,
   ]);
 
-  // Günlük gelir verilerini hesapla
-  const dailyRevenueData = useMemo(() => {
-    // Paginationsuz endpoint response yapısını kontrol et
-    const items = weeklyRevenueData?.data?.items || weeklyRevenueData?.items;
+  // Non-paginated response: data array direkt veya data.items veya items
+  const getSalesItems = (res: any): any[] => {
+    if (!res) return [];
+    if (Array.isArray(res.data)) return res.data;
+    if (Array.isArray(res.data?.items)) return res.data.items;
+    if (Array.isArray(res.items)) return res.items;
+    return [];
+  };
 
-    if (!items || !Array.isArray(items)) {
-      return [0, 0, 0, 0, 0, 0, 0];
-    }
+  // Paginated response: data.items (createdOnValue alanı mevcut)
+  const getPaginatedItems = (res: any): any[] => {
+    if (!res) return [];
+    if (Array.isArray(res.data?.items)) return res.data.items;
+    if (Array.isArray(res.items)) return res.items;
+    return [];
+  };
+
+  // Son 7 günlük toplam gelir
+  // Non-paginated API zaten tarih filtreli döndürüyor; direkt topla
+  const weeklyTotalRevenue = useMemo(() => {
+    const items = getSalesItems(weeklyRevenueData);
+    return items.reduce((sum: number, item: any) => sum + (item.totalRevenue ?? item.totalAmount ?? 0), 0);
+  }, [weeklyRevenueData]);
+
+  // Günlük gelir dağılımı: Paginated endpoint createdOnValue içeriyor
+  const dailyRevenueData = useMemo(() => {
+    const items = getPaginatedItems(weeklyPaginatedData);
+    if (!items.length) return [0, 0, 0, 0, 0, 0, 0];
 
     const today = new Date();
-    const days = [];
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (6 - i));
+      d.setHours(0, 0, 0, 0);
+      return d;
+    });
 
-    // Son 7 günü oluştur
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      date.setHours(0, 0, 0, 0);
-      days.push(date);
-    }
-
-    // Günlere göre grupla ve topla
-    const dailyTotals = days.map((day) => {
-      const dayStart = new Date(day);
-      dayStart.setHours(0, 0, 0, 0);
-
-      const dayItems = items.filter((item) => {
-        if (!item.createdOnValue) return false;
+    return days.map((day) => {
+      const dayItems = items.filter((item: any) => {
+        const dateStr = item.createdOnValue ?? item.saleDate;
+        if (!dateStr) return false;
+        if (dateStr.startsWith("0001")) return false;
         try {
-          const itemDate = new Date(item.createdOnValue);
-          const itemDay = new Date(
-            itemDate.getFullYear(),
-            itemDate.getMonth(),
-            itemDate.getDate()
+          const itemDate = new Date(dateStr);
+          if (isNaN(itemDate.getTime()) || itemDate.getFullYear() < 2000) return false;
+          return (
+            itemDate.getFullYear() === day.getFullYear() &&
+            itemDate.getMonth() === day.getMonth() &&
+            itemDate.getDate() === day.getDate()
           );
-          const dayToCompare = new Date(
-            dayStart.getFullYear(),
-            dayStart.getMonth(),
-            dayStart.getDate()
-          );
-          return itemDay.getTime() === dayToCompare.getTime();
-        } catch (error) {
+        } catch {
           return false;
         }
       });
+      return dayItems.reduce((sum: number, item: any) => sum + (item.totalRevenue ?? item.totalAmount ?? 0), 0);
+    });
+  }, [weeklyPaginatedData]);
 
-      return dayItems.reduce((sum, item) => sum + (item.totalAmount || 0), 0);
+  // Aylık gelir: 6 ayrı API çağrısından her ay kendi verisi
+  const monthlyChartData = useMemo(() => {
+    const monthlyDatas = [month0Data, month1Data, month2Data, month3Data, month4Data, month5Data];
+    return {
+      categories: monthRanges.map((m) => m.label),
+      data: monthlyDatas.map((d) => {
+        const items = getSalesItems(d);
+        return items.reduce((sum: number, item: any) => sum + (item.totalRevenue ?? item.totalAmount ?? 0), 0);
+      }),
+    };
+  }, [month0Data, month1Data, month2Data, month3Data, month4Data, month5Data, monthRanges]);
+
+  // En çok satan ürünler: 6 aylık tüm monthly datalardan birleştir
+  const { topByRevenue, topByQuantity } = useMemo(() => {
+    const allMonthlyDatas = [month0Data, month1Data, month2Data, month3Data, month4Data, month5Data];
+    const allItems = allMonthlyDatas.flatMap((d) => getSalesItems(d));
+
+    const byProduct = new Map<
+      string,
+      { title: string; revenue: number; quantity: number }
+    >();
+
+    allItems.forEach((item: any) => {
+      const key = item.productId ?? item.id ?? item.productTitle ?? "unknown";
+      const revenue = item.totalRevenue ?? item.totalAmount ?? 0;
+      const qty = item.totalQuantity ?? item.quantity ?? 0;
+      const title = item.productTitle ?? item.title ?? "-";
+      const existing = byProduct.get(key);
+      if (existing) {
+        existing.revenue += revenue;
+        existing.quantity += qty;
+      } else {
+        byProduct.set(key, { title, revenue, quantity: qty });
+      }
     });
 
-    return dailyTotals;
-  }, [weeklyRevenueData]);
+    const arr = Array.from(byProduct.values());
+    return {
+      topByRevenue: [...arr].sort((a, b) => b.revenue - a.revenue).slice(0, 10),
+      topByQuantity: [...arr].sort((a, b) => b.quantity - a.quantity).slice(0, 10),
+    };
+  }, [month0Data, month1Data, month2Data, month3Data, month4Data, month5Data]);
 
   // Animasyon fonksiyonu
   const animateNumber = useCallback(
@@ -342,134 +422,102 @@ function AdminHomePage() {
     }
   }, [supportData.pendingCount, animateNumber]);
 
+  useEffect(() => {
+    if (
+      weeklyTotalRevenue > 0 &&
+      !animationTriggered.current.totalRevenue
+    ) {
+      animationTriggered.current.totalRevenue = true;
+      animateNumber(Math.floor(weeklyTotalRevenue), (value) =>
+        setAnimatedCounts((prev) => ({ ...prev, totalRevenue: value }))
+      );
+    }
+  }, [weeklyTotalRevenue, animateNumber]);
+
   // Grafikleri Oluşturma
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("apexcharts").then((ApexCharts) => {
-        // Rapor Özeti Grafiği (Area Chart)
-        const reportsChart = new ApexCharts.default(
-          document.querySelector("#reportsChart"),
-          {
-            series: [
-              {
-                name: "Rapor Sayısı",
-                data: [0, 0, 0, 0],
+        // Aylık Satış Geliri Grafiği (6 ay)
+        const monthlySalesChartEl = document.querySelector("#monthlySalesChart");
+        if (monthlySalesChartEl) {
+          const monthlySalesChart = new ApexCharts.default(
+            monthlySalesChartEl,
+            {
+              series: [
+                {
+                  name: "Gelir",
+                  data: [0, 0, 0, 0, 0, 0],
+                },
+              ],
+              chart: {
+                height: 300,
+                type: "bar",
+                toolbar: { show: false },
               },
-            ],
-            chart: {
-              height: 250,
-              type: "area",
-              toolbar: { show: false },
-              zoom: { enabled: false },
-            },
-            stroke: {
-              curve: "smooth",
-              width: 2,
-            },
-            colors: ["#4f46e5"],
-            fill: {
-              type: "gradient",
-              gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.4,
-                opacityTo: 0.1,
-                stops: [0, 90, 100],
-              },
-            },
-            xaxis: {
-              categories: ["Beğeni", "Satış", "Pasif", "Sepet"],
-            },
-            yaxis: {
-              show: false,
-            },
-          }
-        );
-
-        reportsChartRef.current = reportsChart;
-        reportsChart.render();
-
-        // Toplam Gelir Grafiği (Bar Chart)
-        const totalRevenueChart = new ApexCharts.default(
-          document.querySelector("#totalRevenueChart"),
-          {
-            series: [
-              {
-                name: "Gelir",
-                data: [0, 0, 0, 0, 0, 0, 0],
-              },
-            ],
-            chart: {
-              height: 300,
-              type: "bar",
-              toolbar: { show: false },
-            },
-            plotOptions: {
-              bar: {
-                borderRadius: 4,
-                horizontal: false,
-              },
-            },
-            colors: ["#696cff"],
-            xaxis: {
-              categories: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"],
-            },
-            yaxis: {
-              labels: {
-                formatter: function (val: number) {
-                  return val.toLocaleString("tr-TR", {
-                    maximumFractionDigits: 0,
-                  });
+              plotOptions: {
+                bar: {
+                  borderRadius: 4,
+                  horizontal: false,
                 },
               },
-            },
-          }
-        );
-
-        totalRevenueChartRef.current = totalRevenueChart;
-        totalRevenueChart.render();
+              colors: ["#696cff"],
+              xaxis: {
+                categories: [],
+              },
+              yaxis: {
+                labels: {
+                  formatter: function (val: number) {
+                    return val.toLocaleString("tr-TR", {
+                      maximumFractionDigits: 0,
+                    });
+                  },
+                },
+              },
+              tooltip: {
+                y: {
+                  formatter: function (val: number) {
+                    return new Intl.NumberFormat("tr-TR", {
+                      style: "currency",
+                      currency: "TRY",
+                    }).format(val);
+                  },
+                },
+              },
+            }
+          );
+          monthlySalesChartRef.current = monthlySalesChart;
+          monthlySalesChart.render();
+        }
 
         // Cleanup
         return () => {
-          if (reportsChartRef.current) {
-            reportsChartRef.current.destroy();
-          }
-          if (totalRevenueChartRef.current) {
-            totalRevenueChartRef.current.destroy();
+          if (monthlySalesChartRef.current) {
+            monthlySalesChartRef.current.destroy();
           }
         };
       });
     }
   }, []);
 
-  // Grafikleri Güncelleme
-  // Rapor özeti grafiğini güncelle
-  useEffect(() => {
-    if (reportsChartRef.current) {
-      reportsChartRef.current.updateSeries([
-        {
-          name: "Rapor Sayısı",
-          data: [
-            reportData.likedCount,
-            reportData.salesCount,
-            reportData.passiveCount,
-            reportData.cartCount,
-          ],
-        },
-      ]);
-    }
-  }, [reportData]);
 
-  // Toplam gelir grafiğini güncelle
+  // Aylık satış grafiğini güncelle
   useEffect(() => {
-    if (totalRevenueChartRef.current && dailyRevenueData) {
-      totalRevenueChartRef.current.updateSeries([
+    if (
+      monthlySalesChartRef.current &&
+      monthlyChartData.categories.length > 0
+    ) {
+      monthlySalesChartRef.current.updateOptions({
+        xaxis: { categories: monthlyChartData.categories },
+      });
+      monthlySalesChartRef.current.updateSeries([
         {
           name: "Gelir",
-          data: dailyRevenueData,
+          data: monthlyChartData.data,
         },
       ]);
     }
-  }, [dailyRevenueData]);
+  }, [monthlyChartData]);
 
   return (
     <div className="content-wrapper">
@@ -572,8 +620,11 @@ function AdminHomePage() {
           </div>
         </div>
 
-        {/* Rapor Kartları */}
+        {/* Canlı Raporlar + Toplam Bakiye */}
         <div className="row mb-4">
+          {/* Canlı Raporlar - 5 kart */}
+          <div className="col-lg-8 mb-4">
+            <div className="row">
           {/* Stok Raporu Kartı */}
           <div className="col-md-4 col-sm-6 mb-4">
             <div
@@ -631,7 +682,7 @@ function AdminHomePage() {
                 transition: "all 0.3s ease",
               }}
               onClick={() =>
-                window.open("/admin/reports/most-liked-products", "_blank")
+                window.open("/admin/reports/most-liked-products-report", "_blank")
               }
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px) scale(1.01)";
@@ -678,7 +729,7 @@ function AdminHomePage() {
                 transition: "all 0.3s ease",
               }}
               onClick={() =>
-                window.open("/admin/reports/product-sales", "_blank")
+                window.open("/admin/reports/product-sales-report", "_blank")
               }
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px) scale(1.01)";
@@ -725,7 +776,7 @@ function AdminHomePage() {
                 transition: "all 0.3s ease",
               }}
               onClick={() =>
-                window.open("/admin/reports/passive-products", "_blank")
+                window.open("/admin/reports/passive-products-report", "_blank")
               }
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px) scale(1.01)";
@@ -772,7 +823,7 @@ function AdminHomePage() {
                 transition: "all 0.3s ease",
               }}
               onClick={() =>
-                window.open("/admin/reports/product-cart", "_blank")
+                window.open("/admin/reports/product-cart-report", "_blank")
               }
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px) scale(1.01)";
@@ -821,8 +872,7 @@ function AdminHomePage() {
               onClick={() => window.open("/admin/categories", "_blank")}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px) scale(1.01)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px rgba(0, 0, 0, 0.15)";
+                e.currentTarget.style.boxShadow = "0 12px 24px rgba(0, 0, 0, 0.15)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0) scale(1)";
@@ -853,30 +903,200 @@ function AdminHomePage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Grafikler */}
-        <div className="row">
-          {/* Rapor Özeti Grafiği */}
-          <div className="col-md-6 mb-4">
-            <div className="card">
-              <div className="card-header">
-                <h5 className="card-title mb-0">Rapor Özeti</h5>
-              </div>
-              <div className="card-body">
-                <div id="reportsChart"></div>
-              </div>
             </div>
           </div>
 
-          {/* Toplam Gelir Grafiği */}
-          <div className="col-md-6 mb-4">
+          {/* Toplam Bakiye */}
+          <div className="col-lg-4 mb-4">
+            <div
+              className="card h-100"
+              style={{
+                background: "linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%)",
+                border: "none",
+                boxShadow: "0 4px 20px rgba(76, 175, 80, 0.3)",
+              }}
+            >
+              <div className="card-body p-4">
+                {isLoadingWeeklyRevenue ? (
+                  <div className="text-center py-5">
+                    <div className="spinner-border spinner-border-lg text-success" />
+                    <p className="text-muted mt-3 mb-0">Veriler yükleniyor...</p>
+                  </div>
+                ) : weeklyRevenueError ? (
+                  <div className="text-center py-5">
+                    <i className="bx bx-error-circle text-danger" style={{ fontSize: "3rem" }} />
+                    <p className="text-danger mt-3 mb-0">Veri yüklenirken bir hata oluştu.</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      <div>
+                        <h6 style={{ color: "#2e7d32" }}>Toplam Bakiye</h6>
+                        <p className="small mb-0" style={{ color: "#388e3c" }}>
+                          Son 7 günlük toplam gelir
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-center mb-3">
+                      <div style={{ fontSize: "2rem", color: "#1b5e20", fontWeight: "700" }}>
+                        {formatCurrency(animatedCounts.totalRevenue)}
+                      </div>
+                      <div className="small mt-1" style={{ color: "#388e3c" }}>
+                        {(() => {
+                          const today = new Date();
+                          const start = new Date(today);
+                          start.setDate(today.getDate() - 6);
+                          return `${start.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" })} – ${today.toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" })}`;
+                        })()}
+                      </div>
+                    </div>
+                    <div className="pt-3" style={{ borderTop: "1px solid rgba(76, 175, 80, 0.2)" }}>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="small" style={{ color: "#2e7d32" }}>
+                          <i className="bx bx-trending-up me-1"></i>Günlük Ortalama
+                        </span>
+                        <span className="fw-bold small" style={{ color: "#1b5e20" }}>
+                          {formatCurrency(weeklyTotalRevenue / 7)}
+                        </span>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="small" style={{ color: "#2e7d32" }}>
+                          <i className="bx bx-bar-chart-alt-2 me-1"></i>Toplam Satış
+                        </span>
+                        <span className="fw-bold small" style={{ color: "#1b5e20" }}>
+                          {reportData.salesCount.toLocaleString("tr-TR")} adet
+                        </span>
+                      </div>
+                      {dailyRevenueData.some((v) => v > 0) && (
+                        <>
+                          <div className="d-flex justify-content-between align-items-center mb-3">
+                            <span className="small" style={{ color: "#2e7d32" }}>
+                              <i className="bx bx-up-arrow-alt me-1"></i>En Yüksek Gün
+                            </span>
+                            <span className="fw-bold small" style={{ color: "#1b5e20" }}>
+                              {formatCurrency(Math.max(...dailyRevenueData))}
+                            </span>
+                          </div>
+                          <div className="pt-3" style={{ borderTop: "1px solid rgba(76, 175, 80, 0.2)" }}>
+                            <div className="d-flex justify-content-between">
+                              {dailyRevenueData.slice(-3).map((dayRevenue, index) => {
+                                const dayNames = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+                                const daysAgo = 2 - index;
+                                const d = new Date();
+                                d.setDate(d.getDate() - daysAgo);
+                                const dayName = dayNames[d.getDay()];
+                                return (
+                                  <div key={index} className="text-center" style={{ flex: 1 }}>
+                                    <div className="small mb-1" style={{ color: "#388e3c" }}>{dayName}</div>
+                                    <div className="fw-semibold small" style={{ color: "#1b5e20" }}>
+                                      {formatCurrency(dayRevenue)}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Aylık Satış Geliri Grafiği */}
+        <div className="row mb-4">
+          <div className="col-12">
             <div className="card">
               <div className="card-header">
-                <h5 className="card-title mb-0">Son 7 Günün Gelir Analizi</h5>
+                <h5 className="card-title mb-0">Aylık Satış Geliri</h5>
               </div>
               <div className="card-body">
-                <div id="totalRevenueChart"></div>
+                <div id="monthlySalesChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* En Çok Satan Ürünler */}
+        <div className="row">
+          <div className="col-lg-6 mb-4">
+            <div className="card">
+              <div className="card-header">
+                <h5 className="card-title mb-0">En Çok Satan Ürünler (Gelir)</h5>
+              </div>
+              <div className="card-body p-0">
+                <div className="table-responsive">
+                  <table className="table table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Ürün</th>
+                        <th className="text-end">Gelir</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topByRevenue.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="text-center text-muted py-4">
+                            Veri bulunamadı
+                          </td>
+                        </tr>
+                      ) : (
+                        topByRevenue.map((item, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td>{item.title}</td>
+                            <td className="text-end fw-semibold">
+                              {formatCurrency(item.revenue)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-lg-6 mb-4">
+            <div className="card">
+              <div className="card-header">
+                <h5 className="card-title mb-0">En Çok Satan Ürünler (Adet)</h5>
+              </div>
+              <div className="card-body p-0">
+                <div className="table-responsive">
+                  <table className="table table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Ürün</th>
+                        <th className="text-end">Adet</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topByQuantity.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="text-center text-muted py-4">
+                            Veri bulunamadı
+                          </td>
+                        </tr>
+                      ) : (
+                        topByQuantity.map((item, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td>{item.title}</td>
+                            <td className="text-end fw-semibold">
+                              {item.quantity.toLocaleString("tr-TR")}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
