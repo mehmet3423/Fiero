@@ -150,13 +150,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [cssLoaded, setCssLoaded] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // CSS hazır; yükleme ekranına gerek yok
 
   return (
     <div className="layout-wrapper layout-content-navbar">
@@ -213,10 +210,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             id="layout-navbar"
             style={{ flexWrap: "nowrap" }}
           >
-            <div className="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <div className="layout-menu-toggle navbar-nav align-items-center me-3 admin-hamburger-toggle">
               <button
-                className="nav-item nav-link px-0 me-xl-4"
+                className="nav-item nav-link px-0"
                 onClick={() => setIsSidebarOpen(true)}
+                type="button"
               >
                 <i className="bx bx-menu bx-sm"></i>
               </button>

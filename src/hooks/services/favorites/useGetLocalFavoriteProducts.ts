@@ -17,14 +17,19 @@ export const useGetLocalFavoriteProducts = (
 
         if (favoriteIds.length > 0) {
           try {
-            const products = await Promise.all(
+            const results = await Promise.allSettled(
               favoriteIds.map(async (id) => {
                 const response = await fetch(`${GET_PRODUCT_BY_ID}?id=${id}`);
+                if (!response.ok) {
+                  throw new Error(`HTTP ${response.status}`);
+                }
                 const data = await response.json();
-                // API response'u data property'si içinde geliyorsa onu çıkar
                 return data.data || data;
               })
             );
+            const products = results
+              .filter((r): r is PromiseFulfilledResult<Product> => r.status === "fulfilled")
+              .map((r) => r.value);
             setFavoriteProducts(products);
           } catch (error) {
             console.error("Favori ürünler getirilirken hata oluştu:", error);

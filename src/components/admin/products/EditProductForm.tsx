@@ -833,8 +833,9 @@ export default function EditProductForm({
             type="file"
             accept="image/png,image/jpeg,image/jpg,image/webp"
             className="form-control"
+            multiple
             onChange={handleBannerImagesSelect}
-            disabled={isLoading || bannerPreviewUrls.length >= 1}
+            disabled={isLoading}
           />
           <div className="d-flex gap-2 flex-wrap mt-2">
             {bannerPreviewUrls.map((url, index) => (
@@ -867,7 +868,7 @@ export default function EditProductForm({
           </div>
         </div>
         <small className="text-muted">
-          Sadece 1 banner resmi ekleyebilirsiniz. ({bannerPreviewUrls.length}/1)
+          Banner resimleri ({bannerPreviewUrls.length})
         </small>
       </div>
     </form>

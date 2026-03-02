@@ -254,7 +254,7 @@ export default function Header() {
       {/* Top Bar */}
       <div className="tf-top-bar-wrapper">
         <AnnouncementSlider />
-        <div className="tf-top-bar bg_white line py-4 fixed-top">
+        <div className="tf-top-bar line py-4 fixed-top">
           <div className="px_15 lg-px_40">
             <div className="tf-top-bar_item d-flex justify-content-center align-items-center">
               <div
@@ -277,7 +277,7 @@ export default function Header() {
                 </button>
               </div>
               <div
-                className="col-4 justify-content-center align-items-center mx-4"
+                className="col-4 d-flex justify-content-center align-items-center mx-4"
                 style={{
                   paddingLeft: windowWidth > 768 ? "10%" : "0",
                 }}
@@ -287,7 +287,12 @@ export default function Header() {
                   className="logo-header"
                   title="Eser Leather - Ana Sayfaya Dön"
                 >
-                  LOGO
+                  <img
+                    src="/assets/site/white-logo.png"
+                    alt="Eser Leather"
+                    width={60}
+                    height={22}
+                  />
                 </Link>
               </div>
               <div className="col-4 tf-md-hidden text-center overflow-hidden">
@@ -874,8 +879,24 @@ export default function Header() {
     left: 0;
     right: 0;
     z-index: 1002;
-    background: white !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: var(--theme-header-bar) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    color: var(--theme-text-on-dark) !important;
+  }
+  .tf-top-bar.fixed-top .top-bar-text,
+  .tf-top-bar.fixed-top .nav-icon-item,
+  .tf-top-bar.fixed-top .nav-icon-item i,
+  .tf-top-bar.fixed-top a {
+    color: var(--theme-text-on-dark) !important;
+  }
+  .tf-top-bar.fixed-top .tf-btn.btn-line {
+    color: var(--theme-text-on-dark) !important;
+    border-color: rgba(255,255,255,0.6) !important;
+  }
+  .tf-top-bar.fixed-top .tf-btn.btn-line:hover {
+    color: var(--theme-header-bar) !important;
+    background: var(--theme-text-on-dark) !important;
+    border-color: var(--theme-text-on-dark) !important;
   }
     
   .header-default {

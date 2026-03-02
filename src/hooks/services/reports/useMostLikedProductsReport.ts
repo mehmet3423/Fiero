@@ -23,15 +23,15 @@ const fetchMostLikedProductsReport = async (
   }
 
   if (params?.page !== undefined) {
-    url.searchParams.append("page", params.page.toString());
+    url.searchParams.append("Page", params.page.toString());
   }
 
   if (params?.pageSize !== undefined) {
-    url.searchParams.append("pageSize", params.pageSize.toString());
+    url.searchParams.append("PageSize", params.pageSize.toString());
   }
 
   if (params?.from) {
-    url.searchParams.append("from", params.from.toString());
+    url.searchParams.append("From", params.from.toString());
   }
 
   const token = getToken();

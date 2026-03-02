@@ -26,7 +26,7 @@ export default function LanguageSwitcher() {
         background: "transparent",
         fontWeight: "lighter",
         fontSize: "16px",
-        color: "#333",
+        color: "#fff",
         textTransform: "uppercase",
         marginLeft: "0px",
         gap: "5px",

@@ -340,9 +340,11 @@ const AddProductPage: React.FC = () => {
   const handleBannerImagesSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (event.target.files && event.target.files[0]) {
-      try {
-        const file = event.target.files[0];
+    const files = event.target.files ? Array.from(event.target.files) : [];
+    if (files.length === 0) return;
+
+    try {
+      for (const file of files) {
         if (file.size > 10000000) {
           toast.error("Dosya boyutu çok büyük (max 10MB)");
           return;
@@ -355,17 +357,20 @@ const AddProductPage: React.FC = () => {
           toast.error("Sadece JPG, JPEG, PNG ve WebP formatları desteklenir");
           return;
         }
+      }
 
-        setSelectedBannerImages((prev) => [...prev, file]);
+      setSelectedBannerImages((prev) => [...prev, ...files]);
 
-        // Preview için URL oluştur
-        const imageUrl = URL.createObjectURL(file);
-        setProduct((prev) => ({
-          ...prev,
-          banner: [...(prev.banner || []), imageUrl],
-        }));
+      // Preview için URL oluştur (geçici)
+      const tempUrls = files.map((f) => URL.createObjectURL(f));
+      setProduct((prev) => ({
+        ...prev,
+        banner: [...(prev.banner || []), ...tempUrls],
+      }));
 
-        // Cloudinary'ye yükle
+      // Cloudinary'ye sırayla yükle
+      const uploadedUrls: string[] = [];
+      for (const file of files) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append(
@@ -380,16 +385,20 @@ const AddProductPage: React.FC = () => {
 
         if (!response.ok) throw new Error("Resim yüklenemedi");
         const data = await response.json();
-
-        // Cloudinary URL'sini kaydet (son eklenen URL'yi güncelle)
-        setProduct((prev) => ({
-          ...prev,
-          banner: [...(prev.banner || []).slice(0, -1), data.secure_url],
-        }));
-      } catch (error) {
-        toast.error("Resim yüklenirken hata oluştu");
+        uploadedUrls.push(data.secure_url);
       }
+
+      // Geçici URL'leri Cloudinary URL'leri ile değiştir
+      setProduct((prev) => {
+        const currentBanner = prev.banner || [];
+        const tempCount = tempUrls.length;
+        const withoutTemp = currentBanner.slice(0, -tempCount);
+        return { ...prev, banner: [...withoutTemp, ...uploadedUrls] };
+      });
+    } catch (error) {
+      toast.error("Resim yüklenirken hata oluştu");
     }
+    event.target.value = "";
   };
   const handleVideoSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -1442,6 +1451,7 @@ const AddProductPage: React.FC = () => {
                               type="file"
                               className="form-control form-control-sm"
                               accept="image/png,image/jpeg,image/jpg,image/webp"
+                              multiple
                               onChange={handleBannerImagesSelect}
                             />
 

@@ -105,6 +105,12 @@ export default function Document() {
           type="text/css"
           href="/assets/site/css/styles.css"
         />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="/assets/site/css/theme-colors.css"
+          data-type="site-asset"
+        />
 
         <link rel="shortcut icon" href="/assets/site/images/logo/favicon.png" />
         <link
@@ -115,6 +121,11 @@ export default function Document() {
         {/* Admin Vendors CSS */}
         <link
           href="/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"
+          rel="stylesheet"
+          data-type="admin-asset"
+        />
+        <link
+          href="/assets/admin/vendor/libs/apex-charts/apex-charts.css"
           rel="stylesheet"
           data-type="admin-asset"
         />

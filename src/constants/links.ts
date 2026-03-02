@@ -7,6 +7,7 @@ export const SEND_EMAIL = `${BASE_URL}api/Authentication/SendEmailConfirmation`;
 export const CONFIRM_EMAIL = `${BASE_URL}api/Authentication/ConfirmEmail`;
 
 export const LOGIN = `${BASE_URL}api/Authentication/Login`;
+export const GOOGLE_LOGIN = `${BASE_URL}api/Authentication/GoogleLogin`;
 export const LOGOUT = `${BASE_URL}api/Authentication/Logout`;
 
 // Cart endpoints
@@ -260,7 +261,7 @@ export const GET_MOST_COMMENTED_PRODUCTS_REPORT = `${BASE_URL}api/Reports/MostCo
 export const GET_FAVORITE_PRODUCTS_REPORT = `${BASE_URL}api/Reports/FavoriteProductsReportPaginated`;
 export const GET_PRODUCT_RETURN_REPORT = `${BASE_URL}api/Reports/ProductReturnReportPaginated`;
 export const GET_RETURN_REASON_REPORT = `${BASE_URL}api/Reports/ReturnReasonReportPaginated`;
-export const GET_PRODUCT_CART_REPORT = `  ${BASE_URL}api/Reports/ProductCartReportPaginated`;
+export const GET_PRODUCT_CART_REPORT = `${BASE_URL}api/Reports/ProductCartReportPaginated`;
 export const GET_UNSOLD_PRODUCTS_REPORT = `${BASE_URL}api/Reports/UnsoldProductsReportPaginated`;
 export const GET_PRODUCT_SALES_REPORT = `${BASE_URL}api/Reports/ProductSalesReportPaginated`;
 

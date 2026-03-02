@@ -1,6 +1,7 @@
 import RootLayout from "@/components/layouts/RootLayout";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { SearchProvider } from "@/context/SearchContext";
 import AdminGuard from "@/guards/AdminGuard";
@@ -120,10 +121,10 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <AuthProvider>
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+  const AppContent = (
+    <LanguageProvider>
+      <AuthProvider>
           <SearchProvider>
             <Toaster
               position="top-right"
@@ -158,8 +159,19 @@ export default function App({ Component, pageProps }: AppProps) {
               </AdminGuard>
             </AuthGuard>
           </SearchProvider>
-        </AuthProvider>
-      </LanguageProvider>
+      </AuthProvider>
+    </LanguageProvider>
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {googleClientId ? (
+        <GoogleOAuthProvider clientId={googleClientId}>
+          {AppContent}
+        </GoogleOAuthProvider>
+      ) : (
+        AppContent
+      )}
     </QueryClientProvider>
   );
 }

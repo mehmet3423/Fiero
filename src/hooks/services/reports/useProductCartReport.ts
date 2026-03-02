@@ -24,11 +24,11 @@ const fetchProductCartReport = async (
   }
 
   if (params?.page !== undefined) {
-    url.searchParams.append("page", params.page.toString());
+    url.searchParams.append("Page", params.page.toString());
   }
 
   if (params?.pageSize !== undefined) {
-    url.searchParams.append("pageSize", params.pageSize.toString());
+    url.searchParams.append("PageSize", params.pageSize.toString());
   }
 
   const token = getToken();
