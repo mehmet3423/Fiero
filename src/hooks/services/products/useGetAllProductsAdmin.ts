@@ -24,6 +24,8 @@ interface UseGetAllProductsAdminOptions {
   mainCategoryId?: string;
   subCategoryId?: string;
   search?: string;
+  isAvailable?: boolean;
+  specificationOptionIds?: string[];
 }
 
 // Admin paneli için ürünler hook'u
@@ -44,7 +46,7 @@ export const useGetAllProductsAdmin = (options: UseGetAllProductsAdminOptions = 
     ? [options.subCategoryId]
     : [];
 
-  // Body data objesi oluştur
+  // Body data objesi oluştur (Swagger GetAllProducts ile uyumlu)
   const bodyData = {
     page: options.page !== undefined ? options.page : 0,
     pageSize: options.pageSize !== undefined ? options.pageSize : 1000,
@@ -55,8 +57,10 @@ export const useGetAllProductsAdmin = (options: UseGetAllProductsAdminOptions = 
       options.salesCountSort !== undefined ? options.salesCountSort : 0,
     likeCountSort:
       options.likeCountSort !== undefined ? options.likeCountSort : 0,
+    ...(options.isAvailable !== undefined && { isAvailable: options.isAvailable }),
     mainCategoryIds: mainCategoryIdsArray,
     subCategoryIds: subCategoryIdsArray,
+    specificationOptionIds: options.specificationOptionIds || [],
     search: searchQuery || "",
   };
 
@@ -71,8 +75,10 @@ export const useGetAllProductsAdmin = (options: UseGetAllProductsAdminOptions = 
       options.ratingSort?.toString() || "0",
       options.salesCountSort?.toString() || "0",
       options.likeCountSort?.toString() || "0",
+      options.isAvailable?.toString() ?? "",
       JSON.stringify(mainCategoryIdsArray),
       JSON.stringify(subCategoryIdsArray),
+      JSON.stringify(options.specificationOptionIds || []),
       searchQuery || "",
     ],
     method: HttpMethod.POST,

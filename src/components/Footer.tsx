@@ -154,11 +154,8 @@ export default function Footer() {
                           <i
                             className="icon fs-10 icon-play"
                             style={{
-                              border: "1px solid #000",
                               padding: "2px 4px",
                               borderRadius: "2px",
-                              backgroundColor: "#000",
-                              color: "#fff",
                               fontSize: "8px",
                             }}
                           ></i>
@@ -441,8 +438,9 @@ export default function Footer() {
                         <div className="subscribe-msg">
                           {subscribeMessage && (
                             <div
+                              className="subscribe-error-msg"
                               style={{
-                                color: "#dc3545",
+                                color: "var(--theme-footer-error)",
                                 fontSize: "0.875rem",
                                 marginTop: "0.5rem",
                               }}
@@ -541,7 +539,7 @@ export default function Footer() {
             display: block !important;
             cursor: pointer;
             padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 0 !important;
           }
 
@@ -580,12 +578,12 @@ export default function Footer() {
           .footer-menu_item {
             padding: 8px 0;
             display: block;
-            color: #666;
+            color: var(--theme-footer-text);
             text-decoration: none;
           }
 
           .footer-menu_item:hover {
-            color: #333;
+            color: var(--theme-text-on-dark);
           }
         }
       `}</style>
