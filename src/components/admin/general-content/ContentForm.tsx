@@ -33,12 +33,12 @@ export default function ContentForm({
     isUploading: isImageUploading,
   } = useCloudinaryImageUpload();
 
-  // EditingContent varsa imageUrl'i set et
+  // EditingContent değiştiğinde imageUrl'i başlat (sadece ilk yüklemede/item değişiminde)
   React.useEffect(() => {
-    if (editingContent?.imageUrl && !imageUrl) {
-      setImageUrl(editingContent.imageUrl);
-    }
-  }, [editingContent, imageUrl, setImageUrl]);
+    setImageUrl(editingContent?.imageUrl || "");
+    setSelectedFile(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingContent?.id]);
 
   // MainProductList özel form state'i
   const [selectedProductIds, setSelectedProductIds] = React.useState<string[]>(

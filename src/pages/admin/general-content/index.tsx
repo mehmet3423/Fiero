@@ -75,7 +75,7 @@ function GeneralContentPage() {
         title: formData.get("title") as string,
         content: formData.get("content") as string,
         contentUrl: formData.get("contentUrl") as string,
-        imageUrl: formData.get("imageUrl") as string,
+        imageUrl: (formData.get("imageUrl") as string) || editingContent.imageUrl || "",
         willRender: editingContent.willRender,
         generalContentType: editingContent.generalContentType,
         language: parseInt(formData.get("language") as string),
