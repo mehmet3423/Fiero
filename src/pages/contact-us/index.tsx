@@ -1,7 +1,7 @@
 "use client";
 import SEOHead from "@/components/SEO/SEOHead";
 import { useGetSupportEmailAddress } from "@/hooks/services/settings";
-import { useState } from "react";
+import { useSubmitContactForm } from "@/hooks/services/contact/useSubmitContactForm";
 import { SEND_MAIL } from "@/constants/links";
 import { HttpMethod } from "@/constants/enums/HttpMethods";
 import toast from "react-hot-toast";
@@ -9,45 +9,48 @@ import { useLanguage } from "@/context/LanguageContext";
 
 function ContactUsPage() {
   const { t } = useLanguage();
-  const { supportEmail, isLoading: isLoadingEmail } = useGetSupportEmailAddress();
-  // Fallback email adresi
+  const { supportEmail } = useGetSupportEmailAddress();
   const defaultEmail = "merhaba@nors.com.tr";
   const emailAddress = supportEmail || defaultEmail;
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { submit, isPending } = useSubmitContactForm();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    setIsSubmitting(true);
-
     const formData = new FormData(form);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const message = formData.get("message") as string;
+    const name = (formData.get("name") as string).trim();
+    const email = (formData.get("email") as string).trim();
+    const message = (formData.get("message") as string).trim();
+
+    const subject = `${t("contactUs.emailSubject")}: ${name}`;
+    const body = `${t("contactUs.emailFrom")}: ${email}\n\n${t("contactUs.emailMessage")}:\n${message}`;
+    const mailUrl = new URL(SEND_MAIL);
+    mailUrl.searchParams.set("to", emailAddress);
+    mailUrl.searchParams.set("subject", subject);
+    mailUrl.searchParams.set("body", body);
+
+    const sendMailPromise = fetch(mailUrl.toString(), { method: HttpMethod.POST });
 
     try {
-      const subject = `${t("contactUs.emailSubject")}: ${name}`;
-      const body = `${t("contactUs.emailFrom")}: ${email}\n\n${t("contactUs.emailMessage")}:\n${message}`;
-      const url = new URL(SEND_MAIL);
-      url.searchParams.set("to", emailAddress);
-      url.searchParams.set("subject", subject);
-      url.searchParams.set("body", body);
+      const [contactResponse] = await Promise.all([
+        submit({
+          firstName: name,
+          surname: null,
+          email,
+          title: t("contactUs.emailSubject"),
+          body: message,
+        }),
+        sendMailPromise,
+      ]);
 
-      const response = await fetch(url.toString(), {
-        method: HttpMethod.POST,
-      });
-
-      if (response.ok) {
+      if (contactResponse.ok) {
         toast.success(t("contactUs.successMessage"));
         form.reset();
       } else {
         toast.error(t("contactUs.errorMessage"));
       }
-    } catch (error) {
-      console.error("Error sending email:", error);
+    } catch {
       toast.error(t("contactUs.errorMessage"));
-    } finally {
-      setIsSubmitting(false);
     }
   };
   return (
@@ -90,7 +93,7 @@ function ContactUsPage() {
                         </span>
                         <div className="flex-grow-1 min-w-0">
                           <small className="text-muted d-block mb-1">{t("contactUs.website")}</small>
-                          <a href="http://www.desa.com.tr" target="_blank" rel="noopener noreferrer" className="text-decoration-underline">
+                          <a href="https://www.eserleather.com" target="_blank" rel="noopener noreferrer" className="text-decoration-underline">
                             {t("contactUs.websiteLink")}
                           </a>
                         </div>
@@ -153,8 +156,8 @@ function ContactUsPage() {
                           <textarea placeholder={t("contactUs.messagePlaceholder")} name="message" id="message" required cols={30} rows={10}></textarea>
                         </div>
                         <div className="send-wrap">
-                          <button type="submit" className="tf-btn radius-3 btn-fill animate-hover-btn justify-content-center" disabled={isSubmitting}>
-                            {isSubmitting ? t("contactUs.sending") : t("contactUs.send")}
+                          <button type="submit" className="tf-btn radius-3 btn-fill animate-hover-btn justify-content-center" disabled={isPending}>
+                            {isPending ? t("contactUs.sending") : t("contactUs.send")}
                           </button>
                         </div>
                       </form>

@@ -3,10 +3,15 @@ import CirclePagination from "@/components/shared/CirclePagination";
 import GeneralModal from "@/components/shared/GeneralModal";
 import { SubCategory } from "@/constants/models/Category";
 import { Product } from "@/constants/models/Product";
+import {
+  DiscountSort,
+  RatingSort,
+  SalesCountSort,
+  LikeCountSort,
+} from "@/constants/enums/SortOptions";
 import { useCategories } from "@/hooks/services/categories/useCategories";
 import { useDeleteProduct } from "@/hooks/services/products/useDeleteProduct";
 import { useGetAllProductsAdmin } from "@/hooks/services/products/useGetAllProductsAdmin";
-import { useProductsByCategory } from "@/hooks/services/products/useProductsByCategory";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -19,28 +24,57 @@ function ProductsAdminPage() {
   const [selectedSubCategoryId, setSelectedSubCategoryId] =
     useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState<
+    "all" | "available" | "unavailable"
+  >("all");
+  const [sortBy, setSortBy] = useState<string>("none");
 
   // Pagination için state'ler
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(20); // Sayfa başına gösterilen ürün sayısını 20'ye çıkardık
-
-  // Tüm ürünleri getiren hook'u çağırıyoruz
-  const { data: allProducts, isLoading: allProductsLoading } =
-    useGetAllProductsAdmin({
-      page: currentPage - 1, // API 0 tabanlı, UI 1 tabanlı
-      pageSize: itemsPerPage,
-      searchTerm: searchTerm, // Arama terimini API'ye gönder
-    });
+  const [itemsPerPage] = useState(20);
 
   const { categories, isLoading: categoriesLoading } = useCategories();
-  const { products, isLoading: productsLoading } = useProductsByCategory(
-    selectedSubCategoryId,
-    {
-      page: currentPage - 1,
-      pageSize: itemsPerPage,
-      searchTerm: searchTerm, // Arama terimini API'ye gönder
-    }
-  );
+
+  // Tek API: GetAllProducts - tüm filtreler desteklenir
+  const {
+    items: currentProducts,
+    count: totalCount,
+    isLoading,
+  } = useGetAllProductsAdmin({
+    page: currentPage - 1,
+    pageSize: itemsPerPage,
+    searchTerm: searchTerm,
+    mainCategoryId: selectedMainCategoryId || undefined,
+    subCategoryId: selectedSubCategoryId || undefined,
+    isAvailable:
+      availabilityFilter === "all"
+        ? undefined
+        : availabilityFilter === "available",
+    discountSort:
+      sortBy === "price-asc"
+        ? DiscountSort.PriceAsc
+        : sortBy === "price-desc"
+          ? DiscountSort.PriceDesc
+          : DiscountSort.None,
+    ratingSort:
+      sortBy === "rating-best"
+        ? RatingSort.BestFirst
+        : sortBy === "rating-worst"
+          ? RatingSort.WorstFirst
+          : RatingSort.None,
+    salesCountSort:
+      sortBy === "sales-high"
+        ? SalesCountSort.HighToLow
+        : sortBy === "sales-low"
+          ? SalesCountSort.LowToHigh
+          : SalesCountSort.None,
+    likeCountSort:
+      sortBy === "likes-high"
+        ? LikeCountSort.HighToLow
+        : sortBy === "likes-low"
+          ? LikeCountSort.LowToHigh
+          : LikeCountSort.None,
+  });
 
   const { deleteProduct, isPending: isDeleting } = useDeleteProduct();
   const [deletingProductId, setDeletingProductId] = useState<string | null>(
@@ -64,21 +98,19 @@ function ProductsAdminPage() {
     setSelectedSubCategoryId("");
   }, [selectedMainCategoryId]);
 
-  // Aramaya veya kategori filtrelerine göre pagination sıfırlanır
+  // Aramaya veya filtre değişikliklerine göre pagination sıfırlanır
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedMainCategoryId, selectedSubCategoryId, searchTerm]);
+  }, [
+    selectedMainCategoryId,
+    selectedSubCategoryId,
+    searchTerm,
+    availabilityFilter,
+    sortBy,
+  ]);
 
   // Pagination için toplam sayfa sayısını hesaplama
-  const totalPages = selectedSubCategoryId
-    ? Math.ceil((products?.count || 0) / itemsPerPage)
-    : Math.ceil((allProducts?.count || 0) / itemsPerPage);
-
-  // Mevcut sayfada gösterilecek ürünler - API'den gelen ürünleri kullan
-  const currentProducts =
-    selectedSubCategoryId && products?.items
-      ? products.items
-      : allProducts?.items || [];
+  const totalPages = Math.ceil((totalCount || 0) / itemsPerPage);
 
   // Sayfa değiştirme işlemi
   const handlePageChange = (pageNumber: number) => {
@@ -103,23 +135,15 @@ function ProductsAdminPage() {
     }
   };
 
-  // Yükleniyor durumu
-  const isLoading = selectedSubCategoryId
-    ? productsLoading
-    : allProductsLoading;
-
   // Arama kısmını temizleme ve filtreleri sıfırlama
   const handleClearFilters = () => {
     setSearchTerm("");
     setSelectedMainCategoryId("");
     setSelectedSubCategoryId("");
+    setAvailabilityFilter("all");
+    setSortBy("none");
     setCurrentPage(1);
   };
-
-  // Sayfa bilgisi gösterimi için toplam ürün sayısı
-  const totalCount = selectedSubCategoryId
-    ? products?.count || 0
-    : allProducts?.count || 0;
 
   return (
     <div className="content-wrapper overflow-hidden">
@@ -150,11 +174,11 @@ function ProductsAdminPage() {
           </div>
         </div>
 
-        {/* Filtreler - mobilde tam genişlik, dikey dizilim */}
+        {/* Filtreler - Swagger GetAllProducts ile uyumlu */}
         <div className="card mb-4">
           <div className="card-body">
             <div className="row g-3">
-              <div className="col-12 col-md-4">
+              <div className="col-12 col-md-3">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Arama
                 </label>
@@ -178,7 +202,7 @@ function ProductsAdminPage() {
                   )}
                 </div>
               </div>
-              <div className="col-12 col-md-3">
+              <div className="col-12 col-md-2">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Ana Kategori
                 </label>
@@ -189,7 +213,7 @@ function ProductsAdminPage() {
                   disabled={categoriesLoading}
                   style={{ fontSize: "0.75rem" }}
                 >
-                  <option value="">Tüm Kategoriler</option>
+                  <option value="">Tümü</option>
                   {categories?.items?.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -197,7 +221,7 @@ function ProductsAdminPage() {
                   ))}
                 </select>
               </div>
-              <div className="col-12 col-md-3">
+              <div className="col-12 col-md-2">
                 <label className="form-label" style={{ fontSize: "0.75rem" }}>
                   Alt Kategori
                 </label>
@@ -208,7 +232,7 @@ function ProductsAdminPage() {
                   disabled={!selectedMainCategoryId}
                   style={{ fontSize: "0.75rem" }}
                 >
-                  <option value="">Tüm Alt Kategoriler</option>
+                  <option value="">Tümü</option>
                   {subCategories.map((subCategory: SubCategory) => (
                     <option key={subCategory.id} value={subCategory.id}>
                       {subCategory.name}
@@ -216,21 +240,63 @@ function ProductsAdminPage() {
                   ))}
                 </select>
               </div>
+              <div className="col-12 col-md-2">
+                <label className="form-label" style={{ fontSize: "0.75rem" }}>
+                  Durum
+                </label>
+                <select
+                  className="form-select form-select-sm"
+                  value={availabilityFilter}
+                  onChange={(e) =>
+                    setAvailabilityFilter(
+                      e.target.value as "all" | "available" | "unavailable"
+                    )
+                  }
+                  style={{ fontSize: "0.75rem" }}
+                >
+                  <option value="all">Tümü</option>
+                  <option value="available">Aktif</option>
+                  <option value="unavailable">Pasif</option>
+                </select>
+              </div>
+              <div className="col-12 col-md-2">
+                <label className="form-label" style={{ fontSize: "0.75rem" }}>
+                  Sıralama
+                </label>
+                <select
+                  className="form-select form-select-sm"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  style={{ fontSize: "0.75rem" }}
+                >
+                  <option value="none">Sıralama yok</option>
+                  <option value="price-asc">Fiyat (Düşük → Yüksek)</option>
+                  <option value="price-desc">Fiyat (Yüksek → Düşük)</option>
+                  <option value="rating-best">Puan (En yüksek)</option>
+                  <option value="rating-worst">Puan (En düşük)</option>
+                  <option value="sales-high">Satış (En çok)</option>
+                  <option value="sales-low">Satış (En az)</option>
+                  <option value="likes-high">Beğeni (En çok)</option>
+                  <option value="likes-low">Beğeni (En az)</option>
+                </select>
+              </div>
               {(searchTerm ||
                 selectedMainCategoryId ||
-                selectedSubCategoryId) && (
-                <div className="col-12 col-md-2">
+                selectedSubCategoryId ||
+                availabilityFilter !== "all" ||
+                sortBy !== "none") && (
+                <div className="col-12 col-md-2 col-lg-1">
                   <label className="form-label" style={{ fontSize: "0.75rem" }}>
                     &nbsp;
                   </label>
                   <button
-                    className="btn btn-outline-secondary btn-sm w-100"
+                    className="btn btn-outline-secondary btn-sm w-100 d-flex align-items-center justify-content-center gap-1"
                     type="button"
                     onClick={handleClearFilters}
                     style={{ fontSize: "0.75rem", marginBottom: "10px" }}
                   >
-                    <i className="bx bx-refresh me-1"></i>
-                    Temizle
+                    <i className="bx bx-refresh" style={{ fontSize: "1rem" }}></i>
+                    <span>Temizle</span>
                   </button>
                 </div>
               )}
@@ -254,8 +320,8 @@ function ProductsAdminPage() {
                 key={product.id}
                 className="col-12 col-sm-6 col-md-4 col-xl-3"
               >
-                <div className="card h-100">
-                  <div className="position-relative">
+                <div className="card h-100 product-admin-card">
+                  <div className="position-relative product-admin-card-img-wrap">
                     {product.isOutlet && (
                       <div
                         className="position-absolute top-0 start-0 m-2"
@@ -264,7 +330,14 @@ function ProductsAdminPage() {
                         <span className="badge bg-label-primary">Outlet</span>
                       </div>
                     )}
-                    <Link href={`/products/${product.id}`}>
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="d-flex align-items-center justify-content-center overflow-hidden"
+                      style={{
+                        height: "200px",
+                        background: "transparent",
+                      }}
+                    >
                       <Image
                         width={0}
                         height={0}
@@ -274,7 +347,13 @@ function ProductsAdminPage() {
                         }
                         alt={product.title}
                         className="card-img-top"
-                        style={{ height: "200px", objectFit: "contain" }}
+                        style={{
+                          height: "200px",
+                          width: "auto",
+                          maxWidth: "100%",
+                          objectFit: "contain",
+                          objectPosition: "center",
+                        }}
                         unoptimized={true}
                       />
                     </Link>
@@ -414,6 +493,12 @@ function ProductsAdminPage() {
           border-radius: 0.5rem;
           border: 1px solid #eee;
           box-shadow: none;
+        }
+        .product-admin-card .product-admin-card-img-wrap {
+          background: transparent !important;
+        }
+        .product-admin-card .card-img-top {
+          object-position: center;
         }
         .btn {
           border-radius: 3px;

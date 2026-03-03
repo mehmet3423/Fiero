@@ -3,7 +3,7 @@ import { useLogout } from "@/hooks/services/useLogout";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import AdminMobileMenu from "../shared/AdminMobileMenu";
 
 interface AdminLayoutProps {
@@ -150,9 +150,25 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Dışarı tıklanınca user dropdown'ı kapat
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -303,13 +319,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     </li>
                   </ul>
                 </li>
-                {/* User */}
-                <li className="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a
-                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center"
-                    href="#"
-                    data-bs-toggle="dropdown"
-                    onClick={(e) => e.preventDefault()}
+                {/* User Dropdown */}
+                <li
+                  ref={userDropdownRef}
+                  className={`nav-item navbar-dropdown dropdown-user dropdown ${
+                    isUserDropdownOpen ? "show" : ""
+                  }`}
+                >
+                  <button
+                    type="button"
+                    className="nav-link dropdown-toggle hide-arrow d-flex align-items-center border-0 bg-transparent w-100 text-start"
+                    aria-expanded={isUserDropdownOpen}
+                    onClick={() => setIsUserDropdownOpen((prev) => !prev)}
                   >
                     <div className="avatar avatar-online me-0 me-md-2 flex-shrink-0">
                       <Image
@@ -327,46 +348,33 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       </span>
                       <small className="text-muted">Admin</small>
                     </div>
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-end">
+                    <i className="bx bx-chevron-down ms-1 d-none d-md-block"></i>
+                  </button>
+                  <ul
+                    className={`dropdown-menu dropdown-menu-end ${
+                      isUserDropdownOpen ? "show" : ""
+                    }`}
+                  >
                     <li>
-                      <a className="dropdown-item" href="#">
-                        <div className="d-flex">
-                          <div className="avatar avatar-online me-2">
-                            <Image
-                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                              alt="User Avatar"
-                              className="rounded-circle"
-                              width={40}
-                              height={40}
-                            />
-                          </div>
-                          <div className="flex-grow-1">
-                            <span className="fw-semibold d-block">
-                              {userProfile?.applicationUser?.firstName ||
-                                "Admin Kullanıcı"}
-                            </span>
-                            <small className="text-muted">Admin</small>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div className="dropdown-divider"></div>
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item text-danger"
-                        href="#"
-                        onClick={handleLogout}
+                      <button
+                        type="button"
+                        className="dropdown-item text-danger w-100 text-start border-0 bg-transparent"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleLogout();
+                          setIsUserDropdownOpen(false);
+                        }}
+                        disabled={isPending}
                       >
                         <i className="bx bx-power-off me-2"></i>
-                        <span className="align-middle">Çıkış Yap</span>
-                      </a>
+                        <span className="align-middle">
+                          {isPending ? "Çıkış yapılıyor..." : "Çıkış Yap"}
+                        </span>
+                      </button>
                     </li>
                   </ul>
                 </li>
-                {/* /User */}
+                {/* /User Dropdown */}
               </ul>
             </div>
           </nav>

@@ -13,6 +13,16 @@
   --theme-header-bar: #6c3820;
   --theme-text-on-dark: #ffffff;
   --theme-filter-sort-active-bg: rgba(108, 56, 32, 0.15);
+
+  /* Üst bar "Alışverişe Başla" butonu */
+  --theme-top-bar-shop: #e8c547;
+  --theme-top-bar-shop-hover: #d4a017;
+
+  /* Footer tema renkleri */
+  --theme-footer-bg: var(--theme-announcement-bar);
+  --theme-footer-text: rgba(255, 255, 255, 0.85);
+  --theme-footer-error: #dc3545;
+  --theme-footer-border: rgba(255, 255, 255, 0.2);
 }
 
 /* ========== Logo Boyutu ========== */
@@ -35,6 +45,21 @@
 /* ========== 1. İndirim Şeridi ========== */
 .announcement-bar.bg_dark {
   background-color: var(--theme-announcement-bar) !important;
+}
+
+/* Üst bar "Alışverişe Başla" butonu - sarı */
+.top-bar-text .tf-btn.btn-top-bar-yellow {
+  color: var(--theme-top-bar-shop) !important;
+}
+.top-bar-text .tf-btn.btn-top-bar-yellow::after {
+  background-color: var(--theme-top-bar-shop) !important;
+}
+.top-bar-text .tf-btn.btn-top-bar-yellow:hover {
+  color: var(--theme-top-bar-shop-hover) !important;
+  opacity: 1;
+}
+.top-bar-text .tf-btn.btn-top-bar-yellow:hover::after {
+  background-color: var(--theme-top-bar-shop-hover) !important;
 }
 
 /* ========== 2. Filtrele ve En Popüler Butonları ========== */
@@ -135,4 +160,81 @@ body,
 .tf-top-bar.fixed-top {
   background-color: var(--theme-header-bar) !important;
   background: var(--theme-header-bar) !important;
+}
+
+/* ========== 6. Footer ========== */
+#footer.footer {
+  background-color: var(--theme-footer-bg) !important;
+}
+
+#footer .footer-wrap .footer-body::before {
+  display: none;
+}
+
+#footer .footer-wrap .footer-bottom .footer-bottom-wrap {
+  border-top: 1px solid var(--theme-footer-border) !important;
+}
+
+#footer .footer-infor ul li p,
+#footer .footer-infor ul li p a {
+  color: var(--theme-footer-text) !important;
+}
+
+#footer .footer-infor > a {
+  color: var(--theme-footer-text) !important;
+}
+
+#footer .footer-infor > a::after {
+  background-color: var(--theme-footer-text) !important;
+}
+
+#footer .footer-infor > a:hover {
+  color: var(--theme-add-to-cart) !important;
+}
+
+#footer .footer-infor > a:hover::after {
+  background-color: var(--theme-add-to-cart) !important;
+}
+
+#footer .footer-heading h6 {
+  color: var(--theme-text-on-dark) !important;
+}
+
+#footer .footer-menu_item,
+#footer .footer-bottom .footer-bottom-wrap .footer-menu_item {
+  color: var(--theme-footer-text) !important;
+}
+
+#footer ul.footer-menu-list li a:hover {
+  color: var(--theme-add-to-cart) !important;
+}
+
+#footer .footer-newsletter form input {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border: 0 !important;
+  color: var(--theme-text-on-dark) !important;
+}
+
+#footer .footer-newsletter form input::placeholder {
+  color: var(--theme-footer-text) !important;
+}
+
+#footer .footer-newsletter form .tf-btn {
+  border: 0 !important;
+}
+
+/* Footer sosyal ikonları - hepsi beyaz */
+#footer .tf-social-icon .social-line {
+  border-color: var(--theme-text-on-dark) !important;
+  color: var(--theme-text-on-dark) !important;
+}
+
+#footer .tf-social-icon .social-line .icon {
+  color: var(--theme-text-on-dark) !important;
+}
+
+#footer .social-youtube .icon-play {
+  border: 1px solid var(--theme-text-on-dark) !important;
+  background-color: transparent !important;
+  color: var(--theme-text-on-dark) !important;
 }

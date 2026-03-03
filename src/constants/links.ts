@@ -414,6 +414,10 @@ export const GET_DISCOUNT_SORT_TYPES = `${BASE_URL}api/EnumOptions/GetDiscountSo
 
 // Mail endpoints
 export const SEND_MAIL = `${BASE_URL}api/Mail/SendMail`;
+
+// Contact form (external Happencode panel)
+export const CONTACT_FORM_SUBMISSION_API =
+  process.env.NEXT_PUBLIC_CONTACT_FORM_API ?? "https://contact-form-panel.happencode.cloud/api/Submission";
 export const GET_SYSTEM_SETTING_TYPES = `${BASE_URL}api/EnumOptions/GetSystemSettingTypes`;
 
 // Notification Subscription endpoints

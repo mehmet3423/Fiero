@@ -342,7 +342,7 @@ export default function Header() {
                       <div className="swiper-slide">
                         <p className="top-bar-text fw-5">
                           {t("header.springSale")}
-                          <Link href="/products" className="tf-btn btn-line">
+                          <Link href="/products" className="tf-btn btn-line btn-top-bar-yellow">
                             {t("header.shopNow")}
                             <i className="icon icon-arrow1-top-left"></i>
                           </Link>
