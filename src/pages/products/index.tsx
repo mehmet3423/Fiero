@@ -97,12 +97,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const [selectedSubCategoryIds, setSelectedSubCategoryIds] = useState<
     string[]
   >([]);
-  const [selectedFilters, setSelectedFilters] = useState<
-    Record<string, string[]>
-  >({});
+  const [selectedFilters] = useState<Record<string, string[]>>({});
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
+  const [minPossiblePrice, setMinPossiblePrice] = useState<number>(0);
   const [maxPossiblePrice, setMaxPossiblePrice] = useState<number>(100000);
   const [displayPage, setDisplayPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
@@ -232,30 +231,6 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
   const [selectedSpecificationIds, setSelectedSpecificationIds] = useState<
     string[]
   >([]);
-  useEffect(() => {
-    if (
-      subCategorySpecifications &&
-      subCategorySpecifications.length > 0 &&
-      selectedSpecificationIds.length > 0
-    ) {
-      const newSelectedFilters: Record<string, string[]> = {};
-
-      for (const spec of subCategorySpecifications) {
-        const matchingOptions = spec.specificationOptions.filter((option) =>
-          selectedSpecificationIds.includes(option.id)
-        );
-        if (matchingOptions.length > 0) {
-          newSelectedFilters[spec.name] = matchingOptions.map(
-            (opt) => opt.value
-          );
-        }
-      }
-
-      setSelectedFilters(newSelectedFilters);
-    } else {
-      setSelectedFilters({});
-    }
-  }, [selectedSpecificationIds, subCategorySpecifications]);
 
   const { categories: categoriesData, isLoading: categoriesLoading } =
     useActiveCategories();
@@ -284,6 +259,10 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
           ? selectedSubCategoryIds
           : undefined
         : undefined,
+      specificationOptionIds:
+        selectedSpecificationIds.length > 0
+          ? selectedSpecificationIds
+          : undefined,
       ...sortParams,
       enabled: !isOutletPage,
     });
@@ -336,10 +315,12 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
       const minPrice = Math.floor(Math.min(...prices));
       const maxPrice = Math.ceil(Math.max(...prices));
+      const roundedMinPrice = Math.floor(minPrice / 10) * 10;
       const roundedMaxPrice = Math.ceil(maxPrice / 10) * 10;
 
+      setMinPossiblePrice(roundedMinPrice);
       setMaxPossiblePrice(roundedMaxPrice);
-      setPriceRange([minPrice, roundedMaxPrice]);
+      setPriceRange([roundedMinPrice, roundedMaxPrice]);
     }
   }, [apiProducts]);
 
@@ -348,34 +329,18 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
 
     let filtered = [...apiProducts];
 
-    // Fiyat filtrelemesi - sadece priceRange güncellenmişse uygula
-    if (priceRange[1] > 1000) {
-      // priceRange güncellenmişse
+    // Fiyat filtrelemesi - kullanıcı varsayılan aralıktan farklı bir değer seçtiyse uygula
+    const isPriceFiltered =
+      priceRange[0] > minPossiblePrice || priceRange[1] < maxPossiblePrice;
+    if (isPriceFiltered) {
       filtered = filtered.filter((product: Product) => {
         const finalPrice = product.discountedPrice || product.price;
         return finalPrice >= priceRange[0] && finalPrice <= priceRange[1];
       });
     }
 
-    // Diğer filtreler
-    if (Object.keys(selectedFilters).length > 0) {
-      filtered = filtered.filter((product: Product) => {
-        return Object.entries(selectedFilters).every(
-          ([specName, selectedOptions]) => {
-            const productSpec = product.technicalDetails?.find(
-              (spec: TechnicalDetail) => spec.key === specName
-            );
-            if (!productSpec) return false;
-            return selectedOptions.some(
-              (option) => productSpec.value === option
-            );
-          }
-        );
-      });
-    }
-
     return filtered;
-  }, [apiProducts, selectedFilters, priceRange]);
+  }, [apiProducts, priceRange, minPossiblePrice, maxPossiblePrice]);
 
   const sortedProducts = filteredProducts;
 
@@ -384,14 +349,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
     document.body.classList.toggle("sidebar-filter-active");
   };
 
-  const clearAllFilters = () => {
-    setSelectedFilters({});
-    setSelectedMainCategoryIds([]);
-    setSelectedSubCategoryIds([]);
-    setPriceRange([0, maxPossiblePrice]);
-    setSelectedSpecificationIds([]);
-    setDisplayPage(1);
-  };
+   
 
   // Çoklu kategori seçimi - toggle mantığı
   const handleMainCategoryChange = (categoryId: string) => {
@@ -431,7 +389,7 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
         return [...prev, subCategoryId];
       }
     });
-    setSelectedSpecificationIds([]); // Alt kategori değiştiğinde specification'ları temizle
+    setSelectedSpecificationIds([]);
     setDisplayPage(1);
   };
 
@@ -474,12 +432,11 @@ const ProductPage: React.FC<ProductsProps> = ({ seoData }) => {
           show={isFilterVisible}
           onClose={toggleFilters}
           categories={categories?.items || []}
-          selectedFilters={selectedFilters}
-          onFilterChange={setSelectedFilters}
           subCategorySpecifications={subCategorySpecifications || []}
           selectedSpecificationIds={selectedSpecificationIds}
           onSpecificationChange={setSelectedSpecificationIds}
           priceRange={priceRange}
+          priceMinMax={[minPossiblePrice, maxPossiblePrice]}
           onPriceRangeChange={setPriceRange}
           selectedMainCategoryIds={selectedMainCategoryIds}
           selectedSubCategoryIds={selectedSubCategoryIds}
