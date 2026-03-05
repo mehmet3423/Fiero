@@ -78,7 +78,7 @@ const MainSlideshow: React.FC<MainSlideshowProps> = ({
               <div className="box-content">
                 <div className="container">
                   {slide.title && (
-                    <h1 className="fade-item fade-item-1">{slide.title}</h1>
+                    <h1 className="fade-item fade-item-1" style={{ color: "white" }}>{slide.title}</h1>
                   )}
                   {slide.subtitle && (
                     <p className="fade-item fade-item-2">{slide.subtitle}</p>

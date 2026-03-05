@@ -77,6 +77,7 @@ export const useGetAllProducts = (options: UseGetAllProductsOptions = {}) => {
       options.likeCountSort?.toString() || "0",
       JSON.stringify(mainCategoryIdsArray),
       JSON.stringify(subCategoryIdsArray),
+      JSON.stringify(options.specificationOptionIds || []),
       searchQuery || "",
     ],
     method: HttpMethod.POST,

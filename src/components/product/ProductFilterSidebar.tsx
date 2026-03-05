@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useActiveCategories } from "@/hooks/services/categories/useActiveCategories";
 import { useSubCategoriesLookUp } from "@/hooks/services/categories/useSubCategoriesLookUp";
 import { useLanguage } from "@/context/LanguageContext";
@@ -28,16 +28,15 @@ interface ProductFilterSidebarProps {
     displayIndex: any;
     id: string;
     name: string;
-  }[]; // Prop olarak gelen kategoriler
-  selectedFilters: Record<string, string[]>;
+  }[];
   show: boolean;
   onClose: () => void;
-  onFilterChange: (filters: Record<string, string[]>) => void;
   // Backend ile entegrasyon için yeni props
   subCategorySpecifications?: Specification[];
   selectedSpecificationIds: string[];
   onSpecificationChange: (ids: string[]) => void;
   priceRange: [number, number];
+  priceMinMax: [number, number];
   onPriceRangeChange: (range: [number, number]) => void;
   // Kategori seçimi için yeni props - çoklu seçim
   selectedMainCategoryIds?: string[];
@@ -47,15 +46,14 @@ interface ProductFilterSidebarProps {
 }
 
 const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
-  categories: propCategories, // Prop'tan gelen kategorileri rename ediyoruz
-  selectedFilters,
-  onFilterChange,
+  categories: propCategories,
   show,
   onClose,
   subCategorySpecifications = [],
   selectedSpecificationIds,
   onSpecificationChange,
   priceRange,
+  priceMinMax,
   onPriceRangeChange,
   selectedMainCategoryIds: propSelectedMainCategoryIds = [],
   selectedSubCategoryIds: propSelectedSubCategoryIds = [],
@@ -63,6 +61,10 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
   onSubCategoryChange,
 }) => {
   const { t } = useLanguage();
+  // Slider'ın kullanıcı tarafından hareket ettirildiğini takip eder
+  // (programatik set ile kullanıcı hareketi arasındaki farkı anlamak için)
+  const sliderDragging = useRef(false);
+
   // Active categories hook'u kullanarak kategorileri çekiyoruz
   const { categories: activeCategoriesData } = useActiveCategories();
   const activeCategories = activeCategoriesData?.items || [];
@@ -119,18 +121,6 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
     fetchSubCategories();
   }, [propSelectedMainCategoryIds]);
 
-  const handleFilter = (group: string, value: string) => {
-    const groupFilters = selectedFilters[group] || [];
-    let newFilters: Record<string, string[]> = { ...selectedFilters };
-    if (groupFilters.includes(value)) {
-      newFilters[group] = groupFilters.filter((v) => v !== value);
-    } else {
-      newFilters[group] = [...groupFilters, value];
-    }
-
-    onFilterChange(newFilters);
-  };
-
   // Ana kategori toggle - çoklu seçim
   const handleMainCategoryClick = (categoryId: string) => {
     onMainCategoryChange(categoryId);
@@ -150,11 +140,7 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     categories: true,
-    availability: true,
     price: true,
-    brand: true,
-    color: true,
-    size: true,
     // Dinamik specification sections
     ...subCategorySpecifications.reduce((acc, spec) => {
       acc[spec.id] = true;
@@ -225,12 +211,20 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
           setTimeout(() => {
             if (rangeSlider && window.noUiSlider && !(rangeSlider as any).noUiSlider) {
               try {
+                const [sliderMin, sliderMax] = priceMinMax;
+                const span = sliderMax - sliderMin;
+                const step =
+                  span <= 500 ? 10 : span <= 5000 ? 50 : span <= 50000 ? 100 : 500;
+
                 window.noUiSlider.create(rangeSlider, {
-                  start: [priceRange[0], priceRange[1]],
-                  step: 100,
+                  start: [
+                    Math.max(priceRange[0], sliderMin),
+                    Math.min(priceRange[1], sliderMax),
+                  ],
+                  step,
                   range: {
-                    min: [0],
-                    max: [99999],
+                    min: [sliderMin],
+                    max: [sliderMax === sliderMin ? sliderMin + 1 : sliderMax],
                   },
                   connect: true,
                 });
@@ -260,7 +254,10 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                         Math.round(parseFloat(values[0])),
                         Math.round(parseFloat(values[1])),
                       ];
+                      sliderDragging.current = true;
                       onPriceRangeChange(newRange);
+                      // Kısa süre sonra flag'i sıfırla (programatik set'e izin ver)
+                      setTimeout(() => { sliderDragging.current = false; }, 200);
                     }, 100);
                   }
                 );
@@ -285,9 +282,13 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
         }
       };
     }
-  }, [show]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, priceMinMax[0], priceMinMax[1]]);
 
   useEffect(() => {
+    // Kullanıcı slider'ı bizzat hareket ettirdiyse programatik set yapma
+    if (sliderDragging.current) return;
+
     if (show && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         const rangeSlider = document.getElementById("slider-range");
@@ -302,7 +303,8 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [priceRange, show]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priceRange[0], priceRange[1], show]);
 
   return (
     <>
@@ -550,113 +552,6 @@ const ProductFilterSidebar: React.FC<ProductFilterSidebarProps> = ({
                 </div>
               </div>
 
-              {/* Statik Filtreler - Availability */}
-              <div className="widget-facet">
-                <div
-                  className="facet-title"
-                  onClick={() => toggleSection("availability")}
-                  aria-expanded={openSections.availability}
-                  aria-controls="availability"
-                  style={{ cursor: "pointer" }}
-                >
-                  <span>{t("productFilter.availability")}</span>
-                  <span
-                    className={`icon ${
-                      openSections.availability
-                        ? "icon-arrow-down"
-                        : "icon-arrow-up"
-                    }`}
-                  ></span>
-                </div>
-                <div
-                  id="availability"
-                  className={`collapse${
-                    openSections.availability ? " show" : ""
-                  }`}
-                >
-                  <ul className="tf-filter-group current-scrollbar mb_36">
-                    <li className="list-item d-flex gap-12 align-items-center">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="tf-check"
-                        id="availability-1"
-                        onChange={() =>
-                          handleFilter("availability", "in-stock")
-                        }
-                      />
-                      <label htmlFor="availability-1" className="label">
-                        <span>{t("productFilter.inStock")}</span>&nbsp;
-                        <span>(14)</span>
-                      </label>
-                    </li>
-                    <li className="list-item d-flex gap-12 align-items-center">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="tf-check"
-                        id="availability-2"
-                        onChange={() =>
-                          handleFilter("availability", "out-of-stock")
-                        }
-                      />
-                      <label htmlFor="availability-2" className="label">
-                        <span>{t("productFilter.outOfStock")}</span>&nbsp;
-                        <span>(2)</span>
-                      </label>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Statik Filtreler - Brand */}
-              <div className="widget-facet">
-                <div
-                  className="facet-title"
-                  onClick={() => toggleSection("brand")}
-                  aria-expanded={openSections.brand}
-                  aria-controls="brand"
-                  style={{ cursor: "pointer" }}
-                >
-                  <span>{t("productFilter.brand")}</span>
-                  <span
-                    className={`icon ${
-                      openSections.brand ? "icon-arrow-down" : "icon-arrow-up"
-                    }`}
-                  ></span>
-                </div>
-                <div
-                  id="brand"
-                  className={`collapse${openSections.brand ? " show" : ""}`}
-                >
-                  <ul className="tf-filter-group current-scrollbar mb_36">
-                    <li className="list-item d-flex gap-12 align-items-center">
-                      <input
-                        type="radio"
-                        name="brand"
-                        className="tf-check"
-                        id="brand-1"
-                        onChange={() => handleFilter("brand", "ecomus")}
-                      />
-                      <label htmlFor="brand-1" className="label">
-                        <span>Ecomus</span>&nbsp;<span>(8)</span>
-                      </label>
-                    </li>
-                    <li className="list-item d-flex gap-12 align-items-center">
-                      <input
-                        type="radio"
-                        name="brand"
-                        className="tf-check"
-                        id="brand-2"
-                        onChange={() => handleFilter("brand", "mh")}
-                      />
-                      <label htmlFor="brand-2" className="label">
-                        <span>M&H</span>&nbsp;<span>(8)</span>
-                      </label>
-                    </li>
-                  </ul>
-                </div>
-              </div>
             </form>
           </div>
         </div>
