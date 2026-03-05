@@ -66,6 +66,22 @@ const CompareProducts = () => {
         <title>{t("compareProducts.pageTitle")}</title>
       </Head>
       <style jsx>{`
+        /* Sütun hizalaması: tüm satırlarda eşit genişlik */
+        .tf-compare-row {
+          display: flex;
+        }
+        .tf-compare-label-col {
+          flex: 0 0 180px;
+          min-width: 180px;
+        }
+        .tf-compare-label-col h6 {
+          text-align: left;
+        }
+        .tf-compare-row .tf-compare-col:not(.tf-compare-label-col) {
+          flex: 1 1 0;
+          min-width: 180px;
+        }
+
         /* Mobil görünüm için buton düzenlemeleri */
         @media (max-width: 768px) {
           .tf-compare-group-btns {
@@ -138,7 +154,7 @@ const CompareProducts = () => {
           <div className="tf-compare-table">
             {/* Ürünler */}
             <div className="tf-compare-row tf-compare-grid">
-              <div className="tf-compare-col d-md-block d-none"></div>
+              <div className="tf-compare-col tf-compare-label-col d-md-block d-none"></div>
               {isLoading ? (
                 <div>{t("compareProducts.loading")}</div>
               ) : products && products.length > 0 ? (
@@ -148,6 +164,11 @@ const CompareProducts = () => {
                       <div className="tf-compare-remove link" onClick={() => handleRemove(product.id)}>
                         {t("compareProducts.remove")}
                       </div>
+                      {product.isOutlet && (
+                        <span className="badge bg-danger mb-2" style={{ alignSelf: "center" }}>
+                          {t("compareProducts.outletBadge")}
+                        </span>
+                      )}
                       <a className="tf-compare-image" href={`/products/${product.id}`}>
                         <SafeImage
                           src={resolveImageUrl(product.baseImageUrl)}
@@ -194,8 +215,8 @@ const CompareProducts = () => {
               )}
             </div>
             {/* Özellikler */}
-            <div className="tf-compare-row" >
-              <div className="tf-compare-col tf-compare-field d-md-block d-none">
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field tf-compare-label-col d-md-block d-none">
                 <h6>{t("compareProducts.stockStatus")}</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
@@ -207,18 +228,57 @@ const CompareProducts = () => {
                       <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem', backgroundColor: 'rgba(177, 32, 32, 1)', borderRadius: '50%', height: '17px', width: '17px' }}>&#10007;</span> // Cross icon
                     )}
                   </div>
-                  <span className="fw-5 " style={{ color: product.sellableQuantity > 0 ? 'green' : 'red' }}>
+                  <span className="fw-5" style={{ color: product.sellableQuantity > 0 ? 'green' : 'red' }}>
                     {product.sellableQuantity > 0 ? t("compareProducts.inStock") : t("compareProducts.outOfStock")}
                   </span>
                 </div>
               ))}
             </div>
+            {/* Puan */}
             <div className="tf-compare-row">
-              <div className="tf-compare-col tf-compare-field d-md-block d-none">
-                <h6>{t("compareProducts.seller")}</h6>
+              <div className="tf-compare-col tf-compare-field tf-compare-label-col d-md-block d-none">
+                <h6>{t("compareProducts.rating")}</h6>
               </div>
               {products && products.length > 0 && products.map((product) => (
-                <div className="tf-compare-col tf-compare-value text-center" key={product.id}></div>
+                <div className="tf-compare-col tf-compare-field tf-compare-value text-center" key={product.id}>
+                  {product.ratingCount && product.ratingCount > 0 ? (
+                    <span>
+                      ★ {typeof product.averageRating === "number" ? product.averageRating.toFixed(1) : "0"} ({product.ratingCount})
+                    </span>
+                  ) : (
+                    <span className="text-muted">{t("compareProducts.noRating")}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            {/* İade */}
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field tf-compare-label-col d-md-block d-none">
+                <h6>{t("compareProducts.refundable")}</h6>
+              </div>
+              {products && products.length > 0 && products.map((product) => (
+                <div className="tf-compare-col tf-compare-field tf-compare-value text-center" key={product.id}>
+                  {product.refundable ? (
+                    <span className="text-success">{t("compareProducts.refundableYes")}</span>
+                  ) : (
+                    <span className="text-muted">{t("compareProducts.refundableNo")}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            {/* Ürün Tipi (Outlet) */}
+            <div className="tf-compare-row">
+              <div className="tf-compare-col tf-compare-field tf-compare-label-col d-md-block d-none">
+                <h6>{t("compareProducts.productType")}</h6>
+              </div>
+              {products && products.length > 0 && products.map((product) => (
+                <div className="tf-compare-col tf-compare-field tf-compare-value text-center" key={product.id}>
+                  {product.isOutlet ? (
+                    <span className="text-warning fw-5">{t("compareProducts.productTypeOutlet")}</span>
+                  ) : (
+                    <span>{t("compareProducts.productTypeNormal")}</span>
+                  )}
+                </div>
               ))}
             </div>
           </div>
